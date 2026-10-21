@@ -1,6 +1,11 @@
 {
   "name": "h-beauty",
   "compatibility_date": "2026-10-21",
+  // Build the SPA as part of every `wrangler deploy` / `versions upload`, so
+  // deploys from a clean checkout (e.g. Cloudflare Workers Builds) have ./dist.
+  "build": {
+    "command": "test -d node_modules || npm ci --no-audit --no-fund; npm run build"
+  },
   "assets": {
     "directory": "./dist",
     "not_found_handling": "single-page-application"
