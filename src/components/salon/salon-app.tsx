@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Toaster } from "sonner";
 import { TABS, useSalon, type Tab } from "@/lib/salon-store";
+import { withTransition } from "@/lib/transition";
 import { Docks, TabBar, TopBar } from "./chrome";
 import { HomeScreen } from "./screens/home";
 import { ServicesScreen } from "./screens/services";
@@ -57,8 +58,9 @@ export function SalonApp() {
       if (sheetRef.current && !(window.history.state as { sheet?: boolean } | null)?.sheet) setSheet(null);
       const next = tabFromHash();
       if (next !== useSalon.getState().tab) {
-        scrolls.current[useSalon.getState().tab] = window.scrollY;
-        setTab(next);
+        const current = useSalon.getState().tab;
+        scrolls.current[current] = window.scrollY;
+        withTransition(() => setTab(next), TABS.indexOf(next) > TABS.indexOf(current) ? "forward" : "back");
       }
     };
     window.addEventListener("popstate", onPop);
@@ -101,10 +103,24 @@ export function SalonApp() {
         }
         scrolls.current[current] = window.scrollY;
         scrolls.current[next] = 0;
-        setTab(next);
+        withTransition(() => setTab(next), TABS.indexOf(next) > TABS.indexOf(current) ? "forward" : "back");
       },
       openSheet,
       closeSheet,
+      openDiscover: (id, from) => {
+        // Shared-element morph: the tapped image hands its name to the feed's first frame.
+        if (from) from.style.viewTransitionName = "look-morph";
+        let target: HTMLElement | null = null;
+        const transition = withTransition(() => {
+          if (from) from.style.viewTransitionName = "";
+          openSheet({ kind: "discover", id });
+          target = from ? document.querySelector<HTMLElement>(".discover [data-morph]") : null;
+          if (target) target.style.viewTransitionName = "look-morph";
+        }, "morph");
+        const clear = () => (target as HTMLElement | null)?.style.removeProperty("view-transition-name");
+        if (transition) transition.finished.finally(clear);
+        else clear();
+      },
       openBooking: (intent?: BookingIntent) => {
         const store = useSalon.getState();
         store.resetDraft();
@@ -120,7 +136,7 @@ export function SalonApp() {
     <SalonProvider value={actions}>
       <div className="app-frame">
         <TopBar />
-        <main key={tab} className="screen pb-[calc(7.5rem+env(safe-area-inset-bottom))]">
+        <main key={tab} className="screen pb-[calc(11rem+env(safe-area-inset-bottom))]">
           {tab === "home" ? <HomeScreen /> : null}
           {tab === "services" ? <ServicesScreen /> : null}
           {tab === "looks" ? <LooksScreen /> : null}

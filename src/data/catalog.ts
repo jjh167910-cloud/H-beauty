@@ -51,6 +51,11 @@ export function lookSrc(id: number) {
   return `/looks/${id}.webp`;
 }
 
+/** 560px thumbnail for grids and rails; full-size `lookSrc` is for immersive views. */
+export function lookThumb(id: number) {
+  return `/looks/sm/${id}.webp`;
+}
+
 export function byRep(repId: number) {
   return families.find((family) => family.repId === repId);
 }

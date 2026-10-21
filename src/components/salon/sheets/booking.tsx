@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { ArrowRight, CalendarCheck2, Check, Clock3, Copy, Send, Sparkles, X } from "lucide-react";
 import { toast } from "sonner";
-import { familyById, lookSrc, persian } from "@/data/catalog";
+import { familyById, lookThumb, persian } from "@/data/catalog";
 import {
   ANY_STYLIST,
   SERVICES,
@@ -218,7 +218,7 @@ export function BookingSheet({ open, onClose }: { open: boolean; onClose: () => 
             </div>
             {look ? (
               <div className="flex items-center gap-3 rounded-2xl border border-border p-2.5">
-                <img src={lookSrc(look.repId)} alt="" className="size-12 rounded-xl object-cover" />
+                <img src={lookThumb(look.repId)} alt="" className="size-12 rounded-xl object-cover" />
                 <span className="min-w-0 flex-1 text-sm"><small className="block text-xs text-muted">مدل منتخب</small><strong className="block truncate">{look.name}</strong></span>
                 <button type="button" className="icon-btn" onClick={() => setDraft({ lookId: null })} aria-label="حذف مدل منتخب"><X className="size-4" /></button>
               </div>

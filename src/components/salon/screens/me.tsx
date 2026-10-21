@@ -1,6 +1,6 @@
 import { ChevronLeft, Columns2, Heart, HeartHandshake, Monitor, Moon, ScanFace, ShieldCheck, Sun, Trash2 } from "lucide-react";
 import { toast } from "sonner";
-import { familyById, lookSrc, persian, type Family } from "@/data/catalog";
+import { familyById, lookThumb, persian, type Family } from "@/data/catalog";
 import { SALON } from "@/data/salon";
 import { cn } from "@/lib/cn";
 import { useSalon, type ThemePref } from "@/lib/salon-store";
@@ -74,7 +74,7 @@ export function MeScreen() {
           <div className="rail no-scrollbar">
             {saved.slice(0, 10).map((family) => (
               <button key={family.id} type="button" className="press saved-tile" onClick={() => openSheet({ kind: "look", id: family.id })}>
-                <img src={lookSrc(family.repId)} alt={family.name} loading="lazy" />
+                <img src={lookThumb(family.repId)} alt={family.name} loading="lazy" />
                 <span className="line-clamp-1">{family.name}</span>
               </button>
             ))}

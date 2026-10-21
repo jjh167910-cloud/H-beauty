@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Columns2, Heart, Search, X } from "lucide-react";
+import { Columns2, Heart, Play, Search, X } from "lucide-react";
 import { toast } from "sonner";
-import { FAMILY_COUNT, FILTERS, diverseOrder, families, labelOf, lookSrc, matchesFamily, persian } from "@/data/catalog";
+import { FAMILY_COUNT, FILTERS, diverseOrder, families, labelOf, lookThumb, matchesFamily, persian } from "@/data/catalog";
 import { cn } from "@/lib/cn";
 import { useSalon } from "@/lib/salon-store";
 import { Chip, EmptyState, haptic, useSalonActions } from "../ui";
@@ -24,7 +24,7 @@ const SHORT: Record<string, string> = {
 };
 
 export function LooksScreen() {
-  const { openSheet } = useSalonActions();
+  const { openDiscover } = useSalonActions();
   const favs = useSalon((state) => state.favs);
   const compare = useSalon((state) => state.compare);
   const filter = useSalon((state) => state.filter);
@@ -63,11 +63,19 @@ export function LooksScreen() {
     <div className="pt-2">
       <section className="px-6">
         <p className="reveal font-brand text-[0.7rem] tracking-[0.3em] text-accent-deep" dir="ltr">THE LOOKBOOK · {FAMILY_COUNT} LOOKS</p>
-        <h1 className="reveal mt-3 mb-5 text-[2.2rem] leading-[1.35] font-extralight tracking-tight" style={{ animationDelay: "80ms" }}>
-          الهام برای
-          <br />
-          <span className="font-display text-[2.4rem] text-accent-deep">نوبت بعدی</span>
-        </h1>
+        <div className="mb-5 flex items-end justify-between gap-4">
+          <h1 className="reveal mt-3 text-[2.2rem] leading-[1.35] font-extralight tracking-tight" style={{ animationDelay: "80ms" }}>
+            الهام برای
+            <br />
+            <span className="font-display text-[2.4rem] text-accent-deep">نوبت بعدی</span>
+          </h1>
+          {list.length ? (
+            <button type="button" className="reveal press glass inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full ps-3 pe-4 text-[0.8rem]" style={{ animationDelay: "160ms" }} onClick={() => openDiscover(list[0].id)}>
+              <span className="grid size-7 place-items-center rounded-full bg-ink text-champagne"><Play className="size-3 fill-current" /></span>
+              تمام‌صفحه
+            </button>
+          ) : null}
+        </div>
         <label className="search-field">
           <span className="sr-only">جست‌وجوی مدل</span>
           <Search className="size-[18px] shrink-0 text-muted" />
@@ -122,9 +130,9 @@ export function LooksScreen() {
             const picked = compareSet.has(family.id);
             return (
               <article key={family.id} className="look-card rise" style={{ animationDelay: `${(index % PAGE_SIZE) * 18}ms` }}>
-                <button type="button" className="press block w-full text-start" onClick={() => openSheet({ kind: "look", id: family.id })}>
+                <button type="button" className="press block w-full text-start" onClick={(event) => openDiscover(family.id, event.currentTarget.querySelector("img"))}>
                   <span className="look-image">
-                    <img src={lookSrc(family.repId)} alt={family.name} loading="lazy" decoding="async" />
+                    <img src={lookThumb(family.repId)} alt={family.name} loading="lazy" decoding="async" />
                   </span>
                   <h3 className="mt-3 line-clamp-2 min-h-10 text-[0.82rem] leading-5">{family.name}</h3>
                   <p className="mt-0.5 font-brand text-[0.75rem] italic tracking-[0.08em] text-muted" dir="ltr">{family.code}</p>

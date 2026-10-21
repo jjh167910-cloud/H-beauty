@@ -1,6 +1,6 @@
 import { useMemo } from "react";
-import { ArrowLeft, CalendarPlus, ChevronLeft, HeartHandshake, LayoutGrid, Navigation, Phone, ScanFace } from "lucide-react";
-import { byRep, lookSrc } from "@/data/catalog";
+import { ArrowLeft, CalendarPlus, ChevronLeft, HeartHandshake, Navigation, Phone, Play, ScanFace } from "lucide-react";
+import { FAMILY_COUNT, byRep, lookSrc, lookThumb } from "@/data/catalog";
 import { SALON, SERVICES, STYLISTS, dayOf, formatPrice, greeting, isPast, longDate, monthOf, openStatus, stylistName, summarize, timeLabel } from "@/data/salon";
 import { cn } from "@/lib/cn";
 import { useSalon } from "@/lib/salon-store";
@@ -24,7 +24,7 @@ const EXPERIENCE = [
 const ROMAN = ["I", "II", "III", "IV", "V", "VI"];
 
 export function HomeScreen() {
-  const { go, openSheet, openBooking } = useSalonActions();
+  const { go, openSheet, openBooking, openDiscover } = useSalonActions();
   const name = useSalon((state) => state.profile.name);
   const bookings = useSalon((state) => state.bookings);
   const hero = byRep(30);
@@ -34,12 +34,7 @@ export function HomeScreen() {
     [bookings],
   );
 
-  const quick = [
-    { label: "رزرو", Icon: CalendarPlus, onClick: () => openBooking() },
-    { label: "استایل‌یاب", Icon: ScanFace, onClick: () => openSheet({ kind: "finder" }) },
-    { label: "مشاوره", Icon: HeartHandshake, onClick: () => openSheet({ kind: "consult" }) },
-    { label: "لوک‌بوک", Icon: LayoutGrid, onClick: () => go("looks") },
-  ];
+  const curatedFirst = byRep(77)?.id ?? hero?.id ?? 1;
 
   return (
     <div className="grid grid-cols-1 gap-12 pt-4">
@@ -59,7 +54,7 @@ export function HomeScreen() {
 
       {hero ? (
         <section className="reveal relative px-6" style={{ animationDelay: "160ms" }}>
-          <button type="button" className="hero-arch press block w-full" onClick={() => openSheet({ kind: "look", id: hero.id })} aria-label={`مشاهده ${hero.name}`}>
+          <button type="button" className="hero-arch press block w-full" onClick={(event) => openDiscover(hero.id, event.currentTarget.querySelector("img"))} aria-label={`مشاهده ${hero.name}`}>
             <img src={lookSrc(hero.repId)} alt={hero.name} fetchPriority="high" />
             <span className="hero-arch-shade" />
             <span className="absolute inset-x-6 bottom-6 text-start text-white">
@@ -99,16 +94,32 @@ export function HomeScreen() {
         </section>
       ) : null}
 
-      <section className="grid grid-cols-4 px-6">
-        {quick.map(({ label, Icon, onClick }, index) => (
-          <button key={label} type="button" onClick={onClick} className={cn("press quick-action", index > 0 && "border-s border-foreground/10")}>
-            <Icon className="size-[22px] text-accent-deep" strokeWidth={1.25} />
-            <small>{label}</small>
-          </button>
-        ))}
+      <section className="sd-reveal bento px-6" aria-label="دسترسی سریع">
+        <button type="button" className="press bento-tile bento-discover" onClick={(event) => openDiscover(curatedFirst, event.currentTarget.querySelector("img"))}>
+          <img src={lookThumb(77)} alt="" loading="lazy" />
+          <span className="bento-shade" />
+          <span className="relative mt-auto text-start text-white">
+            <span className="glass-dark inline-grid size-9 place-items-center rounded-full"><Play className="size-3.5 fill-current" /></span>
+            <strong className="mt-3 block text-[1.05rem] font-normal">کاوش لوک‌ها</strong>
+            <small className="font-brand text-[0.7rem] tracking-[0.2em] text-white/70" dir="ltr">{FAMILY_COUNT} LOOKS · SWIPE</small>
+          </span>
+        </button>
+        <button type="button" className="press bento-tile foil text-[#1a140e]" onClick={() => openBooking()}>
+          <CalendarPlus className="size-6" strokeWidth={1.4} />
+          <span className="mt-auto text-start"><strong className="block text-[0.95rem] font-medium">رزرو نوبت</strong><small className="text-[0.7rem] opacity-70">در چهار قدم</small></span>
+        </button>
+        <button type="button" className="press bento-tile bento-ink" onClick={() => openSheet({ kind: "finder" })}>
+          <ScanFace className="size-6 text-champagne" strokeWidth={1.4} />
+          <span className="mt-auto text-start"><strong className="block text-[0.95rem] font-normal">استایل‌یاب</strong><small className="text-[0.7rem] text-white/55">مدل مناسب چهره‌تان</small></span>
+        </button>
+        <button type="button" className="press bento-tile bento-wide glass" onClick={() => openSheet({ kind: "consult" })}>
+          <HeartHandshake className="size-6 text-accent-deep" strokeWidth={1.4} />
+          <span className="flex-1 text-start"><strong className="block text-[0.95rem] font-normal">مشاوره خصوصی با آرتیست</strong><small className="text-[0.72rem] text-muted">مدل‌های منتخبتان را بفرستید</small></span>
+          <ArrowLeft className="size-4 text-muted" />
+        </button>
       </section>
 
-      <section>
+      <section className="sd-reveal">
         <SectionHead index="01" kicker="THE RITUALS" title="منوی امضادار" action={<TextLink onClick={() => go("services")}>منوی کامل</TextLink>} />
         <div className="px-6">
           {SERVICES.filter((service) => service.popular).map((service, index) => (
@@ -125,7 +136,7 @@ export function HomeScreen() {
         </div>
       </section>
 
-      <section>
+      <section className="sd-reveal">
         <SectionHead index="02" kicker="THE ARTISTS" title="آرتیست‌های آتلیه" />
         <div className="rail no-scrollbar">
           {STYLISTS.map((stylist) => (
@@ -138,16 +149,16 @@ export function HomeScreen() {
         </div>
       </section>
 
-      <section>
+      <section className="sd-reveal">
         <SectionHead index="03" kicker="CURATED LOOKBOOK" title="استایل‌های منتخب" action={<TextLink onClick={() => go("looks")}>همه</TextLink>} />
         <div className="rail no-scrollbar">
           {CURATED.map((item) => {
             const look = byRep(item.repId);
             if (!look) return null;
             return (
-              <button key={item.repId} type="button" className="press curated-tile" onClick={() => openSheet({ kind: "look", id: look.id })} aria-label={`${item.label}، ${look.name}`}>
+              <button key={item.repId} type="button" className="press curated-tile" onClick={(event) => openDiscover(look.id, event.currentTarget.querySelector("img"))} aria-label={`${item.label}، ${look.name}`}>
                 <span className="arch block aspect-[3/4] overflow-hidden bg-soft">
-                  <img src={lookSrc(item.repId)} alt="" loading="lazy" />
+                  <img src={lookThumb(item.repId)} alt="" loading="lazy" />
                 </span>
                 <strong>{item.label}</strong>
                 <small dir="ltr">{item.caption}</small>
@@ -159,7 +170,7 @@ export function HomeScreen() {
 
       <Ornament className="px-6" />
 
-      <section className="px-6">
+      <section className="sd-reveal px-6">
         <p className="font-brand text-[0.7rem] tracking-[0.28em] text-accent-deep" dir="ltr">THE ATELIER EXPERIENCE</p>
         <h2 className="mt-1.5 text-[1.4rem] font-light tracking-tight">یک ساعت، فقط برای خودتان</h2>
         <ol className="mt-6 grid gap-6">
@@ -175,7 +186,7 @@ export function HomeScreen() {
         </ol>
       </section>
 
-      <section className="px-6">
+      <section className="sd-reveal px-6">
         <button type="button" className="press finder-banner" onClick={() => openSheet({ kind: "finder" })}>
           <span className="relative z-10 min-w-0 flex-1 text-start">
             <span className="font-brand text-[0.7rem] tracking-[0.3em] text-champagne" dir="ltr">STYLE FINDER</span>
@@ -186,7 +197,7 @@ export function HomeScreen() {
         </button>
       </section>
 
-      <section className="px-6">
+      <section className="sd-reveal px-6">
         <p className="font-brand text-[0.7rem] tracking-[0.28em] text-accent-deep" dir="ltr">VISIT THE ATELIER</p>
         <div className="mt-4 grid grid-cols-2 border-y border-foreground/10">
           <div className="py-4 pe-4">

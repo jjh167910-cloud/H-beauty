@@ -4,6 +4,19 @@ Luxury, mobile-first Persian (RTL) salon **app**: an installable PWA with a firs
 
 Design language: light-weight Persian display type with calligraphic (Aref Ruqaa) accent words, italic Cormorant numerals, arch-framed imagery, hairline rules and an editorial menu with dot leaders, and a single metallic champagne foil accent reserved for primary actions and seals. Tokens live at the top of `src/styles.css`.
 
+## Modern platform features (all progressive enhancements)
+
+| Feature | Where | Fallback |
+| --- | --- | --- |
+| View Transitions API | Directional tab slides with fixed chrome; shared-element morph from a tapped look into the Discover feed (`src/lib/transition.ts`) | Instant state change |
+| Scroll-driven animations (`animation-timeline: view()`) | Section reveals, hero parallax, depth effect between Discover slides | Static, fully visible content |
+| Liquid Glass materials (`backdrop-filter`, layered specular highlights) | Tab bar with sliding lens that minimises on scroll, top bar, docks, floating controls | Solid surfaces under `prefers-reduced-transparency` |
+| `@starting-style` | Entry animations for docks and the Discover overlay | Appears without animation |
+| CSS scroll snap + container query units | Discover vertical feed, variant carousel in the look sheet, card overlay placement | Normal scrolling |
+| Responsive images | 560px thumbnails in `public/looks/sm/` for grids and rails; full 2048px images fade in only in immersive views | — |
+
+Everything honours `prefers-reduced-motion`.
+
 ## App structure
 
 | Tab | What it does |
@@ -11,7 +24,7 @@ Design language: light-weight Persian display type with calligraphic (Aref Ruqaa
 | خانه (Home) | Greeting, live open/closed status (Tehran time), next appointment, look of the week, quick actions, popular services, artists, curated looks, visit info |
 | خدمات (Services) | Categorised service menu with durations and starting prices; add several services to one booking (floating cart) |
 | رزرو (centre button) | 4-step booking sheet: services → artist → day & time (Persian calendar, Fridays closed, slots fit service length) → details |
-| لوک‌بوک (Lookbook) | 283-look gallery with search, filters, saved looks, infinite scroll, compare (up to 3) |
+| لوک‌بوک (Lookbook) | 283-look gallery with search, filters, saved looks, infinite scroll, compare (up to 3); tapping a look opens **Discover**, a full-screen swipe feed with double-tap to save |
 | نوبت‌ها (Bookings) | Upcoming/past requests with draft/sent status; send, re-book or delete |
 | پروفایل (avatar) | Member card (name/phone prefill), saved looks, compare, style finder, consult, theme, clear local data |
 

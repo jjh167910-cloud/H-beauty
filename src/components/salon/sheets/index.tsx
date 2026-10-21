@@ -3,6 +3,7 @@ import { familyById } from "@/data/catalog";
 import { serviceById } from "@/data/salon";
 import { Sheet, type SheetState } from "../ui";
 import { BookingSheet } from "./booking";
+import { Discover } from "./discover";
 import { CompareBody, ConsultBody, FinderBody } from "./tools";
 import { LookSheet } from "./look";
 import { ServiceSheet } from "./service";
@@ -20,6 +21,7 @@ export function Sheets({ sheet, onClose }: { sheet: SheetState; onClose: () => v
   if (!current) return null;
   const key = `${current.kind}-${"id" in current ? current.id : ""}-${memo.version}`;
 
+  if (current.kind === "discover") return <Discover key={key} open={open} startId={current.id} onClose={onClose} />;
   if (current.kind === "booking") return <BookingSheet key={key} open={open} onClose={onClose} />;
   if (current.kind === "look") {
     const family = familyById.get(current.id);

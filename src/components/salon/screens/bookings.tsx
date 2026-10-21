@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { CalendarPlus, Clock3, RotateCcw, Send, Trash2, UserRound } from "lucide-react";
 import { toast } from "sonner";
-import { familyById, lookSrc, persian } from "@/data/catalog";
+import { familyById, lookThumb, persian } from "@/data/catalog";
 import { dayOf, formatMinutes, isPast, longDate, monthOf, shortWeekday, stylistName, summarize, timeLabel } from "@/data/salon";
 import { cn } from "@/lib/cn";
 import { useSalon, type BookingRequest } from "@/lib/salon-store";
@@ -96,7 +96,7 @@ function BookingCard({ booking, past }: { booking: BookingRequest; past: boolean
             <span className="inline-flex items-center gap-1"><UserRound className="size-3" />{stylistName(booking.stylist)}</span>
           </p>
         </div>
-        {look ? <img src={lookSrc(look.repId)} alt={look.name} className="arch h-16 w-12 shrink-0 object-cover" /> : null}
+        {look ? <img src={lookThumb(look.repId)} alt={look.name} className="arch h-16 w-12 shrink-0 object-cover" /> : null}
       </div>
       <p className="sr-only">{longDate(booking.date)}</p>
       <div className="mt-5 flex gap-2 border-t border-foreground/10 pt-4">

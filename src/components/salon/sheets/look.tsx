@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { CalendarPlus, Columns2, Heart, HeartHandshake, Share2 } from "lucide-react";
 import { toast } from "sonner";
-import { labelOf, lookSrc, type Family } from "@/data/catalog";
+import { labelOf, lookSrc, persian, type Family } from "@/data/catalog";
 import { SALON } from "@/data/salon";
 import { cn } from "@/lib/cn";
 import { useSalon } from "@/lib/salon-store";
@@ -44,29 +44,38 @@ export function LookSheet({ open, family, onClose }: { open: boolean; family: Fa
     >
       <div className="px-6 pb-6">
         <div className="look-hero">
-          <img src={lookSrc(imageId)} alt={name} />
+          <div
+            className="look-carousel no-scrollbar"
+            onScroll={(event) => {
+              const node = event.currentTarget;
+              const next = Math.round(Math.abs(node.scrollLeft) / node.clientWidth);
+              if (next !== index) setIndex(next);
+            }}
+          >
+            {family.variantIds.map((id, itemIndex) => (
+              <img key={id} src={lookSrc(id)} alt={family.variantNames[itemIndex] ?? family.name} loading={itemIndex ? "lazy" : "eager"} draggable={false} />
+            ))}
+          </div>
+          {family.variantIds.length > 1 ? (
+            <div className="glass-dark absolute top-4 start-1/2 flex translate-x-1/2 gap-1.5 rounded-full px-2.5 py-1.5" aria-hidden="true">
+              {family.variantIds.map((id, itemIndex) => (
+                <span key={id} className={cn("h-1.5 rounded-full bg-white transition-all duration-300", itemIndex === index ? "w-4" : "w-1.5 opacity-50")} />
+              ))}
+            </div>
+          ) : null}
           <div className="absolute inset-x-0 bottom-4 flex justify-center gap-2">
-            <button type="button" className={cn("glass-btn press", saved && "glass-btn-on")} aria-pressed={saved} aria-label={saved ? "حذف از ذخیره‌ها" : "ذخیره"} onClick={() => { haptic(); toggleFav(family.id); if (!saved) toast("به ذخیره‌ها اضافه شد."); }}>
+            <button type="button" className={cn("glass-btn glass press", saved && "glass-btn-on")} aria-pressed={saved} aria-label={saved ? "حذف از ذخیره‌ها" : "ذخیره"} onClick={() => { haptic(); toggleFav(family.id); if (!saved) toast("به ذخیره‌ها اضافه شد."); }}>
               <Heart className={cn("size-[18px]", saved && "fill-current")} />
             </button>
-            <button type="button" className={cn("glass-btn press", picked && "glass-btn-on")} aria-pressed={picked} aria-label={picked ? "حذف از مقایسه" : "افزودن به مقایسه"} onClick={() => { haptic(); if (toggleCompare(family.id) === "limit") toast("برای مقایسه حداکثر سه مدل انتخاب کنید."); }}>
+            <button type="button" className={cn("glass-btn glass press", picked && "glass-btn-on")} aria-pressed={picked} aria-label={picked ? "حذف از مقایسه" : "افزودن به مقایسه"} onClick={() => { haptic(); if (toggleCompare(family.id) === "limit") toast("برای مقایسه حداکثر سه مدل انتخاب کنید."); }}>
               <Columns2 className="size-[18px]" />
             </button>
-            <button type="button" className="glass-btn press" aria-label="اشتراک‌گذاری" onClick={share}>
+            <button type="button" className="glass-btn glass press" aria-label="اشتراک‌گذاری" onClick={share}>
               <Share2 className="size-[18px]" />
             </button>
           </div>
         </div>
-
-        {family.variantIds.length > 1 ? (
-          <div className="no-scrollbar mt-3 flex gap-2 overflow-x-auto">
-            {family.variantIds.map((id, itemIndex) => (
-              <button key={id} type="button" onClick={() => setIndex(itemIndex)} className={cn("press shrink-0 overflow-hidden rounded-2xl ring-2 ring-offset-2 ring-offset-background transition", itemIndex === index ? "ring-accent" : "ring-transparent opacity-60")} aria-label={family.variantNames[itemIndex] ?? family.name}>
-                <img src={lookSrc(id)} alt="" className="size-16 object-cover" />
-              </button>
-            ))}
-          </div>
-        ) : null}
+        {family.variantIds.length > 1 ? <p className="mt-3 text-center text-[0.7rem] text-muted">برای دیدن {persian(family.variantIds.length)} برداشت، تصویر را بکشید</p> : null}
 
         <p className="mt-5 font-brand text-xs font-medium tracking-[0.22em] text-accent-deep" dir="ltr">{family.code}</p>
         <h2 className="mt-1 text-2xl leading-snug font-light tracking-tight">{name}</h2>

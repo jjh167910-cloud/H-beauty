@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 import { CalendarDays, CalendarPlus, Columns2, Home, LayoutGrid, Sparkles, UserRound, X } from "lucide-react";
-import { familyById, lookSrc, persian, type Family } from "@/data/catalog";
+import { familyById, lookThumb, persian, type Family } from "@/data/catalog";
 import { formatMinutes, formatPrice, summarize } from "@/data/salon";
 import { cn } from "@/lib/cn";
 import { useSalon, type Tab } from "@/lib/salon-store";
@@ -31,7 +31,7 @@ export function TopBar() {
   const head = TITLES[tab];
 
   return (
-    <header className={cn("top-bar", scrolled && "top-bar-scrolled")}>
+    <header className={cn("top-bar", scrolled && "top-bar-scrolled glass-soft")}>
       <button type="button" className="press flex min-h-11 items-center gap-2.5 text-start" onClick={() => go("home")} aria-label="خانه">
         <LogoMark className="size-9 shrink-0 text-accent" />
         <span className="grid leading-none">
@@ -58,10 +58,31 @@ const ITEMS: Array<{ tab: Tab; label: string; Icon: typeof Home }> = [
   { tab: "bookings", label: "نوبت‌ها", Icon: CalendarDays },
 ];
 
+/** Scroll direction hook: true while the user scrolls down past the fold. */
+function useMinimized() {
+  const [min, setMin] = useState(false);
+  useEffect(() => {
+    let last = window.scrollY;
+    const onScroll = () => {
+      const y = window.scrollY;
+      if (Math.abs(y - last) < 8) return;
+      setMin(y > last && y > 160);
+      last = y;
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+  return min;
+}
+
 export function TabBar() {
   const tab = useSalon((state) => state.tab);
   const pending = useSalon((state) => state.bookings.filter((item) => !item.sent).length);
   const { go, openBooking } = useSalonActions();
+  const minimized = useMinimized();
+  // Grid column of the active tab (the centre column is the booking button).
+  const tabIndex = ITEMS.findIndex((item) => item.tab === tab);
+  const column = tabIndex < 0 ? -1 : tabIndex < 2 ? tabIndex : tabIndex + 1;
 
   const render = (item: (typeof ITEMS)[number]) => {
     const active = tab === item.tab;
@@ -74,16 +95,17 @@ export function TabBar() {
         aria-current={active ? "page" : undefined}
       >
         <span className="relative">
-          <item.Icon className="size-[21px]" strokeWidth={active ? 1.6 : 1.3} />
+          <item.Icon className="size-[22px]" strokeWidth={active ? 1.7 : 1.35} />
           {item.tab === "bookings" && pending ? <span className="tab-dot" aria-label={`${persian(pending)} درخواست ارسال‌نشده`} /> : null}
         </span>
-        <span>{item.label}</span>
+        <span className="tab-label">{item.label}</span>
       </button>
     );
   };
 
   return (
-    <nav className="tab-bar" aria-label="پیمایش اصلی">
+    <nav className={cn("tab-bar glass", minimized && "tab-bar-min")} aria-label="پیمایش اصلی" style={{ "--col": column } as CSSProperties}>
+      {column >= 0 ? <span className="tab-lens" aria-hidden="true" /> : null}
       {ITEMS.slice(0, 2).map(render)}
       <div className="grid place-items-center">
         <button type="button" className="tab-book foil press" onClick={() => { haptic(); openBooking(); }} aria-label="رزرو نوبت">
@@ -106,7 +128,7 @@ export function Docks() {
   if (cart.length && (tab === "home" || tab === "services")) {
     const { items, minutes, price, hasUnpriced } = summarize(cart);
     return (
-      <div className="dock" role="region" aria-label="خدمات انتخاب‌شده">
+      <div className="dock glass" role="region" aria-label="خدمات انتخاب‌شده">
         <button type="button" className="press grid size-9 shrink-0 place-items-center rounded-full bg-soft" onClick={() => setCart([])} aria-label="پاک کردن انتخاب‌ها">
           <X className="size-4" />
         </button>
@@ -124,10 +146,10 @@ export function Docks() {
   if (compare.length && (tab === "looks" || tab === "me")) {
     const selected = compare.map((id) => familyById.get(id)).filter((family): family is Family => Boolean(family));
     return (
-      <div className="dock" role="region" aria-label="مقایسه">
+      <div className="dock glass" role="region" aria-label="مقایسه">
         <div className="flex -space-x-3 rtl:space-x-reverse">
           {selected.map((family) => (
-            <img key={family.id} src={lookSrc(family.repId)} alt="" className="size-10 rounded-full border-2 border-surface object-cover" />
+            <img key={family.id} src={lookThumb(family.repId)} alt="" className="size-10 rounded-full border-2 border-surface object-cover" />
           ))}
         </div>
         <div className="min-w-0 flex-1">

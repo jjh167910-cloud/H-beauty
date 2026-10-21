@@ -6,6 +6,7 @@ import type { Tab } from "@/lib/salon-store";
 
 export type SheetState =
   | { kind: "look"; id: number }
+  | { kind: "discover"; id: number }
   | { kind: "service"; id: string }
   | { kind: "booking" }
   | { kind: "compare" }
@@ -19,6 +20,8 @@ export type SalonActions = {
   go: (tab: Tab) => void;
   openSheet: (sheet: Exclude<SheetState, null>) => void;
   openBooking: (intent?: BookingIntent) => void;
+  /** Opens the immersive feed; pass the tapped image to morph it into place. */
+  openDiscover: (id: number, from?: HTMLElement | null) => void;
   closeSheet: () => void;
 };
 

@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { ArrowRight, Columns2, Copy, Send, X } from "lucide-react";
 import { toast } from "sonner";
-import { families, familyById, labelOf, lookSrc, persian, type Family } from "@/data/catalog";
+import { families, familyById, labelOf, lookThumb, persian, type Family } from "@/data/catalog";
 import { SALON } from "@/data/salon";
 import { cn } from "@/lib/cn";
 import { useSalon } from "@/lib/salon-store";
@@ -38,7 +38,7 @@ export function CompareBody() {
         {selected.map((family) => (
           <article key={family.id} className="relative">
             <button type="button" className="press block w-full text-start" onClick={() => openSheet({ kind: "look", id: family.id })}>
-              <img src={lookSrc(family.repId)} alt={family.name} className="arch aspect-[3/4] w-full object-cover" />
+              <img src={lookThumb(family.repId)} alt={family.name} className="arch aspect-[3/4] w-full object-cover" />
               <span className="mt-2 line-clamp-2 block text-xs leading-5 font-medium">{family.name}</span>
               <span className="mt-0.5 block text-[0.68rem] text-muted">{labelOf(family.category)}</span>
             </button>
@@ -84,7 +84,7 @@ export function ConsultBody() {
       </p>
       {selected.length ? (
         <div className="no-scrollbar -mx-6 flex gap-2 overflow-x-auto px-6">
-          {selected.map((family) => <img key={family.id} src={lookSrc(family.repId)} alt={family.name} className="size-16 shrink-0 rounded-2xl object-cover" />)}
+          {selected.map((family) => <img key={family.id} src={lookThumb(family.repId)} alt={family.name} className="size-16 shrink-0 rounded-2xl object-cover" />)}
         </div>
       ) : (
         <button type="button" className="press rounded-2xl border border-dashed border-border p-4 text-sm text-muted" onClick={() => go("looks")}>
@@ -166,7 +166,7 @@ export function FinderBody() {
         <div className="mt-5 grid grid-cols-3 gap-2.5">
           {picks.map((family) => (
             <button key={family.id} type="button" onClick={() => openSheet({ kind: "look", id: family.id })} className="press text-start">
-              <img src={lookSrc(family.repId)} alt={family.name} className="arch aspect-[3/4] w-full object-cover" />
+              <img src={lookThumb(family.repId)} alt={family.name} className="arch aspect-[3/4] w-full object-cover" />
               <span className="mt-2 block text-[0.7rem] font-medium text-accent-deep">{labelOf(family.category)}</span>
               <span className="line-clamp-2 block text-xs leading-5 font-medium">{family.name}</span>
             </button>
