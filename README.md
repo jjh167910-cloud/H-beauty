@@ -8,7 +8,7 @@ This repository is the deployment target for the mobile-first Persian salon cata
 2. Upload **both files unchanged** to [the `upload/` folder](https://github.com/jjh167910-cloud/H-beauty/tree/main/upload). The names must match exactly. Each file is under GitHub's browser upload size limit.
 3. Open [Actions → Import and deploy Hananeh Beauty](https://github.com/jjh167910-cloud/H-beauty/actions/workflows/import-and-deploy.yml) and choose **Run workflow** on `main`.
 4. The action concatenates the two parts, verifies the SHA-256, extracts the safe portable project to repository root, removes the temporary parts, commits the app, installs dependencies and builds `dist/`.
-5. For **automatic Cloudflare deployment**, configure GitHub repository Actions secrets `CLOUDFLARE_API_TOKEN` (Workers Scripts Edit permission) and `CLOUDFLARE_ACCOUNT_ID` (your account ID). If missing, the workflow builds an artifact but deliberately skips production deployment.
+5. For **automatic Cloudflare deployment**, configure GitHub repository Actions secrets `CLOUDFLARE_API_TOKEN` (Workers Scripts Edit permission) (the Cloudflare account ID is already set in the workflow). If missing, the workflow builds an artifact but deliberately skips production deployment.
 
 **Package SHA-256:** `86584e5306484f756e65b540e841fc039504b614e5b687fef3ecd3c429c7b7f3`
 
