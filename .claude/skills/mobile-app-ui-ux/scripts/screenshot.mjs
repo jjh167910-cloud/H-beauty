@@ -23,7 +23,7 @@
  *   { "storage": { "key": "app", "value": {…} } } // seed localStorage then reload
  *
  * Exit code 1 if any step fails, any console/page error is logged, or the page
- * overflows horizontally.
+ * overflows horizontally (content wider than the device's screen width).
  */
 import { createRequire } from "node:module";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
@@ -90,7 +90,8 @@ for (const deviceName of deviceNames) {
       if (step.back) await page.goBack();
       await page.waitForTimeout(step.wait ?? 600);
 
-      const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+      // Mobile emulation widens the layout viewport to fit overflowing content, so compare against the device width.
+      const overflow = await page.evaluate(() => Math.max(document.documentElement.scrollWidth, window.innerWidth) - screen.width);
       if (overflow > 1) {
         errors.push(`horizontal overflow of ${overflow}px after step ${index} (${label})`);
       }

@@ -11,12 +11,15 @@ The reference files hold the detail. Read the ones the task needs:
 
 | Read when… | File |
 | --- | --- |
+| Choosing a design direction, layout, optical details, imagery; scoring your own work | `references/visual-craft.md` |
+| Deciding what a screen contains, UX laws, heuristics, microcopy, ethics | `references/ux-principles.md` |
 | Defining colour, type, spacing, radius, elevation, motion tokens | `references/design-tokens.md` |
 | Choosing fonts, setting type, any non-Latin script | `references/typography.md` |
 | Building buttons, fields, sheets, tab bars, cards, lists, empty states | `references/components.md` |
 | Designing navigation, onboarding, booking/checkout, feeds, search, forms | `references/patterns.md` |
 | Animations, View Transitions, scroll effects, glass, modern CSS | `references/motion-and-modern-css.md` |
 | Right-to-left languages (Persian, Arabic, Hebrew, Urdu) | `references/rtl.md` |
+| Native iOS/Android, React Native, Flutter, SwiftUI, Compose, or a prototype deliverable | `references/platforms.md` |
 | Accessibility and the final review pass | `references/accessibility-and-review.md` |
 
 ## The workflow
@@ -32,6 +35,8 @@ Read the existing code, content and brand before proposing anything. Establish:
 - **Constraints:** what is real and what is mocked. If a backend does not exist, the UI must not pretend it does (see "Honest UI" below).
 
 When something is genuinely the user's call (brand name, tone, which flows matter), ask. Otherwise choose sensible defaults and say what you chose.
+
+Then write a **direction statement** of two or three sentences: the adjectives, the reference world, and the one signature element. Pick and adapt a recipe from `references/visual-craft.md` if the user gave no direction. A stated direction is what keeps fifty small decisions pulling the same way.
 
 ### 2. Information architecture and flows
 
@@ -61,6 +66,7 @@ Rules that separate premium from generic:
 - **Real content, real lengths.** Design with the longest real names, prices and translations. Placeholder text hides overflow bugs.
 - **Thumb zone.** Primary actions sit in the bottom third. Touch targets are at least 44×44px.
 - **Every state is designed:** empty, loading (skeleton or shimmer, not spinners), error, offline, success, and partially filled.
+- **Words are design.** Buttons name the outcome, errors give the fix, and empty states give the next step (`references/ux-principles.md` §4).
 
 ### 5. Motion with purpose
 
@@ -77,7 +83,9 @@ Never declare a UI finished from code alone. Render it and look at it.
 
 Known screenshot artefact: full-page captures render scroll-driven animated sections blank (they never "enter" the viewport). Scroll the real viewport and capture instead.
 
-The full review checklist is in `references/accessibility-and-review.md`.
+Finally, score the work against the rubric in `references/visual-craft.md` §8 (hierarchy, consistency, restraint, craft, identity, usability, honesty, delight). Give anything under 4/5 another pass. The full checklist is in `references/accessibility-and-review.md`.
+
+If the stack is native (Swift, Kotlin, React Native, Flutter) the method is identical but tokens and conventions are expressed differently; see `references/platforms.md`. If the user wants a design rather than code, deliver a single-file interactive HTML prototype plus screenshots (also in `platforms.md`).
 
 ## Honest UI
 
