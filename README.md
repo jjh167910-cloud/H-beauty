@@ -42,7 +42,7 @@ npm run build
 npx wrangler deploy
 ```
 
-The frontend is a static Vite/React SPA and Cloudflare Workers static assets are served from `dist/` using `wrangler.jsonc`. To deploy from GitHub Actions, configure `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` in the repository secrets.
+The frontend is a static Vite/React SPA and Cloudflare Workers static assets are served from `dist/` using `wrangler.jsonc`. Every push to `main` runs `.github/workflows/deploy.yml` (typecheck, build, `wrangler deploy`). Deploying from GitHub Actions needs a `CLOUDFLARE_API_TOKEN` repository secret with "Workers Scripts: Edit" permission; without it the workflow builds and uploads `dist/` but skips the deploy with a warning.
 
 ## Important functional distinctions
 
