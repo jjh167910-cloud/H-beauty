@@ -1,7 +1,7 @@
 {
   "name": "حنانه بیوتی",
-  "short_name": "حنانه",
-  "description": "رزرو نوبت، منوی خدمات و لوک‌بوک مدل مو",
+  "short_name": "حنانه بیوتی",
+  "description": "آتلیه زیبایی حنانه بیوتی — رزرو نوبت، منوی خدمات و لوک‌بوک مدل مو",
   "lang": "fa",
   "dir": "rtl",
   "id": "/",
@@ -9,14 +9,13 @@
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#f7f3ee",
-  "theme_color": "#f7f3ee",
+  "background_color": "#f7f2ec",
+  "theme_color": "#f7f2ec",
   "categories": ["beauty", "lifestyle"],
   "icons": [
     { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
     { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
-    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ],
   "shortcuts": [
     { "name": "رزرو نوبت", "url": "/#/bookings" },

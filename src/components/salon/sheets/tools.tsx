@@ -1,12 +1,12 @@
 import { useMemo, useState } from "react";
-import { ArrowRight, Columns2, Copy, Send, X } from "lucide-react";
 import { toast } from "sonner";
 import { families, familyById, labelOf, lookThumb, persian, type Family } from "@/data/catalog";
 import { SALON } from "@/data/salon";
 import { cn } from "@/lib/cn";
 import { useSalon } from "@/lib/salon-store";
 import { copyText, shareText, whatsappLink } from "@/lib/share";
-import { Button, EmptyState, Kicker, useSalonActions } from "../ui";
+import { Icon } from "../icons";
+import { Button, EmptyState, IconButton, Media, useSalonActions } from "../ui";
 
 function resolve(ids: number[]) {
   return ids.map((id) => familyById.get(id)).filter((family): family is Family => Boolean(family));
@@ -21,36 +21,32 @@ export function CompareBody() {
 
   if (!selected.length) {
     return (
-      <div className="pb-8">
-        <EmptyState
-          icon={<Columns2 className="size-6" />}
-          title="هنوز مدلی برای مقایسه ندارید"
-          text="در لوک‌بوک روی آیکن دو ستون هر مدل بزنید. حداکثر سه مدل."
-          action={<Button tone="solid" onClick={() => go("looks")}>رفتن به لوک‌بوک</Button>}
-        />
-      </div>
+      <EmptyState
+        icon="compare"
+        title="هنوز مدلی برای مقایسه ندارید"
+        text="در لوک‌بوک روی آیکن مقایسه هر مدل بزنید. حداکثر سه مدل."
+        action={<Button onClick={() => go("looks")}>رفتن به لوک‌بوک</Button>}
+      />
     );
   }
 
   return (
-    <div className="px-6 pb-6">
-      <div className={cn("grid gap-2.5", selected.length === 1 ? "grid-cols-1" : selected.length === 2 ? "grid-cols-2" : "grid-cols-3")}>
+    <div>
+      <div className={cn("grid gap-3", selected.length === 1 ? "grid-cols-1" : selected.length === 2 ? "grid-cols-2" : "grid-cols-3")}>
         {selected.map((family) => (
           <article key={family.id} className="relative">
-            <button type="button" className="press block w-full text-start" onClick={() => openSheet({ kind: "look", id: family.id })}>
-              <img src={lookThumb(family.repId)} alt={family.name} className="arch aspect-[3/4] w-full object-cover" />
-              <span className="mt-2 line-clamp-2 block text-xs leading-5 font-medium">{family.name}</span>
-              <span className="mt-0.5 block text-[0.68rem] text-muted">{labelOf(family.category)}</span>
+            <button type="button" className="tile w-full" onClick={() => openSheet({ kind: "look", id: family.id })}>
+              <Media src={lookThumb(family.repId)} alt={family.name} className="tile__media" />
+              <span className="t-caption mt-2 line-clamp-2 font-medium">{family.name}</span>
+              <span className="t-caption text-ink-2">{labelOf(family.category)}</span>
             </button>
-            <button type="button" className="glass-btn press absolute top-2 start-2 !size-8" onClick={() => toggleCompare(family.id)} aria-label={`حذف ${family.name} از مقایسه`}>
-              <X className="size-3.5" />
-            </button>
+            <IconButton icon="close" label={`حذف ${family.name} از مقایسه`} variant="glass" size="sm" className="absolute top-[30%] start-1.5" onClick={() => toggleCompare(family.id)} />
           </article>
         ))}
       </div>
       <div className="mt-6 flex gap-2">
-        <Button tone="solid" className="flex-1" onClick={() => openSheet({ kind: "consult" })}>مشاوره درباره این مدل‌ها</Button>
-        <Button tone="soft" onClick={clearCompare}>پاک کردن</Button>
+        <Button icon="consult" className="flex-1" onClick={() => openSheet({ kind: "consult" })}>مشاوره درباره این مدل‌ها</Button>
+        <Button variant="tonal" onClick={clearCompare}>پاک کردن</Button>
       </div>
     </div>
   );
@@ -78,40 +74,36 @@ export function ConsultBody() {
   const wa = whatsappLink(draft);
 
   return (
-    <div className="grid grid-cols-1 gap-5 px-6 pb-6">
-      <p className="text-sm leading-7 text-muted">
-        مدل‌های ذخیره‌شده و مقایسه‌شده در یک پیام آماده می‌شوند تا برای آرتیست بفرستید.
-      </p>
+    <div className="grid grid-cols-1 gap-5">
+      <p className="t-callout text-ink-2">مدل‌های ذخیره‌شده و مقایسه‌شده در یک پیام آماده می‌شوند تا برای آرتیست بفرستید.</p>
       {selected.length ? (
-        <div className="no-scrollbar -mx-6 flex gap-2 overflow-x-auto px-6">
-          {selected.map((family) => <img key={family.id} src={lookThumb(family.repId)} alt={family.name} className="size-16 shrink-0 rounded-2xl object-cover" />)}
+        <div className="rail -mx-gutter gap-2">
+          {selected.map((family) => <Media key={family.id} src={lookThumb(family.repId)} alt={family.name} className="arch h-20 w-15" />)}
         </div>
       ) : (
-        <button type="button" className="press rounded-2xl border border-dashed border-border p-4 text-sm text-muted" onClick={() => go("looks")}>
+        <button type="button" className="card t-callout text-ink-2" data-variant="outline" onClick={() => go("looks")}>
           هنوز مدلی انتخاب نشده · افزودن از لوک‌بوک
         </button>
       )}
       <label className="field">
         <span>برای چه مراسم یا استایلی؟ (اختیاری)</span>
-        <textarea value={notes} onChange={(event) => setNotes(event.target.value)} rows={3} placeholder="مثلاً عروسی خواهرم، موهای بلند و نازک دارم" />
+        <textarea value={notes} onChange={(event) => setNotes(event.target.value)} placeholder="مثلاً عروسی خواهرم، موهای بلند و نازک دارم" />
       </label>
-      <details className="rounded-2xl bg-soft p-4 text-sm">
-        <summary className="cursor-pointer font-medium">پیش‌نمایش پیام · {persian(selected.length)} مدل</summary>
-        <pre className="mt-3 font-sans text-xs leading-6 whitespace-pre-wrap text-muted">{draft}</pre>
+      <details className="card" data-variant="sunken">
+        <summary className="t-callout font-medium">پیش‌نمایش پیام · {persian(selected.length)} مدل</summary>
+        <pre className="t-caption mt-3 font-sans whitespace-pre-wrap text-ink-2">{draft}</pre>
       </details>
       <div className="grid gap-2">
         {wa ? (
-          <a href={wa} target="_blank" rel="noreferrer" className="press foil inline-flex min-h-12 items-center justify-center gap-2 rounded-full text-[#1a140e] text-sm font-medium"><Send className="size-4" /> ارسال در واتساپ</a>
+          <a href={wa} target="_blank" rel="noreferrer" className="btn" data-variant="gold"><Icon name="whatsapp" size={18} weight="regular" /> ارسال در واتساپ</a>
         ) : (
-          <Button tone="accent" onClick={async () => { const result = await shareText(draft, "درخواست مشاوره"); if (result === "copied") toast("متن درخواست کپی شد."); else if (result === "failed") toast("اشتراک‌گذاری ممکن نشد."); }}>
-            <Send className="size-4" /> ارسال پیام مشاوره
+          <Button variant="gold" icon="send" onClick={async () => { const result = await shareText(draft, "درخواست مشاوره"); if (result === "copied") toast("متن درخواست کپی شد."); else if (result === "failed") toast("اشتراک‌گذاری ممکن نشد."); }}>
+            ارسال پیام مشاوره
           </Button>
         )}
-        <Button tone="soft" onClick={async () => toast((await copyText(draft)) === "copied" ? "متن درخواست کپی شد." : "کپی ممکن نشد.")}>
-          <Copy className="size-4" /> کپی متن
-        </Button>
+        <Button variant="tonal" icon="copy" onClick={async () => toast((await copyText(draft)) === "copied" ? "متن درخواست کپی شد." : "کپی ممکن نشد.")}>کپی متن</Button>
       </div>
-      <p className="text-center text-[0.7rem] text-muted">این فرم خودکار چیزی ارسال نمی‌کند؛ پیام را خودتان می‌فرستید.</p>
+      <p className="t-caption text-center text-ink-2">این فرم خودکار چیزی ارسال نمی‌کند؛ پیام را خودتان می‌فرستید.</p>
     </div>
   );
 }
@@ -157,50 +149,49 @@ export function FinderBody() {
     const [face, texture, routine] = answers;
     const picks = recommend(face, texture, routine);
     return (
-      <div className="rise px-6 pb-6">
-        <Kicker>YOUR EDIT</Kicker>
-        <h3 className="mt-1 text-xl font-light tracking-tight">سه پیشنهاد برای شما</h3>
-        <p className="mt-2 text-sm leading-7 text-muted">
-          برای صورت <strong className="text-foreground">{FACES.find((item) => item.key === face)?.label}</strong> با موی {TEXTURES.find((item) => item.key === texture)?.label}، این خانواده‌ها هماهنگی بیشتری دارند.
+      <div className="rise">
+        <p className="t-eyebrow">انتخاب ویژه شما</p>
+        <h3 className="t-title-1 mt-1">سه پیشنهاد <span className="t-calligraphy text-gold-ink">برای شما</span></h3>
+        <p className="t-callout mt-2 text-ink-2">
+          برای صورت <strong className="text-ink">{FACES.find((item) => item.key === face)?.label}</strong> با موی {TEXTURES.find((item) => item.key === texture)?.label}، این استایل‌ها هماهنگی بیشتری دارند.
         </p>
-        <div className="mt-5 grid grid-cols-3 gap-2.5">
+        <div className="mt-5 grid grid-cols-3 gap-3">
           {picks.map((family) => (
-            <button key={family.id} type="button" onClick={() => openSheet({ kind: "look", id: family.id })} className="press text-start">
-              <img src={lookThumb(family.repId)} alt={family.name} className="arch aspect-[3/4] w-full object-cover" />
-              <span className="mt-2 block text-[0.7rem] font-medium text-accent-deep">{labelOf(family.category)}</span>
-              <span className="line-clamp-2 block text-xs leading-5 font-medium">{family.name}</span>
+            <button key={family.id} type="button" className="tile" onClick={() => openSheet({ kind: "look", id: family.id })}>
+              <Media src={lookThumb(family.repId)} alt={family.name} className="tile__media" />
+              <span className="t-caption mt-2 text-gold-ink">{labelOf(family.category)}</span>
+              <span className="t-caption line-clamp-2 font-medium">{family.name}</span>
             </button>
           ))}
         </div>
         <div className="mt-6 grid gap-2">
-          <Button tone="accent" size="lg" onClick={() => openBooking({ service: "signature-cut", lookId: picks[0]?.id })}>رزرو مشاوره و کوپ</Button>
+          <Button variant="gold" size="lg" orb onClick={() => openBooking({ service: "signature-cut", lookId: picks[0]?.id })}>رزرو مشاوره و کوپ</Button>
           <div className="flex gap-2">
-            <Button tone="soft" className="flex-1" onClick={() => { setFilter(picks[0]?.category ?? "all"); go("looks"); }}>مدل‌های مشابه</Button>
-            <Button tone="ghost" className="flex-1" onClick={() => setAnswers([])}>از نو</Button>
+            <Button variant="tonal" className="flex-1" onClick={() => { setFilter(picks[0]?.category ?? "all"); go("looks"); }}>مدل‌های مشابه</Button>
+            <Button variant="secondary" icon="rebook" className="flex-1" onClick={() => setAnswers([])}>از نو</Button>
           </div>
         </div>
-        <p className="mt-4 text-center text-[0.7rem] leading-6 text-muted">پیشنهاد بر اساس پاسخ‌های شماست، نه تحلیل عکس؛ آرتیست تناسب نهایی را در سالن تأیید می‌کند.</p>
+        <p className="t-caption mt-4 text-center text-ink-2">پیشنهاد بر اساس پاسخ‌های شماست، نه تحلیل عکس؛ آرتیست تناسب نهایی را در سالن تأیید می‌کند.</p>
       </div>
     );
   }
 
   const question = QUESTIONS[step];
   return (
-    <div className="px-6 pb-6">
+    <div>
       <div className="flex items-center gap-3">
-        {step > 0 ? (
-          <button type="button" className="icon-btn" onClick={() => setAnswers(answers.slice(0, -1))} aria-label="سؤال قبل"><ArrowRight className="size-4" /></button>
-        ) : null}
-        <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-soft" role="progressbar" aria-valuemin={0} aria-valuemax={3} aria-valuenow={step + 1}>
-          <div className="gold-fill h-full rounded-full transition-all duration-500" style={{ width: `${((step + 1) / QUESTIONS.length) * 100}%` }} />
+        {step > 0 ? <IconButton icon="back" label="سؤال قبل" size="sm" onClick={() => setAnswers(answers.slice(0, -1))} /> : null}
+        <div className="h-1 flex-1 overflow-hidden rounded-full bg-sunken" role="progressbar" aria-valuemin={0} aria-valuemax={3} aria-valuenow={step + 1}>
+          <div className="foil h-full rounded-full transition-all duration-500" style={{ width: `${((step + 1) / QUESTIONS.length) * 100}%` }} />
         </div>
-        <span className="text-xs text-muted tabular-nums">{persian(step + 1)} / {persian(QUESTIONS.length)}</span>
+        <span className="t-caption t-numeric text-ink-2">{persian(step + 1)} / {persian(QUESTIONS.length)}</span>
       </div>
-      <h3 key={step} className="rise mt-6 text-xl font-light tracking-tight">{question.title}</h3>
+      <h3 key={step} className="t-title-2 rise mt-6">{question.title}</h3>
       <div key={`options-${step}`} className="rise mt-5 grid gap-2.5">
         {question.options.map((option) => (
-          <button key={option.key} type="button" onClick={() => setAnswers([...answers, option.key])} className="choice press">
-            <span className="flex-1 text-start"><strong className="block text-sm">{option.label}</strong><small className="text-xs text-muted">{option.note}</small></span>
+          <button key={option.key} type="button" className="choice" onClick={() => setAnswers([...answers, option.key])}>
+            <span className="flex-1"><strong className="t-callout block font-medium">{option.label}</strong><span className="t-caption text-ink-2">{option.note}</span></span>
+            <Icon name="chevron" size={18} className="text-ink-3" />
           </button>
         ))}
       </div>

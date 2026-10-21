@@ -4,8 +4,9 @@ import { serviceById, stylistById } from "@/data/salon";
 
 const KEY = "hananeh-atelier-v1";
 
-export type Tab = "home" | "services" | "looks" | "bookings" | "me";
-export const TABS: Tab[] = ["home", "services", "looks", "bookings", "me"];
+export type Tab = "home" | "services" | "looks" | "bookings" | "me" | "design";
+/** Order drives transition direction; "design" is the hidden living style guide. */
+export const TABS: Tab[] = ["home", "services", "looks", "bookings", "me", "design"];
 
 export type ThemePref = "system" | "light" | "dark";
 

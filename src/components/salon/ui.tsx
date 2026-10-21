@@ -1,8 +1,8 @@
-import { createContext, useContext, useId, type ButtonHTMLAttributes, type ReactNode } from "react";
-import { X } from "lucide-react";
+import { createContext, useContext, useId, useState, type ButtonHTMLAttributes, type ImgHTMLAttributes, type ReactNode } from "react";
 import { Drawer } from "vaul";
 import { cn } from "@/lib/cn";
 import type { Tab } from "@/lib/salon-store";
+import { Icon, type IconName } from "./icons";
 
 export type SheetState =
   | { kind: "look"; id: number }
@@ -47,92 +47,183 @@ export function haptic() {
   }
 }
 
+/* ---------- Buttons ---------- */
+
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-  tone?: "solid" | "ghost" | "accent" | "soft";
-  size?: "md" | "lg";
+  variant?: "primary" | "gold" | "secondary" | "tonal" | "ghost" | "glass" | "light";
+  size?: "sm" | "md" | "lg";
+  block?: boolean;
+  icon?: IconName;
+  /** Trailing circular arrow — the signature CTA. */
+  orb?: boolean;
 };
 
-export function Button({ tone = "soft", size = "md", className, type = "button", ...props }: ButtonProps) {
+export function Button({ variant = "primary", size = "md", block, icon, orb, className, type = "button", children, ...props }: ButtonProps) {
   return (
     <button
       type={type}
-      className={cn(
-        "press inline-flex items-center justify-center gap-2 rounded-full px-6 text-sm font-medium tracking-wide transition duration-200",
-        size === "lg" ? "min-h-14 text-[0.95rem]" : "min-h-12",
-        "disabled:cursor-default disabled:opacity-40 disabled:shadow-none",
-        tone === "solid" && "bg-ink text-on-ink shadow-[0_14px_30px_-10px_rgb(20_14_10_/_0.45)]",
-        tone === "accent" && "foil text-[#1a140e] shadow-[0_14px_30px_-10px_rgb(150_110_60_/_0.55)]",
-        tone === "ghost" && "border border-foreground/15 bg-transparent text-foreground",
-        tone === "soft" && "bg-soft text-foreground",
-        className,
-      )}
+      className={cn("btn", className)}
+      data-variant={variant === "primary" ? undefined : variant}
+      data-size={size === "md" ? undefined : size}
+      data-block={block ? "" : undefined}
       {...props}
-    />
-  );
-}
-
-export function Kicker({ children, className }: { children: ReactNode; className?: string }) {
-  return (
-    <p className={cn("font-brand text-[0.7rem] font-semibold tracking-[0.28em] text-accent-deep uppercase", className)} dir="ltr">
+    >
+      {icon ? <Icon name={icon} size={size === "sm" ? 16 : 18} weight="regular" /> : null}
       {children}
-    </p>
+      {orb ? (
+        <span className="btn__orb">
+          <Icon name="forward" size={16} weight="regular" />
+        </span>
+      ) : null}
+    </button>
   );
 }
 
-export function SectionHead({ title, kicker, index, action }: { title: string; kicker?: string; index?: string; action?: ReactNode }) {
+type IconButtonProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, "children"> & {
+  icon: IconName;
+  label: string;
+  variant?: "outline" | "tonal" | "solid" | "glass" | "glass-dark";
+  size?: "sm" | "md" | "lg";
+  pressed?: boolean;
+  /** Pressed state uses the rose "love" colour. */
+  love?: boolean;
+};
+
+export function IconButton({ icon, label, variant = "outline", size = "md", pressed, love, className, type = "button", ...props }: IconButtonProps) {
+  const px = size === "sm" ? 17 : size === "lg" ? 24 : 20;
   return (
-    <div className="mb-5 flex items-end justify-between gap-4 px-6">
+    <button
+      type={type}
+      aria-label={label}
+      aria-pressed={pressed}
+      data-variant={variant === "outline" ? undefined : variant}
+      data-size={size === "md" ? undefined : size}
+      data-love={love ? "" : undefined}
+      className={cn("icon-btn", className)}
+      {...props}
+    >
+      <Icon name={icon} size={px} weight={pressed ? "fill" : "light"} />
+    </button>
+  );
+}
+
+export function Chip({ active, className, type = "button", ...props }: ButtonHTMLAttributes<HTMLButtonElement> & { active?: boolean }) {
+  return <button type={type} aria-pressed={active} className={cn("chip", className)} {...props} />;
+}
+
+export function TextLink({ className, type = "button", children, ...props }: ButtonHTMLAttributes<HTMLButtonElement>) {
+  return (
+    <button type={type} className={cn("link", className)} {...props}>
+      {children}
+      <Icon name="chevron" size={14} weight="regular" />
+    </button>
+  );
+}
+
+/* ---------- Typography blocks ---------- */
+
+/** Screen header: eyebrow, light display title with an optional calligraphic accent line. */
+export function PageHead({ eyebrow, title, accent, lead, action }: { eyebrow?: string; title: string; accent?: string; lead?: string; action?: ReactNode }) {
+  return (
+    <header className="page-head">
+      {eyebrow ? <p className="t-eyebrow enter">{eyebrow}</p> : null}
+      <div className="flex items-end justify-between gap-4">
+        <h1 className="t-display enter mt-1" style={{ animationDelay: "60ms" }}>
+          {title}
+          {accent ? (
+            <>
+              <br />
+              <span className="t-calligraphy text-[0.92em] text-gold-ink">{accent}</span>
+            </>
+          ) : null}
+        </h1>
+        {action}
+      </div>
+      {lead ? <p className="t-callout enter mt-2 max-w-[22rem] text-ink-2" style={{ animationDelay: "120ms" }}>{lead}</p> : null}
+    </header>
+  );
+}
+
+export function SectionHead({ eyebrow, title, action }: { eyebrow?: string; title: string; action?: ReactNode }) {
+  return (
+    <div className="section-head">
       <div>
-        {kicker ? (
-          <p className="flex items-center gap-2 font-brand text-[0.7rem] tracking-[0.28em] text-accent-deep uppercase" dir="ltr">
-            {index ? <span className="italic tracking-normal">{index}</span> : null}
-            {index ? <span className="h-px w-5 bg-accent/50" /> : null}
-            {kicker}
-          </p>
-        ) : null}
-        <h2 className="mt-1.5 text-[1.4rem] leading-snug font-light tracking-tight">{title}</h2>
+        {eyebrow ? <p className="t-eyebrow">{eyebrow}</p> : null}
+        <h2 className="t-title-2 mt-0.5">{title}</h2>
       </div>
       {action}
     </div>
   );
 }
 
-/** Hairline rule with a centred diamond — the atelier's signature divider. */
 export function Ornament({ className }: { className?: string }) {
   return (
     <div className={cn("ornament", className)} aria-hidden="true">
-      <span />
       <i />
-      <span />
     </div>
   );
 }
 
-/** Circular engraved text seal. */
+/** Circular engraved seal with rotating Latin text. */
 export function Seal({ text, className, children }: { text: string; className?: string; children?: ReactNode }) {
   const id = `seal${useId().replace(/[^a-zA-Z0-9]/g, "")}`;
   return (
     <span className={cn("seal", className)} aria-hidden="true">
-      <svg viewBox="0 0 100 100" className="seal-ring" direction="ltr">
+      <svg viewBox="0 0 100 100" direction="ltr">
         <defs>
           <path id={id} d="M50 50 m-38 0 a38 38 0 1 1 76 0 a38 38 0 1 1 -76 0" />
         </defs>
         <text>
-          <textPath href={`#${id}`} startOffset="0">{text}</textPath>
+          <textPath href={`#${id}`}>{text}</textPath>
         </text>
       </svg>
-      <span className="seal-core" dir="ltr">{children}</span>
+      <span className="seal__core">{children}</span>
     </span>
   );
 }
 
-export function TextLink({ className, type = "button", ...props }: ButtonHTMLAttributes<HTMLButtonElement>) {
-  return <button type={type} className={cn("min-h-10 shrink-0 text-[0.8rem] font-semibold text-accent-deep", className)} {...props} />;
+/* ---------- Media & identity ---------- */
+
+/** Image in a shimmering placeholder; the shimmer stops once the image loads. */
+export function Media({ className, alt = "", onLoad, ...props }: ImgHTMLAttributes<HTMLImageElement>) {
+  const [loaded, setLoaded] = useState(false);
+  return (
+    <span className={cn("media block", className)} data-loaded={loaded ? "" : undefined}>
+      <img
+        alt={alt}
+        decoding="async"
+        onLoad={(event) => {
+          setLoaded(true);
+          onLoad?.(event);
+        }}
+        {...props}
+      />
+    </span>
+  );
 }
 
-export function Chip({ active, className, type = "button", ...props }: ButtonHTMLAttributes<HTMLButtonElement> & { active?: boolean }) {
-  return <button type={type} aria-pressed={active} className={cn("chip", active && "chip-active", className)} {...props} />;
+export function Avatar({ name, tone, className, arch }: { name: string; tone: string; className?: string; arch?: boolean }) {
+  return (
+    <span className={cn("avatar bg-gradient-to-b", tone, className)} data-shape={arch ? "arch" : undefined}>
+      <span className="relative">{name.slice(0, 1)}</span>
+    </span>
+  );
 }
+
+export function EmptyState({ icon, title, text, action }: { icon: IconName; title: string; text: string; action?: ReactNode }) {
+  return (
+    <div className="empty">
+      <span className="empty__icon">
+        <Icon name={icon} size={26} />
+      </span>
+      <p className="t-title-3">{title}</p>
+      <p className="t-callout max-w-xs text-ink-2">{text}</p>
+      {action ? <div className="mt-5">{action}</div> : null}
+    </div>
+  );
+}
+
+/* ---------- Sheet ---------- */
 
 export function Sheet({
   open,
@@ -141,7 +232,6 @@ export function Sheet({
   children,
   footer,
   full,
-  bare,
   leading,
 }: {
   open: boolean;
@@ -150,52 +240,27 @@ export function Sheet({
   children: ReactNode;
   footer?: ReactNode;
   full?: boolean;
-  bare?: boolean;
   leading?: ReactNode;
 }) {
   return (
     <Drawer.Root open={open} onOpenChange={(next) => { if (!next) onClose(); }} repositionInputs={false}>
       <Drawer.Portal>
-        <Drawer.Overlay className="sheet-overlay fixed inset-0 z-50" />
-        <Drawer.Content className={cn("sheet", full && "sheet-full")} aria-describedby={undefined}>
-          <div className="sheet-handle" aria-hidden="true" />
-          {bare ? (
-            <Drawer.Title className="sr-only">{title}</Drawer.Title>
-          ) : (
-            <div className="sheet-head">
-              <div className="flex min-w-0 items-center gap-1">
-                {leading}
-                <Drawer.Title className="truncate text-[0.95rem] font-bold">{title}</Drawer.Title>
-              </div>
-              <Drawer.Close className="icon-btn" aria-label="بستن">
-                <X className="size-[18px]" />
-              </Drawer.Close>
+        <Drawer.Overlay className="sheet-overlay" />
+        <Drawer.Content className="sheet" data-full={full ? "" : undefined} aria-describedby={undefined}>
+          <div className="sheet__handle" aria-hidden="true" />
+          <div className="sheet__head">
+            <div className="flex min-w-0 items-center gap-2">
+              {leading}
+              <Drawer.Title className="t-headline truncate">{title}</Drawer.Title>
             </div>
-          )}
-          <div className="sheet-body">{children}</div>
-          {footer ? <div className="sheet-foot">{footer}</div> : null}
+            <Drawer.Close asChild>
+              <IconButton icon="close" label="بستن" size="sm" />
+            </Drawer.Close>
+          </div>
+          <div className="sheet__body">{children}</div>
+          {footer ? <div className="sheet__foot">{footer}</div> : null}
         </Drawer.Content>
       </Drawer.Portal>
     </Drawer.Root>
-  );
-}
-
-export function Monogram({ name, tone, className, arch }: { name: string; tone: string; className?: string; arch?: boolean }) {
-  return (
-    <span className={cn("relative grid place-items-center overflow-hidden bg-gradient-to-b font-display text-white", arch ? "arch" : "rounded-full", tone, className)}>
-      <span className="monogram-sheen" />
-      <span className="relative">{name.slice(0, 1)}</span>
-    </span>
-  );
-}
-
-export function EmptyState({ icon, title, text, action }: { icon: ReactNode; title: string; text: string; action?: ReactNode }) {
-  return (
-    <div className="mx-6 flex flex-col items-center px-6 py-14 text-center">
-      <span className="arch grid h-20 w-16 place-items-center border border-accent/40 text-accent-deep">{icon}</span>
-      <p className="mt-5 text-lg font-light">{title}</p>
-      <p className="mt-1.5 max-w-xs text-sm leading-7 text-muted">{text}</p>
-      {action ? <div className="mt-5">{action}</div> : null}
-    </div>
   );
 }

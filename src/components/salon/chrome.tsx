@@ -1,23 +1,22 @@
 import { useEffect, useState, type CSSProperties } from "react";
-import { CalendarDays, CalendarPlus, Columns2, Home, LayoutGrid, Sparkles, UserRound, X } from "lucide-react";
 import { familyById, lookThumb, persian, type Family } from "@/data/catalog";
 import { formatMinutes, formatPrice, summarize } from "@/data/salon";
-import { cn } from "@/lib/cn";
 import { useSalon, type Tab } from "@/lib/salon-store";
-import { LogoMark } from "./logo";
-import { haptic, useSalonActions } from "./ui";
+import { Icon, type IconName } from "./icons";
+import { BrandMark, Wordmark } from "./logo";
+import { Button, IconButton, haptic, useSalonActions } from "./ui";
 
-const TITLES: Record<Tab, { title: string; en: string }> = {
-  home: { title: "حنانه", en: "HAUTE BEAUTÉ" },
-  services: { title: "منوی خدمات", en: "THE ATELIER MENU" },
-  looks: { title: "لوک‌بوک", en: "THE LOOKBOOK" },
-  bookings: { title: "نوبت‌های من", en: "MY APPOINTMENTS" },
-  me: { title: "پروفایل", en: "MY ATELIER" },
+const TITLES: Partial<Record<Tab, string>> = {
+  services: "منوی خدمات",
+  looks: "لوک‌بوک",
+  bookings: "نوبت‌های من",
+  me: "پروفایل",
+  design: "سیستم طراحی",
 };
 
 export function TopBar() {
   const tab = useSalon((state) => state.tab);
-  const name = useSalon((state) => state.profile.name);
+  const name = useSalon((state) => state.profile.name.trim());
   const { go } = useSalonActions();
   const [scrolled, setScrolled] = useState(false);
 
@@ -28,37 +27,43 @@ export function TopBar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const head = TITLES[tab];
+  const title = TITLES[tab];
 
   return (
-    <header className={cn("top-bar", scrolled && "top-bar-scrolled glass-soft")}>
-      <button type="button" className="press flex min-h-11 items-center gap-2.5 text-start" onClick={() => go("home")} aria-label="خانه">
-        <LogoMark className="size-9 shrink-0 text-accent" />
-        <span className="grid leading-none">
-          <strong className={cn(tab === "home" ? "font-display text-[1.5rem] font-normal" : "text-[1.05rem] font-normal")}>{head.title}</strong>
-          <small className="mt-1 font-brand text-[0.62rem] tracking-[0.28em] text-muted" dir="ltr">{head.en}</small>
-        </span>
+    <header className="topbar" data-scrolled={scrolled ? "" : undefined}>
+      <button type="button" className="flex min-h-11 items-center gap-2.5 text-start" onClick={() => go("home")} aria-label="حنانه بیوتی، خانه">
+        <BrandMark className="h-10 w-8 text-[1.15rem]" />
+        {title ? (
+          <span className="grid">
+            <strong className="t-headline">{title}</strong>
+            <span className="t-caption text-ink-2">حنانه بیوتی</span>
+          </span>
+        ) : (
+          <Wordmark className="text-[1.4rem]" latin={false} />
+        )}
       </button>
       <button
         type="button"
         onClick={() => go("me")}
-        className={cn("press grid size-10 place-items-center rounded-full transition", tab === "me" ? "bg-ink text-champagne" : "text-foreground shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--color-foreground)_15%,transparent)]")}
         aria-label="پروفایل"
+        aria-current={tab === "me" ? "page" : undefined}
+        className="icon-btn"
+        data-variant={tab === "me" ? "solid" : undefined}
       >
-        {name.trim() ? <span className="font-display text-lg leading-none">{name.trim().slice(0, 1)}</span> : <UserRound className="size-[18px]" strokeWidth={1.4} />}
+        {name ? <span className="font-calligraphy text-lg leading-none">{name.slice(0, 1)}</span> : <Icon name="profile" size={20} />}
       </button>
     </header>
   );
 }
 
-const ITEMS: Array<{ tab: Tab; label: string; Icon: typeof Home }> = [
-  { tab: "home", label: "خانه", Icon: Home },
-  { tab: "services", label: "خدمات", Icon: Sparkles },
-  { tab: "looks", label: "لوک‌بوک", Icon: LayoutGrid },
-  { tab: "bookings", label: "نوبت‌ها", Icon: CalendarDays },
+const ITEMS: Array<{ tab: Tab; label: string; icon: IconName }> = [
+  { tab: "home", label: "خانه", icon: "home" },
+  { tab: "services", label: "خدمات", icon: "services" },
+  { tab: "looks", label: "لوک‌بوک", icon: "looks" },
+  { tab: "bookings", label: "نوبت‌ها", icon: "bookings" },
 ];
 
-/** Scroll direction hook: true while the user scrolls down past the fold. */
+/** True while the user scrolls down past the fold (tab bar minimises). */
 function useMinimized() {
   const [min, setMin] = useState(false);
   useEffect(() => {
@@ -80,38 +85,30 @@ export function TabBar() {
   const pending = useSalon((state) => state.bookings.filter((item) => !item.sent).length);
   const { go, openBooking } = useSalonActions();
   const minimized = useMinimized();
-  // Grid column of the active tab (the centre column is the booking button).
-  const tabIndex = ITEMS.findIndex((item) => item.tab === tab);
-  const column = tabIndex < 0 ? -1 : tabIndex < 2 ? tabIndex : tabIndex + 1;
+  // Grid column of the active tab; the centre column is the booking button.
+  const index = ITEMS.findIndex((item) => item.tab === tab);
+  const column = index < 0 ? -1 : index < 2 ? index : index + 1;
 
   const render = (item: (typeof ITEMS)[number]) => {
     const active = tab === item.tab;
     return (
-      <button
-        key={item.tab}
-        type="button"
-        onClick={() => { haptic(); go(item.tab); }}
-        className={cn("tab-item", active && "tab-item-active")}
-        aria-current={active ? "page" : undefined}
-      >
+      <button key={item.tab} type="button" className="tabbar__item" aria-current={active ? "page" : undefined} onClick={() => { haptic(); go(item.tab); }}>
         <span className="relative">
-          <item.Icon className="size-[22px]" strokeWidth={active ? 1.7 : 1.35} />
-          {item.tab === "bookings" && pending ? <span className="tab-dot" aria-label={`${persian(pending)} درخواست ارسال‌نشده`} /> : null}
+          <Icon name={item.icon} size={23} weight={active ? "fill" : "light"} />
+          {item.tab === "bookings" && pending ? <span className="tabbar__dot" aria-label={`${persian(pending)} درخواست ارسال‌نشده`} /> : null}
         </span>
-        <span className="tab-label">{item.label}</span>
+        <span className="tabbar__label">{item.label}</span>
       </button>
     );
   };
 
   return (
-    <nav className={cn("tab-bar glass", minimized && "tab-bar-min")} aria-label="پیمایش اصلی" style={{ "--col": column } as CSSProperties}>
-      {column >= 0 ? <span className="tab-lens" aria-hidden="true" /> : null}
+    <nav className="tabbar glass" data-minimized={minimized ? "" : undefined} aria-label="پیمایش اصلی" style={{ "--col": column } as CSSProperties}>
+      {column >= 0 ? <span className="tabbar__lens" aria-hidden="true" /> : null}
       {ITEMS.slice(0, 2).map(render)}
-      <div className="grid place-items-center">
-        <button type="button" className="tab-book foil press" onClick={() => { haptic(); openBooking(); }} aria-label="رزرو نوبت">
-          <CalendarPlus className="size-[22px]" strokeWidth={1.5} />
-        </button>
-      </div>
+      <button type="button" className="tabbar__book foil" onClick={() => { haptic(); openBooking(); }} aria-label="رزرو نوبت">
+        <Icon name="book" size={23} weight="regular" />
+      </button>
       {ITEMS.slice(2).map(render)}
     </nav>
   );
@@ -129,16 +126,12 @@ export function Docks() {
     const { items, minutes, price, hasUnpriced } = summarize(cart);
     return (
       <div className="dock glass" role="region" aria-label="خدمات انتخاب‌شده">
-        <button type="button" className="press grid size-9 shrink-0 place-items-center rounded-full bg-soft" onClick={() => setCart([])} aria-label="پاک کردن انتخاب‌ها">
-          <X className="size-4" />
-        </button>
+        <IconButton icon="close" label="پاک کردن انتخاب‌ها" size="sm" variant="tonal" onClick={() => setCart([])} />
         <div className="min-w-0 flex-1">
-          <p className="text-[0.8rem] font-medium">{persian(items.length)} خدمت · {formatMinutes(minutes)}</p>
-          <p className="truncate text-[0.7rem] text-muted">{price ? `از ${formatPrice(price)} تومان` : "قیمت پس از مشاوره"}{hasUnpriced && price ? " + مشاوره" : ""}</p>
+          <p className="t-footnote font-medium">{persian(items.length)} خدمت · {formatMinutes(minutes)}</p>
+          <p className="t-caption truncate text-ink-2">{price ? `از ${formatPrice(price)} تومان` : "قیمت پس از مشاوره"}{hasUnpriced && price ? " + مشاوره" : ""}</p>
         </div>
-        <button type="button" className="press foil min-h-11 rounded-full px-5 text-sm font-medium text-[#1a140e]" onClick={() => openSheet({ kind: "booking" })}>
-          ادامه رزرو
-        </button>
+        <Button variant="gold" size="sm" onClick={() => openSheet({ kind: "booking" })}>ادامه رزرو</Button>
       </div>
     );
   }
@@ -149,17 +142,15 @@ export function Docks() {
       <div className="dock glass" role="region" aria-label="مقایسه">
         <div className="flex -space-x-3 rtl:space-x-reverse">
           {selected.map((family) => (
-            <img key={family.id} src={lookThumb(family.repId)} alt="" className="size-10 rounded-full border-2 border-surface object-cover" />
+            <img key={family.id} src={lookThumb(family.repId)} alt="" className="size-10 rounded-full object-cover ring-2 ring-surface" />
           ))}
         </div>
         <div className="min-w-0 flex-1">
-          <p className="flex items-center gap-1.5 text-[0.8rem] font-bold"><Columns2 className="size-3.5" /> مقایسه</p>
-          <p className="text-[0.7rem] text-muted">{persian(selected.length)} از ۳ مدل</p>
+          <p className="t-footnote font-medium">مقایسه</p>
+          <p className="t-caption text-ink-2">{persian(selected.length)} از ۳ مدل</p>
         </div>
-        <button type="button" className="press min-h-11 px-2 text-xs text-muted" onClick={clearCompare}>پاک کردن</button>
-        <button type="button" className="press foil min-h-11 rounded-full px-5 text-sm font-medium text-[#1a140e]" onClick={() => openSheet({ kind: "compare" })}>
-          مشاهده
-        </button>
+        <Button variant="ghost" size="sm" onClick={clearCompare}>پاک کردن</Button>
+        <Button variant="gold" size="sm" onClick={() => openSheet({ kind: "compare" })}>مشاهده</Button>
       </div>
     );
   }

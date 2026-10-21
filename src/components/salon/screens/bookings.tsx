@@ -1,12 +1,12 @@
 import { useMemo, useState } from "react";
-import { CalendarPlus, Clock3, RotateCcw, Send, Trash2, UserRound } from "lucide-react";
 import { toast } from "sonner";
 import { familyById, lookThumb, persian } from "@/data/catalog";
 import { dayOf, formatMinutes, isPast, longDate, monthOf, shortWeekday, stylistName, summarize, timeLabel } from "@/data/salon";
 import { cn } from "@/lib/cn";
 import { useSalon, type BookingRequest } from "@/lib/salon-store";
 import { bookingMessage, shareText, whatsappLink } from "@/lib/share";
-import { Button, Chip, EmptyState, useSalonActions } from "../ui";
+import { Icon } from "../icons";
+import { Button, Chip, EmptyState, IconButton, Media, PageHead, useSalonActions } from "../ui";
 
 export function BookingsScreen() {
   const { openBooking } = useSalonActions();
@@ -21,32 +21,22 @@ export function BookingsScreen() {
 
   return (
     <div className="pt-2">
-      <section className="px-6 pt-2">
-        <p className="reveal font-brand text-[0.7rem] tracking-[0.3em] text-accent-deep" dir="ltr">YOUR APPOINTMENTS</p>
-        <h1 className="reveal mt-3 text-[2.2rem] leading-[1.35] font-extralight tracking-tight" style={{ animationDelay: "80ms" }}>
-          نوبت‌های
-          <br />
-          <span className="font-display text-[2.4rem] text-accent-deep">شما</span>
-        </h1>
-        <p className="reveal mt-3 max-w-xs text-[0.82rem] leading-7 text-muted" style={{ animationDelay: "140ms" }}>درخواست‌ها روی همین دستگاه نگه داشته می‌شوند و پس از ارسال، سالن زمان را تأیید می‌کند.</p>
-      </section>
+      <PageHead eyebrow="نوبت‌ها" title="قرارهای" accent="زیبایی شما" lead="درخواست‌ها روی همین دستگاه نگه داشته می‌شوند و پس از ارسال، سالن زمان را تأیید می‌کند." />
 
-      <div className="chip-bar no-scrollbar">
-        <Chip active={view === "upcoming"} onClick={() => setView("upcoming")}>پیش رو {upcoming.length ? `· ${persian(upcoming.length)}` : ""}</Chip>
-        <Chip active={view === "past"} onClick={() => setView("past")}>گذشته {past.length ? `· ${persian(past.length)}` : ""}</Chip>
+      <div className="chip-row mt-5" role="tablist" aria-label="نمایش نوبت‌ها">
+        <Chip active={view === "upcoming"} onClick={() => setView("upcoming")}>پیش رو{upcoming.length ? ` · ${persian(upcoming.length)}` : ""}</Chip>
+        <Chip active={view === "past"} onClick={() => setView("past")}>گذشته{past.length ? ` · ${persian(past.length)}` : ""}</Chip>
       </div>
 
       {list.length === 0 ? (
-        <div className="mt-4">
-          <EmptyState
-            icon={<CalendarPlus className="size-6" />}
-            title={view === "upcoming" ? "نوبت پیش رویی ندارید" : "سابقه‌ای ثبت نشده"}
-            text="خدمت، آرتیست و زمان دلخواه را انتخاب کنید؛ درخواست آماده ارسال برای سالن می‌شود."
-            action={<Button tone="solid" onClick={() => openBooking()}><CalendarPlus className="size-4" /> رزرو نوبت</Button>}
-          />
-        </div>
+        <EmptyState
+          icon="book"
+          title={view === "upcoming" ? "نوبت پیش رویی ندارید" : "سابقه‌ای ثبت نشده"}
+          text="خدمت، آرتیست و زمان دلخواه را انتخاب کنید؛ درخواست آماده ارسال برای سالن می‌شود."
+          action={<Button variant="gold" icon="book" onClick={() => openBooking()}>رزرو نوبت</Button>}
+        />
       ) : (
-        <div className="mt-4 grid gap-4 px-6">
+        <div className="mt-3 grid gap-4 px-gutter">
           {list.map((booking) => <BookingCard key={booking.id} booking={booking} past={view === "past"} />)}
         </div>
       )}
@@ -79,43 +69,37 @@ function BookingCard({ booking, past }: { booking: BookingRequest; past: boolean
   }
 
   return (
-    <article className={cn("rise rounded-[1.75rem] bg-surface p-5 shadow-card", past && "opacity-75")}>
-      <div className="flex gap-3.5">
+    <article className={cn("card rise", past && "opacity-70")}>
+      <div className="flex gap-4">
         <span className="date-tile">
           <small>{shortWeekday(booking.date)}</small>
           <strong>{dayOf(booking.date)}</strong>
           <small>{monthOf(booking.date)}</small>
         </span>
         <div className="min-w-0 flex-1">
-          <span className={cn("state-pill", booking.sent ? "state-pill-sent" : "state-pill-draft")}>
+          <span className="status" data-tone={past ? undefined : booking.sent ? "gold" : "garnet"}>
             {past ? "گذشته" : booking.sent ? "ارسال‌شده · در انتظار تأیید" : "پیش‌نویس · ارسال نشده"}
           </span>
-          <p className="mt-1.5 text-[0.95rem] leading-6">{items.map((item) => item.title).join("، ") || "مشاوره"}</p>
-          <p className="mt-1 flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted">
-            <span className="inline-flex items-center gap-1"><Clock3 className="size-3" />{timeLabel(booking.time)} · {formatMinutes(minutes)}</span>
-            <span className="inline-flex items-center gap-1"><UserRound className="size-3" />{stylistName(booking.stylist)}</span>
+          <p className="t-headline mt-1 font-normal">{items.map((item) => item.title).join("، ") || "مشاوره"}</p>
+          <p className="t-caption mt-1 flex flex-wrap gap-x-3 gap-y-1 text-ink-2">
+            <span className="inline-flex items-center gap-1"><Icon name="clock" size={13} />{timeLabel(booking.time)} · {formatMinutes(minutes)}</span>
+            <span className="inline-flex items-center gap-1"><Icon name="profile" size={13} />{stylistName(booking.stylist)}</span>
           </p>
         </div>
-        {look ? <img src={lookThumb(look.repId)} alt={look.name} className="arch h-16 w-12 shrink-0 object-cover" /> : null}
+        {look ? <Media src={lookThumb(look.repId)} alt={look.name} className="arch h-16 w-12 shrink-0" /> : null}
       </div>
       <p className="sr-only">{longDate(booking.date)}</p>
-      <div className="mt-5 flex gap-2 border-t border-foreground/10 pt-4">
+      <div className="mt-5 flex gap-2 border-t border-line pt-4">
         {past ? (
-          <Button tone="soft" className="min-h-11 flex-1" onClick={() => openBooking({ services: booking.services, stylist: booking.stylist })}>
-            <RotateCcw className="size-4" /> رزرو دوباره
-          </Button>
+          <Button variant="tonal" icon="rebook" className="flex-1" onClick={() => openBooking({ services: booking.services, stylist: booking.stylist })}>رزرو دوباره</Button>
         ) : wa ? (
-          <a className="press inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-full bg-ink text-sm text-on-ink" href={wa} target="_blank" rel="noreferrer" onClick={() => markSent(booking.id)}>
-            <Send className="size-4" /> ارسال در واتساپ
+          <a className="btn flex-1" href={wa} target="_blank" rel="noreferrer" onClick={() => markSent(booking.id)}>
+            <Icon name="whatsapp" size={18} weight="regular" /> ارسال در واتساپ
           </a>
         ) : (
-          <Button tone={booking.sent ? "soft" : "solid"} className="min-h-11 flex-1" onClick={send}>
-            <Send className="size-4" /> {booking.sent ? "ارسال دوباره" : "ارسال برای سالن"}
-          </Button>
+          <Button variant={booking.sent ? "tonal" : "primary"} icon="send" className="flex-1" onClick={send}>{booking.sent ? "ارسال دوباره" : "ارسال برای سالن"}</Button>
         )}
-        <button type="button" className="icon-btn press !size-11 text-muted" onClick={remove} aria-label="حذف درخواست">
-          <Trash2 className="size-4" />
-        </button>
+        <IconButton icon="trash" label="حذف درخواست" variant="tonal" onClick={remove} />
       </div>
     </article>
   );

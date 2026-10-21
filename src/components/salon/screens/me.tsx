@@ -1,15 +1,15 @@
-import { ChevronLeft, Columns2, Heart, HeartHandshake, Monitor, Moon, ScanFace, ShieldCheck, Sun, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { familyById, lookThumb, persian, type Family } from "@/data/catalog";
 import { SALON } from "@/data/salon";
-import { cn } from "@/lib/cn";
 import { useSalon, type ThemePref } from "@/lib/salon-store";
-import { Kicker, SectionHead, TextLink, useSalonActions } from "../ui";
+import { Icon, type IconName } from "../icons";
+import { Wordmark } from "../logo";
+import { Button, Media, SectionHead, TextLink, useSalonActions } from "../ui";
 
-const THEMES: Array<{ key: ThemePref; label: string; Icon: typeof Sun }> = [
-  { key: "light", label: "روشن", Icon: Sun },
-  { key: "dark", label: "تیره", Icon: Moon },
-  { key: "system", label: "خودکار", Icon: Monitor },
+const THEMES: Array<{ key: ThemePref; label: string; icon: IconName }> = [
+  { key: "light", label: "روشن", icon: "light" },
+  { key: "dark", label: "تیره", icon: "dark" },
+  { key: "system", label: "خودکار", icon: "auto" },
 ];
 
 export function MeScreen() {
@@ -25,100 +25,113 @@ export function MeScreen() {
   const clearData = useSalon((state) => state.clearData);
   const saved = favs.map((id) => familyById.get(id)).filter((family): family is Family => Boolean(family)).reverse();
 
-  const rows = [
-    { label: "مقایسه مدل‌ها", note: compare.length ? `${persian(compare.length)} مدل انتخاب‌شده` : "تا سه مدل را کنار هم ببینید", Icon: Columns2, onClick: () => openSheet({ kind: "compare" }) },
-    { label: "استایل‌یاب", note: "پیشنهاد مدل بر اساس فرم چهره", Icon: ScanFace, onClick: () => openSheet({ kind: "finder" }) },
-    { label: "درخواست مشاوره", note: "مدل‌های منتخب را برای آرتیست بفرستید", Icon: HeartHandshake, onClick: () => openSheet({ kind: "consult" }) },
+  const rows: Array<{ label: string; note: string; icon: IconName; onClick: () => void }> = [
+    { label: "مقایسه مدل‌ها", note: compare.length ? `${persian(compare.length)} مدل انتخاب‌شده` : "تا سه مدل را کنار هم ببینید", icon: "compare", onClick: () => openSheet({ kind: "compare" }) },
+    { label: "استایل‌یاب", note: "پیشنهاد مدل بر اساس فرم چهره", icon: "finder", onClick: () => openSheet({ kind: "finder" }) },
+    { label: "درخواست مشاوره", note: "مدل‌های منتخب را برای آرتیست بفرستید", icon: "consult", onClick: () => openSheet({ kind: "consult" }) },
+  ];
+
+  const stats = [
+    { value: favs.length, label: "ذخیره", onClick: () => { showSaved(); go("looks"); } },
+    { value: bookings.length, label: "درخواست نوبت", onClick: () => go("bookings") },
+    { value: compare.length, label: "مقایسه", onClick: () => openSheet({ kind: "compare" }) },
   ];
 
   return (
-    <div className="grid grid-cols-1 gap-8 pt-2">
-      <section className="rise px-6">
-        <div className="member-card">
-          <div className="flex items-center justify-between">
-            <Kicker className="text-champagne">ATELIER MEMBER</Kicker>
-            <span className="font-brand text-xs tracking-[0.2em] opacity-60" dir="ltr">HB</span>
+    <div className="grid grid-cols-1 gap-[var(--spacing-section)] pt-2">
+      <section className="enter px-gutter">
+        <div className="member">
+          <div className="flex items-start justify-between">
+            <span className="t-caption text-champagne">عضو آتلیه</span>
+            <Wordmark className="text-[1.05rem] [&_.wordmark__en]:text-white/45" latin={false} />
           </div>
-          <label className="mt-6 block">
+          <label className="mt-5 block">
             <span className="sr-only">نام شما</span>
             <input
               value={profile.name}
               onChange={(event) => setProfile({ name: event.target.value })}
               placeholder="نام خود را بنویسید"
-              className="w-full bg-transparent font-display text-[1.75rem] leading-tight text-white outline-none placeholder:text-white/40"
               autoComplete="name"
+              className="t-calligraphy w-full bg-transparent text-[1.6rem] text-white outline-none placeholder:text-white/35 focus:shadow-none"
             />
           </label>
-          <label className="mt-1 block">
+          <label className="block">
             <span className="sr-only">شماره همراه</span>
             <input
               value={profile.phone}
               onChange={(event) => setProfile({ phone: event.target.value })}
-              placeholder="شماره همراه (برای پر کردن خودکار فرم رزرو)"
-              className="w-full bg-transparent text-sm text-white/80 outline-none placeholder:text-white/40"
+              placeholder="شماره همراه، برای پر کردن خودکار فرم رزرو"
               inputMode="tel"
               autoComplete="tel"
+              className="t-footnote w-full bg-transparent text-white/75 outline-none placeholder:text-white/35 focus:shadow-none"
             />
           </label>
-          <div className="mt-6 grid grid-cols-3 gap-2 border-t border-white/10 pt-4 text-center">
-            <button type="button" onClick={() => { showSaved(); go("looks"); }} className="press grid gap-0.5"><strong className="text-lg">{persian(favs.length)}</strong><small className="text-[0.68rem] opacity-60">ذخیره</small></button>
-            <button type="button" onClick={() => go("bookings")} className="press grid gap-0.5"><strong className="text-lg">{persian(bookings.length)}</strong><small className="text-[0.68rem] opacity-60">درخواست نوبت</small></button>
-            <button type="button" onClick={() => openSheet({ kind: "compare" })} className="press grid gap-0.5"><strong className="text-lg">{persian(compare.length)}</strong><small className="text-[0.68rem] opacity-60">مقایسه</small></button>
+          <div className="mt-auto grid grid-cols-3 border-t border-white/12 pt-4 text-center">
+            {stats.map((item) => (
+              <button key={item.label} type="button" onClick={item.onClick} className="grid">
+                <strong className="t-title-2 t-numeric">{persian(item.value)}</strong>
+                <span className="t-caption text-white/55">{item.label}</span>
+              </button>
+            ))}
           </div>
         </div>
       </section>
 
       <section>
-        <SectionHead kicker="SAVED LOOKS" title="مدل‌های ذخیره‌شده" action={saved.length ? <TextLink onClick={() => { showSaved(); go("looks"); }}>همه</TextLink> : undefined} />
+        <SectionHead eyebrow="مجموعه شما" title="مدل‌های ذخیره‌شده" action={saved.length ? <TextLink onClick={() => { showSaved(); go("looks"); }}>همه</TextLink> : undefined} />
         {saved.length ? (
-          <div className="rail no-scrollbar">
+          <div className="rail">
             {saved.slice(0, 10).map((family) => (
-              <button key={family.id} type="button" className="press saved-tile" onClick={() => openSheet({ kind: "look", id: family.id })}>
-                <img src={lookThumb(family.repId)} alt={family.name} loading="lazy" />
-                <span className="line-clamp-1">{family.name}</span>
+              <button key={family.id} type="button" className="tile w-28" onClick={() => openSheet({ kind: "look", id: family.id })}>
+                <Media src={lookThumb(family.repId)} alt={family.name} loading="lazy" className="tile__media" />
+                <span className="t-caption mt-2 line-clamp-1">{family.name}</span>
               </button>
             ))}
           </div>
         ) : (
-          <button type="button" className="press mx-6 flex w-[calc(100%-3rem)] items-center gap-3 rounded-3xl border border-dashed border-border p-4 text-start" onClick={() => go("looks")}>
-            <span className="grid size-11 place-items-center rounded-full bg-soft text-accent-deep"><Heart className="size-5" /></span>
-            <span className="flex-1 text-sm"><strong className="block">هنوز مدلی ذخیره نشده</strong><small className="text-xs text-muted">لوک‌بوک را ببینید و روی قلب بزنید</small></span>
-            <ChevronLeft className="size-5 text-muted" />
-          </button>
+          <div className="px-gutter">
+            <button type="button" className="list-row card" data-variant="outline" onClick={() => go("looks")}>
+              <span className="list-row__icon" style={{ background: "var(--color-rose-soft)", color: "var(--color-rose)" }}><Icon name="heart" size={20} weight="duotone" /></span>
+              <span className="flex-1"><strong className="t-headline block font-normal">هنوز مدلی ذخیره نشده</strong><span className="t-caption text-ink-2">لوک‌بوک را ببینید و روی قلب بزنید</span></span>
+              <Icon name="chevron" size={18} className="text-ink-3" />
+            </button>
+          </div>
         )}
       </section>
 
-      <section className="px-6">
-        <div className="overflow-hidden rounded-[1.75rem] bg-surface shadow-card">
-          {rows.map(({ label, note, Icon, onClick }) => (
-            <button key={label} type="button" onClick={onClick} className="press flex w-full items-center gap-3.5 border-b border-foreground/10 p-4 text-start last:border-b-0">
-              <span className="grid size-10 place-items-center rounded-full bg-soft text-accent-deep"><Icon className="size-[18px]" strokeWidth={1.7} /></span>
-              <span className="min-w-0 flex-1"><strong className="block text-sm">{label}</strong><small className="text-xs text-muted">{note}</small></span>
-              <ChevronLeft className="size-4 text-muted" />
+      <section className="px-gutter">
+        <div className="list">
+          {rows.map((row) => (
+            <button key={row.label} type="button" className="list-row" onClick={row.onClick}>
+              <span className="list-row__icon"><Icon name={row.icon} size={20} weight="duotone" /></span>
+              <span className="min-w-0 flex-1"><strong className="t-headline block font-normal">{row.label}</strong><span className="t-caption text-ink-2">{row.note}</span></span>
+              <Icon name="chevron" size={18} className="text-ink-3" />
             </button>
           ))}
         </div>
       </section>
 
-      <section className="px-6">
-        <h2 className="mb-3 text-sm font-medium">ظاهر برنامه</h2>
+      <section className="px-gutter">
+        <h2 className="t-headline mb-3">ظاهر برنامه</h2>
         <div className="segmented" role="radiogroup" aria-label="ظاهر برنامه">
-          {THEMES.map(({ key, label, Icon }) => (
-            <button key={key} type="button" role="radio" aria-checked={theme === key} onClick={() => setTheme(key)} className={cn(theme === key && "segmented-on")}>
-              <Icon className="size-4" strokeWidth={1.8} /> {label}
+          {THEMES.map((item) => (
+            <button key={item.key} type="button" role="radio" aria-checked={theme === item.key} onClick={() => setTheme(item.key)}>
+              <Icon name={item.icon} size={17} weight={theme === item.key ? "fill" : "light"} /> {item.label}
             </button>
           ))}
         </div>
       </section>
 
-      <section className="px-6">
-        <div className="flex items-start gap-3 rounded-3xl bg-soft p-4 text-xs leading-6 text-muted">
-          <ShieldCheck className="mt-0.5 size-4 shrink-0 text-accent-deep" />
-          <p>نام، شماره، ذخیره‌ها و درخواست‌های نوبت فقط روی همین دستگاه نگه داشته می‌شوند و تا زمانی که خودتان ارسال نکنید، برای {SALON.name} فرستاده نمی‌شوند.</p>
+      <section className="grid gap-3 px-gutter">
+        <div className="card flex items-start gap-3" data-variant="sunken">
+          <Icon name="privacy" size={20} weight="duotone" className="mt-0.5 shrink-0 text-gold-ink" />
+          <p className="t-footnote text-ink-2">نام، شماره، ذخیره‌ها و درخواست‌های نوبت فقط روی همین دستگاه نگه داشته می‌شوند و تا زمانی که خودتان ارسال نکنید، برای {SALON.name} فرستاده نمی‌شوند.</p>
         </div>
-        <button
-          type="button"
-          className="press mt-3 flex min-h-11 w-full items-center justify-center gap-2 rounded-2xl text-sm font-medium text-[#b4483c]"
+        <Button variant="ghost" icon="palette" className="justify-self-center" onClick={() => go("design")}>سیستم طراحی حنانه بیوتی</Button>
+        <Button
+          variant="ghost"
+          icon="trash"
+          className="justify-self-center text-garnet"
           onClick={() => {
             if (window.confirm("همه اطلاعات ذخیره‌شده روی این دستگاه پاک شود؟")) {
               clearData();
@@ -126,8 +139,8 @@ export function MeScreen() {
             }
           }}
         >
-          <Trash2 className="size-4" /> پاک کردن اطلاعات این دستگاه
-        </button>
+          پاک کردن اطلاعات این دستگاه
+        </Button>
       </section>
     </div>
   );

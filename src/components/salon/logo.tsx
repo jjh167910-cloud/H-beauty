@@ -1,12 +1,24 @@
-export function LogoMark({ className }: { className?: string }) {
+import { cn } from "@/lib/cn";
+
+/** Brand mark: the atelier arch framing a calligraphic ح. */
+export function BrandMark({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 72 72" className={className} fill="none" aria-hidden="true">
-      <rect x="4.5" y="4.5" width="63" height="63" rx="21" stroke="currentColor" strokeWidth="1.25" />
-      <path d="M23 19.5v33M49 19.5v33" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" />
-      <path d="M23 37c6-5.4 20-5.4 26 0" stroke="currentColor" strokeWidth="2.1" strokeLinecap="round" />
-      <path d="M28.5 23.5c3.6-3.5 8.6-4.6 13.1-2.8 2.1.8 3.9 2.3 5.1 4.2" stroke="currentColor" strokeWidth="1.15" strokeLinecap="round" />
-      <path d="M25.3 48.2c4.2 3.8 10.3 5 15.7 3 2.4-.9 4.4-2.5 5.9-4.5" stroke="currentColor" strokeWidth="1.15" strokeLinecap="round" />
-      <circle cx="36" cy="36" r="2.4" fill="currentColor" />
-    </svg>
+    <span className={cn("relative inline-grid place-items-center text-gold", className)} aria-hidden="true">
+      <svg viewBox="0 0 40 48" className="absolute inset-0 size-full" fill="none">
+        <path d="M3 46V20C3 10.6 10.6 3 20 3s17 7.6 17 17v26H3Z" stroke="currentColor" strokeWidth="1.2" />
+        <path d="M6.5 43V20.5C6.5 13 12.5 6.8 20 6.8S33.5 13 33.5 20.5V43" stroke="currentColor" strokeWidth="0.6" opacity="0.6" />
+      </svg>
+      <span className="relative mt-[18%] font-calligraphy text-[1em] leading-none">ح</span>
+    </span>
+  );
+}
+
+/** Wordmark: «حنانه بیوتی» in Nastaliq above HANANEH BEAUTY in Bodoni. */
+export function Wordmark({ className, latin = true }: { className?: string; latin?: boolean }) {
+  return (
+    <span className={cn("wordmark", className)}>
+      <span className="wordmark__fa">حنانه بیوتی</span>
+      {latin ? <span className="wordmark__en" lang="en">HANANEH BEAUTY</span> : null}
+    </span>
   );
 }
