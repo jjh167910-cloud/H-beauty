@@ -21,7 +21,7 @@ jobs:
           test -s upload/H-beauty-portable.part-01
           test -s upload/H-beauty-portable.part-02
           cat upload/H-beauty-portable.part-01 upload/H-beauty-portable.part-02 > /tmp/h-beauty.zip
-          echo "6525635e74b070f88c83e80fa8d5580c8ad91069f21174c0e88884130216204a  /tmp/h-beauty.zip" | sha256sum -c -
+          echo "86584e5306484f756e65b540e841fc039504b614e5b687fef3ecd3c429c7b7f3  /tmp/h-beauty.zip" | sha256sum -c -
           unzip -tq /tmp/h-beauty.zip
       - name: Import clean portable project
         shell: bash
