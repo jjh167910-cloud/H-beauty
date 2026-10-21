@@ -21,9 +21,14 @@ export function BookingsScreen() {
 
   return (
     <div className="pt-2">
-      <section className="rise px-5">
-        <h1 className="text-[1.65rem] font-bold">نوبت‌های من</h1>
-        <p className="mt-1.5 text-sm leading-7 text-muted">درخواست‌ها روی همین دستگاه نگه داشته می‌شوند و پس از ارسال، سالن زمان را تأیید می‌کند.</p>
+      <section className="px-6 pt-2">
+        <p className="reveal font-brand text-[0.7rem] tracking-[0.3em] text-accent-deep" dir="ltr">YOUR APPOINTMENTS</p>
+        <h1 className="reveal mt-3 text-[2.2rem] leading-[1.35] font-extralight tracking-tight" style={{ animationDelay: "80ms" }}>
+          نوبت‌های
+          <br />
+          <span className="font-display text-[2.4rem] text-accent-deep">شما</span>
+        </h1>
+        <p className="reveal mt-3 max-w-xs text-[0.82rem] leading-7 text-muted" style={{ animationDelay: "140ms" }}>درخواست‌ها روی همین دستگاه نگه داشته می‌شوند و پس از ارسال، سالن زمان را تأیید می‌کند.</p>
       </section>
 
       <div className="chip-bar no-scrollbar">
@@ -41,7 +46,7 @@ export function BookingsScreen() {
           />
         </div>
       ) : (
-        <div className="mt-2 grid gap-3 px-5">
+        <div className="mt-4 grid gap-4 px-6">
           {list.map((booking) => <BookingCard key={booking.id} booking={booking} past={view === "past"} />)}
         </div>
       )}
@@ -74,7 +79,7 @@ function BookingCard({ booking, past }: { booking: BookingRequest; past: boolean
   }
 
   return (
-    <article className={cn("rounded-3xl border border-border bg-surface p-4 shadow-card", past && "opacity-75")}>
+    <article className={cn("rise rounded-[1.75rem] bg-surface p-5 shadow-card", past && "opacity-75")}>
       <div className="flex gap-3.5">
         <span className="date-tile">
           <small>{shortWeekday(booking.date)}</small>
@@ -85,22 +90,22 @@ function BookingCard({ booking, past }: { booking: BookingRequest; past: boolean
           <span className={cn("state-pill", booking.sent ? "state-pill-sent" : "state-pill-draft")}>
             {past ? "گذشته" : booking.sent ? "ارسال‌شده · در انتظار تأیید" : "پیش‌نویس · ارسال نشده"}
           </span>
-          <p className="mt-1.5 text-sm leading-6 font-bold">{items.map((item) => item.title).join("، ") || "مشاوره"}</p>
+          <p className="mt-1.5 text-[0.95rem] leading-6">{items.map((item) => item.title).join("، ") || "مشاوره"}</p>
           <p className="mt-1 flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted">
             <span className="inline-flex items-center gap-1"><Clock3 className="size-3" />{timeLabel(booking.time)} · {formatMinutes(minutes)}</span>
             <span className="inline-flex items-center gap-1"><UserRound className="size-3" />{stylistName(booking.stylist)}</span>
           </p>
         </div>
-        {look ? <img src={lookSrc(look.repId)} alt={look.name} className="size-14 shrink-0 rounded-2xl object-cover" /> : null}
+        {look ? <img src={lookSrc(look.repId)} alt={look.name} className="arch h-16 w-12 shrink-0 object-cover" /> : null}
       </div>
       <p className="sr-only">{longDate(booking.date)}</p>
-      <div className="mt-4 flex gap-2 border-t border-border pt-3">
+      <div className="mt-5 flex gap-2 border-t border-foreground/10 pt-4">
         {past ? (
           <Button tone="soft" className="min-h-11 flex-1" onClick={() => openBooking({ service: booking.services[0], stylist: booking.stylist })}>
             <RotateCcw className="size-4" /> رزرو دوباره
           </Button>
         ) : wa ? (
-          <a className="press inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-2xl bg-ink text-sm font-semibold text-on-ink" href={wa} target="_blank" rel="noreferrer" onClick={() => markSent(booking.id)}>
+          <a className="press inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-full bg-ink text-sm text-on-ink" href={wa} target="_blank" rel="noreferrer" onClick={() => markSent(booking.id)}>
             <Send className="size-4" /> ارسال در واتساپ
           </a>
         ) : (
@@ -108,7 +113,7 @@ function BookingCard({ booking, past }: { booking: BookingRequest; past: boolean
             <Send className="size-4" /> {booking.sent ? "ارسال دوباره" : "ارسال برای سالن"}
           </Button>
         )}
-        <button type="button" className="press grid size-11 place-items-center rounded-2xl bg-soft text-muted" onClick={remove} aria-label="حذف درخواست">
+        <button type="button" className="icon-btn press !size-11 text-muted" onClick={remove} aria-label="حذف درخواست">
           <Trash2 className="size-4" />
         </button>
       </div>

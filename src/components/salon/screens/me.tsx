@@ -33,7 +33,7 @@ export function MeScreen() {
 
   return (
     <div className="grid grid-cols-1 gap-8 pt-2">
-      <section className="rise px-5">
+      <section className="rise px-6">
         <div className="member-card">
           <div className="flex items-center justify-between">
             <Kicker className="text-champagne">ATELIER MEMBER</Kicker>
@@ -80,7 +80,7 @@ export function MeScreen() {
             ))}
           </div>
         ) : (
-          <button type="button" className="press mx-5 flex w-[calc(100%-2.5rem)] items-center gap-3 rounded-3xl border border-dashed border-border p-4 text-start" onClick={() => go("looks")}>
+          <button type="button" className="press mx-6 flex w-[calc(100%-3rem)] items-center gap-3 rounded-3xl border border-dashed border-border p-4 text-start" onClick={() => go("looks")}>
             <span className="grid size-11 place-items-center rounded-full bg-soft text-accent-deep"><Heart className="size-5" /></span>
             <span className="flex-1 text-sm"><strong className="block">هنوز مدلی ذخیره نشده</strong><small className="text-xs text-muted">لوک‌بوک را ببینید و روی قلب بزنید</small></span>
             <ChevronLeft className="size-5 text-muted" />
@@ -88,11 +88,11 @@ export function MeScreen() {
         )}
       </section>
 
-      <section className="px-5">
-        <div className="overflow-hidden rounded-3xl border border-border bg-surface shadow-card">
+      <section className="px-6">
+        <div className="overflow-hidden rounded-[1.75rem] bg-surface shadow-card">
           {rows.map(({ label, note, Icon, onClick }) => (
-            <button key={label} type="button" onClick={onClick} className="press flex w-full items-center gap-3.5 border-b border-border p-4 text-start last:border-b-0">
-              <span className="grid size-10 place-items-center rounded-2xl bg-soft text-accent-deep"><Icon className="size-[18px]" strokeWidth={1.7} /></span>
+            <button key={label} type="button" onClick={onClick} className="press flex w-full items-center gap-3.5 border-b border-foreground/10 p-4 text-start last:border-b-0">
+              <span className="grid size-10 place-items-center rounded-full bg-soft text-accent-deep"><Icon className="size-[18px]" strokeWidth={1.7} /></span>
               <span className="min-w-0 flex-1"><strong className="block text-sm">{label}</strong><small className="text-xs text-muted">{note}</small></span>
               <ChevronLeft className="size-4 text-muted" />
             </button>
@@ -100,8 +100,8 @@ export function MeScreen() {
         </div>
       </section>
 
-      <section className="px-5">
-        <h2 className="mb-3 text-sm font-bold">ظاهر برنامه</h2>
+      <section className="px-6">
+        <h2 className="mb-3 text-sm font-medium">ظاهر برنامه</h2>
         <div className="segmented" role="radiogroup" aria-label="ظاهر برنامه">
           {THEMES.map(({ key, label, Icon }) => (
             <button key={key} type="button" role="radio" aria-checked={theme === key} onClick={() => setTheme(key)} className={cn(theme === key && "segmented-on")}>
@@ -111,14 +111,14 @@ export function MeScreen() {
         </div>
       </section>
 
-      <section className="px-5">
+      <section className="px-6">
         <div className="flex items-start gap-3 rounded-3xl bg-soft p-4 text-xs leading-6 text-muted">
           <ShieldCheck className="mt-0.5 size-4 shrink-0 text-accent-deep" />
           <p>نام، شماره، ذخیره‌ها و درخواست‌های نوبت فقط روی همین دستگاه نگه داشته می‌شوند و تا زمانی که خودتان ارسال نکنید، برای {SALON.name} فرستاده نمی‌شوند.</p>
         </div>
         <button
           type="button"
-          className="press mt-3 flex min-h-11 w-full items-center justify-center gap-2 rounded-2xl text-sm font-semibold text-[#b4483c]"
+          className="press mt-3 flex min-h-11 w-full items-center justify-center gap-2 rounded-2xl text-sm font-medium text-[#b4483c]"
           onClick={() => {
             if (window.confirm("همه اطلاعات ذخیره‌شده روی این دستگاه پاک شود؟")) {
               clearData();

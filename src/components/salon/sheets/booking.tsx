@@ -99,7 +99,7 @@ export function BookingSheet({ open, onClose }: { open: boolean; onClose: () => 
           <div className="min-w-0 flex-1">
             {cart.length ? (
               <>
-                <p className="truncate text-[0.8rem] font-bold">{persian(cart.length)} خدمت · {formatMinutes(summary.minutes)}</p>
+                <p className="truncate text-[0.8rem] font-medium">{persian(cart.length)} خدمت · {formatMinutes(summary.minutes)}</p>
                 <p className="truncate text-[0.72rem] text-muted">{summary.price ? `از ${formatPrice(summary.price)} تومان` : "قیمت پس از مشاوره"}</p>
               </>
             ) : (
@@ -112,7 +112,7 @@ export function BookingSheet({ open, onClose }: { open: boolean; onClose: () => 
         </div>
       }
     >
-      <div className="px-5 pb-6">
+      <div className="px-6 pb-6">
         <ol className="stepper" aria-label="مراحل رزرو">
           {STEPS.map((label, index) => (
             <li key={label} className={cn(index < step && "stepper-done", index === step && "stepper-now")} aria-current={index === step ? "step" : undefined}>
@@ -126,7 +126,7 @@ export function BookingSheet({ open, onClose }: { open: boolean; onClose: () => 
           <div className="rise mt-6 grid gap-6">
             {SERVICE_CATEGORIES.map((category) => (
               <section key={category.key}>
-                <h3 className="mb-2 text-xs font-bold text-muted">{category.label}</h3>
+                <h3 className="mb-2 text-xs font-medium text-muted">{category.label}</h3>
                 <div className="grid gap-2">
                   {SERVICES.filter((service) => service.category === category.key).map((service) => {
                     const picked = cart.includes(service.id);
@@ -172,8 +172,8 @@ export function BookingSheet({ open, onClose }: { open: boolean; onClose: () => 
 
         {step === 2 ? (
           <div className="rise mt-6">
-            <p className="text-sm font-bold">{date ? longDate(date) : "روز را انتخاب کنید"}</p>
-            <div className="no-scrollbar -mx-5 mt-3 flex gap-2 overflow-x-auto px-5 pb-1">
+            <p className="text-sm font-medium">{date ? longDate(date) : "روز را انتخاب کنید"}</p>
+            <div className="no-scrollbar -mx-6 mt-3 flex gap-2 overflow-x-auto px-6 pb-1">
               {days.map((day) => {
                 const active = day.iso === date;
                 return (
@@ -191,7 +191,7 @@ export function BookingSheet({ open, onClose }: { open: boolean; onClose: () => 
                 if (!list.length) return null;
                 return (
                   <section key={part} className="mt-5">
-                    <h3 className="mb-2 text-xs font-bold text-muted">{PARTS[part]}</h3>
+                    <h3 className="mb-2 text-xs font-medium text-muted">{PARTS[part]}</h3>
                     <div className="grid grid-cols-4 gap-2">
                       {list.map((slot) => (
                         <button key={slot.time} type="button" onClick={() => { haptic(); setDraft({ date, time: slot.time }); }} aria-pressed={draft.time === slot.time} className={cn("slot press", draft.time === slot.time && "slot-on")}>
@@ -212,7 +212,7 @@ export function BookingSheet({ open, onClose }: { open: boolean; onClose: () => 
         {step === 3 ? (
           <div className="rise mt-6 grid gap-4">
             <div className="rounded-2xl bg-soft p-4 text-sm leading-7">
-              <p className="font-bold">{summary.items.map((item) => item.title).join("، ")}</p>
+              <p className="font-medium">{summary.items.map((item) => item.title).join("، ")}</p>
               <p className="text-muted">{longDate(date)} · ساعت {timeLabel(draft.time)}</p>
               <p className="text-muted">{stylistName(draft.stylist)} · {formatMinutes(summary.minutes)}</p>
             </div>
@@ -266,7 +266,7 @@ function BookingDone({ open, booking, onClose }: { open: boolean; booking: Booki
       footer={
         <div className="grid gap-2">
           {wa ? (
-            <a href={wa} target="_blank" rel="noreferrer" onClick={() => markSent(booking.id)} className="press gold-fill inline-flex min-h-14 items-center justify-center gap-2 rounded-2xl text-[0.95rem] font-semibold text-on-accent">
+            <a href={wa} target="_blank" rel="noreferrer" onClick={() => markSent(booking.id)} className="press foil inline-flex min-h-14 items-center justify-center gap-2 rounded-full text-[#1a140e] text-[0.95rem] font-medium">
               <Send className="size-5" /> ارسال در واتساپ
             </a>
           ) : (
@@ -276,21 +276,21 @@ function BookingDone({ open, booking, onClose }: { open: boolean; booking: Booki
         </div>
       }
     >
-      <div className="px-5 pb-6 text-center">
-        <span className="success-mark mx-auto"><CalendarCheck2 className="size-8" strokeWidth={1.6} /></span>
-        <h2 className="mt-5 text-xl font-bold">درخواست شما آماده است</h2>
+      <div className="px-6 pb-6 text-center">
+        <span className="success-mark foil mx-auto"><CalendarCheck2 className="size-8" strokeWidth={1.6} /></span>
+        <h2 className="mt-5 text-xl font-light tracking-tight">درخواست شما آماده است</h2>
         <p className="mx-auto mt-2 max-w-sm text-sm leading-7 text-muted">
           این برنامه هنوز به سیستم نوبت‌دهی سالن متصل نیست. برای قطعی شدن نوبت، درخواست را برای سالن بفرستید تا زمان را تأیید کنند.
         </p>
         <div className="mt-6 rounded-3xl border border-border bg-surface p-4 text-start text-sm leading-7 shadow-card">
-          <p className="font-bold">{items.map((item) => item.title).join("، ")}</p>
+          <p className="font-medium">{items.map((item) => item.title).join("، ")}</p>
           <p className="text-muted">{longDate(booking.date)} · ساعت {timeLabel(booking.time)}</p>
           <p className="text-muted">{stylistName(booking.stylist)} · {formatMinutes(minutes)}</p>
-          <p className="mt-2 inline-flex rounded-full bg-soft px-2.5 text-[0.7rem] font-semibold text-accent-deep">وضعیت: در انتظار ارسال و تأیید سالن</p>
+          <p className="mt-2 inline-flex rounded-full bg-soft px-2.5 text-[0.7rem] font-medium text-accent-deep">وضعیت: در انتظار ارسال و تأیید سالن</p>
         </div>
         <button
           type="button"
-          className="press mx-auto mt-3 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-accent-deep"
+          className="press mx-auto mt-3 inline-flex min-h-11 items-center gap-2 text-sm font-medium text-accent-deep"
           onClick={async () => toast((await copyText(message)) === "copied" ? "متن درخواست کپی شد." : "کپی ممکن نشد.")}
         >
           <Copy className="size-4" /> کپی متن درخواست

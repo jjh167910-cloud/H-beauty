@@ -35,17 +35,17 @@ export function TopBar() {
       <button type="button" className="press flex min-h-11 items-center gap-2.5 text-start" onClick={() => go("home")} aria-label="خانه">
         <LogoMark className="size-9 shrink-0 text-accent" />
         <span className="grid leading-none">
-          <strong className={cn(tab === "home" ? "font-display text-[1.45rem]" : "text-[1.05rem] font-bold")}>{head.title}</strong>
-          <small className="mt-1 font-brand text-[0.58rem] font-semibold tracking-[0.24em] text-muted" dir="ltr">{head.en}</small>
+          <strong className={cn(tab === "home" ? "font-display text-[1.5rem] font-normal" : "text-[1.05rem] font-normal")}>{head.title}</strong>
+          <small className="mt-1 font-brand text-[0.62rem] tracking-[0.28em] text-muted" dir="ltr">{head.en}</small>
         </span>
       </button>
       <button
         type="button"
         onClick={() => go("me")}
-        className={cn("press grid size-10 place-items-center rounded-full border transition", tab === "me" ? "border-accent bg-soft text-accent-deep" : "border-border bg-surface text-foreground")}
+        className={cn("press grid size-10 place-items-center rounded-full transition", tab === "me" ? "bg-ink text-champagne" : "text-foreground shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--color-foreground)_15%,transparent)]")}
         aria-label="پروفایل"
       >
-        {name.trim() ? <span className="font-display text-lg leading-none">{name.trim().slice(0, 1)}</span> : <UserRound className="size-[18px]" strokeWidth={1.7} />}
+        {name.trim() ? <span className="font-display text-lg leading-none">{name.trim().slice(0, 1)}</span> : <UserRound className="size-[18px]" strokeWidth={1.4} />}
       </button>
     </header>
   );
@@ -74,7 +74,7 @@ export function TabBar() {
         aria-current={active ? "page" : undefined}
       >
         <span className="relative">
-          <item.Icon className="size-[21px]" strokeWidth={active ? 2 : 1.6} />
+          <item.Icon className="size-[21px]" strokeWidth={active ? 1.6 : 1.3} />
           {item.tab === "bookings" && pending ? <span className="tab-dot" aria-label={`${persian(pending)} درخواست ارسال‌نشده`} /> : null}
         </span>
         <span>{item.label}</span>
@@ -86,8 +86,8 @@ export function TabBar() {
     <nav className="tab-bar" aria-label="پیمایش اصلی">
       {ITEMS.slice(0, 2).map(render)}
       <div className="grid place-items-center">
-        <button type="button" className="tab-book press" onClick={() => { haptic(); openBooking(); }} aria-label="رزرو نوبت">
-          <CalendarPlus className="size-6" strokeWidth={1.8} />
+        <button type="button" className="tab-book foil press" onClick={() => { haptic(); openBooking(); }} aria-label="رزرو نوبت">
+          <CalendarPlus className="size-[22px]" strokeWidth={1.5} />
         </button>
       </div>
       {ITEMS.slice(2).map(render)}
@@ -107,14 +107,14 @@ export function Docks() {
     const { items, minutes, price, hasUnpriced } = summarize(cart);
     return (
       <div className="dock" role="region" aria-label="خدمات انتخاب‌شده">
-        <button type="button" className="press grid size-9 shrink-0 place-items-center rounded-full bg-on-ink/10" onClick={() => setCart([])} aria-label="پاک کردن انتخاب‌ها">
+        <button type="button" className="press grid size-9 shrink-0 place-items-center rounded-full bg-soft" onClick={() => setCart([])} aria-label="پاک کردن انتخاب‌ها">
           <X className="size-4" />
         </button>
         <div className="min-w-0 flex-1">
-          <p className="text-[0.8rem] font-bold">{persian(items.length)} خدمت · {formatMinutes(minutes)}</p>
-          <p className="truncate text-[0.7rem] opacity-70">{price ? `از ${formatPrice(price)} تومان` : "قیمت پس از مشاوره"}{hasUnpriced && price ? " + مشاوره" : ""}</p>
+          <p className="text-[0.8rem] font-medium">{persian(items.length)} خدمت · {formatMinutes(minutes)}</p>
+          <p className="truncate text-[0.7rem] text-muted">{price ? `از ${formatPrice(price)} تومان` : "قیمت پس از مشاوره"}{hasUnpriced && price ? " + مشاوره" : ""}</p>
         </div>
-        <button type="button" className="press gold-fill min-h-11 rounded-xl px-4 text-sm font-bold text-on-accent" onClick={() => openSheet({ kind: "booking" })}>
+        <button type="button" className="press foil min-h-11 rounded-full px-5 text-sm font-medium text-[#1a140e]" onClick={() => openSheet({ kind: "booking" })}>
           ادامه رزرو
         </button>
       </div>
@@ -127,15 +127,15 @@ export function Docks() {
       <div className="dock" role="region" aria-label="مقایسه">
         <div className="flex -space-x-3 rtl:space-x-reverse">
           {selected.map((family) => (
-            <img key={family.id} src={lookSrc(family.repId)} alt="" className="size-10 rounded-full border-2 border-ink object-cover" />
+            <img key={family.id} src={lookSrc(family.repId)} alt="" className="size-10 rounded-full border-2 border-surface object-cover" />
           ))}
         </div>
         <div className="min-w-0 flex-1">
           <p className="flex items-center gap-1.5 text-[0.8rem] font-bold"><Columns2 className="size-3.5" /> مقایسه</p>
-          <p className="text-[0.7rem] opacity-70">{persian(selected.length)} از ۳ مدل</p>
+          <p className="text-[0.7rem] text-muted">{persian(selected.length)} از ۳ مدل</p>
         </div>
-        <button type="button" className="press min-h-11 px-2 text-xs opacity-70" onClick={clearCompare}>پاک کردن</button>
-        <button type="button" className="press gold-fill min-h-11 rounded-xl px-4 text-sm font-bold text-on-accent" onClick={() => openSheet({ kind: "compare" })}>
+        <button type="button" className="press min-h-11 px-2 text-xs text-muted" onClick={clearCompare}>پاک کردن</button>
+        <button type="button" className="press foil min-h-11 rounded-full px-5 text-sm font-medium text-[#1a140e]" onClick={() => openSheet({ kind: "compare" })}>
           مشاهده
         </button>
       </div>

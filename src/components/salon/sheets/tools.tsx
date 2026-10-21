@@ -33,13 +33,13 @@ export function CompareBody() {
   }
 
   return (
-    <div className="px-5 pb-6">
+    <div className="px-6 pb-6">
       <div className={cn("grid gap-2.5", selected.length === 1 ? "grid-cols-1" : selected.length === 2 ? "grid-cols-2" : "grid-cols-3")}>
         {selected.map((family) => (
           <article key={family.id} className="relative">
             <button type="button" className="press block w-full text-start" onClick={() => openSheet({ kind: "look", id: family.id })}>
-              <img src={lookSrc(family.repId)} alt={family.name} className="aspect-[3/4] w-full rounded-2xl object-cover" />
-              <span className="mt-2 line-clamp-2 block text-xs leading-5 font-bold">{family.name}</span>
+              <img src={lookSrc(family.repId)} alt={family.name} className="arch aspect-[3/4] w-full object-cover" />
+              <span className="mt-2 line-clamp-2 block text-xs leading-5 font-medium">{family.name}</span>
               <span className="mt-0.5 block text-[0.68rem] text-muted">{labelOf(family.category)}</span>
             </button>
             <button type="button" className="glass-btn press absolute top-2 start-2 !size-8" onClick={() => toggleCompare(family.id)} aria-label={`حذف ${family.name} از مقایسه`}>
@@ -78,12 +78,12 @@ export function ConsultBody() {
   const wa = whatsappLink(draft);
 
   return (
-    <div className="grid grid-cols-1 gap-5 px-5 pb-6">
+    <div className="grid grid-cols-1 gap-5 px-6 pb-6">
       <p className="text-sm leading-7 text-muted">
         مدل‌های ذخیره‌شده و مقایسه‌شده در یک پیام آماده می‌شوند تا برای آرتیست بفرستید.
       </p>
       {selected.length ? (
-        <div className="no-scrollbar -mx-5 flex gap-2 overflow-x-auto px-5">
+        <div className="no-scrollbar -mx-6 flex gap-2 overflow-x-auto px-6">
           {selected.map((family) => <img key={family.id} src={lookSrc(family.repId)} alt={family.name} className="size-16 shrink-0 rounded-2xl object-cover" />)}
         </div>
       ) : (
@@ -96,12 +96,12 @@ export function ConsultBody() {
         <textarea value={notes} onChange={(event) => setNotes(event.target.value)} rows={3} placeholder="مثلاً عروسی خواهرم، موهای بلند و نازک دارم" />
       </label>
       <details className="rounded-2xl bg-soft p-4 text-sm">
-        <summary className="cursor-pointer font-semibold">پیش‌نمایش پیام · {persian(selected.length)} مدل</summary>
+        <summary className="cursor-pointer font-medium">پیش‌نمایش پیام · {persian(selected.length)} مدل</summary>
         <pre className="mt-3 font-sans text-xs leading-6 whitespace-pre-wrap text-muted">{draft}</pre>
       </details>
       <div className="grid gap-2">
         {wa ? (
-          <a href={wa} target="_blank" rel="noreferrer" className="press gold-fill inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl text-sm font-semibold text-on-accent"><Send className="size-4" /> ارسال در واتساپ</a>
+          <a href={wa} target="_blank" rel="noreferrer" className="press foil inline-flex min-h-12 items-center justify-center gap-2 rounded-full text-[#1a140e] text-sm font-medium"><Send className="size-4" /> ارسال در واتساپ</a>
         ) : (
           <Button tone="accent" onClick={async () => { const result = await shareText(draft, "درخواست مشاوره"); if (result === "copied") toast("متن درخواست کپی شد."); else if (result === "failed") toast("اشتراک‌گذاری ممکن نشد."); }}>
             <Send className="size-4" /> ارسال پیام مشاوره
@@ -157,18 +157,18 @@ export function FinderBody() {
     const [face, texture, routine] = answers;
     const picks = recommend(face, texture, routine);
     return (
-      <div className="rise px-5 pb-6">
+      <div className="rise px-6 pb-6">
         <Kicker>YOUR EDIT</Kicker>
-        <h3 className="mt-1 text-xl font-bold">سه پیشنهاد برای شما</h3>
+        <h3 className="mt-1 text-xl font-light tracking-tight">سه پیشنهاد برای شما</h3>
         <p className="mt-2 text-sm leading-7 text-muted">
           برای صورت <strong className="text-foreground">{FACES.find((item) => item.key === face)?.label}</strong> با موی {TEXTURES.find((item) => item.key === texture)?.label}، این خانواده‌ها هماهنگی بیشتری دارند.
         </p>
         <div className="mt-5 grid grid-cols-3 gap-2.5">
           {picks.map((family) => (
             <button key={family.id} type="button" onClick={() => openSheet({ kind: "look", id: family.id })} className="press text-start">
-              <img src={lookSrc(family.repId)} alt={family.name} className="aspect-[3/4] w-full rounded-2xl object-cover" />
-              <span className="mt-2 block text-[0.7rem] font-semibold text-accent-deep">{labelOf(family.category)}</span>
-              <span className="line-clamp-2 block text-xs leading-5 font-bold">{family.name}</span>
+              <img src={lookSrc(family.repId)} alt={family.name} className="arch aspect-[3/4] w-full object-cover" />
+              <span className="mt-2 block text-[0.7rem] font-medium text-accent-deep">{labelOf(family.category)}</span>
+              <span className="line-clamp-2 block text-xs leading-5 font-medium">{family.name}</span>
             </button>
           ))}
         </div>
@@ -186,7 +186,7 @@ export function FinderBody() {
 
   const question = QUESTIONS[step];
   return (
-    <div className="px-5 pb-6">
+    <div className="px-6 pb-6">
       <div className="flex items-center gap-3">
         {step > 0 ? (
           <button type="button" className="icon-btn" onClick={() => setAnswers(answers.slice(0, -1))} aria-label="سؤال قبل"><ArrowRight className="size-4" /></button>
@@ -196,7 +196,7 @@ export function FinderBody() {
         </div>
         <span className="text-xs text-muted tabular-nums">{persian(step + 1)} / {persian(QUESTIONS.length)}</span>
       </div>
-      <h3 key={step} className="rise mt-6 text-xl font-bold">{question.title}</h3>
+      <h3 key={step} className="rise mt-6 text-xl font-light tracking-tight">{question.title}</h3>
       <div key={`options-${step}`} className="rise mt-5 grid gap-2.5">
         {question.options.map((option) => (
           <button key={option.key} type="button" onClick={() => setAnswers([...answers, option.key])} className="choice press">

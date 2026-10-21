@@ -61,7 +61,13 @@ export function LooksScreen() {
 
   return (
     <div className="pt-2">
-      <section className="px-5">
+      <section className="px-6">
+        <p className="reveal font-brand text-[0.7rem] tracking-[0.3em] text-accent-deep" dir="ltr">THE LOOKBOOK · {FAMILY_COUNT} LOOKS</p>
+        <h1 className="reveal mt-3 mb-5 text-[2.2rem] leading-[1.35] font-extralight tracking-tight" style={{ animationDelay: "80ms" }}>
+          الهام برای
+          <br />
+          <span className="font-display text-[2.4rem] text-accent-deep">نوبت بعدی</span>
+        </h1>
         <label className="search-field">
           <span className="sr-only">جست‌وجوی مدل</span>
           <Search className="size-[18px] shrink-0 text-muted" />
@@ -93,11 +99,11 @@ export function LooksScreen() {
         ))}
       </div>
 
-      <div className="mt-1 flex items-center justify-between px-5 text-xs text-muted" aria-live="polite">
+      <div className="mt-1 flex items-center justify-between px-6 text-xs text-muted" aria-live="polite">
         <span>
           {savedOnly ? "ذخیره‌ها" : query.trim() ? `«${query.trim()}»` : labelOf(filter)} · <span className="tabular-nums">{persian(list.length)}</span> از {persian(FAMILY_COUNT)}
         </span>
-        {savedOnly || filter !== "all" || query.trim() ? <button type="button" className="min-h-9 font-semibold text-accent-deep" onClick={clearAll}>نمایش همه</button> : null}
+        {savedOnly || filter !== "all" || query.trim() ? <button type="button" className="min-h-9 font-medium text-accent-deep" onClick={clearAll}>نمایش همه</button> : null}
       </div>
 
       {visible.length === 0 ? (
@@ -106,11 +112,11 @@ export function LooksScreen() {
             icon={savedOnly ? <Heart className="size-6" /> : <Search className="size-6" />}
             title={savedOnly ? "هنوز مدلی ذخیره نکرده‌اید" : "مدلی پیدا نشد"}
             text={savedOnly ? "روی قلب هر مدل بزنید تا اینجا برای مشاوره و رزرو نگه داشته شود." : "عبارت دیگری امتحان کنید یا فیلترها را پاک کنید."}
-            action={<button type="button" className="press min-h-11 rounded-2xl bg-soft px-5 text-sm font-semibold" onClick={clearAll}>مشاهده همه مدل‌ها</button>}
+            action={<button type="button" className="press min-h-11 rounded-2xl bg-soft px-6 text-sm font-medium" onClick={clearAll}>مشاهده همه مدل‌ها</button>}
           />
         </div>
       ) : (
-        <div className="mt-3 grid grid-cols-2 gap-x-3 gap-y-5 px-5 sm:grid-cols-3">
+        <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-8 px-6 sm:grid-cols-3">
           {visible.map((family, index) => {
             const saved = favSet.has(family.id);
             const picked = compareSet.has(family.id);
@@ -119,10 +125,9 @@ export function LooksScreen() {
                 <button type="button" className="press block w-full text-start" onClick={() => openSheet({ kind: "look", id: family.id })}>
                   <span className="look-image">
                     <img src={lookSrc(family.repId)} alt={family.name} loading="lazy" decoding="async" />
-                    <span className="look-pill">{labelOf(family.category)}</span>
                   </span>
-                  <h3 className="mt-2.5 line-clamp-2 min-h-10 text-[0.82rem] leading-5 font-bold">{family.name}</h3>
-                  <p className="mt-0.5 font-brand text-[0.68rem] tracking-[0.1em] text-muted" dir="ltr">{family.code}</p>
+                  <h3 className="mt-3 line-clamp-2 min-h-10 text-[0.82rem] leading-5">{family.name}</h3>
+                  <p className="mt-0.5 font-brand text-[0.75rem] italic tracking-[0.08em] text-muted" dir="ltr">{family.code}</p>
                 </button>
                 <div className="look-actions">
                   <button

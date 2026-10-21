@@ -40,6 +40,7 @@ type Persisted = {
   bookings?: unknown;
   theme?: unknown;
   profile?: unknown;
+  welcomed?: unknown;
 };
 
 function ids(value: unknown, limit?: number) {
@@ -77,6 +78,8 @@ type SalonState = {
   bookings: BookingRequest[];
   theme: ThemePref;
   profile: { name: string; phone: string };
+  welcomed: boolean;
+  hydrated: boolean;
   filter: string;
   query: string;
   savedOnly: boolean;
@@ -95,6 +98,7 @@ type SalonState = {
   setTheme: (theme: ThemePref) => void;
   setProfile: (profile: Partial<{ name: string; phone: string }>) => void;
   clearData: () => void;
+  welcome: () => void;
   setFilter: (filter: string) => void;
   setQuery: (query: string) => void;
   toggleSaved: () => void;
@@ -104,9 +108,9 @@ type SalonState = {
 
 export const useSalon = create<SalonState>((set, get) => {
   function save() {
-    const { favs, compare, cart, bookings, theme, profile } = get();
+    const { favs, compare, cart, bookings, theme, profile, welcomed } = get();
     try {
-      localStorage.setItem(KEY, JSON.stringify({ favs, compare, cart, bookings, theme, profile }));
+      localStorage.setItem(KEY, JSON.stringify({ favs, compare, cart, bookings, theme, profile, welcomed }));
     } catch {
       /* private mode / quota */
     }
@@ -126,6 +130,8 @@ export const useSalon = create<SalonState>((set, get) => {
     bookings: [],
     theme: "system",
     profile: { name: "", phone: "" },
+    welcomed: false,
+    hydrated: false,
     filter: "all",
     query: "",
     savedOnly: false,
@@ -133,6 +139,7 @@ export const useSalon = create<SalonState>((set, get) => {
       try {
         const raw = localStorage.getItem(KEY);
         if (!raw) return;
+        set({ welcomed: true });
         const data = JSON.parse(raw) as Persisted;
         const profile = data.profile && typeof data.profile === "object" ? (data.profile as Record<string, unknown>) : {};
         set({
@@ -145,9 +152,12 @@ export const useSalon = create<SalonState>((set, get) => {
             name: typeof profile.name === "string" ? profile.name : "",
             phone: typeof profile.phone === "string" ? profile.phone : "",
           },
+          welcomed: data.welcomed !== false,
         });
       } catch {
         /* ignore broken storage */
+      } finally {
+        set({ hydrated: true });
       }
     },
     setTab: (tab) => set({ tab }),
@@ -185,8 +195,9 @@ export const useSalon = create<SalonState>((set, get) => {
       } catch {
         /* ignore */
       }
-      set({ favs: [], compare: [], cart: [], bookings: [], profile: { name: "", phone: "" }, theme: "system", draft: EMPTY_DRAFT });
+      set({ welcomed: false, favs: [], compare: [], cart: [], bookings: [], profile: { name: "", phone: "" }, theme: "system", draft: EMPTY_DRAFT });
     },
+    welcome: () => update({ welcomed: true }),
     setFilter: (filter) => set({ filter, savedOnly: false }),
     setQuery: (query) => set({ query }),
     toggleSaved: () => set((state) => ({ savedOnly: !state.savedOnly, filter: "all" })),

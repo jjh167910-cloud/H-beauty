@@ -42,10 +42,10 @@ export function LookSheet({ open, family, onClose }: { open: boolean; family: Fa
         </div>
       }
     >
-      <div className="px-5 pb-6">
+      <div className="px-6 pb-6">
         <div className="look-hero">
           <img src={lookSrc(imageId)} alt={name} />
-          <div className="absolute top-3 flex gap-2 start-3">
+          <div className="absolute inset-x-0 bottom-4 flex justify-center gap-2">
             <button type="button" className={cn("glass-btn press", saved && "glass-btn-on")} aria-pressed={saved} aria-label={saved ? "حذف از ذخیره‌ها" : "ذخیره"} onClick={() => { haptic(); toggleFav(family.id); if (!saved) toast("به ذخیره‌ها اضافه شد."); }}>
               <Heart className={cn("size-[18px]", saved && "fill-current")} />
             </button>
@@ -68,8 +68,8 @@ export function LookSheet({ open, family, onClose }: { open: boolean; family: Fa
           </div>
         ) : null}
 
-        <p className="mt-5 font-brand text-xs font-semibold tracking-[0.22em] text-accent-deep" dir="ltr">{family.code}</p>
-        <h2 className="mt-1 text-2xl leading-snug font-bold">{name}</h2>
+        <p className="mt-5 font-brand text-xs font-medium tracking-[0.22em] text-accent-deep" dir="ltr">{family.code}</p>
+        <h2 className="mt-1 text-2xl leading-snug font-light tracking-tight">{name}</h2>
         <div className="mt-3 flex flex-wrap gap-1.5">
           {chips.map((chip) => <span key={chip} className="badge">{labelOf(chip)}</span>)}
         </div>

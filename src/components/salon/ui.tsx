@@ -1,4 +1,4 @@
-import { createContext, useContext, type ButtonHTMLAttributes, type ReactNode } from "react";
+import { createContext, useContext, useId, type ButtonHTMLAttributes, type ReactNode } from "react";
 import { X } from "lucide-react";
 import { Drawer } from "vaul";
 import { cn } from "@/lib/cn";
@@ -53,12 +53,12 @@ export function Button({ tone = "soft", size = "md", className, type = "button",
     <button
       type={type}
       className={cn(
-        "press inline-flex items-center justify-center gap-2 rounded-2xl px-5 text-sm font-semibold transition duration-200",
+        "press inline-flex items-center justify-center gap-2 rounded-full px-6 text-sm font-medium tracking-wide transition duration-200",
         size === "lg" ? "min-h-14 text-[0.95rem]" : "min-h-12",
         "disabled:cursor-default disabled:opacity-40 disabled:shadow-none",
-        tone === "solid" && "bg-ink text-on-ink shadow-[0_12px_28px_rgb(20_14_10_/_0.22)]",
-        tone === "accent" && "gold-fill text-on-accent shadow-[0_12px_28px_rgb(150_110_60_/_0.28)]",
-        tone === "ghost" && "border border-border bg-surface text-foreground",
+        tone === "solid" && "bg-ink text-on-ink shadow-[0_14px_30px_-10px_rgb(20_14_10_/_0.45)]",
+        tone === "accent" && "foil text-[#1a140e] shadow-[0_14px_30px_-10px_rgb(150_110_60_/_0.55)]",
+        tone === "ghost" && "border border-foreground/15 bg-transparent text-foreground",
         tone === "soft" && "bg-soft text-foreground",
         className,
       )}
@@ -69,21 +69,56 @@ export function Button({ tone = "soft", size = "md", className, type = "button",
 
 export function Kicker({ children, className }: { children: ReactNode; className?: string }) {
   return (
-    <p className={cn("font-brand text-[0.68rem] font-semibold tracking-[0.22em] text-accent-deep uppercase", className)} dir="ltr">
+    <p className={cn("font-brand text-[0.7rem] font-semibold tracking-[0.28em] text-accent-deep uppercase", className)} dir="ltr">
       {children}
     </p>
   );
 }
 
-export function SectionHead({ title, kicker, action }: { title: string; kicker?: string; action?: ReactNode }) {
+export function SectionHead({ title, kicker, index, action }: { title: string; kicker?: string; index?: string; action?: ReactNode }) {
   return (
-    <div className="mb-3.5 flex items-end justify-between gap-4 px-5">
+    <div className="mb-5 flex items-end justify-between gap-4 px-6">
       <div>
-        {kicker ? <Kicker>{kicker}</Kicker> : null}
-        <h2 className="mt-0.5 text-lg font-bold">{title}</h2>
+        {kicker ? (
+          <p className="flex items-center gap-2 font-brand text-[0.7rem] tracking-[0.28em] text-accent-deep uppercase" dir="ltr">
+            {index ? <span className="italic tracking-normal">{index}</span> : null}
+            {index ? <span className="h-px w-5 bg-accent/50" /> : null}
+            {kicker}
+          </p>
+        ) : null}
+        <h2 className="mt-1.5 text-[1.4rem] leading-snug font-light tracking-tight">{title}</h2>
       </div>
       {action}
     </div>
+  );
+}
+
+/** Hairline rule with a centred diamond — the atelier's signature divider. */
+export function Ornament({ className }: { className?: string }) {
+  return (
+    <div className={cn("ornament", className)} aria-hidden="true">
+      <span />
+      <i />
+      <span />
+    </div>
+  );
+}
+
+/** Circular engraved text seal. */
+export function Seal({ text, className, children }: { text: string; className?: string; children?: ReactNode }) {
+  const id = `seal${useId().replace(/[^a-zA-Z0-9]/g, "")}`;
+  return (
+    <span className={cn("seal", className)} aria-hidden="true">
+      <svg viewBox="0 0 100 100" className="seal-ring" direction="ltr">
+        <defs>
+          <path id={id} d="M50 50 m-38 0 a38 38 0 1 1 76 0 a38 38 0 1 1 -76 0" />
+        </defs>
+        <text>
+          <textPath href={`#${id}`} startOffset="0">{text}</textPath>
+        </text>
+      </svg>
+      <span className="seal-core" dir="ltr">{children}</span>
+    </span>
   );
 }
 
@@ -141,19 +176,20 @@ export function Sheet({
   );
 }
 
-export function Monogram({ name, tone, className }: { name: string; tone: string; className?: string }) {
+export function Monogram({ name, tone, className, arch }: { name: string; tone: string; className?: string; arch?: boolean }) {
   return (
-    <span className={cn("grid place-items-center rounded-full bg-gradient-to-br font-display text-white shadow-[inset_0_0_0_1px_rgb(255_255_255_/_0.25)]", tone, className)}>
-      {name.slice(0, 1)}
+    <span className={cn("relative grid place-items-center overflow-hidden bg-gradient-to-b font-display text-white", arch ? "arch" : "rounded-full", tone, className)}>
+      <span className="monogram-sheen" />
+      <span className="relative">{name.slice(0, 1)}</span>
     </span>
   );
 }
 
 export function EmptyState({ icon, title, text, action }: { icon: ReactNode; title: string; text: string; action?: ReactNode }) {
   return (
-    <div className="mx-5 flex flex-col items-center rounded-3xl border border-dashed border-border px-6 py-12 text-center">
-      <span className="grid size-14 place-items-center rounded-full bg-soft text-accent-deep">{icon}</span>
-      <p className="mt-4 font-bold">{title}</p>
+    <div className="mx-6 flex flex-col items-center px-6 py-14 text-center">
+      <span className="arch grid h-20 w-16 place-items-center border border-accent/40 text-accent-deep">{icon}</span>
+      <p className="mt-5 text-lg font-light">{title}</p>
       <p className="mt-1.5 max-w-xs text-sm leading-7 text-muted">{text}</p>
       {action ? <div className="mt-5">{action}</div> : null}
     </div>

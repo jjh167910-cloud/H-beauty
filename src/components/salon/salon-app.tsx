@@ -8,6 +8,7 @@ import { LooksScreen } from "./screens/looks";
 import { BookingsScreen } from "./screens/bookings";
 import { MeScreen } from "./screens/me";
 import { Sheets } from "./sheets";
+import { Welcome } from "./welcome";
 import { SalonProvider, type BookingIntent, type SalonActions, type SheetState } from "./ui";
 
 function tabFromHash(): Tab {
@@ -34,6 +35,7 @@ export function SalonApp() {
   const hydrate = useSalon((state) => state.hydrate);
   const tab = useSalon((state) => state.tab);
   const setTab = useSalon((state) => state.setTab);
+  const showWelcome = useSalon((state) => state.hydrated && !state.welcomed);
   const [sheet, setSheet] = useState<SheetState>(null);
   const sheetRef = useRef<SheetState>(null);
   const scrolls = useRef<Partial<Record<Tab, number>>>({});
@@ -129,6 +131,7 @@ export function SalonApp() {
         <TabBar />
       </div>
       <Sheets sheet={sheet} onClose={closeSheet} />
+      {showWelcome ? <Welcome /> : null}
       <Toaster
         dir="rtl"
         position="top-center"
