@@ -95,6 +95,8 @@ type SalonState = {
   addBooking: (booking: BookingRequest) => void;
   markSent: (id: string) => void;
   removeBooking: (id: string) => void;
+  /** Re-inserts a deleted booking without touching the cart or draft. */
+  restoreBooking: (booking: BookingRequest) => void;
   setTheme: (theme: ThemePref) => void;
   setProfile: (profile: Partial<{ name: string; phone: string }>) => void;
   clearData: () => void;
@@ -187,6 +189,9 @@ export const useSalon = create<SalonState>((set, get) => {
     addBooking: (booking) => update({ bookings: [booking, ...get().bookings], cart: [], draft: EMPTY_DRAFT }),
     markSent: (id) => update({ bookings: get().bookings.map((item) => (item.id === id ? { ...item, sent: true } : item)) }),
     removeBooking: (id) => update({ bookings: get().bookings.filter((item) => item.id !== id) }),
+    restoreBooking: (booking) => {
+      if (!get().bookings.some((item) => item.id === booking.id)) update({ bookings: [booking, ...get().bookings] });
+    },
     setTheme: (theme) => update({ theme }),
     setProfile: (profile) => update({ profile: { ...get().profile, ...profile } }),
     clearData: () => {

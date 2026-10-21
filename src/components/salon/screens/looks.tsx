@@ -8,6 +8,9 @@ import { Chip, EmptyState, haptic, useSalonActions } from "../ui";
 
 const PAGE_SIZE = 20;
 
+// Survives tab switches so Back can restore the scroll offset over the same number of loaded looks.
+const memory = { count: PAGE_SIZE, key: "" };
+
 const SHORT: Record<string, string> = {
   all: "همه",
   straight: "صاف",
@@ -36,7 +39,8 @@ export function LooksScreen() {
   const clearAll = useSalon((state) => state.clearAll);
   const toggleFav = useSalon((state) => state.toggleFav);
   const toggleCompare = useSalon((state) => state.toggleCompare);
-  const [count, setCount] = useState(PAGE_SIZE);
+  const listKey = `${query}|${filter}|${savedOnly}`;
+  const [count, setCount] = useState(() => (memory.key === listKey ? memory.count : PAGE_SIZE));
   const sentinel = useRef<HTMLDivElement>(null);
 
   const favSet = useMemo(() => new Set(favs), [favs]);
@@ -47,7 +51,16 @@ export function LooksScreen() {
   }, [query, filter, savedOnly, favSet]);
   const visible = list.slice(0, count);
 
-  useEffect(() => setCount(PAGE_SIZE), [query, filter, savedOnly]);
+  useEffect(() => {
+    if (memory.key !== listKey) {
+      memory.key = listKey;
+      setCount(PAGE_SIZE);
+    }
+  }, [listKey]);
+
+  useEffect(() => {
+    memory.count = count;
+  }, [count]);
 
   useEffect(() => {
     const node = sentinel.current;

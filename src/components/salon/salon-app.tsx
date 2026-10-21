@@ -124,7 +124,8 @@ export function SalonApp() {
       openBooking: (intent?: BookingIntent) => {
         const store = useSalon.getState();
         store.resetDraft();
-        if (intent?.service && !store.cart.includes(intent.service)) store.setCart([...store.cart, intent.service]);
+        if (intent?.services) store.setCart(intent.services);
+        else if (intent?.service && !store.cart.includes(intent.service)) store.setCart([...store.cart, intent.service]);
         if (intent?.stylist || intent?.lookId != null) store.setDraft({ stylist: intent.stylist ?? "any", lookId: intent.lookId ?? null });
         openSheet({ kind: "booking" });
       },

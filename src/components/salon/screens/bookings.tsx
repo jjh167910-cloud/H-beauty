@@ -58,7 +58,7 @@ function BookingCard({ booking, past }: { booking: BookingRequest; past: boolean
   const { openBooking } = useSalonActions();
   const markSent = useSalon((state) => state.markSent);
   const removeBooking = useSalon((state) => state.removeBooking);
-  const addBooking = useSalon((state) => state.addBooking);
+  const restoreBooking = useSalon((state) => state.restoreBooking);
   const { items, minutes } = summarize(booking.services);
   const look = booking.lookId != null ? familyById.get(booking.lookId) : null;
   const wa = whatsappLink(bookingMessage(booking));
@@ -75,7 +75,7 @@ function BookingCard({ booking, past }: { booking: BookingRequest; past: boolean
 
   function remove() {
     removeBooking(booking.id);
-    toast("درخواست حذف شد.", { action: { label: "بازگردانی", onClick: () => addBooking(booking) } });
+    toast("درخواست حذف شد.", { action: { label: "بازگردانی", onClick: () => restoreBooking(booking) } });
   }
 
   return (
@@ -101,7 +101,7 @@ function BookingCard({ booking, past }: { booking: BookingRequest; past: boolean
       <p className="sr-only">{longDate(booking.date)}</p>
       <div className="mt-5 flex gap-2 border-t border-foreground/10 pt-4">
         {past ? (
-          <Button tone="soft" className="min-h-11 flex-1" onClick={() => openBooking({ service: booking.services[0], stylist: booking.stylist })}>
+          <Button tone="soft" className="min-h-11 flex-1" onClick={() => openBooking({ services: booking.services, stylist: booking.stylist })}>
             <RotateCcw className="size-4" /> رزرو دوباره
           </Button>
         ) : wa ? (

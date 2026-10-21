@@ -14,7 +14,8 @@ export type SheetState =
   | { kind: "finder" }
   | null;
 
-export type BookingIntent = { service?: string; stylist?: string; lookId?: number };
+/** `services` replaces the cart (rebooking); `service` adds one service to it. */
+export type BookingIntent = { service?: string; services?: string[]; stylist?: string; lookId?: number };
 
 export type SalonActions = {
   go: (tab: Tab) => void;
