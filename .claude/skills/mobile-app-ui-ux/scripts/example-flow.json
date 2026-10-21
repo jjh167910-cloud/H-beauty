@@ -1,0 +1,10 @@
+[
+  { "goto": "/", "eval": "localStorage.clear()", "reload": true, "shot": "first-launch", "wait": 1500 },
+  { "storage": { "key": "hananeh-atelier-v1", "value": { "welcomed": true } }, "shot": "home", "wait": 1000 },
+  { "scroll": 900, "shot": "home-scrolled", "wait": 800 },
+  { "goto": "/#/services", "shot": "services" },
+  { "click": ".tabbar__book", "shot": "booking-sheet", "wait": 900 },
+  { "back": true },
+  { "goto": "/#/looks", "shot": "lookbook" },
+  { "goto": "/#/me", "shot": "profile" }
+]
