@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import { ArrowRight, CalendarCheck2, Check, Clock3, Copy, Send, Sparkles, X } from "lucide-react";
 import { toast } from "sonner";
 import { familyById, lookThumb, persian } from "@/data/catalog";
 import {
@@ -17,10 +16,10 @@ import {
   timeLabel,
   upcomingDays,
 } from "@/data/salon";
-import { cn } from "@/lib/cn";
 import { useSalon, type BookingRequest } from "@/lib/salon-store";
 import { bookingMessage, copyText, shareText, whatsappLink } from "@/lib/share";
-import { Button, Monogram, Sheet, haptic, useSalonActions } from "../ui";
+import { Icon } from "../icons";
+import { Avatar, Button, IconButton, Media, Sheet, haptic, useSalonActions } from "../ui";
 
 const STEPS = ["خدمات", "آرتیست", "زمان", "اطلاعات"];
 const PARTS = { morning: "صبح", afternoon: "ظهر", evening: "عصر" } as const;
@@ -81,164 +80,153 @@ export function BookingSheet({ open, onClose }: { open: boolean; onClose: () => 
 
   if (done) return <BookingDone open={open} booking={done} onClose={onClose} />;
 
-  const back = step > 0 ? (
-    <button type="button" className="icon-btn" onClick={() => setStep(step - 1)} aria-label="مرحله قبل">
-      <ArrowRight className="size-[18px]" />
-    </button>
-  ) : null;
-
   return (
     <Sheet
       open={open}
       onClose={onClose}
       title="رزرو نوبت"
       full
-      leading={back}
+      leading={step > 0 ? <IconButton icon="back" label="مرحله قبل" size="sm" onClick={() => setStep(step - 1)} /> : null}
       footer={
         <div className="flex items-center gap-3">
           <div className="min-w-0 flex-1">
             {cart.length ? (
               <>
-                <p className="truncate text-[0.8rem] font-medium">{persian(cart.length)} خدمت · {formatMinutes(summary.minutes)}</p>
-                <p className="truncate text-[0.72rem] text-muted">{summary.price ? `از ${formatPrice(summary.price)} تومان` : "قیمت پس از مشاوره"}</p>
+                <p className="t-footnote truncate font-medium">{persian(cart.length)} خدمت · {formatMinutes(summary.minutes)}</p>
+                <p className="t-caption truncate text-ink-2">{summary.price ? `از ${formatPrice(summary.price)} تومان` : "قیمت پس از مشاوره"}</p>
               </>
             ) : (
-              <p className="text-xs text-muted">حداقل یک خدمت انتخاب کنید</p>
+              <p className="t-caption text-ink-2">حداقل یک خدمت انتخاب کنید</p>
             )}
           </div>
-          <Button tone="accent" size="lg" className="min-w-36" disabled={!canNext && !(step === 3 && !touched)} onClick={next}>
+          <Button variant="gold" size="lg" className="min-w-36" disabled={!canNext && !(step === 3 && !touched)} onClick={next}>
             {step === 3 ? "ثبت درخواست" : "ادامه"}
           </Button>
         </div>
       }
     >
-      <div className="px-6 pb-6">
-        <ol className="stepper" aria-label="مراحل رزرو">
-          {STEPS.map((label, index) => (
-            <li key={label} className={cn(index < step && "stepper-done", index === step && "stepper-now")} aria-current={index === step ? "step" : undefined}>
-              <span>{index < step ? <Check className="size-3" strokeWidth={3} /> : persian(index + 1)}</span>
-              <small>{label}</small>
-            </li>
-          ))}
-        </ol>
+      <ol className="stepper" aria-label="مراحل رزرو">
+        {STEPS.map((label, index) => (
+          <li key={label} data-done={index < step ? "" : undefined} aria-current={index === step ? "step" : undefined}>
+            <span>{index < step ? <Icon name="check" size={13} weight="bold" /> : persian(index + 1)}</span>
+            {label}
+          </li>
+        ))}
+      </ol>
 
-        {step === 0 ? (
-          <div className="rise mt-6 grid gap-6">
-            {SERVICE_CATEGORIES.map((category) => (
-              <section key={category.key}>
-                <h3 className="mb-2 text-xs font-medium text-muted">{category.label}</h3>
-                <div className="grid gap-2">
-                  {SERVICES.filter((service) => service.category === category.key).map((service) => {
-                    const picked = cart.includes(service.id);
-                    return (
-                      <button key={service.id} type="button" onClick={() => { haptic(); toggleCart(service.id); }} aria-pressed={picked} className={cn("choice press", picked && "choice-on")}>
-                        <span className={cn("check", picked && "check-on")}>{picked ? <Check className="size-3" strokeWidth={3} /> : null}</span>
-                        <span className="min-w-0 flex-1 text-start">
-                          <strong className="block text-sm">{service.title}</strong>
-                          <small className="text-xs text-muted">{formatMinutes(service.minutes)} · {service.price ? `از ${formatPrice(service.price)}` : formatPrice(null)}</small>
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </section>
+      {step === 0 ? (
+        <div className="rise mt-7 grid gap-7">
+          {SERVICE_CATEGORIES.map((category) => (
+            <section key={category.key}>
+              <h3 className="t-caption mb-2.5 flex items-center gap-1.5 text-ink-2"><Icon name={category.key} size={15} />{category.label}</h3>
+              <div className="grid gap-2">
+                {SERVICES.filter((service) => service.category === category.key).map((service) => {
+                  const picked = cart.includes(service.id);
+                  return (
+                    <button key={service.id} type="button" className="choice" aria-pressed={picked} onClick={() => { haptic(); toggleCart(service.id); }}>
+                      <span className="check">{picked ? <Icon name="check" size={13} weight="bold" /> : null}</span>
+                      <span className="min-w-0 flex-1">
+                        <strong className="t-callout block font-medium">{service.title}</strong>
+                        <span className="t-caption text-ink-2">{formatMinutes(service.minutes)} · {service.price ? `از ${formatPrice(service.price)}` : formatPrice(null)}</span>
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </section>
+          ))}
+        </div>
+      ) : null}
+
+      {step === 1 ? (
+        <div className="rise mt-7 grid gap-2.5">
+          <p className="t-callout mb-1 text-ink-2">با کدام آرتیست راحت‌ترید؟</p>
+          <button type="button" className="choice" aria-pressed={draft.stylist === ANY_STYLIST} onClick={() => setDraft({ stylist: ANY_STYLIST })}>
+            <span className="grid size-12 place-items-center rounded-full bg-noir text-champagne"><Icon name="services" size={22} weight="duotone" /></span>
+            <span className="flex-1"><strong className="t-callout block font-medium">اولین آرتیست در دسترس</strong><span className="t-caption text-ink-2">سریع‌ترین زمان ممکن</span></span>
+          </button>
+          {[...STYLISTS]
+            .sort((a, b) => Number(summary.items.some((item) => b.focus.includes(item.category))) - Number(summary.items.some((item) => a.focus.includes(item.category))))
+            .map((stylist) => {
+              const match = summary.items.some((item) => stylist.focus.includes(item.category));
+              return (
+                <button key={stylist.id} type="button" className="choice" aria-pressed={draft.stylist === stylist.id} onClick={() => setDraft({ stylist: stylist.id })}>
+                  <Avatar name={stylist.name} tone={stylist.tone} className="size-12 text-xl" />
+                  <span className="flex-1">
+                    <strong className="t-callout flex items-center gap-2 font-medium">{stylist.name}{match ? <span className="badge">متخصص</span> : null}</strong>
+                    <span className="t-caption text-ink-2">{stylist.role}</span>
+                  </span>
+                </button>
+              );
+            })}
+        </div>
+      ) : null}
+
+      {step === 2 ? (
+        <div className="rise mt-7">
+          <p className="t-headline">{date ? longDate(date) : "روز را انتخاب کنید"}</p>
+          <div className="rail -mx-gutter mt-3 gap-2" role="listbox" aria-label="انتخاب روز">
+            {days.map((day) => (
+              <button key={day.iso} type="button" className="day" disabled={!day.open} aria-pressed={day.iso === date} onClick={() => { haptic(); setDraft({ date: day.iso }); }}>
+                <small>{day.weekday}</small>
+                <strong>{day.day}</strong>
+                <small>{day.open ? day.month : "تعطیل"}</small>
+              </button>
             ))}
           </div>
-        ) : null}
+          {slots.length ? (
+            (Object.keys(PARTS) as Array<keyof typeof PARTS>).map((part) => {
+              const list = slots.filter((slot) => slot.part === part);
+              if (!list.length) return null;
+              return (
+                <section key={part} className="mt-5">
+                  <h3 className="t-caption mb-2 text-ink-2">{PARTS[part]}</h3>
+                  <div className="grid grid-cols-4 gap-2">
+                    {list.map((slot) => (
+                      <button key={slot.time} type="button" className="slot" aria-pressed={draft.time === slot.time} onClick={() => { haptic(); setDraft({ date, time: slot.time }); }}>
+                        {timeLabel(slot.time)}
+                      </button>
+                    ))}
+                  </div>
+                </section>
+              );
+            })
+          ) : (
+            <p className="card t-callout mt-6 text-ink-2" data-variant="sunken">برای این روز زمان آزادی با این مدت خدمت باقی نمانده؛ روز دیگری انتخاب کنید.</p>
+          )}
+          <p className="t-caption mt-5 flex items-start gap-2 text-ink-2"><Icon name="info" size={16} className="mt-0.5 shrink-0" />زمان انتخابی پیشنهاد شماست و پس از هماهنگی، سالن آن را تأیید می‌کند.</p>
+        </div>
+      ) : null}
 
-        {step === 1 ? (
-          <div className="rise mt-6 grid gap-2.5">
-            <p className="mb-1 text-sm text-muted">با چه کسی راحت‌ترید؟</p>
-            <button type="button" onClick={() => setDraft({ stylist: ANY_STYLIST })} aria-pressed={draft.stylist === ANY_STYLIST} className={cn("choice press", draft.stylist === ANY_STYLIST && "choice-on")}>
-              <span className="grid size-12 place-items-center rounded-full bg-ink text-champagne"><Sparkles className="size-5" /></span>
-              <span className="flex-1 text-start"><strong className="block text-sm">اولین آرتیست در دسترس</strong><small className="text-xs text-muted">سریع‌ترین زمان ممکن</small></span>
-            </button>
-            {[...STYLISTS]
-              .sort((a, b) => Number(summary.items.some((item) => b.focus.includes(item.category))) - Number(summary.items.some((item) => a.focus.includes(item.category))))
-              .map((stylist) => {
-                const match = summary.items.some((item) => stylist.focus.includes(item.category));
-                return (
-                  <button key={stylist.id} type="button" onClick={() => setDraft({ stylist: stylist.id })} aria-pressed={draft.stylist === stylist.id} className={cn("choice press", draft.stylist === stylist.id && "choice-on")}>
-                    <Monogram name={stylist.name} tone={stylist.tone} className="size-12 text-xl" />
-                    <span className="flex-1 text-start">
-                      <strong className="flex items-center gap-2 text-sm">{stylist.name}{match ? <span className="badge">متخصص</span> : null}</strong>
-                      <small className="text-xs text-muted">{stylist.role}</small>
-                    </span>
-                  </button>
-                );
-              })}
+      {step === 3 ? (
+        <div className="rise mt-7 grid gap-5">
+          <div className="card grid gap-1" data-variant="sunken">
+            <p className="t-headline">{summary.items.map((item) => item.title).join("، ")}</p>
+            <p className="t-footnote text-ink-2">{longDate(date)} · ساعت {timeLabel(draft.time)}</p>
+            <p className="t-footnote text-ink-2">{stylistName(draft.stylist)} · {formatMinutes(summary.minutes)}</p>
           </div>
-        ) : null}
-
-        {step === 2 ? (
-          <div className="rise mt-6">
-            <p className="text-sm font-medium">{date ? longDate(date) : "روز را انتخاب کنید"}</p>
-            <div className="no-scrollbar -mx-6 mt-3 flex gap-2 overflow-x-auto px-6 pb-1">
-              {days.map((day) => {
-                const active = day.iso === date;
-                return (
-                  <button key={day.iso} type="button" disabled={!day.open} onClick={() => { haptic(); setDraft({ date: day.iso }); }} aria-pressed={active} className={cn("day press", active && "day-on")}>
-                    <small>{day.weekday}</small>
-                    <strong>{day.day}</strong>
-                    <small>{day.open ? day.month : "تعطیل"}</small>
-                  </button>
-                );
-              })}
+          {look ? (
+            <div className="flex items-center gap-3">
+              <Media src={lookThumb(look.repId)} className="arch h-14 w-11 shrink-0" />
+              <span className="min-w-0 flex-1"><span className="t-caption block text-ink-2">مدل منتخب</span><strong className="t-callout block truncate font-medium">{look.name}</strong></span>
+              <IconButton icon="close" label="حذف مدل منتخب" size="sm" variant="tonal" onClick={() => setDraft({ lookId: null })} />
             </div>
-            {slots.length ? (
-              (Object.keys(PARTS) as Array<keyof typeof PARTS>).map((part) => {
-                const list = slots.filter((slot) => slot.part === part);
-                if (!list.length) return null;
-                return (
-                  <section key={part} className="mt-5">
-                    <h3 className="mb-2 text-xs font-medium text-muted">{PARTS[part]}</h3>
-                    <div className="grid grid-cols-4 gap-2">
-                      {list.map((slot) => (
-                        <button key={slot.time} type="button" onClick={() => { haptic(); setDraft({ date, time: slot.time }); }} aria-pressed={draft.time === slot.time} className={cn("slot press", draft.time === slot.time && "slot-on")}>
-                          {timeLabel(slot.time)}
-                        </button>
-                      ))}
-                    </div>
-                  </section>
-                );
-              })
-            ) : (
-              <p className="mt-6 rounded-2xl bg-soft p-4 text-sm text-muted">برای این روز زمان آزادی با این مدت خدمت باقی نمانده؛ روز دیگری انتخاب کنید.</p>
-            )}
-            <p className="mt-5 flex items-start gap-2 text-[0.72rem] leading-6 text-muted"><Clock3 className="mt-1 size-3.5 shrink-0" />زمان انتخابی پیشنهاد شماست و پس از هماهنگی، سالن آن را تأیید می‌کند.</p>
-          </div>
-        ) : null}
-
-        {step === 3 ? (
-          <div className="rise mt-6 grid gap-4">
-            <div className="rounded-2xl bg-soft p-4 text-sm leading-7">
-              <p className="font-medium">{summary.items.map((item) => item.title).join("، ")}</p>
-              <p className="text-muted">{longDate(date)} · ساعت {timeLabel(draft.time)}</p>
-              <p className="text-muted">{stylistName(draft.stylist)} · {formatMinutes(summary.minutes)}</p>
-            </div>
-            {look ? (
-              <div className="flex items-center gap-3 rounded-2xl border border-border p-2.5">
-                <img src={lookThumb(look.repId)} alt="" className="size-12 rounded-xl object-cover" />
-                <span className="min-w-0 flex-1 text-sm"><small className="block text-xs text-muted">مدل منتخب</small><strong className="block truncate">{look.name}</strong></span>
-                <button type="button" className="icon-btn" onClick={() => setDraft({ lookId: null })} aria-label="حذف مدل منتخب"><X className="size-4" /></button>
-              </div>
-            ) : null}
-            <label className="field">
-              <span>نام و نام خانوادگی</span>
-              <input value={name} onChange={(event) => setName(event.target.value)} autoComplete="name" placeholder="نام شما" aria-invalid={touched && !name.trim()} />
-            </label>
-            <label className="field">
-              <span>شماره همراه</span>
-              <input value={phone} onChange={(event) => setPhone(event.target.value)} inputMode="tel" autoComplete="tel" placeholder="۰۹۱۲ ۰۰۰ ۰۰۰۰" dir="ltr" aria-invalid={touched && !validPhone} />
-              {touched && phone && !validPhone ? <small className="text-[#b4483c]">شماره همراه معتبر وارد کنید (مثل ۰۹۱۲۳۴۵۶۷۸۹).</small> : null}
-            </label>
-            <label className="field">
-              <span>توضیحات (اختیاری)</span>
-              <textarea value={draft.note} onChange={(event) => setDraft({ note: event.target.value })} rows={3} placeholder="سابقه رنگ، مراسم، یا هر نکته‌ای که آرتیست باید بداند" />
-            </label>
-          </div>
-        ) : null}
-      </div>
+          ) : null}
+          <label className="field">
+            <span>نام و نام خانوادگی</span>
+            <input value={name} onChange={(event) => setName(event.target.value)} autoComplete="name" placeholder="نام شما" aria-invalid={touched && !name.trim()} />
+          </label>
+          <label className="field">
+            <span>شماره همراه</span>
+            <input value={phone} onChange={(event) => setPhone(event.target.value)} inputMode="tel" autoComplete="tel" placeholder="۰۹۱۲ ۰۰۰ ۰۰۰۰" dir="ltr" aria-invalid={touched && !validPhone} />
+            {touched && phone && !validPhone ? <small className="field__error">شماره همراه معتبر وارد کنید (مثل ۰۹۱۲۳۴۵۶۷۸۹).</small> : null}
+          </label>
+          <label className="field">
+            <span>توضیحات (اختیاری)</span>
+            <textarea value={draft.note} onChange={(event) => setDraft({ note: event.target.value })} placeholder="سابقه رنگ، مراسم، یا هر نکته‌ای که آرتیست باید بداند" />
+          </label>
+        </div>
+      ) : null}
     </Sheet>
   );
 }
@@ -266,35 +254,31 @@ function BookingDone({ open, booking, onClose }: { open: boolean; booking: Booki
       footer={
         <div className="grid gap-2">
           {wa ? (
-            <a href={wa} target="_blank" rel="noreferrer" onClick={() => markSent(booking.id)} className="press foil inline-flex min-h-14 items-center justify-center gap-2 rounded-full text-[#1a140e] text-[0.95rem] font-medium">
-              <Send className="size-5" /> ارسال در واتساپ
+            <a href={wa} target="_blank" rel="noreferrer" onClick={() => markSent(booking.id)} className="btn" data-variant="gold" data-size="lg">
+              <Icon name="whatsapp" size={20} weight="regular" /> ارسال در واتساپ
             </a>
           ) : (
-            <Button tone="accent" size="lg" onClick={send}><Send className="size-5" /> ارسال برای سالن</Button>
+            <Button variant="gold" size="lg" icon="send" onClick={send}>ارسال برای سالن</Button>
           )}
-          <Button tone="soft" onClick={() => go("bookings")}>مشاهده نوبت‌های من</Button>
+          <Button variant="tonal" onClick={() => go("bookings")}>مشاهده نوبت‌های من</Button>
         </div>
       }
     >
-      <div className="px-6 pb-6 text-center">
-        <span className="success-mark foil mx-auto"><CalendarCheck2 className="size-8" strokeWidth={1.6} /></span>
-        <h2 className="mt-5 text-xl font-light tracking-tight">درخواست شما آماده است</h2>
-        <p className="mx-auto mt-2 max-w-sm text-sm leading-7 text-muted">
+      <div className="text-center">
+        <span className="success-mark foil"><Icon name="booked" size={34} weight="duotone" /></span>
+        <h2 className="t-title-2 mt-5">درخواست شما <span className="t-calligraphy text-gold-ink">آماده است</span></h2>
+        <p className="t-callout mx-auto mt-2 max-w-sm text-ink-2">
           این برنامه هنوز به سیستم نوبت‌دهی سالن متصل نیست. برای قطعی شدن نوبت، درخواست را برای سالن بفرستید تا زمان را تأیید کنند.
         </p>
-        <div className="mt-6 rounded-3xl border border-border bg-surface p-4 text-start text-sm leading-7 shadow-card">
-          <p className="font-medium">{items.map((item) => item.title).join("، ")}</p>
-          <p className="text-muted">{longDate(booking.date)} · ساعت {timeLabel(booking.time)}</p>
-          <p className="text-muted">{stylistName(booking.stylist)} · {formatMinutes(minutes)}</p>
-          <p className="mt-2 inline-flex rounded-full bg-soft px-2.5 text-[0.7rem] font-medium text-accent-deep">وضعیت: در انتظار ارسال و تأیید سالن</p>
+        <div className="card mt-6 grid gap-1 text-start">
+          <p className="t-headline">{items.map((item) => item.title).join("، ")}</p>
+          <p className="t-footnote text-ink-2">{longDate(booking.date)} · ساعت {timeLabel(booking.time)}</p>
+          <p className="t-footnote text-ink-2">{stylistName(booking.stylist)} · {formatMinutes(minutes)}</p>
+          <span className="status mt-2" data-tone="garnet">در انتظار ارسال و تأیید سالن</span>
         </div>
-        <button
-          type="button"
-          className="press mx-auto mt-3 inline-flex min-h-11 items-center gap-2 text-sm font-medium text-accent-deep"
-          onClick={async () => toast((await copyText(message)) === "copied" ? "متن درخواست کپی شد." : "کپی ممکن نشد.")}
-        >
-          <Copy className="size-4" /> کپی متن درخواست
-        </button>
+        <Button variant="ghost" icon="copy" className="mt-3" onClick={async () => toast((await copyText(message)) === "copied" ? "متن درخواست کپی شد." : "کپی ممکن نشد.")}>
+          کپی متن درخواست
+        </Button>
       </div>
     </Sheet>
   );

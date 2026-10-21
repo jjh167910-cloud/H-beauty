@@ -8,6 +8,8 @@ import { ServicesScreen } from "./screens/services";
 import { LooksScreen } from "./screens/looks";
 import { BookingsScreen } from "./screens/bookings";
 import { MeScreen } from "./screens/me";
+import { DesignScreen } from "./screens/design";
+import { IconProvider } from "./icons";
 import { Sheets } from "./sheets";
 import { Welcome } from "./welcome";
 import { SalonProvider, type BookingIntent, type SalonActions, type SheetState } from "./ui";
@@ -24,7 +26,7 @@ function useTheme() {
     const apply = () => {
       const dark = theme === "dark" || (theme === "system" && media.matches);
       document.documentElement.dataset.theme = dark ? "dark" : "light";
-      document.querySelector('meta[name="theme-color"]')?.setAttribute("content", dark ? "#0f0d0c" : "#f7f3ee");
+      document.querySelector('meta[name="theme-color"]')?.setAttribute("content", dark ? "#110e0c" : "#f7f2ec");
     };
     apply();
     media.addEventListener("change", apply);
@@ -135,14 +137,16 @@ export function SalonApp() {
 
   return (
     <SalonProvider value={actions}>
-      <div className="app-frame">
+     <IconProvider>
+      <div className="app">
         <TopBar />
-        <main key={tab} className="screen pb-[calc(11rem+env(safe-area-inset-bottom))]">
+        <main key={tab}>
           {tab === "home" ? <HomeScreen /> : null}
           {tab === "services" ? <ServicesScreen /> : null}
           {tab === "looks" ? <LooksScreen /> : null}
           {tab === "bookings" ? <BookingsScreen /> : null}
           {tab === "me" ? <MeScreen /> : null}
+          {tab === "design" ? <DesignScreen /> : null}
         </main>
         <Docks />
         <TabBar />
@@ -155,14 +159,17 @@ export function SalonApp() {
         offset={16}
         toastOptions={{
           style: {
-            background: "var(--color-ink)",
-            color: "var(--color-on-ink)",
+            background: "var(--color-inverse)",
+            color: "var(--color-on-inverse)",
             border: "none",
-            borderRadius: "1rem",
+            borderRadius: "var(--radius-pill)",
+            boxShadow: "var(--shadow-3)",
             fontFamily: "var(--font-sans)",
+            fontSize: "0.8125rem",
           },
         }}
       />
+     </IconProvider>
     </SalonProvider>
   );
 }

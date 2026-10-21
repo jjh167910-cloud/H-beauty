@@ -1,12 +1,11 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type PointerEvent } from "react";
-import { CalendarPlus, ChevronUp, Columns2, Heart, Info, Share2, X } from "lucide-react";
+import { Icon } from "../icons";
 import { toast } from "sonner";
 import { diverseOrder, families, labelOf, lookSrc, lookThumb, matchesFamily, persian, type Family } from "@/data/catalog";
 import { SALON } from "@/data/salon";
-import { cn } from "@/lib/cn";
 import { useSalon } from "@/lib/salon-store";
 import { shareText } from "@/lib/share";
-import { haptic, useSalonActions } from "../ui";
+import { Button, IconButton, haptic, useSalonActions } from "../ui";
 
 const HINT_KEY = "hananeh-discover-hint";
 
@@ -103,74 +102,64 @@ export function Discover({ open, startId, onClose }: { open: boolean; startId: n
   const current = list[active];
 
   return (
-    <div className={cn("discover", !open && "discover-closed")} role="dialog" aria-modal="true" aria-label="کاوش لوک‌ها">
-      <div ref={scroller} className="discover-scroll no-scrollbar" onScroll={onScroll}>
+    <div className="discover" data-closed={open ? undefined : ""} role="dialog" aria-modal="true" aria-label="کاوش لوک‌ها">
+      <div ref={scroller} className="discover__scroll" onScroll={onScroll}>
         {list.map((family, index) => {
           const near = Math.abs(index - active) <= 2;
           // Only slides around the active one carry content; the rest are empty snap stops.
-          if (!near) return <section key={family.id} className="discover-slide" aria-hidden="true" />;
+          if (!near) return <section key={family.id} className="discover__slide" aria-hidden="true" />;
           const saved = favs.includes(family.id);
           const picked = compare.includes(family.id);
           return (
-            <section key={family.id} className="discover-slide" aria-roledescription="اسلاید" aria-label={`${persian(index + 1)} از ${persian(list.length)}: ${family.name}`}>
-              <img className="discover-ambient" src={lookThumb(family.repId)} alt="" aria-hidden="true" />
-              <div className="discover-stage" onPointerUp={(event) => onTap(event, family)}>
-                <div className="discover-frame" data-morph={family.id === startId ? "" : undefined}>
+            <section key={family.id} className="discover__slide" aria-roledescription="اسلاید" aria-label={`${persian(index + 1)} از ${persian(list.length)}: ${family.name}`}>
+              <img className="discover__ambient" src={lookThumb(family.repId)} alt="" aria-hidden="true" />
+              <div className="discover__stage" onPointerUp={(event) => onTap(event, family)}>
+                <div className="discover__frame" data-morph={family.id === startId ? "" : undefined}>
                   <img src={lookThumb(family.repId)} alt={family.name} draggable={false} />
-                  {index === active ? <img className="discover-full" src={lookSrc(family.repId)} alt="" aria-hidden="true" draggable={false} onLoad={(event) => event.currentTarget.classList.add("is-loaded")} /> : null}
+                  {index === active ? <img className="discover__full" src={lookSrc(family.repId)} alt="" aria-hidden="true" draggable={false} onLoad={(event) => event.currentTarget.setAttribute("data-loaded", "")} /> : null}
                 </div>
               </div>
 
-              <div className="discover-info">
-                <p className="font-brand text-xs tracking-[0.3em] text-champagne" dir="ltr">{family.code} · {labelOf(family.category).toUpperCase()}</p>
-                <h2 className="mt-1.5 font-display text-[1.9rem] leading-tight text-white">{family.name}</h2>
+              <div className="discover__info">
+                <p className="t-caption text-champagne"><span dir="ltr">{family.code}</span> · {labelOf(family.category)}</p>
+                <h2 className="t-title-1 mt-1 text-white">{family.name}</h2>
                 <div className="mt-4 flex gap-2">
-                  <button type="button" className="press foil inline-flex min-h-12 items-center gap-2 rounded-full px-5 text-sm font-medium text-[#1a140e]" onClick={() => openBooking({ service: serviceFor(family), lookId: family.id })}>
-                    <CalendarPlus className="size-4" /> رزرو این استایل
-                  </button>
-                  <button type="button" className="press glass-dark inline-flex min-h-12 items-center gap-2 rounded-full px-4 text-sm text-white" onClick={() => openSheet({ kind: "look", id: family.id })}>
-                    <Info className="size-4" /> جزئیات
-                  </button>
+                  <Button variant="gold" icon="book" onClick={() => openBooking({ service: serviceFor(family), lookId: family.id })}>رزرو این استایل</Button>
+                  <Button variant="glass" icon="info" onClick={() => openSheet({ kind: "look", id: family.id })}>جزئیات</Button>
                 </div>
               </div>
 
-              <div className="discover-rail">
-                <button type="button" className={cn("discover-action press", saved && "discover-action-on")} aria-pressed={saved} aria-label={saved ? "حذف از ذخیره‌ها" : "ذخیره"} onClick={() => { haptic(); toggleFav(family.id); }}>
-                  <Heart className={cn("size-[22px]", saved && "fill-current")} strokeWidth={1.6} />
-                </button>
-                <button type="button" className={cn("discover-action press", picked && "discover-action-on")} aria-pressed={picked} aria-label={picked ? "حذف از مقایسه" : "افزودن به مقایسه"} onClick={() => { haptic(); if (toggleCompare(family.id) === "limit") toast("برای مقایسه حداکثر سه مدل انتخاب کنید."); }}>
-                  <Columns2 className="size-[22px]" strokeWidth={1.6} />
-                </button>
-                <button type="button" className="discover-action press" aria-label="اشتراک‌گذاری" onClick={() => share(family)}>
-                  <Share2 className="size-[22px]" strokeWidth={1.6} />
-                </button>
+              <div className="discover__rail">
+                <IconButton icon="heart" variant="glass-dark" size="lg" pressed={saved} label={saved ? "حذف از ذخیره‌ها" : "ذخیره"} onClick={() => { haptic(); toggleFav(family.id); }} />
+                <IconButton icon="compare" variant="glass-dark" size="lg" pressed={picked} label={picked ? "حذف از مقایسه" : "افزودن به مقایسه"} onClick={() => { haptic(); if (toggleCompare(family.id) === "limit") toast("برای مقایسه حداکثر سه مدل انتخاب کنید."); }} />
+                <IconButton icon="share" variant="glass-dark" size="lg" label="اشتراک‌گذاری" onClick={() => share(family)} />
               </div>
             </section>
           );
         })}
       </div>
 
-      <div className="discover-top">
-        <button type="button" className="glass-dark press grid size-11 place-items-center rounded-full text-white" onClick={onClose} aria-label="بستن">
-          <X className="size-5" strokeWidth={1.6} />
-        </button>
-        <div className="discover-progress" aria-hidden="true">
+      <div className="discover__top">
+        <IconButton icon="close" variant="glass-dark" label="بستن" onClick={onClose} />
+        <div className="discover__progress" aria-hidden="true">
           <span style={{ width: `${((active + 1) / list.length) * 100}%` }} />
         </div>
-        <span className="glass-dark rounded-full px-3 py-1.5 text-xs text-white tabular-nums" aria-live="polite">
+        <span className="glass-dark t-caption t-numeric rounded-full px-3 py-1.5" aria-live="polite">
           {persian(active + 1)} / {persian(list.length)}
         </span>
       </div>
 
       {hint && current ? (
-        <div className="discover-hint" aria-hidden="true">
-          <ChevronUp className="size-5" />
+        <div className="discover__hint" aria-hidden="true">
+          <Icon name="up" size={18} />
           <span>برای مدل بعدی بالا بکشید · دو ضربه برای ذخیره</span>
         </div>
       ) : null}
 
       {hearts.map((heart) => (
-        <Heart key={heart.id} className="heart-burst" style={{ left: heart.x, top: heart.y }} fill="currentColor" strokeWidth={0} />
+        <span key={heart.id} className="heart-burst" style={{ left: heart.x, top: heart.y }}>
+          <Icon name="heart" size="100%" weight="fill" />
+        </span>
       ))}
     </div>
   );

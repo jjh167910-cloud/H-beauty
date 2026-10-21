@@ -1,8 +1,8 @@
 # H-beauty — Hananeh Beauty salon app
 
-Luxury, mobile-first Persian (RTL) salon **app**: an installable PWA with a first-launch concierge welcome, floating ink tab bar, native-style bottom sheets and light ("porcelain & champagne") / dark ("noir & gold") themes.
+«حنانه بیوتی» (Hananeh Beauty) — a luxury, mobile-first Persian (RTL) salon **app**: an installable PWA with a first-launch concierge welcome, a Liquid Glass tab bar, native-style bottom sheets and light ("porcelain & champagne") / dark ("noir & gold") themes.
 
-Design language: light-weight Persian display type with calligraphic (Aref Ruqaa) accent words, italic Cormorant numerals, arch-framed imagery, hairline rules and an editorial menu with dot leaders, and a single metallic champagne foil accent reserved for primary actions and seals. Tokens live at the top of `src/styles.css`.
+Design system: **Estedad** for UI text, **Noto Nastaliq** calligraphy for the wordmark and accents, **Bodoni Moda** for Latin, OKLCH colour tokens, Phosphor icons and arch-framed imagery. Full documentation is in [`DESIGN.md`](DESIGN.md); the living style guide is at `#/design` in the app.
 
 ## Modern platform features (all progressive enhancements)
 

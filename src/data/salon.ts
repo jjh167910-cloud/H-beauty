@@ -6,7 +6,7 @@ import { persian } from "./catalog";
  */
 export const SALON = {
   name: "حنانه بیوتی",
-  latin: "HANANEH HAUTE BEAUTÉ",
+  latin: "HANANEH BEAUTY",
   city: "تهران، الهیه",
   address: "برج پالادیوم، طبقه چهارم",
   mapsQuery: "Palladium Tower Elahieh Tehran",
