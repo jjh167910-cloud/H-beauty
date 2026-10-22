@@ -9,7 +9,7 @@ import { Button, IconButton, haptic, useSalonActions } from "./ui";
 const TITLES: Partial<Record<Tab, string>> = {
   services: "منوی خدمات",
   looks: "لوک‌بوک",
-  bookings: "نوبت‌های من",
+  bookings: "درخواست‌های من",
   me: "پروفایل",
   design: "سیستم طراحی",
 };
@@ -60,7 +60,7 @@ const ITEMS: Array<{ tab: Tab; label: string; icon: IconName }> = [
   { tab: "home", label: "خانه", icon: "home" },
   { tab: "services", label: "خدمات", icon: "services" },
   { tab: "looks", label: "لوک‌بوک", icon: "looks" },
-  { tab: "bookings", label: "نوبت‌ها", icon: "bookings" },
+  { tab: "bookings", label: "درخواست‌ها", icon: "bookings" },
 ];
 
 /** True while the user scrolls down past the fold (tab bar minimises). */
@@ -106,7 +106,7 @@ export function TabBar() {
     <nav className="tabbar glass" data-minimized={minimized ? "" : undefined} aria-label="پیمایش اصلی" style={{ "--col": column } as CSSProperties}>
       {column >= 0 ? <span className="tabbar__lens" aria-hidden="true" /> : null}
       {ITEMS.slice(0, 2).map(render)}
-      <button type="button" className="tabbar__book foil" onClick={() => { haptic(); openBooking(); }} aria-label="رزرو نوبت">
+      <button type="button" className="tabbar__book foil" onClick={() => { haptic(); openBooking(); }} aria-label="درخواست نوبت">
         <Icon name="book" size={23} weight="regular" />
       </button>
       {ITEMS.slice(2).map(render)}
@@ -131,7 +131,7 @@ export function Docks() {
           <p className="t-footnote font-medium">{persian(items.length)} خدمت · {formatMinutes(minutes)}</p>
           <p className="t-caption truncate text-ink-2">{price ? `از ${formatPrice(price)} تومان` : "قیمت پس از مشاوره"}{hasUnpriced && price ? " + مشاوره" : ""}</p>
         </div>
-        <Button variant="gold" size="sm" onClick={() => openSheet({ kind: "booking" })}>ادامه رزرو</Button>
+        <Button variant="gold" size="sm" onClick={() => openSheet({ kind: "booking" })}>تکمیل درخواست</Button>
       </div>
     );
   }
