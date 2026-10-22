@@ -66,3 +66,19 @@
 @media(prefers-reduced-motion:reduce) {
   @layer components { .salon25-look-card__action:active {transform:none;} }
 }
+
+/* Tablet: portrait sits alongside the booking pathway rather than filling the viewport. */
+@layer components {.salon26-hero__intro {display:none;}}
+@media(min-width:740px) {
+  @layer components {
+    .salon24-hero {grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:auto auto 1fr;column-gap:1.5rem;align-items:start;}
+    .salon24-hero__stage {grid-column:1;grid-row:1 / span 3;min-width:0;}
+    .salon26-hero__intro {display:grid;grid-column:2;grid-row:1;gap:.5rem;align-content:start;padding-block:.85rem .5rem;}
+    .salon26-hero__intro > span {font:600 .66rem/1.5 var(--font-serif);letter-spacing:.09em;color:var(--color-gold-ink);}
+    .salon26-hero__intro h2 {font-size:clamp(1.1rem,3vw,1.5rem);line-height:1.65;font-weight:720;}
+    .salon26-hero__intro p {font-size:.87rem;line-height:1.9;color:var(--color-ink-2);}
+    .salon24-hero__actions {grid-column:2;grid-row:2;grid-template-columns:1fr;align-self:start;margin-top:.75rem;}
+    .salon24-hero__fine {grid-column:2;grid-row:3;align-self:start;max-width:18rem;}
+    .salon24-hero__photo {aspect-ratio:3/4;max-height:none;}
+  }
+}
