@@ -21,9 +21,9 @@ export function BookingsScreen() {
 
   return (
     <div className="pt-2">
-      <PageHead eyebrow="نوبت‌ها" title="قرارهای" accent="زیبایی شما" lead="درخواست‌ها روی همین دستگاه نگه داشته می‌شوند و پس از ارسال، سالن زمان را تأیید می‌کند." />
+      <PageHead eyebrow="نوبت‌ها" title="درخواست‌های" accent="زیبایی شما" lead="این‌ها درخواستِ زمان هستند، نه نوبت قطعی. فقط تأیید مستقیم سالن زمان را نهایی می‌کند." />
 
-      <div className="chip-row mt-5" role="tablist" aria-label="نمایش نوبت‌ها">
+      <div className="chip-row mt-5" role="group" aria-label="فیلتر درخواست‌های نوبت">
         <Chip active={view === "upcoming"} onClick={() => setView("upcoming")}>پیش رو{upcoming.length ? ` · ${persian(upcoming.length)}` : ""}</Chip>
         <Chip active={view === "past"} onClick={() => setView("past")}>گذشته{past.length ? ` · ${persian(past.length)}` : ""}</Chip>
       </div>
@@ -31,7 +31,7 @@ export function BookingsScreen() {
       {list.length === 0 ? (
         <EmptyState
           icon="book"
-          title={view === "upcoming" ? "نوبت پیش رویی ندارید" : "سابقه‌ای ثبت نشده"}
+          title={view === "upcoming" ? "درخواست پیش رویی ندارید" : "سابقه‌ای ثبت نشده"}
           text="خدمت، آرتیست و زمان دلخواه را انتخاب کنید؛ درخواست آماده ارسال برای سالن می‌شود."
           action={<Button variant="gold" icon="book" onClick={() => openBooking()}>رزرو نوبت</Button>}
         />
