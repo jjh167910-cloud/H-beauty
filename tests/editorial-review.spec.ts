@@ -180,7 +180,7 @@ test("bottom navigation stays visible and navigates to every core screen", async
   await page.goto("/");
   const nav = page.getByRole("navigation", { name: "پیمایش اصلی" });
   await expect(nav).toBeVisible();
-  for (const [label, hash] of [["خدمات", "services"], ["لوک‌بوک", "looks"], ["درخواست‌ها", "bookings"], ["خانه", ""]] as const) {
+  for (const [label, hash] of [["خدمات", "services"], ["مدل‌ها", "looks"], ["نوبت‌ها", "bookings"], ["خانه", ""]] as const) {
     await nav.getByRole("button", { name: label, exact: true }).click();
     await expect(page).toHaveURL(new RegExp(hash ? `#/${hash}$` : `#/$`));
     await expect(nav).toBeVisible();
@@ -197,4 +197,36 @@ test("responsive navigation does not shrink away while scrolling", async ({ page
   await expect(nav).toBeVisible();
   const height = await nav.evaluate((node) => node.getBoundingClientRect().height);
   expect(height).toBeGreaterThanOrEqual(60);
+});
+
+test("salon home has beauty photography and a visible appointment request", async ({ page }) => {
+  await seed(page);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  await expect(page.getByRole("heading", { name: /زیبایی شما/ })).toBeVisible();
+  const hero = page.getByRole("region", { name: "استایل منتخب سالن" });
+  await expect(hero.getByRole("img", { name: /موج/ })).toBeVisible();
+  await expect(hero.getByRole("button", { name: /دیدن مدل .* در لوک‌بوک/ })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "خدمات سالن زیبایی" })).toBeVisible();
+  await expect(page.getByRole("button", { name: /میکاپ مجلسی/ })).toBeVisible();
+  await expect(hero.getByRole("button", { name: "درخواست نوبت" })).toBeVisible();
+  await page.screenshot({ path: "test-results/salon-home-390.png", fullPage: true });
+});
+
+test("salon hero booking enters the connected appointment sheet", async ({ page }) => {
+  await seed(page);
+  await page.goto("/");
+  await page.getByRole("region", { name: "استایل منتخب سالن" }).getByRole("button", { name: "درخواست نوبت" }).click();
+  await expect(page.getByRole("dialog", { name: /درخواست نوبت/ })).toBeVisible();
+});
+
+test("salon brand and photo-led catalog remain legible in dark RTL", async ({ page }) => {
+  await seed(page, { theme: "dark" });
+  await page.setViewportSize({ width: 320, height: 700 });
+  await page.goto("/");
+  await expect(page.locator("html")).toHaveAttribute("dir", "rtl");
+  await expect(page.getByRole("heading", { name: "خدمات سالن زیبایی" })).toBeVisible();
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  expect(overflow).toBeLessThanOrEqual(1);
+  await page.screenshot({ path: "test-results/salon-home-320-dark.png", fullPage: true });
 });
