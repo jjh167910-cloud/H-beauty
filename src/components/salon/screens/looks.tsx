@@ -120,7 +120,7 @@ export function LooksScreen() {
         <EmptyState
           icon={savedOnly ? "heart" : "search"}
           title={savedOnly ? "هنوز مدلی ذخیره نکرده‌اید" : "مدلی پیدا نشد"}
-          text={savedOnly ? "روی قلب هر مدل بزنید تا اینجا برای مشاوره و رزرو نگه داشته شود." : "عبارت دیگری امتحان کنید یا فیلترها را پاک کنید."}
+          text={savedOnly ? "گزینه ذخیره زیر هر تصویر را بزنید تا مدل را برای مشاوره نگه دارید." : "عبارت دیگری امتحان کنید یا فیلترها را پاک کنید."}
           action={<Button variant="tonal" onClick={clearAll}>مشاهده همه مدل‌ها</Button>}
         />
       ) : (
@@ -133,26 +133,28 @@ export function LooksScreen() {
                 <button type="button" className="block w-full text-start" onClick={(event) => openDiscover(family.id, event.currentTarget.querySelector("img"))}>
                   <span className="studio-look-card__frame">
                     <Media src={lookThumb(family.repId)} alt={family.name} loading="lazy" className="look-card__media" />
-                    <span className="studio-look-card__serial" dir="ltr">{family.code}</span>
                   </span>
                   <span className="studio-look-card__copy">
                     <span className="studio-look-card__category">{labelOf(family.category)}</span>
                     <h3 className="t-footnote line-clamp-2 font-medium">{family.name}</h3>
-                    <span className="studio-look-card__view">دیدن استایل <Icon name="chevron" size={15} /></span>
                   </span>
                 </button>
-                <div className="look-card__actions">
-                  <IconButton icon="heart" variant="glass" love pressed={saved} label={saved ? `حذف ${family.name} از ذخیره‌ها` : `ذخیره ${family.name}`} onClick={() => { haptic(); toggleFav(family.id); }} />
-                  <IconButton
-                    icon="compare"
-                    variant="glass"
-                    pressed={picked}
-                    label={picked ? `حذف ${family.name} از مقایسه` : `افزودن ${family.name} به مقایسه`}
+                <div className="salon25-look-card__actions" role="group" aria-label={`گزینه‌های ${family.name}`}>
+                  <button type="button" className="salon25-look-card__action" aria-pressed={saved}
+                    aria-label={saved ? `حذف ${family.name} از ذخیره‌ها` : `ذخیره ${family.name}`}
+                    onClick={() => { haptic(); toggleFav(family.id); }}>
+                    <Icon name="heart" size={16} weight={saved ? "fill" : "regular"} />
+                    <span>{saved ? "ذخیره شد" : "ذخیره"}</span>
+                  </button>
+                  <button type="button" className="salon25-look-card__action" aria-pressed={picked}
+                    aria-label={picked ? `حذف ${family.name} از مقایسه` : `افزودن ${family.name} به مقایسه`}
                     onClick={() => {
                       haptic();
                       if (toggleCompare(family.id) === "limit") toast("برای مقایسه حداکثر سه مدل انتخاب کنید.");
-                    }}
-                  />
+                    }}>
+                    <Icon name="compare" size={16} weight={picked ? "fill" : "regular"} />
+                    <span>{picked ? "انتخاب شد" : "مقایسه"}</span>
+                  </button>
                 </div>
               </article>
             );
