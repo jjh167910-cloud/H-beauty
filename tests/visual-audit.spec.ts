@@ -117,3 +117,40 @@ test("audit all screens at 320px and tablet", async ({ page }) => {
     await capture(page,name);
   }
 });
+
+test("tablet hero keeps photo and booking actions in separate columns", async ({ page }) => {
+  await prepare(page);
+  await page.setViewportSize({ width: 768, height: 1024 });
+  await page.goto("/");
+  const photo = page.locator(".salon24-hero__photo");
+  const action = page.getByRole("region", { name: "استایل منتخب سالن" }).getByRole("button", { name: "درخواست نوبت" });
+  await expect(page.locator(".salon26-hero__intro")).toBeVisible();
+  const pic = await photo.boundingBox();
+  const button = await action.boundingBox();
+  expect(pic && button).toBeTruthy();
+  expect(pic!.height).toBeLessThan(600);
+  expect(pic!.x >= button!.x + button!.width - 1 || button!.x >= pic!.x + pic!.width - 1).toBe(true);
+});
+
+test("mobile action controls meet minimum tap dimensions", async ({ page }) => {
+  await prepare(page);
+  await page.setViewportSize({ width: 320, height: 700 });
+  for (const route of ["/#/services", "/#/looks"]) {
+    await page.goto(route);
+    for (const selector of route.includes("services") ? [".studio-service-item__add", ".chip"] : [".salon25-look-card__action", ".chip"]) {
+      const nodes = page.locator(selector);
+      if (!await nodes.count()) continue;
+      const sizes = await nodes.first().evaluate(node => { const box = node.getBoundingClientRect(); return { width: box.width, height: box.height }; });
+      expect(sizes.width, selector + " width").toBeGreaterThanOrEqual(44);
+      expect(sizes.height, selector + " height").toBeGreaterThanOrEqual(44);
+    }
+  }
+});
+
+test("offline homepage portrait failure has a readable fallback", async ({ page }) => {
+  await prepare(page);
+  await page.route("**/looks/30.webp", route => route.fulfill({status:404,body:"missing"}));
+  await page.goto("/");
+  await expect(page.locator(".salon24-hero__photo")).toHaveAttribute("data-image-error", "true");
+  await expect(page.locator(".salon26-hero__missing")).toBeVisible();
+});
