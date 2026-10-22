@@ -330,3 +330,14 @@ test("look detail controls are outside the full-size image", async ({ page }) =>
   expect(actionsBox).not.toBeNull();
   expect(actionsBox!.y).toBeGreaterThanOrEqual(imageBox!.y + imageBox!.height - 1);
 });
+
+test("unavailable offline hairstyle photos show a fallback instead of endless shimmer", async ({ page }) => {
+  await seed(page);
+  await page.route("**/looks/sm/*.webp", (route) => route.fulfill({ status: 404, contentType: "text/plain", body: "unavailable" }));
+  await page.goto("/#/looks");
+  const failed = page.locator(".studio-look-card .media[data-error]");
+  await expect(failed.first()).toBeVisible();
+  await expect(failed.first().getByText("تصویر در دسترس نیست")).toBeVisible();
+  const animated = await failed.first().evaluate((element) => getComputedStyle(element).animationName);
+  expect(animated).toBe("none");
+});
