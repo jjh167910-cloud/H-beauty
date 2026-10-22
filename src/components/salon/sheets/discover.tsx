@@ -26,7 +26,6 @@ export function Discover({ open, startId, onClose }: { open: boolean; startId: n
   const scroller = useRef<HTMLDivElement>(null);
   const dialog = useRef<HTMLDivElement>(null);
   const lastTap = useRef({ time: 0, x: 0, y: 0 });
-  const [hearts, setHearts] = useState<Array<{ id: number; x: number; y: number }>>([]);
   const [hint, setHint] = useState(() => {
     try {
       return !localStorage.getItem(HINT_KEY);
@@ -112,9 +111,7 @@ export function Discover({ open, startId, onClose }: { open: boolean; startId: n
     lastTap.current.time = 0;
     haptic();
     if (!useSalon.getState().favs.includes(family.id)) toggleFav(family.id);
-    const id = now;
-    setHearts((current) => [...current, { id, x: event.clientX, y: event.clientY }]);
-    window.setTimeout(() => setHearts((current) => current.filter((heart) => heart.id !== id)), 900);
+    toast("مدل به ذخیره‌ها اضافه شد.");
   }
 
   async function share(family: Family) {
@@ -135,7 +132,6 @@ export function Discover({ open, startId, onClose }: { open: boolean; startId: n
           const picked = compare.includes(family.id);
           return (
             <section key={family.id} className="discover__slide" inert={index !== active} aria-hidden={index !== active} aria-roledescription="اسلاید" aria-label={`${persian(index + 1)} از ${persian(list.length)}: ${family.name}`}>
-              <img className="discover__ambient" src={lookThumb(family.repId)} alt="" aria-hidden="true" />
               <div className="discover__stage" onPointerUp={(event) => onTap(event, family)}>
                 <div className="discover__frame" data-morph={family.id === startId ? "" : undefined}>
                   <img src={lookThumb(family.repId)} alt={family.name} draggable={false} />
@@ -179,11 +175,6 @@ export function Discover({ open, startId, onClose }: { open: boolean; startId: n
         </div>
       ) : null}
 
-      {hearts.map((heart) => (
-        <span key={heart.id} className="heart-burst" style={{ left: heart.x, top: heart.y }}>
-          <Icon name="heart" size="100%" weight="fill" />
-        </span>
-      ))}
     </div>
   );
 }
