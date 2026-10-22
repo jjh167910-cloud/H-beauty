@@ -297,3 +297,32 @@ test("featured salon photography contains no icons or caption overlays", async (
   });
   expect(Math.abs(rect.width / rect.height - 0.75)).toBeLessThan(0.025);
 });
+
+test("full-screen discovery keeps its icon controls outside the portrait", async ({ page }) => {
+  await seed(page);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  await page.getByRole("button", { name: /دیدن مدل .* در لوک‌بوک/ }).click();
+  const dialog = page.getByRole("dialog", { name: "کاوش لوک‌ها" });
+  await expect(dialog).toBeVisible();
+  const imageBox = await dialog.locator(".discover__slide:not([inert]) .discover__frame").boundingBox();
+  const railBox = await dialog.locator(".discover__slide:not([inert]) .discover__rail").boundingBox();
+  expect(imageBox).not.toBeNull();
+  expect(railBox).not.toBeNull();
+  expect(railBox!.y).toBeGreaterThanOrEqual(imageBox!.y + imageBox!.height - 1);
+  await expect(dialog.locator(".discover__slide:not([inert]) .discover__frame button")).toHaveCount(0);
+  await page.screenshot({ path: "test-results/discovery-clean-390-v25.png", fullPage: true });
+});
+
+test("look detail controls are outside the full-size image", async ({ page }) => {
+  await seed(page);
+  await page.goto("/#/looks");
+  await page.locator(".studio-look-card > button").first().click();
+  const dialog = page.getByRole("dialog", { name: /.+/ }).filter({ has: page.locator(".studio-look-detail__hero") });
+  await expect(dialog.locator(".salon25-look-detail__tools")).toBeVisible();
+  const imageBox = await dialog.locator(".studio-look-detail__hero").boundingBox();
+  const actionsBox = await dialog.locator(".salon25-look-detail__actions").boundingBox();
+  expect(imageBox).not.toBeNull();
+  expect(actionsBox).not.toBeNull();
+  expect(actionsBox!.y).toBeGreaterThanOrEqual(imageBox!.y + imageBox!.height - 1);
+});
