@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { byRep, lookSrc, lookThumb, persian } from "@/data/catalog";
+import { byRep, lookSrc, lookThumb } from "@/data/catalog";
 import { SERVICES, dayOf, formatPrice, greeting, isPast, longDate, monthOf, summarize, timeLabel } from "@/data/salon";
 import { useSalon } from "@/lib/salon-store";
 import { Icon } from "../icons";
@@ -46,14 +46,11 @@ export function HomeScreen() {
               onClick={(event) => openDiscover(hero.id, event.currentTarget.querySelector("img"))}
               aria-label={`دیدن مدل ${hero.name} در لوک‌بوک`}>
               <img src={lookSrc(hero.repId)} alt={hero.name} fetchPriority="high" />
-              <span className="salon24-hero__shade" aria-hidden="true" />
-              <span className="salon24-hero__badge">از گالری استایل‌ها</span>
-              <span className="salon24-hero__title">
-                <small lang="en">THE BEAUTY EDIT</small>
-                <strong>{hero.name}</strong>
-                <span>برای دیدن جزئیات مدل لمس کنید <Icon name="chevron" size={16} /></span>
-              </span>
             </button>
+            <div className="salon25-hero__caption">
+              <div><span>استایل منتخب سالن</span><h2>{hero.name}</h2></div>
+              <span lang="en">HANANEH BEAUTY</span>
+            </div>
           </div>
           <div className="salon24-hero__actions">
             <Button variant="gold" icon="book" onClick={() => openBooking({ service: "event-styling", lookId: hero.id })}>درخواست نوبت</Button>
