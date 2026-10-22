@@ -230,3 +230,70 @@ test("salon brand and photo-led catalog remain legible in dark RTL", async ({ pa
   expect(overflow).toBeLessThanOrEqual(1);
   await page.screenshot({ path: "test-results/salon-home-320-dark.png", fullPage: true });
 });
+
+test("lookbook photos share uniform 3:4 frames with actions below the images", async ({ page }) => {
+  await seed(page);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/#/looks");
+  const cards = page.locator(".studio-look-card");
+  await expect(cards.first()).toBeVisible();
+  const positions = await cards.evaluateAll((nodes) => nodes.slice(0, 8).map((node) => {
+    const img = node.querySelector(".look-card__media");
+    const actions = node.querySelector(".salon25-look-card__actions");
+    const imageBox = img?.getBoundingClientRect();
+    const actionBox = actions?.getBoundingClientRect();
+    return {
+      width: imageBox?.width ?? 0,
+      height: imageBox?.height ?? 0,
+      imageBottom: imageBox?.bottom ?? 0,
+      actionTop: actionBox?.top ?? 0,
+      overlaid: Boolean(node.querySelector(".studio-look-card__frame .icon-btn, .studio-look-card__frame svg, .studio-look-card__serial")),
+    };
+  }));
+  expect(positions.length).toBeGreaterThanOrEqual(4);
+  for (const p of positions) {
+    expect(Math.abs(p.width / p.height - 0.75)).toBeLessThan(0.025);
+    expect(p.actionTop).toBeGreaterThanOrEqual(p.imageBottom - 1);
+    expect(p.overlaid).toBe(false);
+  }
+  await expect(cards.first().getByRole("button", { name: /^ذخیره / })).toBeVisible();
+  await expect(cards.first().getByRole("button", { name: /^افزودن .* به مقایسه$/ })).toBeVisible();
+  await page.screenshot({ path: "test-results/lookbook-uniform-v25.png", fullPage: true });
+});
+
+test("lookbook save and compare remain functional after moving controls", async ({ page }) => {
+  await seed(page);
+  await page.goto("/#/looks");
+  const first = page.locator(".studio-look-card").first();
+  const save = first.getByRole("button", { name: /^ذخیره / });
+  await save.click();
+  await expect(first.getByRole("button", { name: /^حذف .* از ذخیره‌ها$/ })).toHaveAttribute("aria-pressed", "true");
+  const compare = first.getByRole("button", { name: /^افزودن .* به مقایسه$/ });
+  await compare.click();
+  await expect(first.getByRole("button", { name: /^حذف .* از مقایسه$/ })).toHaveAttribute("aria-pressed", "true");
+});
+
+test("new salon signature logo and vector favicon render", async ({ page }) => {
+  await seed(page);
+  await page.goto("/");
+  await expect(page.locator(".topbar .salon25-brand-mark svg")).toBeVisible();
+  await expect(page.locator('link[rel="icon"][type="image/svg+xml"]')).toHaveAttribute("href", "/icons/hananeh-signature.svg");
+  const response = await page.request.get("/icons/hananeh-signature.svg");
+  expect(response.ok()).toBe(true);
+  expect(await response.text()).toContain('viewBox="0 0 64 64"');
+});
+
+test("featured salon photography contains no icons or caption overlays", async ({ page }) => {
+  await seed(page);
+  await page.goto("/");
+  const hero = page.getByRole("region", { name: "استایل منتخب سالن" });
+  const image = hero.getByRole("button", { name: /دیدن مدل .* در لوک‌بوک/ });
+  await expect(image).toBeVisible();
+  await expect(image.locator("svg")).toHaveCount(0);
+  await expect(hero.locator(".salon25-hero__caption")).toBeVisible();
+  const rect = await image.evaluate((node) => {
+    const box = node.getBoundingClientRect();
+    return { width: box.width, height: box.height };
+  });
+  expect(Math.abs(rect.width / rect.height - 0.75)).toBeLessThan(0.025);
+});
