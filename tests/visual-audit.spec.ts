@@ -95,11 +95,25 @@ test("audit first visit, salon request flow and hairstyle details", async ({ pag
 
 test("audit scrolled home and catalog at mobile viewport", async ({ page }) => {
   await prepare(page);
-  for (const [name,route] of [["home-footer","/"],["lookbook-footer","/#/looks"]] as const) {
+  for (const [name,route] of [["home-footer","/"],["services-footer","/#/services"],["lookbook-footer","/#/looks"],["bookings-footer","/#/bookings"],["profile-footer","/#/me"]] as const) {
     await page.goto(route);
     await settle(page);
     await page.evaluate(() => window.scrollTo(0,document.documentElement.scrollHeight));
     await page.waitForTimeout(350);
+    await capture(page,name);
+  }
+});
+
+test("audit all screens at 320px and tablet", async ({ page }) => {
+  await prepare(page);
+  await page.setViewportSize({width:320,height:700});
+  for (const [name,route] of [["home-320","/"],["services-320","/#/services"],["looks-320","/#/looks"],["bookings-320","/#/bookings"],["profile-320","/#/me"]] as const) {
+    await page.goto(route);
+    await capture(page,name);
+  }
+  await page.setViewportSize({width:768,height:1024});
+  for (const [name,route] of [["home-tablet","/"],["looks-tablet","/#/looks"]] as const) {
+    await page.goto(route);
     await capture(page,name);
   }
 });
