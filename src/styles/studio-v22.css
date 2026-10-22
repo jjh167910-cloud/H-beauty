@@ -225,3 +225,41 @@
     .studio-service-item, .studio-service-item__add { transition:none; }
   }
 }
+
+/* Appointment wizard, style detail, and service detail are part of the same design language. */
+@layer components {
+  .studio-booking-intro {
+    position:relative; display:grid; gap:.45rem; padding:1.15rem 1.1rem;
+    border:1px solid var(--color-line); background:var(--color-sunken);
+    border-radius:var(--radius-lg); margin-block-start:1.2rem; overflow:hidden;
+  }
+  .studio-booking-intro > span { font:.58rem/1.5 var(--font-serif); letter-spacing:.13em; color:var(--color-gold-ink); }
+  .studio-booking-intro h2 { display:flex; align-items:center; justify-content:space-between; gap:.7rem; font-size:1.3rem; font-weight:520; line-height:1.6; }
+  .studio-booking-intro h2 small { font:italic .83rem/1.4 var(--font-serif); color:var(--color-gold-ink); white-space:nowrap; }
+  .studio-booking-intro p { font-size:.73rem; line-height:1.95; color:var(--color-ink-2); }
+  .studio-booking-progress { height:3px; background:var(--color-line); border-radius:3px; overflow:hidden; margin-block-start:.65rem; }
+  .studio-booking-progress span { display:block; height:100%; border-radius:3px; background:var(--color-gold); transition:width 250ms ease; }
+  .studio-booking-choices h3 { color:var(--color-gold-ink); letter-spacing:.01em; }
+  .studio-booking-choices .choice, .studio-booking-artists .choice { border:1px solid var(--color-line); background:var(--color-surface); box-shadow:var(--shadow-1); }
+  .studio-booking-choices .choice[aria-pressed="true"], .studio-booking-artists .choice[aria-pressed="true"] { border-color:var(--color-gold-ink); background:var(--color-sunken); }
+  .studio-booking-dates .day[aria-pressed="true"], .studio-booking-dates .slot[aria-pressed="true"] { box-shadow:inset 0 0 0 1px var(--color-gold-ink); }
+  .studio-booking-details .card { background:var(--color-sunken); border:1px solid var(--color-line); }
+  .studio-booking-complete { background:var(--color-sunken); border:1px solid var(--color-line); border-radius:var(--radius-lg); }
+  .studio-look-detail__header { display:flex; align-items:center; justify-content:space-between; gap:.5rem; margin-block:1rem .85rem; color:var(--color-gold-ink); font:.6rem/1.5 var(--font-serif); letter-spacing:.1em; }
+  .studio-look-detail__hero { box-shadow:var(--shadow-2); }
+  .studio-look-detail__title { font-weight:480; line-height:1.6; }
+  .studio-look-detail__note { margin-block-start:1.2rem; padding:1rem; border-inline-start:2px solid var(--color-gold); color:var(--color-ink-2); background:var(--color-sunken); font-size:.79rem; line-height:1.9; }
+  .studio-service-detail__hero {
+    position:relative; isolation:isolate; overflow:hidden; padding:2.1rem 1.3rem 1.5rem;
+    min-height:14rem; display:grid; gap:.5rem; align-content:end;
+    border-radius:var(--radius-lg);
+    background:radial-gradient(ellipse at 100% 0%,#a9886570,transparent 55%),linear-gradient(135deg,#382e27,#1d1917);
+    color:#f7eddf;
+  }
+  .studio-service-detail__hero::before { content:""; position:absolute; inset:.65rem; border:1px solid #ead6b535; border-radius:calc(var(--radius-lg) - 4px); z-index:-1; }
+  .studio-service-detail__hero > span:first-child { font:.63rem/1.5 var(--font-serif); letter-spacing:.13em; color:#e8cda5; }
+  .studio-service-detail__mark { position:absolute; top:1.1rem; inset-inline-end:1.1rem; opacity:.35; }
+  .studio-service-detail__hero h2 { font-size:1.62rem; font-weight:450; line-height:1.5; max-width:17rem; }
+  .studio-service-detail__hero p { font-size:.75rem; line-height:1.8; color:#e0cfbd; max-width:16rem; }
+  .studio-service-detail__eyebrow { margin-block-start:1.3rem; font-size:.75rem; color:var(--color-gold-ink); }
+}
