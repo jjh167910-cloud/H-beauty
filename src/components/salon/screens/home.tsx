@@ -41,6 +41,10 @@ export function HomeScreen() {
 
       {hero ? (
         <section className="salon24-hero px-gutter" aria-label="استایل منتخب سالن">
+          <div className="salon24-hero__actions">
+            <Button variant="gold" icon="book" onClick={() => openBooking({ service: "event-styling", lookId: hero.id })}>درخواست نوبت</Button>
+            <Button variant="secondary" icon="looks" onClick={() => { clearAll(); go("looks"); }}>گالری مدل مو</Button>
+          </div>
           <div className="salon24-hero__stage">
             <button type="button" className="salon24-hero__photo"
               onClick={(event) => openDiscover(hero.id, event.currentTarget.querySelector("img"))}
@@ -52,10 +56,7 @@ export function HomeScreen() {
               <span lang="en">HANANEH BEAUTY</span>
             </div>
           </div>
-          <div className="salon24-hero__actions">
-            <Button variant="gold" icon="book" onClick={() => openBooking({ service: "event-styling", lookId: hero.id })}>درخواست نوبت</Button>
-            <Button variant="secondary" icon="looks" onClick={() => { clearAll(); go("looks"); }}>گالری مدل مو</Button>
-          </div>
+
           <p className="salon24-hero__fine">زمان انتخابی پیشنهادی است؛ سالن پس از دریافت درخواست آن را تأیید می‌کند.</p>
         </section>
       ) : null}
