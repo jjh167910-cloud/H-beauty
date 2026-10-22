@@ -34,6 +34,35 @@ function useTheme() {
   }, [theme]);
 }
 
+/** Connectivity is only an indicator: cached pages and images vary by device. */
+function OfflineNotice() {
+  const [online, setOnline] = useState(() => navigator.onLine);
+  useEffect(() => {
+    const handleOnline = () => setOnline(navigator.onLine);
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOnline);
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOnline);
+    };
+  }, []);
+  return online ? null : (
+    <p className="atelier-offline" role="status">
+      حالت آفلاین · فقط صفحات و تصاویرِ ذخیره‌شده در این دستگاه در دسترس‌اند.
+    </p>
+  );
+}
+
+/** Failure to write browser storage must never be silently presented as success. */
+function StorageNotice() {
+  const failed = useSalon((state) => state.storageError);
+  return failed ? (
+    <p className="atelier-offline" role="alert">
+      ذخیره‌سازی این دستگاه با خطا روبه‌رو شد. اطلاعات جدید ممکن است پس از بستن برنامه باقی نمانند؛ فضای ذخیره‌سازی یا تنظیمات مرورگر را بررسی کنید.
+    </p>
+  ) : null;
+}
+
 export function SalonApp() {
   const hydrate = useSalon((state) => state.hydrate);
   const tab = useSalon((state) => state.tab);
@@ -138,9 +167,14 @@ export function SalonApp() {
   return (
     <SalonProvider value={actions}>
      <IconProvider>
+      <button type="button" className="atelier-skip" onClick={() => document.getElementById("app-content")?.focus()}>
+        پرش به محتوای اصلی
+      </button>
       <div className="app">
         <TopBar />
-        <main key={tab}>
+        <OfflineNotice />
+        <StorageNotice />
+        <main id="app-content" tabIndex={-1} key={tab}>
           {tab === "home" ? <HomeScreen /> : null}
           {tab === "services" ? <ServicesScreen /> : null}
           {tab === "looks" ? <LooksScreen /> : null}

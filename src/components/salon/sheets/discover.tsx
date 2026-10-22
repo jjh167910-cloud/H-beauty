@@ -24,6 +24,7 @@ export function Discover({ open, startId, onClose }: { open: boolean; startId: n
   const toggleFav = useSalon((state) => state.toggleFav);
   const toggleCompare = useSalon((state) => state.toggleCompare);
   const scroller = useRef<HTMLDivElement>(null);
+  const dialog = useRef<HTMLDivElement>(null);
   const lastTap = useRef({ time: 0, x: 0, y: 0 });
   const [hearts, setHearts] = useState<Array<{ id: number; x: number; y: number }>>([]);
   const [hint, setHint] = useState(() => {
@@ -52,14 +53,36 @@ export function Discover({ open, startId, onClose }: { open: boolean; startId: n
   useEffect(() => {
     if (!open) return;
     const previous = document.body.style.overflow;
+    const priorFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     document.body.style.overflow = "hidden";
+    dialog.current?.querySelector<HTMLButtonElement>('button[aria-label="بستن"]')?.focus();
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
+      if (event.key === "Escape") {
+        event.preventDefault();
+        onClose();
+        return;
+      }
+      if (event.key !== "Tab" || !dialog.current) return;
+      const controls = Array.from(dialog.current.querySelectorAll<HTMLElement>(
+        'button:not(:disabled), a[href], [tabindex]:not([tabindex="-1"])',
+      )).filter((node) => !node.closest("[inert]") && node.getClientRects().length > 0);
+      if (!controls.length) return;
+      const first = controls[0];
+      const last = controls[controls.length - 1];
+      const active = document.activeElement;
+      if (!dialog.current.contains(active) || (event.shiftKey && active === first)) {
+        event.preventDefault();
+        (event.shiftKey ? last : first).focus();
+      } else if (!event.shiftKey && active === last) {
+        event.preventDefault();
+        first.focus();
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => {
       document.body.style.overflow = previous;
       window.removeEventListener("keydown", onKey);
+      if (priorFocus?.isConnected) priorFocus.focus();
     };
   }, [open, onClose]);
 
@@ -102,7 +125,7 @@ export function Discover({ open, startId, onClose }: { open: boolean; startId: n
   const current = list[active];
 
   return (
-    <div className="discover" data-closed={open ? undefined : ""} role="dialog" aria-modal="true" aria-label="کاوش لوک‌ها">
+    <div ref={dialog} className="discover" data-closed={open ? undefined : ""} role="dialog" aria-modal="true" aria-label="کاوش لوک‌ها">
       <div ref={scroller} className="discover__scroll" onScroll={onScroll}>
         {list.map((family, index) => {
           const near = Math.abs(index - active) <= 2;
@@ -111,7 +134,7 @@ export function Discover({ open, startId, onClose }: { open: boolean; startId: n
           const saved = favs.includes(family.id);
           const picked = compare.includes(family.id);
           return (
-            <section key={family.id} className="discover__slide" aria-roledescription="اسلاید" aria-label={`${persian(index + 1)} از ${persian(list.length)}: ${family.name}`}>
+            <section key={family.id} className="discover__slide" inert={index !== active} aria-hidden={index !== active} aria-roledescription="اسلاید" aria-label={`${persian(index + 1)} از ${persian(list.length)}: ${family.name}`}>
               <img className="discover__ambient" src={lookThumb(family.repId)} alt="" aria-hidden="true" />
               <div className="discover__stage" onPointerUp={(event) => onTap(event, family)}>
                 <div className="discover__frame" data-morph={family.id === startId ? "" : undefined}>

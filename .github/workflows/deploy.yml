@@ -36,7 +36,14 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Install browser for release acceptance
+        run: npx playwright install --with-deps chromium
+
+      - name: Verify mobile UI before production
+        run: npm run test:ui
+
       - name: Upload build artifact
+        continue-on-error: true
         uses: actions/upload-artifact@v4
         with:
           name: h-beauty-dist

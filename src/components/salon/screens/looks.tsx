@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import { FAMILY_COUNT, FILTERS, diverseOrder, families, labelOf, lookThumb, matchesFamily, persian } from "@/data/catalog";
 import { useSalon } from "@/lib/salon-store";
 import { Icon } from "../icons";
-import { Button, Chip, EmptyState, IconButton, Media, PageHead, haptic, useSalonActions } from "../ui";
+import { Button, Chip, EmptyState, IconButton, Media, haptic, useSalonActions } from "../ui";
 
 const PAGE_SIZE = 20;
 
@@ -74,15 +74,21 @@ export function LooksScreen() {
   const narrowed = savedOnly || filter !== "all" || Boolean(query.trim());
 
   return (
-    <div className="pt-2">
-      <PageHead
-        eyebrow={`لوک‌بوک · ${persian(FAMILY_COUNT)} استایل`}
-        title="الهام برای"
-        accent="نوبت بعدی"
-        action={list.length ? <Button variant="secondary" size="sm" icon="play" className="enter mb-3 shrink-0" onClick={() => openDiscover(list[0].id)}>تمام‌صفحه</Button> : undefined}
-      />
-
-      <div className="px-gutter pt-5">
+    <div className="studio-page studio-looks pt-2">
+      <header className="studio-head px-gutter">
+        <span className="studio-kicker"><span className="studio-line" /> HANANEH · LOOKBOOK</span>
+        <span className="studio-count">02 / THE ARCHIVE</span>
+        <h1>هر مو، یک <em>امضا</em></h1>
+        <p>آرشیوی برای الهام؛ ${persian(FAMILY_COUNT)} خانواده استایل برای دیدن، ذخیره کردن و گفت‌وگو با آرتیست.</p>
+      </header>
+      <section className="studio-look-tools" aria-label="ابزارهای جست‌وجوی استایل">
+        <div className="studio-look-tools__title px-gutter">
+          <span>آرشیو استایل</span>
+          {list.length ? (
+            <Button variant="secondary" size="sm" icon="play" onClick={() => openDiscover(list[0].id)}>مرور تمام‌صفحه</Button>
+          ) : null}
+        </div>
+      <div className="px-gutter pt-3">
         <label className="search">
           <span className="sr-only">جست‌وجوی مدل</span>
           <Icon name="search" size={20} className="text-ink-3" />
@@ -91,7 +97,7 @@ export function LooksScreen() {
         </label>
       </div>
 
-      <div className="chip-row" data-sticky="" role="toolbar" aria-label="فیلتر گروه‌ها">
+      <div className="chip-row studio-chip-row" data-sticky="" role="group" aria-label="فیلتر گروه‌ها">
         <Chip active={savedOnly} onClick={toggleSaved}>
           <Icon name="heart" size={15} weight={savedOnly ? "fill" : "light"} />
           ذخیره‌ها{favs.length ? ` · ${persian(favs.length)}` : ""}
@@ -103,13 +109,14 @@ export function LooksScreen() {
         ))}
       </div>
 
-      <div className="flex min-h-10 items-center justify-between px-gutter" aria-live="polite">
+      <div className="studio-results-count flex min-h-10 items-center justify-between px-gutter" aria-live="polite">
         <span className="t-caption text-ink-2">
           {savedOnly ? "ذخیره‌ها" : query.trim() ? `«${query.trim()}»` : labelOf(filter)} · <span className="t-numeric">{persian(list.length)}</span> از {persian(FAMILY_COUNT)}
         </span>
         {narrowed ? <Button variant="ghost" size="sm" onClick={clearAll}>نمایش همه</Button> : null}
       </div>
 
+      </section>
       {visible.length === 0 ? (
         <EmptyState
           icon={savedOnly ? "heart" : "search"}
@@ -118,16 +125,22 @@ export function LooksScreen() {
           action={<Button variant="tonal" onClick={clearAll}>مشاهده همه مدل‌ها</Button>}
         />
       ) : (
-        <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-8 px-gutter sm:grid-cols-3">
+        <div className="studio-look-grid mt-3 grid grid-cols-2 gap-x-3 gap-y-8 px-gutter sm:grid-cols-3">
           {visible.map((family, index) => {
             const saved = favSet.has(family.id);
             const picked = compareSet.has(family.id);
             return (
-              <article key={family.id} className="look-card rise" style={{ animationDelay: `${(index % PAGE_SIZE) * 18}ms` }}>
+              <article key={family.id} className="look-card studio-look-card rise" style={{ animationDelay: `${(index % PAGE_SIZE) * 18}ms` }}>
                 <button type="button" className="block w-full text-start" onClick={(event) => openDiscover(family.id, event.currentTarget.querySelector("img"))}>
-                  <Media src={lookThumb(family.repId)} alt={family.name} loading="lazy" className="look-card__media" />
-                  <h3 className="t-footnote mt-3 line-clamp-2 min-h-11 font-medium">{family.name}</h3>
-                  <p className="t-caption mt-0.5 text-ink-3" dir="ltr">{family.code} · {labelOf(family.category)}</p>
+                  <span className="studio-look-card__frame">
+                    <Media src={lookThumb(family.repId)} alt={family.name} loading="lazy" className="look-card__media" />
+                    <span className="studio-look-card__serial" dir="ltr">{family.code}</span>
+                  </span>
+                  <span className="studio-look-card__copy">
+                    <span className="studio-look-card__category">{labelOf(family.category)}</span>
+                    <h3 className="t-footnote line-clamp-2 font-medium">{family.name}</h3>
+                    <span className="studio-look-card__view">دیدن استایل <Icon name="chevron" size={15} /></span>
+                  </span>
                 </button>
                 <div className="look-card__actions">
                   <IconButton icon="heart" variant="glass" love pressed={saved} label={saved ? `حذف ${family.name} از ذخیره‌ها` : `ذخیره ${family.name}`} onClick={() => { haptic(); toggleFav(family.id); }} />

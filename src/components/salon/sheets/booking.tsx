@@ -84,7 +84,7 @@ export function BookingSheet({ open, onClose }: { open: boolean; onClose: () => 
     <Sheet
       open={open}
       onClose={onClose}
-      title="رزرو نوبت"
+      title="درخواست نوبت"
       full
       leading={step > 0 ? <IconButton icon="back" label="مرحله قبل" size="sm" onClick={() => setStep(step - 1)} /> : null}
       footer={
@@ -105,7 +105,21 @@ export function BookingSheet({ open, onClose }: { open: boolean; onClose: () => 
         </div>
       }
     >
-      <ol className="stepper" aria-label="مراحل رزرو">
+      <header className="studio-booking-intro">
+        <span lang="en">HANANEH / YOUR APPOINTMENT</span>
+        <h2>{STEPS[step]} <small>{`۰${step + 1} / ۰۴`}</small></h2>
+        <p>{[
+          "خدمات مورد علاقه را انتخاب کنید؛ می‌توانید چند خدمت را با هم درخواست دهید.",
+          "اگر آرتیست خاصی مدنظر دارید انتخاب کنید، وگرنه گزینه بدون ترجیح را نگه دارید.",
+          "روز و ساعت دلخواه خود را پیشنهاد دهید؛ ساعت‌ها از تقویم سالن استعلام نشده‌اند.",
+          "اطلاعات را تکمیل کنید تا متن درخواست قابل ارسال به سالن آماده شود.",
+        ][step]}</p>
+        <div className="studio-booking-progress" role="progressbar" aria-label="پیشرفت ثبت درخواست"
+          aria-valuemin={0} aria-valuemax={4} aria-valuenow={step + 1}>
+          <span style={{ width: `${((step + 1) / 4) * 100}%` }} />
+        </div>
+      </header>
+      <ol className="stepper" aria-label="مراحل درخواست نوبت">
         {STEPS.map((label, index) => (
           <li key={label} data-done={index < step ? "" : undefined} aria-current={index === step ? "step" : undefined}>
             <span>{index < step ? <Icon name="check" size={13} weight="bold" /> : persian(index + 1)}</span>
@@ -115,7 +129,7 @@ export function BookingSheet({ open, onClose }: { open: boolean; onClose: () => 
       </ol>
 
       {step === 0 ? (
-        <div className="rise mt-7 grid gap-7">
+        <div className="studio-booking-choices rise mt-7 grid gap-7">
           {SERVICE_CATEGORIES.map((category) => (
             <section key={category.key}>
               <h3 className="t-caption mb-2.5 flex items-center gap-1.5 text-ink-2"><Icon name={category.key} size={15} />{category.label}</h3>
@@ -139,7 +153,7 @@ export function BookingSheet({ open, onClose }: { open: boolean; onClose: () => 
       ) : null}
 
       {step === 1 ? (
-        <div className="rise mt-7 grid gap-2.5">
+        <div className="studio-booking-artists rise mt-7 grid gap-2.5">
           <p className="t-callout mb-1 text-ink-2">با کدام آرتیست راحت‌ترید؟</p>
           <button type="button" className="choice" aria-pressed={draft.stylist === ANY_STYLIST} onClick={() => setDraft({ stylist: ANY_STYLIST })}>
             <span className="grid size-12 place-items-center rounded-full bg-noir text-champagne"><Icon name="services" size={22} weight="duotone" /></span>
@@ -163,9 +177,10 @@ export function BookingSheet({ open, onClose }: { open: boolean; onClose: () => 
       ) : null}
 
       {step === 2 ? (
-        <div className="rise mt-7">
+        <div className="studio-booking-dates rise mt-7">
           <p className="t-headline">{date ? longDate(date) : "روز را انتخاب کنید"}</p>
-          <div className="rail -mx-gutter mt-3 gap-2" role="listbox" aria-label="انتخاب روز">
+          <p className="t-caption mt-1 text-ink-2">این ساعت‌ها پیشنهادی هستند و از تقویم واقعی سالن استعلام نشده‌اند.</p>
+          <div className="rail -mx-gutter mt-3 gap-2" role="group" aria-label="انتخاب روز">
             {days.map((day) => (
               <button key={day.iso} type="button" className="day" disabled={!day.open} aria-pressed={day.iso === date} onClick={() => { haptic(); setDraft({ date: day.iso }); }}>
                 <small>{day.weekday}</small>
@@ -192,14 +207,14 @@ export function BookingSheet({ open, onClose }: { open: boolean; onClose: () => 
               );
             })
           ) : (
-            <p className="card t-callout mt-6 text-ink-2" data-variant="sunken">برای این روز زمان آزادی با این مدت خدمت باقی نمانده؛ روز دیگری انتخاب کنید.</p>
+            <p className="card t-callout mt-6 text-ink-2" data-variant="sunken">در ساعت‌های کاری اعلام‌شده، زمان پیشنهادی متناسب با مدت این خدمات باقی نمانده است؛ روز دیگری انتخاب کنید.</p>
           )}
           <p className="t-caption mt-5 flex items-start gap-2 text-ink-2"><Icon name="info" size={16} className="mt-0.5 shrink-0" />زمان انتخابی پیشنهاد شماست و پس از هماهنگی، سالن آن را تأیید می‌کند.</p>
         </div>
       ) : null}
 
       {step === 3 ? (
-        <div className="rise mt-7 grid gap-5">
+        <div className="studio-booking-details rise mt-7 grid gap-5">
           <div className="card grid gap-1" data-variant="sunken">
             <p className="t-headline">{summary.items.map((item) => item.title).join("، ")}</p>
             <p className="t-footnote text-ink-2">{longDate(date)} · ساعت {timeLabel(draft.time)}</p>
@@ -233,16 +248,18 @@ export function BookingSheet({ open, onClose }: { open: boolean; onClose: () => 
 
 function BookingDone({ open, booking, onClose }: { open: boolean; booking: BookingRequest; onClose: () => void }) {
   const { go } = useSalonActions();
-  const markSent = useSalon((state) => state.markSent);
   const { items, minutes } = summarize(booking.services);
   const message = bookingMessage(booking);
   const wa = whatsappLink(message);
 
   async function send() {
     const result = await shareText(message, "درخواست نوبت");
-    if (result === "shared" || result === "copied") {
-      markSent(booking.id);
-      toast(result === "copied" ? "متن کپی شد؛ آن را برای سالن بفرستید." : "درخواست آماده ارسال شد.");
+    if (result === "shared") {
+      toast("اشتراک‌گذاری انجام شد؛ پس از ارسال به سالن وضعیت آن را ثبت کنید.");
+    } else if (result === "copied") {
+      toast("متن کپی شد؛ آن را برای سالن بفرستید.");
+    } else if (result === "failed") {
+      toast("اشتراک‌گذاری ممکن نشد.");
     }
   }
 
@@ -250,17 +267,17 @@ function BookingDone({ open, booking, onClose }: { open: boolean; booking: Booki
     <Sheet
       open={open}
       onClose={onClose}
-      title="درخواست ثبت شد"
+      title="درخواست آماده ارسال است"
       footer={
         <div className="grid gap-2">
           {wa ? (
-            <a href={wa} target="_blank" rel="noreferrer" onClick={() => markSent(booking.id)} className="btn" data-variant="gold" data-size="lg">
+            <a href={wa} target="_blank" rel="noreferrer" className="btn" data-variant="gold" data-size="lg">
               <Icon name="whatsapp" size={20} weight="regular" /> ارسال در واتساپ
             </a>
           ) : (
             <Button variant="gold" size="lg" icon="send" onClick={send}>ارسال برای سالن</Button>
           )}
-          <Button variant="tonal" onClick={() => go("bookings")}>مشاهده نوبت‌های من</Button>
+          <Button variant="tonal" onClick={() => go("bookings")}>مشاهده درخواست‌های من</Button>
         </div>
       }
     >
@@ -270,13 +287,13 @@ function BookingDone({ open, booking, onClose }: { open: boolean; booking: Booki
         <p className="t-callout mx-auto mt-2 max-w-sm text-ink-2">
           این برنامه هنوز به سیستم نوبت‌دهی سالن متصل نیست. برای قطعی شدن نوبت، درخواست را برای سالن بفرستید تا زمان را تأیید کنند.
         </p>
-        <div className="card mt-6 grid gap-1 text-start">
+        <div className="studio-booking-complete card mt-6 grid gap-1 text-start">
           <p className="t-headline">{items.map((item) => item.title).join("، ")}</p>
           <p className="t-footnote text-ink-2">{longDate(booking.date)} · ساعت {timeLabel(booking.time)}</p>
           <p className="t-footnote text-ink-2">{stylistName(booking.stylist)} · {formatMinutes(minutes)}</p>
           <span className="status mt-2" data-tone="garnet">در انتظار ارسال و تأیید سالن</span>
         </div>
-        <Button variant="ghost" icon="copy" className="mt-3" onClick={async () => toast((await copyText(message)) === "copied" ? "متن درخواست کپی شد." : "کپی ممکن نشد.")}>
+        <Button variant="ghost" icon="copy" className="mt-3" onClick={async () => toast((await copyText(message)) === "copied" ? "متن درخواست کپی شد؛ آن را برای سالن بفرستید." : "کپی ممکن نشد.")}>
           کپی متن درخواست
         </Button>
       </div>
