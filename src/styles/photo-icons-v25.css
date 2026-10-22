@@ -198,3 +198,14 @@
     .discover__info .mt-4 {margin-top:.3rem;}
   }
 }
+
+/* Offline-first image fallback: never leave a permanent shimmer on broken media. */
+@layer components {
+  .media[data-error] {animation:none;background:var(--color-sunken);border:1px solid var(--color-line);}
+  .media[data-error] > img {opacity:0;}
+  .media__error {
+    position:absolute;inset:0;display:grid;place-items:center;
+    padding:.65rem;color:var(--color-ink-2);
+    font-size:.7rem;font-weight:600;line-height:1.7;text-align:center;
+  }
+}
