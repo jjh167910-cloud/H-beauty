@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, type Page } from "@playwright/test";
 
 /**
  * Editorial redesign regression checks.
@@ -20,15 +20,17 @@ const fixture = {
   sent: false,
 };
 
-test.beforeEach(async ({ page }) => {
-  await page.addInitScript(({ key }) => {
-    window.localStorage.setItem(key, JSON.stringify({ welcomed: true, theme: "light", bookings: [] }));
-  }, { key: STORAGE });
-});
+async function seed(page: Page, data: Record<string, unknown> = {}) {
+  // One initialization script per test avoids undefined ordering between competing scripts.
+  await page.addInitScript(({ key, state }) => {
+    window.localStorage.setItem(key, JSON.stringify({ welcomed: true, theme: "light", bookings: [], ...state }));
+  }, { key: STORAGE, state: data });
+}
 
 for (const width of [320, 390, 768, 1280]) {
   test(`home has no horizontal overflow at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 850 });
+    await seed(page);
     await page.goto("/");
     await expect(page.getByRole("heading", { name: /زیبایی شما/ })).toBeVisible();
     const overflow = await page.evaluate(() => ({
@@ -41,6 +43,7 @@ for (const width of [320, 390, 768, 1280]) {
 }
 
 test("three mood categories navigate to the catalog with a matching filter", async ({ page }) => {
+  await seed(page);
   await page.goto("/");
   await page.getByRole("button", { name: "دیدن مدل‌های موج‌های نرم" }).click();
   await expect(page).toHaveURL(/#\/looks$/);
@@ -49,9 +52,7 @@ test("three mood categories navigate to the catalog with a matching filter", asy
 
 test("dark theme and Persian RTL remain usable", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 850 });
-  await page.addInitScript(({ key }) => {
-    window.localStorage.setItem(key, JSON.stringify({ welcomed: true, theme: "dark" }));
-  }, { key: STORAGE });
+  await seed(page, { theme: "dark" });
   await page.goto("/");
   await expect(page.locator("html")).toHaveAttribute("dir", "rtl");
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
@@ -59,15 +60,13 @@ test("dark theme and Persian RTL remain usable", async ({ page }) => {
 });
 
 test("sharing alone does not mark a locally stored booking as sent", async ({ page }) => {
-  await page.addInitScript(({ key, booking }) => {
-    window.localStorage.setItem(key, JSON.stringify({
-      welcomed: true, theme: "light", bookings: [booking],
-    }));
+  await seed(page, { bookings: [fixture] });
+  await page.addInitScript(() => {
     Object.defineProperty(navigator, "share", {
       configurable: true,
       value: async () => undefined,
     });
-  }, { key: STORAGE, booking: fixture });
+  });
 
   await page.goto("/#/bookings");
   await expect(page.getByText("پیش‌نویس · ارسال نشده")).toBeVisible();
@@ -81,6 +80,7 @@ test("sharing alone does not mark a locally stored booking as sent", async ({ pa
 });
 
 test("keyboard skip control targets the main page content", async ({ page }) => {
+  await seed(page);
   await page.goto("/");
   await page.keyboard.press("Tab");
   const skip = page.getByRole("button", { name: "پرش به محتوای اصلی" });
