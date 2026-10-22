@@ -160,3 +160,41 @@ test("service selection reaches the full appointment-request wizard", async ({ p
   await expect(page.getByRole("progressbar", { name: /پیشرفت ثبت درخواست/ })).toHaveAttribute("aria-valuenow", "2");
   await expect(page.getByRole("heading", { name: /آرتیست/ })).toBeVisible();
 });
+
+test("first-run welcome is usable and dismisses with an optional name", async ({ page }) => {
+  await seed(page, { welcomed: false });
+  await page.setViewportSize({ width: 320, height: 680 });
+  await page.goto("/");
+  const dialog = page.getByRole("dialog", { name: "به حنانه بیوتی خوش آمدید" });
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByRole("heading", { name: /استایل دلخواهتان/ })).toBeVisible();
+  await dialog.getByRole("textbox", { name: /نام شما/ }).fill("کاربر نمونه");
+  await dialog.getByRole("button", { name: /شروع و مشاهده مدل‌ها/ }).click();
+  await expect(dialog).not.toBeVisible();
+  await expect(page.getByRole("heading", { name: /زیبایی شما/ })).toBeVisible();
+});
+
+test("bottom navigation stays visible and navigates to every core screen", async ({ page }) => {
+  await seed(page);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  const nav = page.getByRole("navigation", { name: "پیمایش اصلی" });
+  await expect(nav).toBeVisible();
+  for (const [label, hash] of [["خدمات", "services"], ["لوک‌بوک", "looks"], ["درخواست‌ها", "bookings"], ["خانه", ""]] as const) {
+    await nav.getByRole("button", { name: label, exact: true }).click();
+    await expect(page).toHaveURL(new RegExp(hash ? `#/${hash}$` : `#/$`));
+    await expect(nav).toBeVisible();
+  }
+});
+
+test("responsive navigation does not shrink away while scrolling", async ({ page }) => {
+  await seed(page);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  await page.waitForTimeout(180);
+  const nav = page.getByRole("navigation", { name: "پیمایش اصلی" });
+  await expect(nav).toBeVisible();
+  const height = await nav.evaluate((node) => node.getBoundingClientRect().height);
+  expect(height).toBeGreaterThanOrEqual(60);
+});

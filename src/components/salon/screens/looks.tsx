@@ -76,10 +76,9 @@ export function LooksScreen() {
   return (
     <div className="studio-page studio-looks pt-2">
       <header className="studio-head px-gutter">
-        <span className="studio-kicker"><span className="studio-line" /> HANANEH · LOOKBOOK</span>
-        <span className="studio-count">02 / THE ARCHIVE</span>
-        <h1>هر مو، یک <em>امضا</em></h1>
-        <p>آرشیوی برای الهام؛ ${persian(FAMILY_COUNT)} خانواده استایل برای دیدن، ذخیره کردن و گفت‌وگو با آرتیست.</p>
+        <span className="studio-kicker">گالری مدل‌های مو</span>
+        <h1>مدل مو <em>و استایل</em></h1>
+        <p>{persian(FAMILY_COUNT)} مدل برای انتخاب. جست‌وجو کنید، سبک دلخواهتان را ذخیره کنید و مدل‌ها را مقایسه کنید.</p>
       </header>
       <section className="studio-look-tools" aria-label="ابزارهای جست‌وجوی استایل">
         <div className="studio-look-tools__title px-gutter">

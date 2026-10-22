@@ -23,8 +23,8 @@ jobs:
         run: npm run typecheck
       - name: Build Vite
         run: npm run build
-      - name: Install Chromium
-        run: npx playwright install --with-deps chromium
+      - name: Verify runner Chrome
+        run: google-chrome --version
       - name: Mobile RTL and booking regression
         run: npm run test:ui
       - name: Upload visual review

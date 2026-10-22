@@ -34,10 +34,9 @@ export function MeScreen() {
   return (
     <div className="studio-page studio-profile pt-2">
       <header className="studio-head px-gutter">
-        <span className="studio-kicker"><span className="studio-line" /> HANANEH · YOUR ATELIER</span>
-        <span className="studio-count">04 / PERSONAL</span>
-        <h1>گوشه‌ای <em>برای شما</em></h1>
-        <p>مدل‌های محبوب، انتخاب‌ها و اطلاعات شما؛ همگی در یک فضای شخصی روی همین دستگاه.</p>
+        <span className="studio-kicker">حساب کاربری</span>
+        <h1>حساب <em>کاربری شما</em></h1>
+        <p>مشخصات، مدل‌های ذخیره‌شده، درخواست‌های نوبت و تنظیمات برنامه را مدیریت کنید.</p>
       </header>
 
       <section className="px-gutter">
