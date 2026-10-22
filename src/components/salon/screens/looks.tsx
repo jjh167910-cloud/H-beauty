@@ -76,8 +76,7 @@ export function LooksScreen() {
   return (
     <div className="studio-page studio-looks pt-2">
       <header className="studio-head px-gutter">
-        <span className="studio-kicker"><span className="studio-line" /> HANANEH · LOOKBOOK</span>
-        <span className="studio-count">02 / THE ARCHIVE</span>
+        <span className="studio-kicker">گالری مدل‌های مو</span>
         <h1>مدل مو <em>و استایل</em></h1>
         <p>{persian(FAMILY_COUNT)} مدل برای انتخاب. جست‌وجو کنید، سبک دلخواهتان را ذخیره کنید و مدل‌ها را مقایسه کنید.</p>
       </header>
