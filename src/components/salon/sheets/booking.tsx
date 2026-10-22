@@ -263,7 +263,7 @@ function BookingDone({ open, booking, onClose }: { open: boolean; booking: Booki
           ) : (
             <Button variant="gold" size="lg" icon="send" onClick={send}>ارسال برای سالن</Button>
           )}
-          <Button variant="tonal" onClick={() => { onClose(); go("bookings"); }}>مشاهده درخواست‌های من</Button>
+          <Button variant="tonal" onClick={() => go("bookings")}>مشاهده درخواست‌های من</Button>
         </div>
       }
     >
