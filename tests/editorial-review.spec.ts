@@ -129,3 +129,32 @@ test("home reflows at 200 percent text scaling", async ({ page }) => {
   expect(overflow).toBeLessThanOrEqual(1);
   await page.screenshot({ path: "test-results/home-390-text-200.png", fullPage: true });
 });
+
+for (const tab of ["services", "looks", "bookings", "me"] as const) {
+  for (const width of [320, 390]) {
+    test(`${tab} page has clear heading and no sideways scrolling at ${width}px`, async ({ page }) => {
+      await seed(page);
+      await page.setViewportSize({ width, height: 844 });
+      await page.goto(`/#/${tab}`);
+      await expect(page.locator("main h1")).toBeVisible();
+      const metrics = await page.evaluate(() => ({
+        document: document.documentElement.scrollWidth,
+        viewport: document.documentElement.clientWidth,
+      }));
+      expect(metrics.document).toBeLessThanOrEqual(metrics.viewport + 1);
+      await page.screenshot({ path: `test-results/${tab}-${width}-light.png`, fullPage: true });
+    });
+  }
+}
+
+test("service selection reaches the full appointment-request wizard", async ({ page }) => {
+  await seed(page);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/#/services");
+  const add = page.getByRole("button", { name: /^افزودن .* به انتخاب‌ها$/ }).first();
+  await add.click();
+  await expect(page.getByRole("button", { name: /تکمیل درخواست/ })).toBeVisible();
+  await page.getByRole("button", { name: /تکمیل درخواست/ }).click();
+  await expect(page.getByRole("dialog", { name: /درخواست نوبت/ })).toBeVisible();
+  await expect(page.getByRole("progressbar", { name: /پیشرفت ثبت درخواست/ })).toHaveAttribute("aria-valuenow", "1");
+});
