@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { FAMILY_COUNT, byRep, lookSrc, lookThumb, persian } from "@/data/catalog";
+import { byRep, lookSrc, lookThumb, persian } from "@/data/catalog";
 import { SALON, SERVICES, STYLISTS, dayOf, formatPrice, greeting, isPast, longDate, monthOf, openStatus, stylistName, summarize, timeLabel } from "@/data/salon";
 import { useSalon } from "@/lib/salon-store";
 import { Icon } from "../icons";
@@ -15,6 +15,12 @@ const CURATED = [
   { repId: 125, label: "پیکسی مدرن" },
 ];
 
+const MOODS = [
+  { id: 30, filter: "waves", label: "موج‌های نرم", en: "SOFT WAVES" },
+  { id: 84, filter: "curly", label: "فرِ پرحجم", en: "CURL STORY" },
+  { id: 77, filter: "braid", label: "بافتِ خلاق", en: "BRAID EDIT" },
+] as const;
+
 const EXPERIENCE = [
   { title: "مشاوره", text: "گفت‌وگوی بی‌عجله درباره فرم چهره، جنس مو و حسی که می‌خواهید." },
   { title: "ریچوال", text: "شست‌وشوی آرامش‌بخش، ماساژ سر و اجرای دقیق توسط آرتیست ارشد." },
@@ -25,45 +31,52 @@ export function HomeScreen() {
   const { go, openSheet, openBooking, openDiscover } = useSalonActions();
   const name = useSalon((state) => state.profile.name.trim());
   const bookings = useSalon((state) => state.bookings);
+  const clearAll = useSalon((state) => state.clearAll);
+  const setFilter = useSalon((state) => state.setFilter);
   const hero = byRep(30);
   const status = openStatus();
   const next = useMemo(
     () => bookings.filter((item) => !isPast(item.date, item.time)).sort((a, b) => `${a.date}${a.time}`.localeCompare(`${b.date}${b.time}`))[0],
     [bookings],
   );
-  const braid = byRep(77);
 
   return (
     <div className="grid grid-cols-1 gap-[var(--spacing-section)] pt-2">
-      <section className="px-gutter">
-        <p className="enter flex flex-wrap items-center gap-x-3 gap-y-1">
-          <span className="t-footnote text-ink-2">{greeting()}{name ? `، ${name.split(" ")[0]}` : ""}</span>
+      <section className="atelier-heading px-gutter">
+        <div className="atelier-heading__meta enter">
+          <span className="t-footnote">{greeting()}{name ? `، ${name.split(" ")[0]}` : ""}</span>
           <span className="status" data-tone={status.open ? "sage" : "garnet"}>{status.label}</span>
-        </p>
-        <h1 className="t-display enter mt-3" style={{ animationDelay: "60ms" }}>
-          زیبایی،
+        </div>
+        <p className="atelier-heading__index enter" lang="en">HANANEH · THE ATELIER</p>
+        <h1 className="atelier-heading__title enter mt-3" style={{ animationDelay: "60ms" }}>
+          زیبایی شما،
           <br />
-          <span className="t-calligraphy text-[0.95em] text-gold-ink">به امضای شما</span>
+          <span className="t-calligraphy text-gold-ink">امضای شما</span>
         </h1>
+        <p className="atelier-heading__lead enter" style={{ animationDelay: "110ms" }}>
+          از اولین جرقهٔ الهام تا انتخاب استایل و درخواست نوبت؛ تجربه‌ای شخصی با سلیقهٔ شما.
+        </p>
       </section>
 
       {hero ? (
-        <section className="enter relative px-gutter" style={{ animationDelay: "140ms" }}>
-          <button type="button" className="hero" onClick={(event) => openDiscover(hero.id, event.currentTarget.querySelector("img"))} aria-label={`مشاهده ${hero.name}`}>
+        <section className="atelier-hero-wrap enter px-gutter" style={{ animationDelay: "140ms" }}>
+          <button type="button" className="hero atelier-hero" onClick={(event) => openDiscover(hero.id, event.currentTarget.querySelector("img"))} aria-label={`دیدن مدل ${hero.name} در لوک‌بوک`}>
             <img src={lookSrc(hero.repId)} alt={hero.name} fetchPriority="high" className="absolute inset-0 size-full object-cover" />
-            <span className="hero__shade" />
-            <span className="hero__caption">
-              <span className="t-caption text-champagne">استایل هفته</span>
-              <span className="t-title-1 mt-1 block font-light">{hero.name}</span>
+            <span className="atelier-hero__vignette" aria-hidden="true" />
+            <span className="atelier-hero__edge" lang="en" aria-hidden="true">THE EDIT · 001</span>
+            <span className="atelier-hero__caption">
+              <span className="t-latin text-champagne" lang="en">LOOK OF THE WEEK</span>
+              <span className="t-title-1 block font-light">{hero.name}</span>
+              <span className="t-caption text-white/85">برای دیدن جزئیات لمس کنید</span>
             </span>
           </button>
           <Seal text="HANANEH BEAUTY · TEHRAN · " className="-top-5 start-3">
             <span className="font-serif text-[0.6rem] italic">N°</span>
             <span className="font-serif text-lg">{hero.code.slice(-2)}</span>
           </Seal>
-          <div className="mt-5 flex items-center justify-between gap-3">
-            <p className="t-footnote text-ink-2">موج نرم و درخششی<br />که تا آخر شب می‌ماند.</p>
-            <Button variant="gold" orb onClick={() => openBooking({ service: "event-styling", lookId: hero.id })}>رزرو این استایل</Button>
+          <div className="atelier-hero-actions">
+            <p className="atelier-hero-actions__copy">از آرشیو الهام بگیرید؛ با انتخاب مدل، مشاورهٔ شخصی خود را آغاز کنید.</p>
+            <Button variant="gold" orb onClick={() => openBooking({ service: "event-styling", lookId: hero.id })}>درخواست این استایل</Button>
           </div>
         </section>
       ) : null}
@@ -85,28 +98,56 @@ export function HomeScreen() {
         </section>
       ) : null}
 
-      <section className="reveal-on-scroll bento px-gutter" aria-label="دسترسی سریع">
-        <button type="button" className="bento__tile" data-tall="" onClick={(event) => openDiscover(braid?.id ?? 1, event.currentTarget.querySelector("img"))}>
-          <img src={lookThumb(77)} alt="" loading="lazy" />
-          <span className="mt-auto">
-            <span className="glass-dark inline-grid size-10 place-items-center rounded-full"><Icon name="play" size={16} weight="fill" /></span>
-            <strong className="t-title-3 mt-3 block font-normal">کاوش لوک‌ها</strong>
-            <span className="t-caption text-white/70">{persian(FAMILY_COUNT)} استایل · بکشید و ببینید</span>
-          </span>
-        </button>
-        <button type="button" className="bento__tile foil" onClick={() => openBooking()}>
-          <Icon name="book" size={28} weight="duotone" />
-          <span className="mt-auto"><strong className="t-headline block">رزرو نوبت</strong><span className="t-caption opacity-70">در چهار قدم ساده</span></span>
-        </button>
-        <button type="button" className="bento__tile card" data-variant="inverse" onClick={() => openSheet({ kind: "finder" })}>
-          <Icon name="finder" size={28} weight="duotone" className="text-champagne" />
-          <span className="mt-auto"><strong className="t-headline block font-normal">استایل‌یاب</strong><span className="t-caption text-white/60">مدل مناسب چهره‌تان</span></span>
-        </button>
-        <button type="button" className="bento__tile glass" data-wide="" onClick={() => openSheet({ kind: "consult" })}>
-          <span className="list-row__icon"><Icon name="consult" size={22} weight="duotone" /></span>
-          <span className="flex-1"><strong className="t-headline block font-normal">مشاوره خصوصی با آرتیست</strong><span className="t-caption text-ink-2">مدل‌های منتخبتان را بفرستید</span></span>
-          <Icon name="chevron" size={18} className="text-ink-3" />
-        </button>
+      <section className="atelier-mood reveal-on-scroll px-gutter" aria-labelledby="mood-title">
+        <div className="atelier-mood__intro">
+          <div>
+            <p className="t-eyebrow">THE LOOK EDIT / انتخاب شما</p>
+            <h2 id="mood-title" className="t-title-1 mt-1">امروز کدام <span className="text-gold-ink">حال‌وهوا</span> را دوست دارید؟</h2>
+          </div>
+        </div>
+        <div className="atelier-mood__cards">
+          {MOODS.map((mood) => (
+            <button key={mood.filter} type="button" className="atelier-mood__card" onClick={() => {
+              clearAll();
+              setFilter(mood.filter);
+              go("looks");
+            }} aria-label={`دیدن مدل‌های ${mood.label}`}>
+              <img src={lookThumb(mood.id)} loading="lazy" alt="" />
+              <span className="atelier-mood__caption">
+                <strong>{mood.label}</strong>
+                <small lang="en">{mood.en}</small>
+              </span>
+            </button>
+          ))}
+        </div>
+        <div className="atelier-mood__footer">
+          <span>مدل دلخواهتان را ذخیره یا با دو مدل دیگر مقایسه کنید.</span>
+          <TextLink onClick={() => { clearAll(); go("looks"); }}>تمام لوک‌بوک</TextLink>
+        </div>
+      </section>
+
+      <section className="reveal-on-scroll px-gutter" aria-labelledby="journey-title">
+        <div className="mb-4">
+          <p className="t-eyebrow">گام بعدی</p>
+          <h2 id="journey-title" className="t-title-2">انتخابتان را به واقعیت نزدیک‌تر کنید</h2>
+        </div>
+        <div className="atelier-journeys">
+          <button type="button" className="atelier-journey" data-primary="" onClick={() => openBooking()}>
+            <span className="atelier-journey__number" lang="en">01</span>
+            <span><strong className="atelier-journey__title">درخواست نوبت</strong><span className="atelier-journey__note">خدمات، آرتیست و زمان دلخواه</span></span>
+            <Icon name="book" size={22} weight="light" className="text-champagne" />
+          </button>
+          <button type="button" className="atelier-journey" onClick={() => openSheet({ kind: "consult" })}>
+            <span className="atelier-journey__number" lang="en">02</span>
+            <span><strong className="atelier-journey__title">مشاورهٔ استایل</strong><span className="atelier-journey__note">انتخاب‌هایتان را با آرتیست مطرح کنید</span></span>
+            <Icon name="consult" size={22} weight="light" className="text-gold-ink" />
+          </button>
+          <button type="button" className="atelier-journey" data-wide="" onClick={() => openSheet({ kind: "finder" })}>
+            <span className="atelier-journey__number" lang="en">03</span>
+            <span className="min-w-0 flex-1"><strong className="atelier-journey__title">هنوز مطمئن نیستید؟ استایل‌یاب را امتحان کنید</strong><span className="atelier-journey__note">با سه پرسش، چند پیشنهاد متناسب با سلیقه‌تان ببینید؛ بدون ادعای شبیه‌سازی هوش مصنوعی.</span></span>
+            <Icon name="finder" size={24} weight="duotone" className="text-gold-ink" />
+          </button>
+        </div>
       </section>
 
       <section className="reveal-on-scroll">
@@ -171,21 +212,6 @@ export function HomeScreen() {
             </li>
           ))}
         </ol>
-      </section>
-
-      <section className="reveal-on-scroll px-gutter">
-        <div className="card" data-variant="inverse">
-          <div className="relative flex items-center gap-4">
-            <span className="min-w-0 flex-1">
-              <span className="t-eyebrow text-champagne">استایل‌یاب</span>
-              <strong className="t-title-2 mt-1 block">مدل متناسب با فرم چهره‌تان</strong>
-              <span className="t-caption text-white/60">سه پرسش کوتاه، سه پیشنهاد اختصاصی</span>
-            </span>
-            <button type="button" className="icon-btn text-champagne ring-1 ring-champagne/40" style={{ boxShadow: "none" }} onClick={() => openSheet({ kind: "finder" })} aria-label="شروع استایل‌یاب">
-              <Icon name="forward" size={20} />
-            </button>
-          </div>
-        </div>
       </section>
 
       <section className="reveal-on-scroll px-gutter">
