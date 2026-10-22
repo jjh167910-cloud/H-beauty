@@ -24,8 +24,8 @@ export function BookingsScreen() {
       <header className="studio-head px-gutter">
         <span className="studio-kicker"><span className="studio-line" /> HANANEH · APPOINTMENTS</span>
         <span className="studio-count">03 / YOUR VISITS</span>
-        <h1>لحظه‌ای <em>برای خودتان</em></h1>
-        <p>درخواست‌های زمان را اینجا نگه دارید و پس از ارسال مستقیم به سالن پیگیری کنید. هیچ ساعتی تا تأیید سالن رزرو قطعی نیست.</p>
+        <h1>درخواست‌های <em>نوبت شما</em></h1>
+        <p>درخواست‌های ارسال‌شده و آماده ارسال را اینجا ببینید. نوبت فقط پس از تأیید سالن قطعی است.</p>
       </header>
 
       <section className="px-gutter">
