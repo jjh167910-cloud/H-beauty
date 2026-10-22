@@ -30,14 +30,17 @@ export function ServiceSheet({ open, service, onClose }: { open: boolean; servic
           >
             {picked ? "انتخاب شد" : "افزودن"}
           </Button>
-          <Button variant="gold" size="lg" className="flex-1" onClick={() => openBooking({ service: service.id })}>رزرو این خدمت</Button>
+          <Button variant="gold" size="lg" className="flex-1" onClick={() => openBooking({ service: service.id })}>درخواست این خدمت</Button>
         </div>
       }
     >
-      <span className="list-row__icon size-14"><Icon name={service.category} size={28} weight="duotone" /></span>
-      <p className="t-latin mt-5 text-gold-ink">{service.en}</p>
-      <h2 className="t-title-1 mt-1">{service.title}</h2>
-      <p className="t-body mt-2 text-ink-2">{service.detail}</p>
+      <div className="studio-service-detail__hero">
+        <span lang="en">{service.en}</span>
+        <span className="studio-service-detail__mark" aria-hidden="true"><Icon name={service.category} size={44} weight="duotone" /></span>
+        <h2>{service.title}</h2>
+        <p>{service.detail}</p>
+      </div>
+      <p className="studio-service-detail__eyebrow">خدمت انتخابی · اطلاعات و شرایط</p>
 
       <div className="mt-6 grid grid-cols-2 border-y border-line">
         <div className="py-4 pe-4">
