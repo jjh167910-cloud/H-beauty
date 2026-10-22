@@ -156,5 +156,7 @@ test("service selection reaches the full appointment-request wizard", async ({ p
   await expect(page.getByRole("button", { name: /تکمیل درخواست/ })).toBeVisible();
   await page.getByRole("button", { name: /تکمیل درخواست/ }).click();
   await expect(page.getByRole("dialog", { name: /درخواست نوبت/ })).toBeVisible();
-  await expect(page.getByRole("progressbar", { name: /پیشرفت ثبت درخواست/ })).toHaveAttribute("aria-valuenow", "1");
+  // Choosing services in the catalog intentionally starts the wizard at step 2 (stylist).
+  await expect(page.getByRole("progressbar", { name: /پیشرفت ثبت درخواست/ })).toHaveAttribute("aria-valuenow", "2");
+  await expect(page.getByRole("heading", { name: /آرتیست/ })).toBeVisible();
 });
