@@ -132,7 +132,7 @@
 }
 @media(min-width:740px) {
   @layer components {
-    .salon24-hero__photo {aspect-ratio:4/5;max-height:35rem;}
+    .salon24-hero__photo {aspect-ratio:3/4;max-height:none;}
     .salon25-look-card__action {font-size:.78rem;}
   }
 }
