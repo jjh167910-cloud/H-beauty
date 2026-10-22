@@ -318,10 +318,14 @@ test("look detail controls are outside the full-size image", async ({ page }) =>
   await seed(page);
   await page.goto("/#/looks");
   await page.locator(".studio-look-card > button").first().click();
-  const dialog = page.getByRole("dialog", { name: /.+/ }).filter({ has: page.locator(".studio-look-detail__hero") });
-  await expect(dialog.locator(".salon25-look-detail__tools")).toBeVisible();
-  const imageBox = await dialog.locator(".studio-look-detail__hero").boundingBox();
-  const actionsBox = await dialog.locator(".salon25-look-detail__actions").boundingBox();
+  const discovery = page.getByRole("dialog", { name: "کاوش لوک‌ها" });
+  await expect(discovery).toBeVisible();
+  await discovery.getByRole("button", { name: "جزئیات" }).click();
+  const detail = page.locator(".studio-look-detail__hero");
+  await expect(detail).toBeVisible();
+  await expect(page.locator(".salon25-look-detail__tools")).toBeVisible();
+  const imageBox = await detail.boundingBox();
+  const actionsBox = await page.locator(".salon25-look-detail__actions").boundingBox();
   expect(imageBox).not.toBeNull();
   expect(actionsBox).not.toBeNull();
   expect(actionsBox!.y).toBeGreaterThanOrEqual(imageBox!.y + imageBox!.height - 1);
