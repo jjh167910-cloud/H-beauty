@@ -209,3 +209,29 @@
     font-size:.7rem;font-weight:600;line-height:1.7;text-align:center;
   }
 }
+
+/* Visual QA: prevent a very tall portrait from hiding the primary booking CTA. */
+@layer components {
+  .salon24-hero__actions {order:-1;}
+  .salon24-hero__photo {background:var(--color-sunken);}
+  .salon24-hero__actions .btn {min-height:3.05rem;font-weight:660;}
+  .salon24-service-row__copy {min-width:0;}
+  .salon24-service-row__price {white-space:normal;max-width:6.25rem;min-width:0;}
+  .studio-look-card {min-width:0;}
+  .studio-look-card__frame,.studio-look-card .look-card__media {width:100%;max-width:100%;}
+  .salon25-look-card__action {min-height:2.85rem;}
+  .studio-profile__field input {min-width:0;width:100%;max-width:100%;}
+  .salon25-look-detail__actions .salon25-look-card__action {min-height:2.85rem;}
+  .look-hero .carousel img {object-fit:cover;object-position:center center;}
+  .discover__frame > img {object-fit:cover;object-position:center center;}
+}
+@media(max-width:370px) {
+  @layer components {
+    .salon24-hero__actions {grid-template-columns:1fr 1fr;}
+    .salon24-hero__actions .btn {font-size:.72rem;min-height:3rem;}
+    .salon24-service-row__price {max-width:5.4rem;font-size:.66rem;}
+    .salon24-service-row__copy strong {font-size:.78rem;}
+    .studio-booking-card__actions {flex-wrap:wrap;}
+    .studio-booking-card__actions .btn {min-width:0;white-space:normal;}
+  }
+}
