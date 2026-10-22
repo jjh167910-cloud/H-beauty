@@ -246,3 +246,13 @@
 @media(prefers-reduced-motion:reduce) {
   @layer components {.salon24-hero__photo,.salon24-style-card,.salon24-service-row {transition:none;}}
 }
+
+/* Make the central booking action legible without competing with the other tabs. */
+@layer components {
+  .tabbar__book,.tabbar[data-minimized] .tabbar__book {width:3.5rem;height:3.5rem;min-width:3.5rem;min-height:3.5rem;display:grid;justify-items:center;align-content:center;gap:0;border-radius:1.05rem;}
+  .salon24-tabbar-book-label {display:block;font-size:.59rem;font-weight:660;line-height:1.45;}
+  .tabbar__item {min-width:0;}
+  .studio-bookings__metrics small,.studio-profile__metrics span {color:var(--color-ink-2);}
+  .studio-booking-card__actions .btn {font-size:.75rem;}
+  .salon24-service-row:focus-visible,.salon24-style-card:focus-visible,.salon24-hero__photo:focus-visible {outline:3px solid var(--color-gold-ink);outline-offset:3px;}
+}
