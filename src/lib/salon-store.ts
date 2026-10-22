@@ -81,6 +81,8 @@ type SalonState = {
   profile: { name: string; phone: string };
   welcomed: boolean;
   hydrated: boolean;
+  /** True when local persistence or loading failed; unsaved edits must be disclosed. */
+  storageError: boolean;
   filter: string;
   query: string;
   savedOnly: boolean;
@@ -114,8 +116,10 @@ export const useSalon = create<SalonState>((set, get) => {
     const { favs, compare, cart, bookings, theme, profile, welcomed } = get();
     try {
       localStorage.setItem(KEY, JSON.stringify({ favs, compare, cart, bookings, theme, profile, welcomed }));
+      if (get().storageError) set({ storageError: false });
     } catch {
-      /* private mode / quota */
+      // The UI may still hold edits in memory, but they are not durable.
+      if (!get().storageError) set({ storageError: true });
     }
   }
 
@@ -135,6 +139,7 @@ export const useSalon = create<SalonState>((set, get) => {
     profile: { name: "", phone: "" },
     welcomed: false,
     hydrated: false,
+    storageError: false,
     filter: "all",
     query: "",
     savedOnly: false,
@@ -158,7 +163,7 @@ export const useSalon = create<SalonState>((set, get) => {
           welcomed: data.welcomed !== false,
         });
       } catch {
-        /* ignore broken storage */
+        set({ storageError: true });
       } finally {
         set({ hydrated: true });
       }
@@ -196,12 +201,13 @@ export const useSalon = create<SalonState>((set, get) => {
     setTheme: (theme) => update({ theme }),
     setProfile: (profile) => update({ profile: { ...get().profile, ...profile } }),
     clearData: () => {
+      let storageError = false;
       try {
         localStorage.removeItem(KEY);
       } catch {
-        /* ignore */
+        storageError = true;
       }
-      set({ welcomed: false, favs: [], compare: [], cart: [], bookings: [], profile: { name: "", phone: "" }, theme: "system", draft: EMPTY_DRAFT });
+      set({ welcomed: false, favs: [], compare: [], cart: [], bookings: [], profile: { name: "", phone: "" }, theme: "system", draft: EMPTY_DRAFT, storageError });
     },
     welcome: () => update({ welcomed: true }),
     setFilter: (filter) => set({ filter, savedOnly: false }),
