@@ -165,7 +165,8 @@ export function BookingSheet({ open, onClose }: { open: boolean; onClose: () => 
       {step === 2 ? (
         <div className="rise mt-7">
           <p className="t-headline">{date ? longDate(date) : "روز را انتخاب کنید"}</p>
-          <div className="rail -mx-gutter mt-3 gap-2" role="listbox" aria-label="انتخاب روز">
+          <p className="t-caption mt-1 text-ink-2">این ساعت‌ها پیشنهادی هستند و از تقویم واقعی سالن استعلام نشده‌اند.</p>
+          <div className="rail -mx-gutter mt-3 gap-2" role="group" aria-label="انتخاب روز">
             {days.map((day) => (
               <button key={day.iso} type="button" className="day" disabled={!day.open} aria-pressed={day.iso === date} onClick={() => { haptic(); setDraft({ date: day.iso }); }}>
                 <small>{day.weekday}</small>
@@ -192,7 +193,7 @@ export function BookingSheet({ open, onClose }: { open: boolean; onClose: () => 
               );
             })
           ) : (
-            <p className="card t-callout mt-6 text-ink-2" data-variant="sunken">برای این روز زمان آزادی با این مدت خدمت باقی نمانده؛ روز دیگری انتخاب کنید.</p>
+            <p className="card t-callout mt-6 text-ink-2" data-variant="sunken">در ساعت‌های کاری اعلام‌شده، زمان پیشنهادی متناسب با مدت این خدمات باقی نمانده است؛ روز دیگری انتخاب کنید.</p>
           )}
           <p className="t-caption mt-5 flex items-start gap-2 text-ink-2"><Icon name="info" size={16} className="mt-0.5 shrink-0" />زمان انتخابی پیشنهاد شماست و پس از هماهنگی، سالن آن را تأیید می‌کند.</p>
         </div>
@@ -233,16 +234,18 @@ export function BookingSheet({ open, onClose }: { open: boolean; onClose: () => 
 
 function BookingDone({ open, booking, onClose }: { open: boolean; booking: BookingRequest; onClose: () => void }) {
   const { go } = useSalonActions();
-  const markSent = useSalon((state) => state.markSent);
   const { items, minutes } = summarize(booking.services);
   const message = bookingMessage(booking);
   const wa = whatsappLink(message);
 
   async function send() {
     const result = await shareText(message, "درخواست نوبت");
-    if (result === "shared" || result === "copied") {
-      markSent(booking.id);
-      toast(result === "copied" ? "متن کپی شد؛ آن را برای سالن بفرستید." : "درخواست آماده ارسال شد.");
+    if (result === "shared") {
+      toast("اشتراک‌گذاری انجام شد؛ پس از ارسال به سالن وضعیت آن را ثبت کنید.");
+    } else if (result === "copied") {
+      toast("متن کپی شد؛ آن را برای سالن بفرستید.");
+    } else if (result === "failed") {
+      toast("اشتراک‌گذاری ممکن نشد.");
     }
   }
 
@@ -254,13 +257,13 @@ function BookingDone({ open, booking, onClose }: { open: boolean; booking: Booki
       footer={
         <div className="grid gap-2">
           {wa ? (
-            <a href={wa} target="_blank" rel="noreferrer" onClick={() => markSent(booking.id)} className="btn" data-variant="gold" data-size="lg">
+            <a href={wa} target="_blank" rel="noreferrer" className="btn" data-variant="gold" data-size="lg">
               <Icon name="whatsapp" size={20} weight="regular" /> ارسال در واتساپ
             </a>
           ) : (
             <Button variant="gold" size="lg" icon="send" onClick={send}>ارسال برای سالن</Button>
           )}
-          <Button variant="tonal" onClick={() => go("bookings")}>مشاهده نوبت‌های من</Button>
+          <Button variant="tonal" onClick={() => { onClose(); go("bookings"); }}>مشاهده درخواست‌های من</Button>
         </div>
       }
     >
@@ -276,7 +279,7 @@ function BookingDone({ open, booking, onClose }: { open: boolean; booking: Booki
           <p className="t-footnote text-ink-2">{stylistName(booking.stylist)} · {formatMinutes(minutes)}</p>
           <span className="status mt-2" data-tone="garnet">در انتظار ارسال و تأیید سالن</span>
         </div>
-        <Button variant="ghost" icon="copy" className="mt-3" onClick={async () => toast((await copyText(message)) === "copied" ? "متن درخواست کپی شد." : "کپی ممکن نشد.")}>
+        <Button variant="ghost" icon="copy" className="mt-3" onClick={async () => toast((await copyText(message)) === "copied" ? "متن درخواست کپی شد؛ آن را برای سالن بفرستید." : "کپی ممکن نشد.")}>
           کپی متن درخواست
         </Button>
       </div>
