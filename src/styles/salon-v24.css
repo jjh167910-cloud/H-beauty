@@ -208,7 +208,7 @@
   :root[data-theme="dark"] .salon24-concierge__inner {background:linear-gradient(135deg,#57394b,#392731);border-color:var(--color-line);color:var(--color-ink);}
   .salon24-concierge__header {display:flex;align-items:center;justify-content:space-between;gap:.7rem;}
   .salon24-concierge__icon {display:grid;place-items:center;width:2.8rem;height:2.8rem;border-radius:50%;background:#fff9f7;color:#91415e;}
-  .salon24-concierge__header > span:last-child {font:600 .56rem/1.5 var(--font-serif);letter-spacing:.1em;color:#8e536c;}
+  .salon24-concierge__header > span:last-child {font:600 .56rem/1.5 var(--font-serif);letter-spacing:.1em;color:#78465d;}
   :root[data-theme="dark"] .salon24-concierge__header > span:last-child {color:#f5bed0;}
   .salon24-concierge__inner h2 {font-size:1.2rem;font-weight:720;line-height:1.65;margin-top:.3rem;}
   .salon24-concierge__inner > p {font-size:.82rem;line-height:1.95;max-width:28rem;}
