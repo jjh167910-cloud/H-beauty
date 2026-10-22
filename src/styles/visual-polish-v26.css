@@ -82,3 +82,10 @@
     .salon24-hero__photo {aspect-ratio:3/4;max-height:none;}
   }
 }
+
+/* Touch-target audit: service add, short category chips, and detail actions. */
+@layer components {
+  .studio-service-item__add {min-width:2.875rem;width:2.875rem;min-height:2.875rem;height:2.875rem;flex:none;}
+  .chip {min-width:2.75rem;}
+  .salon25-look-detail__actions .salon25-look-card__action {min-width:2.75rem;}
+}
