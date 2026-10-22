@@ -82,7 +82,7 @@ npm run build
 npm run dev
 ```
 
-Install the Playwright browser once, then run the new **9-case** review suite (4 viewports + catalog routing + dark RTL + sharing state + skip navigation + Discover focus):
+Install the Playwright browser once, then run the new **11-case** review suite (4 viewports + catalog routing + dark RTL + sharing state + skip navigation + Discover focus + storage-quota injection + 200% Persian text):
 
 ```bash
 npx playwright install chromium
