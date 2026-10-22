@@ -15,8 +15,7 @@ export function ServicesScreen() {
   return (
     <div className="studio-page studio-services pt-2">
       <header className="studio-head px-gutter">
-        <span className="studio-kicker"><span className="studio-line" /> HANANEH · SERVICE MENU</span>
-        <span className="studio-count">01 / ATELIER</span>
+        <span className="studio-kicker">فهرست خدمات</span>
         <h1>خدمات <em>حنانه بیوتی</em></h1>
         <p>خدمات، مدت تقریبی و قیمت پایه را ببینید. برای انتخاب چند خدمت، از دکمه افزودن استفاده کنید.</p>
       </header>
