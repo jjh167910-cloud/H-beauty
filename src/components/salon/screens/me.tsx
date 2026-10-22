@@ -119,7 +119,7 @@ export function MeScreen() {
         </div>
       </section>
       <div className="studio-profile__end px-gutter">
-        <span lang="en">HANANEH BEAUTY · THE ATELIER</span>
+        <span lang="en">HANANEH BEAUTY · SALON</span>
         <Button variant="gold" orb onClick={() => openBooking()}>درخواست نوبت</Button>
       </div>
     </div>
