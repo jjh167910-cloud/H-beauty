@@ -341,3 +341,19 @@
   .studio-bookings__hero-top {display:none;}
   .studio-feature__edition,.studio-count {display:none;}
 }
+
+/* Tablet / small desktop: use more space without losing the mobile experience. */
+@media(min-width:740px) {
+  :root {--app-max:44rem;--spacing-gutter:2rem;}
+  @layer components {
+    .modern-home__hero-photo {aspect-ratio:1.6;}
+    .modern-home__hero-photo img {object-position:center 34%;}
+    .modern-home__intro {gap:.65rem;}
+    .modern-moods {gap:.85rem;}
+    .modern-pick {width:10rem;min-width:10rem;}
+    .studio-look-grid {grid-template-columns:repeat(3,minmax(0,1fr));gap:1.75rem 1rem;}
+    .modern-home__hero-actions {gap:.75rem;}
+    .studio-service-item__content strong {font-size:1rem;}
+    .tabbar,.tabbar[data-minimized] {border-inline:1px solid var(--color-line);}
+  }
+}
