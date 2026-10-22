@@ -50,17 +50,25 @@ export function LookSheet({ open, family, onClose }: { open: boolean; family: Fa
             <img key={id} src={lookSrc(id)} alt={family.variantNames[itemIndex] ?? family.name} loading={itemIndex ? "lazy" : "eager"} draggable={false} style={{ animation: "fade 500ms ease both" }} />
           ))}
         </div>
+      </div>
+      <div className="salon25-look-detail__tools">
         {family.variantIds.length > 1 ? (
-          <div className="glass-dark absolute top-5 start-1/2 flex translate-x-1/2 gap-1.5 rounded-full px-2.5 py-1.5" aria-hidden="true">
+          <div className="salon25-look-detail__pages" aria-label="تصاویر مدل">
             {family.variantIds.map((id, itemIndex) => (
-              <span key={id} className={cn("h-1.5 rounded-full bg-white transition-all duration-300", itemIndex === index ? "w-4" : "w-1.5 opacity-50")} />
+              <span key={id} className={cn("salon25-look-detail__dot", itemIndex === index && "salon25-look-detail__dot--active")} />
             ))}
           </div>
-        ) : null}
-        <div className="absolute inset-x-0 bottom-4 flex justify-center gap-2">
-          <IconButton icon="heart" variant="glass" love pressed={saved} label={saved ? "حذف از ذخیره‌ها" : "ذخیره"} onClick={() => { haptic(); toggleFav(family.id); if (!saved) toast("به ذخیره‌ها اضافه شد."); }} />
-          <IconButton icon="compare" variant="glass" pressed={picked} label={picked ? "حذف از مقایسه" : "افزودن به مقایسه"} onClick={() => { haptic(); if (toggleCompare(family.id) === "limit") toast("برای مقایسه حداکثر سه مدل انتخاب کنید."); }} />
-          <IconButton icon="share" variant="glass" label="اشتراک‌گذاری" onClick={share} />
+        ) : <span />}
+        <div className="salon25-look-detail__actions">
+          <button type="button" className="salon25-look-card__action" aria-pressed={saved}
+            onClick={() => { haptic(); toggleFav(family.id); if (!saved) toast("به ذخیره‌ها اضافه شد."); }}>
+            {saved ? "ذخیره شد" : "ذخیره"}
+          </button>
+          <button type="button" className="salon25-look-card__action" aria-pressed={picked}
+            onClick={() => { haptic(); if (toggleCompare(family.id) === "limit") toast("برای مقایسه حداکثر سه مدل انتخاب کنید."); }}>
+            {picked ? "انتخاب شد" : "مقایسه"}
+          </button>
+          <button type="button" className="salon25-look-card__action" onClick={share}>اشتراک‌گذاری</button>
         </div>
       </div>
       {family.variantIds.length > 1 ? <p className="t-caption mt-3 text-center text-ink-2">برای دیدن {persian(family.variantIds.length)} برداشت، تصویر را بکشید</p> : null}
