@@ -108,7 +108,7 @@ export function TabBar() {
       {ITEMS.slice(0, 2).map(render)}
       <button type="button" className="tabbar__book foil" onClick={() => { haptic(); openBooking(); }} aria-label="درخواست نوبت">
         <Icon name="book" size={21} weight="regular" />
-        <span className="salon24-tabbar-book-label">نوبت</span>
+        <span className="salon24-tabbar-book-label">درخواست</span>
       </button>
       {ITEMS.slice(2).map(render)}
     </nav>
