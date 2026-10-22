@@ -104,3 +104,28 @@ test("full-screen look discovery traps keyboard focus and Escape closes it", asy
   await page.keyboard.press("Escape");
   await expect(dialog).not.toBeVisible();
 });
+
+test("storage quota failure is disclosed rather than silently treated as saved", async ({ page }) => {
+  await seed(page);
+  await page.goto("/#/looks");
+  await page.evaluate(() => {
+    Storage.prototype.setItem = () => {
+      throw new DOMException("Storage quota exceeded", "QuotaExceededError");
+    };
+  });
+  await page.getByRole("button", { name: /^ذخیره / }).first().click();
+  await expect(page.getByRole("alert")).toContainText("ذخیره‌سازی این دستگاه با خطا");
+});
+
+test("home reflows at 200 percent text scaling", async ({ page }) => {
+  await seed(page);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  await page.evaluate(() => {
+    document.documentElement.style.fontSize = "32px";
+  });
+  await expect(page.getByRole("heading", { name: /زیبایی شما/ })).toBeVisible();
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  expect(overflow).toBeLessThanOrEqual(1);
+  await page.screenshot({ path: "test-results/home-390-text-200.png", fullPage: true });
+});
