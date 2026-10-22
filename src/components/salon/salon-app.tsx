@@ -53,6 +53,16 @@ function OfflineNotice() {
   );
 }
 
+/** Failure to write browser storage must never be silently presented as success. */
+function StorageNotice() {
+  const failed = useSalon((state) => state.storageError);
+  return failed ? (
+    <p className="atelier-offline" role="alert">
+      ذخیره‌سازی این دستگاه با خطا روبه‌رو شد. اطلاعات جدید ممکن است پس از بستن برنامه باقی نمانند؛ فضای ذخیره‌سازی یا تنظیمات مرورگر را بررسی کنید.
+    </p>
+  ) : null;
+}
+
 export function SalonApp() {
   const hydrate = useSalon((state) => state.hydrate);
   const tab = useSalon((state) => state.tab);
@@ -163,6 +173,7 @@ export function SalonApp() {
       <div className="app">
         <TopBar />
         <OfflineNotice />
+        <StorageNotice />
         <main id="app-content" tabIndex={-1} key={tab}>
           {tab === "home" ? <HomeScreen /> : null}
           {tab === "services" ? <ServicesScreen /> : null}
