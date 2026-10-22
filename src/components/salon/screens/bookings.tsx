@@ -56,9 +56,8 @@ function BookingCard({ booking, past }: { booking: BookingRequest; past: boolean
   async function send() {
     const result = await shareText(bookingMessage(booking), "درخواست نوبت");
     if (result === "shared") {
-      // A completed system share is not a confirmed booking.
-      markSent(booking.id);
-      toast("اشتراک‌گذاری انجام شد؛ تأیید زمان نوبت فقط با سالن است.");
+      // The share sheet may target a recipient other than the salon.
+      toast("اشتراک‌گذاری انجام شد. اگر برای سالن فرستاده‌اید، وضعیت ارسال را ثبت کنید.");
     } else if (result === "copied") {
       // Copying text does NOT mean a request was delivered.
       toast("متن درخواست کپی شد. پس از ارسال به سالن، آن را در این صفحه علامت بزنید.");
