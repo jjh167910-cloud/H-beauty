@@ -55,9 +55,13 @@ function BookingCard({ booking, past }: { booking: BookingRequest; past: boolean
 
   async function send() {
     const result = await shareText(bookingMessage(booking), "درخواست نوبت");
-    if (result === "shared" || result === "copied") {
+    if (result === "shared") {
+      // A completed system share is not a confirmed booking.
       markSent(booking.id);
-      toast(result === "copied" ? "متن درخواست کپی شد؛ آن را برای سالن بفرستید." : "درخواست برای ارسال آماده شد.");
+      toast("اشتراک‌گذاری انجام شد؛ تأیید زمان نوبت فقط با سالن است.");
+    } else if (result === "copied") {
+      // Copying text does NOT mean a request was delivered.
+      toast("متن درخواست کپی شد. پس از ارسال به سالن، آن را در این صفحه علامت بزنید.");
     } else if (result === "failed") {
       toast("اشتراک‌گذاری ممکن نشد.");
     }
@@ -93,7 +97,7 @@ function BookingCard({ booking, past }: { booking: BookingRequest; past: boolean
         {past ? (
           <Button variant="tonal" icon="rebook" className="flex-1" onClick={() => openBooking({ services: booking.services, stylist: booking.stylist })}>رزرو دوباره</Button>
         ) : wa ? (
-          <a className="btn flex-1" href={wa} target="_blank" rel="noreferrer" onClick={() => markSent(booking.id)}>
+          <a className="btn flex-1" href={wa} target="_blank" rel="noreferrer">
             <Icon name="whatsapp" size={18} weight="regular" /> ارسال در واتساپ
           </a>
         ) : (
@@ -101,6 +105,14 @@ function BookingCard({ booking, past }: { booking: BookingRequest; past: boolean
         )}
         <IconButton icon="trash" label="حذف درخواست" variant="tonal" onClick={remove} />
       </div>
+      {!past && !booking.sent ? (
+        <button type="button" className="mt-3 min-h-11 w-full text-start text-xs leading-7 text-gold-ink underline underline-offset-4" onClick={() => {
+          markSent(booking.id);
+          toast("وضعیت ارسال با اعلام شما ثبت شد؛ تأیید وقت همچنان با سالن است.");
+        }}>
+          درخواست را برای سالن فرستاده‌ام · ثبت وضعیت ارسال
+        </button>
+      ) : null}
     </article>
   );
 }
