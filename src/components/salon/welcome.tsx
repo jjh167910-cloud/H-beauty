@@ -25,14 +25,14 @@ export function Welcome() {
       <div className="modern-welcome__inner">
         <header className="modern-welcome__brand">
           <Wordmark latin={false} />
-          <span lang="en">BEAUTY STUDIO</span>
+          <span lang="en">HANANEH · BEAUTY SALON</span>
         </header>
         <Media className="modern-welcome__image" src={lookSrc(30)}
           alt="نمونه استایل مو از مجموعه حنانه بیوتی" />
         <div className="modern-welcome__content">
-          <p className="modern-welcome__tag">خوش آمدید</p>
+          <p className="modern-welcome__tag">به سالن زیبایی حنانه خوش آمدید</p>
           <h1>استایل دلخواهتان را اینجا پیدا کنید.</h1>
-          <p>مدل مو، خدمات و درخواست نوبت؛ همه در یک تجربه ساده و شخصی.</p>
+          <p>از مدل مو و رنگ تا میکاپ و مراقبت؛ سلیقه‌تان را کشف کنید و برای خدمات دلخواهتان درخواست نوبت بدهید.</p>
           <label className="modern-welcome__field">
             <span>نام شما (اختیاری)</span>
             <input type="text" autoComplete="given-name" value={name}
