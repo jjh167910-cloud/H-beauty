@@ -36,7 +36,7 @@ export function LookSheet({ open, family, onClose }: { open: boolean; family: Fa
         </div>
       }
     >
-      <div className="studio-look-detail__header"><span lang="en">HANANEH · THE LOOK EDIT</span><span lang="en">{family.code}</span></div>
+      <div className="studio-look-detail__header"><span lang="en">HANANEH · BEAUTY LOOKBOOK</span><span lang="en">{family.code}</span></div>
       <div className="look-hero studio-look-detail__hero">
         <div
           className="carousel"
