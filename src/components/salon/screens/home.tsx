@@ -1,23 +1,19 @@
 import { useMemo } from "react";
 import { byRep, lookSrc, lookThumb, persian } from "@/data/catalog";
-import { SERVICES, dayOf, formatPrice, greeting, isPast, longDate, monthOf, stylistName, summarize, timeLabel } from "@/data/salon";
+import { SERVICES, dayOf, formatPrice, greeting, isPast, longDate, monthOf, summarize, timeLabel } from "@/data/salon";
 import { useSalon } from "@/lib/salon-store";
 import { Icon } from "../icons";
-import { Button, Media, SectionHead, TextLink, useSalonActions } from "../ui";
+import { Button, Media, TextLink, useSalonActions } from "../ui";
 
-const MOODS = [
-  { id: 30, filter: "waves", label: "موج‌های نرم", en: "Soft waves" },
-  { id: 84, filter: "curly", label: "فرِ پرحجم", en: "Curly" },
-  { id: 77, filter: "braid", label: "بافتِ خلاق", en: "Braids" },
+const STYLES = [
+  { repId: 30, filter: "waves", label: "موج‌های نرم", caption: "WAVES" },
+  { repId: 84, filter: "curly", label: "فرِ پرحجم", caption: "CURLS" },
+  { repId: 77, filter: "braid", label: "بافتِ خلاق", caption: "BRAIDS" },
+  { repId: 43, filter: "ponytail", label: "دم‌اسبی", caption: "PONYTAIL" },
+  { repId: 125, filter: "pixie", label: "موی کوتاه", caption: "SHORT HAIR" },
 ] as const;
-const PICKS = [
-  { repId: 30, label: "موج هالیوودی" },
-  { repId: 27, label: "صاف و براق" },
-  { repId: 77, label: "بافت" },
-  { repId: 43, label: "دم‌اسبی" },
-  { repId: 84, label: "فر" },
-  { repId: 125, label: "پیکسی" },
-];
+
+const FEATURED_SERVICES = ["signature-cut", "bespoke-balayage", "event-styling", "event-makeup", "luxe-manicure"];
 
 export function HomeScreen() {
   const { go, openSheet, openBooking, openDiscover } = useSalonActions();
@@ -33,120 +29,134 @@ export function HomeScreen() {
   );
 
   return (
-    <div className="modern-home">
-      <header className="modern-home__intro px-gutter">
-        <div className="modern-home__hello">
-          <span>{greeting()}{name ? `، ${name.split(" ")[0]}` : ""}</span>
-          <span className="modern-home__edition" lang="en">HANANEH BEAUTY</span>
+    <div className="salon24-home">
+      <header className="salon24-welcome px-gutter">
+        <div className="salon24-welcome__micro">
+          <span>{greeting()}{name ? `، ${name.split(" ")[0]}` : ""} <span aria-hidden="true">✦</span></span>
+          <span lang="en">HANANEH BEAUTY SALON</span>
         </div>
-        <h1>زیبایی شما، <span>به سبک شما.</span></h1>
-        <p>مدل دلخواهتان را پیدا کنید، خدمات را ببینید و برای مراجعه بعدی درخواست نوبت بدهید.</p>
+        <h1>زیبایی شما، <span>داستان ماست.</span></h1>
+        <p>در سالن زیبایی حنانه، مدل‌های مو و خدمات زیبایی را کشف کنید و برای استایل دلخواهتان درخواست نوبت بدهید.</p>
       </header>
 
       {hero ? (
-        <section className="modern-home__hero px-gutter" aria-label="استایل منتخب">
-          <div className="modern-home__hero-card">
-            <button type="button" className="modern-home__hero-photo"
+        <section className="salon24-hero px-gutter" aria-label="استایل منتخب سالن">
+          <div className="salon24-hero__stage">
+            <button type="button" className="salon24-hero__photo"
               onClick={(event) => openDiscover(hero.id, event.currentTarget.querySelector("img"))}
               aria-label={`دیدن مدل ${hero.name} در لوک‌بوک`}>
               <img src={lookSrc(hero.repId)} alt={hero.name} fetchPriority="high" />
-              <span className="modern-home__hero-shade" aria-hidden="true" />
-              <span className="modern-home__hero-label"><span>استایل منتخب</span><strong>{hero.name}</strong><small>مشاهده مدل <Icon name="chevron" size={15} /></small></span>
+              <span className="salon24-hero__shade" aria-hidden="true" />
+              <span className="salon24-hero__badge">از گالری استایل‌ها</span>
+              <span className="salon24-hero__title">
+                <small lang="en">THE BEAUTY EDIT</small>
+                <strong>{hero.name}</strong>
+                <span>برای دیدن جزئیات مدل لمس کنید <Icon name="chevron" size={16} /></span>
+              </span>
             </button>
           </div>
-          <div className="modern-home__hero-actions">
-            <Button variant="primary" icon="book" onClick={() => openBooking({ service: "event-styling", lookId: hero.id })}>درخواست این استایل</Button>
-            <Button variant="secondary" icon="looks" onClick={() => { clearAll(); go("looks"); }}>مشاهده مدل‌ها</Button>
+          <div className="salon24-hero__actions">
+            <Button variant="gold" icon="book" onClick={() => openBooking({ service: "event-styling", lookId: hero.id })}>درخواست نوبت</Button>
+            <Button variant="secondary" icon="looks" onClick={() => { clearAll(); go("looks"); }}>گالری مدل مو</Button>
           </div>
+          <p className="salon24-hero__fine">زمان انتخابی پیشنهادی است؛ سالن پس از دریافت درخواست آن را تأیید می‌کند.</p>
         </section>
       ) : null}
 
       {next ? (
         <section className="px-gutter">
-          <button type="button" className="modern-next" onClick={() => go("bookings")}>
+          <button type="button" className="modern-next salon24-next" onClick={() => go("bookings")}>
             <span className="modern-next__date"><strong>{dayOf(next.date)}</strong><small>{monthOf(next.date)}</small></span>
             <span className="modern-next__copy">
-              <small>{next.sent ? "ارسال‌شده · در انتظار تأیید سالن" : "درخواست آماده ارسال"}</small>
+              <small>{next.sent ? "ارسال‌شده · در انتظار تأیید" : "پیش‌نویس درخواست · ارسال نشده"}</small>
               <strong>{summarize(next.services).items.map((item) => item.title).join("، ") || "مشاوره"}</strong>
-              <span>{longDate(next.date)} · {timeLabel(next.time)} · {stylistName(next.stylist)}</span>
+              <span>{longDate(next.date)} · {timeLabel(next.time)}</span>
             </span>
-            <Icon name="chevron" size={19} />
+            <Icon name="chevron" size={18} />
           </button>
         </section>
       ) : null}
 
-      <section className="modern-section" aria-labelledby="mood-title">
-        <div className="modern-section__title px-gutter">
-          <div><p>الهام بگیرید</p><h2 id="mood-title">چه مدلی دوست دارید؟</h2></div>
+      <section className="salon24-section" aria-labelledby="salon24-style-title">
+        <div className="salon24-section__head px-gutter">
+          <div><span className="salon24-eyebrow">STYLE INSPIRATION</span><h2 id="salon24-style-title">زیبایی از انتخاب شما شروع می‌شود</h2></div>
           <TextLink onClick={() => { clearAll(); go("looks"); }}>همه مدل‌ها</TextLink>
         </div>
-        <div className="modern-moods px-gutter">
-          {MOODS.map((mood) => (
-            <button key={mood.filter} type="button" className="modern-mood"
-              onClick={() => { clearAll(); setFilter(mood.filter); go("looks"); }}
-              aria-label={`دیدن مدل‌های ${mood.label}`}>
-              <img src={lookThumb(mood.id)} alt="" loading="lazy" />
-              <strong>{mood.label}</strong>
+        <div className="salon24-styles rail">
+          {STYLES.map((style) => (
+            <button key={style.filter} type="button" className="salon24-style-card"
+              aria-label={`دیدن مدل‌های ${style.label}`}
+              onClick={() => { clearAll(); setFilter(style.filter); go("looks"); }}>
+              <Media src={lookThumb(style.repId)} alt="" loading="lazy" />
+              <strong>{style.label}</strong>
+              <span lang="en">{style.caption}</span>
             </button>
           ))}
         </div>
       </section>
 
-      <section className="modern-section modern-section--panel px-gutter" aria-labelledby="steps-title">
-        <div className="modern-action-panel">
-          <p>ساده و سریع</p>
-          <h2 id="steps-title">از انتخاب مدل تا درخواست نوبت</h2>
-          <div className="modern-action-list">
-            <button type="button" onClick={() => { clearAll(); go("looks"); }}>
-              <span className="modern-action-list__icon"><Icon name="looks" size={21} /></span>
-              <span><strong>انتخاب استایل</strong><small>مدل‌ها را مرور و ذخیره کنید</small></span><Icon name="chevron" size={18} />
-            </button>
-            <button type="button" onClick={() => openSheet({ kind: "consult" })}>
-              <span className="modern-action-list__icon"><Icon name="consult" size={21} /></span>
-              <span><strong>مشاوره استایل</strong><small>درباره انتخاب‌هایتان گفت‌وگو کنید</small></span><Icon name="chevron" size={18} />
-            </button>
-            <button type="button" onClick={() => openBooking()}>
-              <span className="modern-action-list__icon"><Icon name="book" size={21} /></span>
-              <span><strong>درخواست نوبت</strong><small>خدمت و زمان پیشنهادی را انتخاب کنید</small></span><Icon name="chevron" size={18} />
-            </button>
+      <section className="salon24-section salon24-services" aria-labelledby="salon24-services-title">
+        <div className="salon24-section__head px-gutter">
+          <div><span className="salon24-eyebrow">BEAUTY SERVICES</span><h2 id="salon24-services-title">خدمات سالن زیبایی</h2></div>
+          <TextLink onClick={() => go("services")}>تمام خدمات</TextLink>
+        </div>
+        <p className="salon24-section__intro px-gutter">از کوتاهی و رنگ مو تا میکاپ و مراقبت؛ هر خدمت را با جزئیات ببینید.</p>
+        <div className="salon24-service-list px-gutter">
+          {FEATURED_SERVICES.map((id) => {
+            const service = SERVICES.find((item) => item.id === id);
+            if (!service) return null;
+            return (
+              <button key={id} type="button" className="salon24-service-row"
+                onClick={() => openSheet({ kind: "service", id })}>
+                <span className="salon24-service-row__icon"><Icon name={service.category} size={23} weight="duotone" /></span>
+                <span className="salon24-service-row__copy"><strong>{service.title}</strong><small>{service.detail}</small></span>
+                <span className="salon24-service-row__price">{service.price ? `از ${formatPrice(service.price)}` : "مشاوره"}<small>{service.price ? "تومان" : ""}</small></span>
+                <Icon name="chevron" size={16} className="salon24-service-row__chevron" />
+              </button>
+            );
+          })}
+        </div>
+        <p className="salon24-section__footnote px-gutter">قیمت‌های نمایش‌داده‌شده «شروع از» هستند و باید توسط سالن تأیید شوند.</p>
+      </section>
+
+      <section className="salon24-concierge px-gutter" aria-labelledby="salon24-concierge-title">
+        <div className="salon24-concierge__inner">
+          <div className="salon24-concierge__header">
+            <span className="salon24-concierge__icon"><Icon name="consult" size={25} weight="duotone" /></span>
+            <span lang="en">A LITTLE BEAUTY ADVICE</span>
+          </div>
+          <h2 id="salon24-concierge-title">هنوز مدل موردعلاقه‌تان را پیدا نکردید؟</h2>
+          <p>چند مدل را ذخیره کنید یا از راهنمای انتخاب استایل کمک بگیرید. بعد می‌توانید انتخاب‌هایتان را برای مشاوره آماده کنید.</p>
+          <div className="salon24-concierge__actions">
+            <Button variant="secondary" icon="finder" onClick={() => openSheet({ kind: "finder" })}>راهنمای استایل</Button>
+            <Button variant="ghost" icon="consult" onClick={() => openSheet({ kind: "consult" })}>مشاوره</Button>
           </div>
         </div>
       </section>
 
-      <section className="modern-section">
-        <SectionHead eyebrow="خدمات سالن" title="خدمات پرطرفدار" action={<TextLink onClick={() => go("services")}>همه خدمات</TextLink>} />
-        <div className="modern-service-preview px-gutter">
-          {SERVICES.filter((service) => service.popular).slice(0, 4).map((service) => (
-            <button key={service.id} type="button" onClick={() => openSheet({ kind: "service", id: service.id })}>
-              <span className="modern-service-preview__icon"><Icon name={service.category} size={22} weight="duotone" /></span>
-              <span><strong>{service.title}</strong><small>{service.detail}</small></span>
-              <span className="modern-service-preview__price">{service.price ? `از ${formatPrice(service.price)}` : "مشاوره"}<small>{service.price ? "تومان" : ""}</small></span>
-            </button>
-          ))}
+      <section className="salon24-section" aria-labelledby="salon24-look-title">
+        <div className="salon24-section__head px-gutter">
+          <div><span className="salon24-eyebrow">THE LOOKBOOK</span><h2 id="salon24-look-title">مدل‌های محبوب برای الهام</h2></div>
+          <TextLink onClick={() => { clearAll(); go("looks"); }}>گالری کامل</TextLink>
         </div>
-        <p className="modern-service-disclaimer px-gutter">قیمت‌ها و زمان‌ها پیشنهادی‌اند و تأیید نهایی با سالن است.</p>
-      </section>
-
-      <section className="modern-section">
-        <SectionHead eyebrow="آرشیو مدل‌ها" title="استایل‌های منتخب" action={<TextLink onClick={() => go("looks")}>دیدن آرشیو</TextLink>} />
-        <div className="modern-picks rail">
-          {PICKS.map((item) => {
-            const look = byRep(item.repId);
+        <div className="salon24-featured rail">
+          {[27, 43, 84, 125].map((repId) => {
+            const look = byRep(repId);
             if (!look) return null;
             return (
-              <button key={item.repId} type="button" className="modern-pick"
-                onClick={(event) => openDiscover(look.id, event.currentTarget.querySelector("img"))}
-                aria-label={`${item.label}، ${look.name}`}>
-                <Media src={lookThumb(item.repId)} alt={item.label} loading="lazy" />
-                <strong>{item.label}</strong>
+              <button key={repId} type="button" className="salon24-featured__card"
+                aria-label={`مشاهده ${look.name}`}
+                onClick={(event) => openDiscover(look.id, event.currentTarget.querySelector("img"))}>
+                <Media src={lookThumb(repId)} alt={look.name} loading="lazy" />
+                <span>{look.name}</span>
               </button>
             );
           })}
         </div>
       </section>
-      <footer className="modern-home__footer px-gutter">
+      <footer className="salon24-footer px-gutter">
         <span>حنانه بیوتی</span>
-        <small lang="en">YOUR STYLE, BEAUTIFULLY SIMPLE.</small>
+        <small>زیبایی، با سلیقه شما</small>
       </footer>
     </div>
   );
