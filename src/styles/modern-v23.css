@@ -6,7 +6,7 @@
   --color-sunken:#f0f1ee;
   --color-ink:#222725;
   --color-ink-2:#626a66;
-  --color-ink-3:#7a827d;
+  --color-ink-3:#637168;
   --color-line:#e4e8e3;
   --color-line-2:#d5dcd6;
   --color-gold:#6e7465;
@@ -332,4 +332,12 @@
     .modern-welcome__image {height:9.5rem;}
     .modern-welcome__inner {gap:.7rem;}
   }
+}
+
+@layer components {
+  .studio-profile__serial,.studio-profile__pass-footer {display:none;}
+  .studio-profile__pass-top {justify-content:flex-end;}
+  .studio-profile__pass {gap:.9rem;}
+  .studio-bookings__hero-top {display:none;}
+  .studio-feature__edition,.studio-count {display:none;}
 }
