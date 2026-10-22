@@ -304,3 +304,32 @@
     .tabbar,.tabbar__item,.studio-look-card .media {transition:none;}
   }
 }
+
+/* First-run welcome, intentionally part of the same product system. */
+@layer components {
+  .modern-welcome {background:var(--color-canvas);color:var(--color-ink);overflow-y:auto;}
+  .modern-welcome[data-leaving] {opacity:0;scale:1;}
+  .modern-welcome__inner {
+    width:100%;min-height:100dvh;max-width:var(--app-max);margin-inline:auto;
+    display:flex;flex-direction:column;gap:1.15rem;
+    padding:calc(1.2rem + env(safe-area-inset-top)) var(--spacing-gutter) calc(1.2rem + env(safe-area-inset-bottom));
+  }
+  .modern-welcome__brand {display:flex;align-items:center;justify-content:space-between;gap:.5rem;min-height:3rem;}
+  .modern-welcome__brand > span:last-child {color:var(--color-ink-3);font:600 .65rem/1.5 var(--font-serif);letter-spacing:.08em;}
+  .modern-welcome__image {flex:none;width:100%;height:clamp(12rem,36dvh,20rem);border-radius:var(--radius-lg);background:var(--color-sunken);}
+  .modern-welcome__image img {object-position:center 30%;}
+  .modern-welcome__content {display:grid;gap:.65rem;align-content:start;padding-block-end:1rem;}
+  .modern-welcome__tag {font-size:.74rem;font-weight:620;color:var(--color-gold-ink);}
+  .modern-welcome__content h1 {font-size:clamp(1.55rem,5.7vw,2rem);font-weight:680;line-height:1.6;}
+  .modern-welcome__content > p:not(.modern-welcome__tag):not(.modern-welcome__privacy) {font-size:.84rem;line-height:1.9;color:var(--color-ink-2);}
+  .modern-welcome__field {display:grid;gap:.45rem;margin-block:.45rem;font-size:.75rem;color:var(--color-ink-2);}
+  .modern-welcome__field input {width:100%;min-height:3.2rem;padding:.65rem .85rem;border:1px solid var(--color-line-2);border-radius:var(--radius-md);background:var(--color-surface);color:var(--color-ink);font-size:.88rem;}
+  .modern-welcome__content > .btn {width:100%;min-height:3.3rem;}
+  .modern-welcome__privacy {display:flex;align-items:center;justify-content:center;gap:.4rem;text-align:center;font-size:.69rem;color:var(--color-ink-2);line-height:1.9;}
+}
+@media(max-height:680px) {
+  @layer components {
+    .modern-welcome__image {height:9.5rem;}
+    .modern-welcome__inner {gap:.7rem;}
+  }
+}
