@@ -42,6 +42,11 @@ export function HomeScreen() {
 
       {hero ? (
         <section className="salon24-hero px-gutter" aria-label="استایل منتخب سالن">
+          <div className="salon26-hero__intro">
+            <span lang="en">YOUR BEAUTY, YOUR WAY</span>
+            <h2>استایل دلخواهتان را پیدا کنید.</h2>
+            <p>مدل‌ها را ببینید، ایده‌هایتان را ذخیره کنید و درخواست نوبت را با انتخاب استایل آغاز کنید.</p>
+          </div>
           <div className="salon24-hero__actions">
             <Button variant="gold" icon="book" onClick={() => openBooking({ service: "event-styling", lookId: hero.id })}>درخواست نوبت</Button>
             <Button variant="secondary" icon="looks" onClick={() => { clearAll(); go("looks"); }}>گالری مدل مو</Button>
