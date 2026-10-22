@@ -84,7 +84,7 @@ export function BookingSheet({ open, onClose }: { open: boolean; onClose: () => 
     <Sheet
       open={open}
       onClose={onClose}
-      title="رزرو نوبت"
+      title="درخواست نوبت"
       full
       leading={step > 0 ? <IconButton icon="back" label="مرحله قبل" size="sm" onClick={() => setStep(step - 1)} /> : null}
       footer={
@@ -105,7 +105,21 @@ export function BookingSheet({ open, onClose }: { open: boolean; onClose: () => 
         </div>
       }
     >
-      <ol className="stepper" aria-label="مراحل رزرو">
+      <header className="studio-booking-intro">
+        <span lang="en">HANANEH / YOUR APPOINTMENT</span>
+        <h2>{STEPS[step]} <small>{`۰${step + 1} / ۰۴`}</small></h2>
+        <p>{[
+          "خدمات مورد علاقه را انتخاب کنید؛ می‌توانید چند خدمت را با هم درخواست دهید.",
+          "اگر آرتیست خاصی مدنظر دارید انتخاب کنید، وگرنه گزینه بدون ترجیح را نگه دارید.",
+          "روز و ساعت دلخواه خود را پیشنهاد دهید؛ ساعت‌ها از تقویم سالن استعلام نشده‌اند.",
+          "اطلاعات را تکمیل کنید تا متن درخواست قابل ارسال به سالن آماده شود.",
+        ][step]}</p>
+        <div className="studio-booking-progress" role="progressbar" aria-label="پیشرفت ثبت درخواست"
+          aria-valuemin={0} aria-valuemax={4} aria-valuenow={step + 1}>
+          <span style={{ width: `${((step + 1) / 4) * 100}%` }} />
+        </div>
+      </header>
+      <ol className="stepper" aria-label="مراحل درخواست نوبت">
         {STEPS.map((label, index) => (
           <li key={label} data-done={index < step ? "" : undefined} aria-current={index === step ? "step" : undefined}>
             <span>{index < step ? <Icon name="check" size={13} weight="bold" /> : persian(index + 1)}</span>
@@ -115,7 +129,7 @@ export function BookingSheet({ open, onClose }: { open: boolean; onClose: () => 
       </ol>
 
       {step === 0 ? (
-        <div className="rise mt-7 grid gap-7">
+        <div className="studio-booking-choices rise mt-7 grid gap-7">
           {SERVICE_CATEGORIES.map((category) => (
             <section key={category.key}>
               <h3 className="t-caption mb-2.5 flex items-center gap-1.5 text-ink-2"><Icon name={category.key} size={15} />{category.label}</h3>
@@ -139,7 +153,7 @@ export function BookingSheet({ open, onClose }: { open: boolean; onClose: () => 
       ) : null}
 
       {step === 1 ? (
-        <div className="rise mt-7 grid gap-2.5">
+        <div className="studio-booking-artists rise mt-7 grid gap-2.5">
           <p className="t-callout mb-1 text-ink-2">با کدام آرتیست راحت‌ترید؟</p>
           <button type="button" className="choice" aria-pressed={draft.stylist === ANY_STYLIST} onClick={() => setDraft({ stylist: ANY_STYLIST })}>
             <span className="grid size-12 place-items-center rounded-full bg-noir text-champagne"><Icon name="services" size={22} weight="duotone" /></span>
@@ -163,7 +177,7 @@ export function BookingSheet({ open, onClose }: { open: boolean; onClose: () => 
       ) : null}
 
       {step === 2 ? (
-        <div className="rise mt-7">
+        <div className="studio-booking-dates rise mt-7">
           <p className="t-headline">{date ? longDate(date) : "روز را انتخاب کنید"}</p>
           <p className="t-caption mt-1 text-ink-2">این ساعت‌ها پیشنهادی هستند و از تقویم واقعی سالن استعلام نشده‌اند.</p>
           <div className="rail -mx-gutter mt-3 gap-2" role="group" aria-label="انتخاب روز">
@@ -200,7 +214,7 @@ export function BookingSheet({ open, onClose }: { open: boolean; onClose: () => 
       ) : null}
 
       {step === 3 ? (
-        <div className="rise mt-7 grid gap-5">
+        <div className="studio-booking-details rise mt-7 grid gap-5">
           <div className="card grid gap-1" data-variant="sunken">
             <p className="t-headline">{summary.items.map((item) => item.title).join("، ")}</p>
             <p className="t-footnote text-ink-2">{longDate(date)} · ساعت {timeLabel(draft.time)}</p>
@@ -253,7 +267,7 @@ function BookingDone({ open, booking, onClose }: { open: boolean; booking: Booki
     <Sheet
       open={open}
       onClose={onClose}
-      title="درخواست ثبت شد"
+      title="درخواست آماده ارسال است"
       footer={
         <div className="grid gap-2">
           {wa ? (
@@ -273,7 +287,7 @@ function BookingDone({ open, booking, onClose }: { open: boolean; booking: Booki
         <p className="t-callout mx-auto mt-2 max-w-sm text-ink-2">
           این برنامه هنوز به سیستم نوبت‌دهی سالن متصل نیست. برای قطعی شدن نوبت، درخواست را برای سالن بفرستید تا زمان را تأیید کنند.
         </p>
-        <div className="card mt-6 grid gap-1 text-start">
+        <div className="studio-booking-complete card mt-6 grid gap-1 text-start">
           <p className="t-headline">{items.map((item) => item.title).join("، ")}</p>
           <p className="t-footnote text-ink-2">{longDate(booking.date)} · ساعت {timeLabel(booking.time)}</p>
           <p className="t-footnote text-ink-2">{stylistName(booking.stylist)} · {formatMinutes(minutes)}</p>
