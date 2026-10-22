@@ -88,3 +88,19 @@ test("keyboard skip control targets the main page content", async ({ page }) => 
   await page.keyboard.press("Enter");
   await expect(page.locator("#app-content")).toBeFocused();
 });
+
+test("full-screen look discovery traps keyboard focus and Escape closes it", async ({ page }) => {
+  await seed(page);
+  await page.goto("/");
+  await page.getByRole("button", { name: /دیدن مدل .* در لوک‌بوک/ }).click();
+  const dialog = page.getByRole("dialog", { name: "کاوش لوک‌ها" });
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByRole("button", { name: "بستن" })).toBeFocused();
+  await page.keyboard.press("Shift+Tab");
+  const stillInside = await page.evaluate(() =>
+    Boolean(document.activeElement?.closest('[role="dialog"][aria-label="کاوش لوک‌ها"]')),
+  );
+  expect(stillInside).toBe(true);
+  await page.keyboard.press("Escape");
+  await expect(dialog).not.toBeVisible();
+});
