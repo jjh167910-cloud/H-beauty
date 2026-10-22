@@ -32,11 +32,12 @@ export function LookSheet({ open, family, onClose }: { open: boolean; family: Fa
       footer={
         <div className="flex gap-2">
           <IconButton icon="consult" label="مشاوره درباره این مدل" size="lg" onClick={() => openSheet({ kind: "consult" })} />
-          <Button variant="gold" size="lg" icon="book" className="flex-1" onClick={() => openBooking({ service, lookId: family.id })}>رزرو با این استایل</Button>
+          <Button variant="gold" size="lg" icon="book" className="flex-1" onClick={() => openBooking({ service, lookId: family.id })}>درخواست این استایل</Button>
         </div>
       }
     >
-      <div className="look-hero">
+      <div className="studio-look-detail__header"><span lang="en">HANANEH · THE LOOK EDIT</span><span lang="en">{family.code}</span></div>
+      <div className="look-hero studio-look-detail__hero">
         <div
           className="carousel"
           onScroll={(event) => {
@@ -65,10 +66,11 @@ export function LookSheet({ open, family, onClose }: { open: boolean; family: Fa
       {family.variantIds.length > 1 ? <p className="t-caption mt-3 text-center text-ink-2">برای دیدن {persian(family.variantIds.length)} برداشت، تصویر را بکشید</p> : null}
 
       <p className="t-caption mt-6 text-gold-ink" dir="ltr">{family.code}</p>
-      <h2 className="t-title-1 mt-1">{name}</h2>
+      <h2 className="t-title-1 studio-look-detail__title mt-1">{name}</h2>
       <div className="mt-3 flex flex-wrap gap-1.5">
         {chips.map((chip) => <span key={chip} className="badge" data-tone="outline">{labelOf(chip)}</span>)}
       </div>
+      <p className="studio-look-detail__note">تصاویر برای الهام‌اند؛ انتخاب نهایی با بررسی فرم چهره و جنس مو انجام می‌شود.</p>
       <p className="t-body mt-4 text-ink-2">
         {family.description ||
           (family.variantIds.length > 1
