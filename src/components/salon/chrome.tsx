@@ -8,9 +8,9 @@ import { Button, IconButton, haptic, useSalonActions } from "./ui";
 
 const TITLES: Partial<Record<Tab, string>> = {
   services: "منوی خدمات",
-  looks: "لوک‌بوک",
+  looks: "گالری مدل مو",
   bookings: "درخواست‌های من",
-  me: "پروفایل",
+  me: "حساب من",
   design: "سیستم طراحی",
 };
 
@@ -59,8 +59,8 @@ export function TopBar() {
 const ITEMS: Array<{ tab: Tab; label: string; icon: IconName }> = [
   { tab: "home", label: "خانه", icon: "home" },
   { tab: "services", label: "خدمات", icon: "services" },
-  { tab: "looks", label: "لوک‌بوک", icon: "looks" },
-  { tab: "bookings", label: "درخواست‌ها", icon: "bookings" },
+  { tab: "looks", label: "مدل‌ها", icon: "looks" },
+  { tab: "bookings", label: "نوبت‌ها", icon: "bookings" },
 ];
 
 /** True while the user scrolls down past the fold (tab bar minimises). */
@@ -107,7 +107,8 @@ export function TabBar() {
       {column >= 0 ? <span className="tabbar__lens" aria-hidden="true" /> : null}
       {ITEMS.slice(0, 2).map(render)}
       <button type="button" className="tabbar__book foil" onClick={() => { haptic(); openBooking(); }} aria-label="درخواست نوبت">
-        <Icon name="book" size={23} weight="regular" />
+        <Icon name="book" size={21} weight="regular" />
+        <span className="salon24-tabbar-book-label">نوبت</span>
       </button>
       {ITEMS.slice(2).map(render)}
     </nav>
