@@ -6,7 +6,7 @@ import { cn } from "@/lib/cn";
 import { useSalon, type BookingRequest } from "@/lib/salon-store";
 import { bookingMessage, shareText, whatsappLink } from "@/lib/share";
 import { Icon } from "../icons";
-import { Button, Chip, EmptyState, IconButton, Media, PageHead, useSalonActions } from "../ui";
+import { Button, Chip, EmptyState, IconButton, Media, useSalonActions } from "../ui";
 
 export function BookingsScreen() {
   const { openBooking } = useSalonActions();
@@ -20,10 +20,32 @@ export function BookingsScreen() {
   const list = view === "upcoming" ? upcoming : past;
 
   return (
-    <div className="pt-2">
-      <PageHead eyebrow="نوبت‌ها" title="درخواست‌های" accent="زیبایی شما" lead="این‌ها درخواستِ زمان هستند، نه نوبت قطعی. فقط تأیید مستقیم سالن زمان را نهایی می‌کند." />
+    <div className="studio-page studio-bookings pt-2">
+      <header className="studio-head px-gutter">
+        <span className="studio-kicker"><span className="studio-line" /> HANANEH · APPOINTMENTS</span>
+        <span className="studio-count">03 / YOUR VISITS</span>
+        <h1>لحظه‌ای <em>برای خودتان</em></h1>
+        <p>درخواست‌های زمان را اینجا نگه دارید و پس از ارسال مستقیم به سالن پیگیری کنید. هیچ ساعتی تا تأیید سالن رزرو قطعی نیست.</p>
+      </header>
 
-      <div className="chip-row mt-5" role="group" aria-label="فیلتر درخواست‌های نوبت">
+      <section className="px-gutter">
+        <div className="studio-bookings__hero">
+          <div className="studio-bookings__hero-top">
+            <span className="studio-feature__edition" lang="en">YOUR BEAUTY JOURNAL</span>
+            <span className="studio-bookings__monogram" aria-hidden="true">H.</span>
+          </div>
+          <strong>آغاز تجربه بعدی</strong>
+          <p>یک یا چند خدمت و زمان پیشنهادی انتخاب کنید، سپس درخواست را برای سالن ارسال کنید.</p>
+          <Button variant="gold" orb onClick={() => openBooking()}>درخواست نوبت جدید</Button>
+        </div>
+      </section>
+      <div className="studio-bookings__metrics px-gutter" aria-label="خلاصه درخواست‌ها">
+        <span><strong>{persian(upcoming.length)}</strong><small>درخواست پیش رو</small></span>
+        <span><strong>{persian(bookings.filter((item) => !item.sent && !isPast(item.date, item.time)).length)}</strong><small>آماده ارسال</small></span>
+        <span><strong>{persian(past.length)}</strong><small>درخواست گذشته</small></span>
+      </div>
+
+      <div className="chip-row studio-chip-row mt-5" role="group" aria-label="فیلتر درخواست‌های نوبت">
         <Chip active={view === "upcoming"} onClick={() => setView("upcoming")}>پیش رو{upcoming.length ? ` · ${persian(upcoming.length)}` : ""}</Chip>
         <Chip active={view === "past"} onClick={() => setView("past")}>گذشته{past.length ? ` · ${persian(past.length)}` : ""}</Chip>
       </div>
@@ -36,7 +58,7 @@ export function BookingsScreen() {
           action={<Button variant="gold" icon="book" onClick={() => openBooking()}>رزرو نوبت</Button>}
         />
       ) : (
-        <div className="mt-3 grid gap-4 px-gutter">
+        <div className="studio-booking-list mt-3 grid gap-4 px-gutter">
           {list.map((booking) => <BookingCard key={booking.id} booking={booking} past={view === "past"} />)}
         </div>
       )}
@@ -72,9 +94,9 @@ function BookingCard({ booking, past }: { booking: BookingRequest; past: boolean
   }
 
   return (
-    <article className={cn("card rise", past && "opacity-70")}>
+    <article className={cn("studio-booking-card card rise", past && "opacity-70")}>
       <div className="flex gap-4">
-        <span className="date-tile">
+        <span className="date-tile studio-booking-card__date">
           <small>{shortWeekday(booking.date)}</small>
           <strong>{dayOf(booking.date)}</strong>
           <small>{monthOf(booking.date)}</small>
@@ -92,7 +114,7 @@ function BookingCard({ booking, past }: { booking: BookingRequest; past: boolean
         {look ? <Media src={lookThumb(look.repId)} alt={look.name} className="arch h-16 w-12 shrink-0" /> : null}
       </div>
       <p className="sr-only">{longDate(booking.date)}</p>
-      <div className="mt-5 flex gap-2 border-t border-line pt-4">
+      <div className="studio-booking-card__actions mt-5 flex gap-2 border-t border-line pt-4">
         {past ? (
           <Button variant="tonal" icon="rebook" className="flex-1" onClick={() => openBooking({ services: booking.services, stylist: booking.stylist })}>رزرو دوباره</Button>
         ) : wa ? (
