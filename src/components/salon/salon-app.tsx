@@ -34,6 +34,25 @@ function useTheme() {
   }, [theme]);
 }
 
+/** Connectivity is only an indicator: cached pages and images vary by device. */
+function OfflineNotice() {
+  const [online, setOnline] = useState(() => navigator.onLine);
+  useEffect(() => {
+    const handleOnline = () => setOnline(navigator.onLine);
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOnline);
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOnline);
+    };
+  }, []);
+  return online ? null : (
+    <p className="atelier-offline" role="status">
+      حالت آفلاین · فقط صفحات و تصاویرِ ذخیره‌شده در این دستگاه در دسترس‌اند.
+    </p>
+  );
+}
+
 export function SalonApp() {
   const hydrate = useSalon((state) => state.hydrate);
   const tab = useSalon((state) => state.tab);
@@ -138,9 +157,13 @@ export function SalonApp() {
   return (
     <SalonProvider value={actions}>
      <IconProvider>
+      <button type="button" className="atelier-skip" onClick={() => document.getElementById("app-content")?.focus()}>
+        پرش به محتوای اصلی
+      </button>
       <div className="app">
         <TopBar />
-        <main key={tab}>
+        <OfflineNotice />
+        <main id="app-content" tabIndex={-1} key={tab}>
           {tab === "home" ? <HomeScreen /> : null}
           {tab === "services" ? <ServicesScreen /> : null}
           {tab === "looks" ? <LooksScreen /> : null}
