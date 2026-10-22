@@ -110,8 +110,10 @@ export function Discover({ open, startId, onClose }: { open: boolean; startId: n
     if (now - time > 320 || !near) return;
     lastTap.current.time = 0;
     haptic();
-    if (!useSalon.getState().favs.includes(family.id)) toggleFav(family.id);
-    toast("مدل به ذخیره‌ها اضافه شد.");
+    if (!useSalon.getState().favs.includes(family.id)) {
+      toggleFav(family.id);
+      toast("مدل به ذخیره‌ها اضافه شد.");
+    }
   }
 
   async function share(family: Family) {
