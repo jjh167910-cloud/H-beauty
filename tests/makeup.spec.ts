@@ -44,7 +44,9 @@ test("makeup detail opens booking request with the chosen makeup service",async(
   await expect(page.getByText(/راهنمای انتخاب رنگ/)).toBeVisible();
   await page.getByRole("button",{name:"درخواست این میکاپ"}).click();
   await expect(page.getByRole("dialog")).toBeVisible();
+  await page.getByRole("button",{name:"مرحله قبل"}).click();
   await expect(page.getByText("میکاپ نچرال").first()).toBeVisible();
+  await expect(page.getByRole("button",{name:"ادامه"})).toBeVisible();
 });
 
 test("makeup style search supports Persian names and independent saved filter",async({page})=>{
