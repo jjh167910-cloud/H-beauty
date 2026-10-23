@@ -18,7 +18,7 @@ test("makeup gallery has six filters and 48 distinct concept cards",async({page}
     await expect(page.getByRole("group",{name:"دسته‌بندی میکاپ"}).getByRole("button",{name})).toBeVisible();
   await page.getByRole("group",{name:"دسته‌بندی میکاپ"}).getByRole("button",{name:"نچرال"}).click();
   await expect(page.locator(".makeup-card")).toHaveCount(8);
-  await expect(page.getByText(/تصویرسازی مفهومی/).first()).toBeVisible();
+  await expect(page.locator(".makeup-editorial-note")).toContainText("چهره مرجع ثابت");
 });
 
 test("makeup favorite is stored separately from existing hairstyle favorites",async({page})=>{
@@ -41,7 +41,7 @@ test("makeup detail opens booking request with the chosen makeup service",async(
   await makeup(page);
   await page.locator(".makeup-card__view").first().click();
   await expect(page.getByRole("dialog")).toBeVisible();
-  await expect(page.getByText(/راهنمای انتخاب رنگ/)).toBeVisible();
+  await expect(page.getByText(/عکس واقعی همان مدل مرجع بدون تغییر چهره/)).toBeVisible();
   await page.getByRole("button",{name:"درخواست این میکاپ"}).click();
   await expect(page.getByRole("dialog")).toBeVisible();
   await page.getByRole("button",{name:"مرحله قبل"}).click();
@@ -75,12 +75,17 @@ test("gallery renders without overflow at 320px and 768px",async({page})=>{
   await page.screenshot({path:"test-results/makeup-gallery-tablet.png",animations:"disabled"});
 });
 
-test("dark mode makeup is readable and works completely without external images",async({page})=>{
+test("dark mode renders the same exact model portrait without remote assets",async({page})=>{
   await makeup(page,390,"dark");
   await expect(page.locator("html")).toHaveAttribute("data-theme","dark");
-  await expect(page.locator(".makeup-art").first()).toBeVisible();
-  const outbound=await page.evaluate(()=>[...document.querySelectorAll('.makeup-page img')].map(x=>x.src));
-  expect(outbound).toEqual([]);
+  const first=page.locator(".makeup-art img").first();
+  await expect(first).toBeVisible();
+  await expect(first).toHaveAttribute("src","/makeup/model-reference.webp");
+  await expect.poll(()=>first.evaluate(img=>(img as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
+  const sources=await page.locator(".makeup-card__art img").evaluateAll(nodes=>nodes.map(img=>img.getAttribute("src")));
+  expect(new Set(sources)).toEqual(new Set(["/makeup/model-reference.webp"]));
+  expect(sources).toHaveLength(48);
+  await expect(page.locator('.makeup-page input[type="file"]')).toHaveCount(0);
   await page.screenshot({path:"test-results/makeup-gallery-dark.png",animations:"disabled"});
 });
 
@@ -90,4 +95,18 @@ test("hair gallery and original hairstyle detail still open after makeup switchi
   await expect(page.locator(".studio-look-card").first()).toBeVisible();
   await page.locator(".studio-look-card > button").first().click();
   await expect(page.getByRole("dialog",{name:"کاوش لوک‌ها"})).toBeVisible();
+});
+
+test("same unmodified face appears in service, detail and booking screens",async({page})=>{
+  await makeup(page);
+  const card=page.locator(".makeup-card__view").first();
+  await card.click();
+  const detail=page.getByRole("dialog");
+  await expect(detail.locator('.makeup-detail__art img[src="/makeup/model-reference.webp"]')).toBeVisible();
+  await expect(detail.locator(".makeup-detail__thumbs img")).toHaveCount(3);
+  await expect(detail.locator(".makeup-detail__palette span")).toHaveCount(4);
+  await page.screenshot({path:"test-results/makeup-detail-exact-face.png",animations:"disabled"});
+  await detail.getByRole("button",{name:"درخواست این میکاپ"}).click();
+  await page.getByRole("button",{name:"مرحله قبل"}).click();
+  await expect(page.getByText("میکاپ نچرال").first()).toBeVisible();
 });
