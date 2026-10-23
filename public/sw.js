@@ -32,7 +32,7 @@ self.addEventListener('fetch', event => {
         // its compiled JS/CSS manifest belongs to the cache fingerprint.
         return response;
       } catch (error) {
-        const shell=await caches.match('/index.html');
+        const shell=await (await caches.open(CACHE)).match('/index.html');
         if (shell) return shell;
         throw error;
       }
@@ -40,7 +40,9 @@ self.addEventListener('fetch', event => {
     return;
   }
   event.respondWith((async () => {
-    const cached=await caches.match(req);
+    // Always prefer the active release; older assets are fallbacks only.
+    const current=await caches.open(CACHE);
+    const cached=(await current.match(req)) || (await caches.match(req));
     if (cached) return cached;
     const response=await fetch(req);
     if (response.ok && response.type==='basic') {
