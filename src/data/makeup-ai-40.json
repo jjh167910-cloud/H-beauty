@@ -19,7 +19,8 @@
       "asset": "/makeup/ai-portraits/hb-makeup-01-natural-satin.webp",
       "identityApproved": false,
       "styleDistinctApproved": false,
-      "publishApproved": false
+      "publishApproved": false,
+      "expectedSha256": "9f1604f4904a0e6136a65354945d6fe83b224c8e54edec5ea20d61b54979633e"
     },
     {
       "id": "hb-makeup-02",
@@ -31,7 +32,8 @@
       "asset": "/makeup/ai-portraits/hb-makeup-02-peach-soft.webp",
       "identityApproved": false,
       "styleDistinctApproved": false,
-      "publishApproved": false
+      "publishApproved": false,
+      "expectedSha256": "7331aca655fc129b8694ba3c05b9af38a42d245496c8abf2c4132390c8d66b57"
     },
     {
       "id": "hb-makeup-03",
@@ -43,7 +45,8 @@
       "asset": "/makeup/ai-portraits/hb-makeup-03-rose-gold.webp",
       "identityApproved": false,
       "styleDistinctApproved": false,
-      "publishApproved": false
+      "publishApproved": false,
+      "expectedSha256": "34d66272d01a63b3241df1c3dc189262fce46f151d555e50f985825c94d98342"
     },
     {
       "id": "hb-makeup-04",
@@ -55,7 +58,8 @@
       "asset": "/makeup/ai-portraits/hb-makeup-04-classic-bridal.webp",
       "identityApproved": false,
       "styleDistinctApproved": false,
-      "publishApproved": false
+      "publishApproved": false,
+      "expectedSha256": "d3c9b4f8732646f90d00f2318a227dd3e1643a02e2b0d2b3fddd8e8c13a4a80c"
     },
     {
       "id": "hb-makeup-05",
@@ -67,7 +71,8 @@
       "asset": "/makeup/ai-portraits/hb-makeup-05-champagne-glow.webp",
       "identityApproved": false,
       "styleDistinctApproved": false,
-      "publishApproved": false
+      "publishApproved": false,
+      "expectedSha256": "16043a1455f1a4788e82bc2b729f6219f6a18084534bfa01b5531ce8e3a065ea"
     },
     {
       "id": "hb-makeup-06",
@@ -79,7 +84,8 @@
       "asset": "/makeup/ai-portraits/hb-makeup-06-bronze-glam.webp",
       "identityApproved": false,
       "styleDistinctApproved": false,
-      "publishApproved": false
+      "publishApproved": false,
+      "expectedSha256": "99ba5715cdc596156e806544e64baca6697c27e7778b062560ed44cfe4d986ef"
     },
     {
       "id": "hb-makeup-07",
@@ -91,7 +97,8 @@
       "asset": "/makeup/ai-portraits/hb-makeup-07-classic-red.webp",
       "identityApproved": false,
       "styleDistinctApproved": false,
-      "publishApproved": false
+      "publishApproved": false,
+      "expectedSha256": "aea73daaf932b1a482c144ae91ecdf81fce4a489e7f4e0303a04c58f9a3d986f"
     },
     {
       "id": "hb-makeup-08",
@@ -103,7 +110,8 @@
       "asset": "/makeup/ai-portraits/hb-makeup-08-plum-evening.webp",
       "identityApproved": false,
       "styleDistinctApproved": false,
-      "publishApproved": false
+      "publishApproved": false,
+      "expectedSha256": "7c0b40bb6eb4c3515fb06edb1546b3f852c6ee91e1dfd9402c467b642d899c86"
     },
     {
       "id": "hb-makeup-09",
@@ -115,7 +123,8 @@
       "asset": "/makeup/ai-portraits/hb-makeup-09-brown-smoky.webp",
       "identityApproved": false,
       "styleDistinctApproved": false,
-      "publishApproved": false
+      "publishApproved": false,
+      "expectedSha256": "48133c802aa05fe1c9d0d7085898b3bfc7d5eea4caabc14f14a451dfeca494ea"
     },
     {
       "id": "hb-makeup-10",
@@ -127,7 +136,8 @@
       "asset": "/makeup/ai-portraits/hb-makeup-10-winged-liner.webp",
       "identityApproved": false,
       "styleDistinctApproved": false,
-      "publishApproved": false
+      "publishApproved": false,
+      "expectedSha256": "5424452078cfeb6f267dcfa152aaa33c72dbd747533e2e5600f5d9de00faae7c"
     },
     {
       "id": "hb-makeup-11",
@@ -139,7 +149,8 @@
       "asset": "/makeup/ai-portraits/hb-makeup-11-emerald-smoky.webp",
       "identityApproved": false,
       "styleDistinctApproved": false,
-      "publishApproved": false
+      "publishApproved": false,
+      "expectedSha256": "4b9e03c1179814e6b6a769525242cf99c5d6cb9a1f86900eccfb73b20a82e443"
     },
     {
       "id": "hb-makeup-12",
@@ -151,7 +162,8 @@
       "asset": "/makeup/ai-portraits/hb-makeup-12-burgundy-velvet.webp",
       "identityApproved": false,
       "styleDistinctApproved": false,
-      "publishApproved": false
+      "publishApproved": false,
+      "expectedSha256": "ded76964408bd1b4a38858f461983f646cc5f667bcbb3d9ab89c5e6a23c0a670"
     },
     {
       "id": "hb-makeup-13",
@@ -163,7 +175,8 @@
       "asset": "/makeup/ai-portraits/hb-makeup-13-copper-metallic.webp",
       "identityApproved": false,
       "styleDistinctApproved": false,
-      "publishApproved": false
+      "publishApproved": false,
+      "expectedSha256": "323c2271ce61127060d9f6f71d436cedf42864a6cbafb640380f3ae25e5314c4"
     },
     {
       "id": "hb-makeup-14",
@@ -175,7 +188,8 @@
       "asset": "/makeup/ai-portraits/hb-makeup-14-hollywood-warm.webp",
       "identityApproved": false,
       "styleDistinctApproved": false,
-      "publishApproved": false
+      "publishApproved": false,
+      "expectedSha256": "67b84fd79dbe597834920c3ea999d1ea1653149cca1c0d2d9500c48881869b66"
     },
     {
       "id": "hb-makeup-15",
@@ -187,7 +201,8 @@
       "asset": "/makeup/ai-portraits/hb-makeup-15-pearl-bridal.webp",
       "identityApproved": false,
       "styleDistinctApproved": false,
-      "publishApproved": false
+      "publishApproved": false,
+      "expectedSha256": "44447dda546435d947f94febce56b563e66f5e95eb22062e79955ee281261573"
     },
     {
       "id": "hb-makeup-16",
@@ -199,7 +214,8 @@
       "asset": "/makeup/ai-portraits/hb-makeup-16-velvet-plum.webp",
       "identityApproved": false,
       "styleDistinctApproved": false,
-      "publishApproved": false
+      "publishApproved": false,
+      "expectedSha256": "ad675847f6072ae83eedaa196e0e95739eb796cec0f0f8cc987275883e2bade9"
     },
     {
       "id": "hb-makeup-17",
@@ -211,7 +227,8 @@
       "asset": "/makeup/ai-portraits/hb-makeup-17-peach-radiance.webp",
       "identityApproved": false,
       "styleDistinctApproved": false,
-      "publishApproved": false
+      "publishApproved": false,
+      "expectedSha256": "3e4576db34a6b5d3e3496509f16ea093d179b9a4d8eee13f2959600fcd1e1875"
     },
     {
       "id": "hb-makeup-18",
@@ -223,7 +240,8 @@
       "asset": "/makeup/ai-portraits/hb-makeup-18-crimson-lip.webp",
       "identityApproved": false,
       "styleDistinctApproved": false,
-      "publishApproved": false
+      "publishApproved": false,
+      "expectedSha256": "479268059fb00781010ab401994a859c2a8f0558ce465128032efe9d974f274c"
     },
     {
       "id": "hb-makeup-19",
@@ -235,7 +253,8 @@
       "asset": "/makeup/ai-portraits/hb-makeup-19-mauve-luxe.webp",
       "identityApproved": false,
       "styleDistinctApproved": false,
-      "publishApproved": false
+      "publishApproved": false,
+      "expectedSha256": "e33f266b3e09a36820eac6a40f45dd65e4ed768a0a6369ba752804186db763f4"
     },
     {
       "id": "hb-makeup-20",
@@ -247,7 +266,8 @@
       "asset": "/makeup/ai-portraits/hb-makeup-20-sunlit-bronze.webp",
       "identityApproved": false,
       "styleDistinctApproved": false,
-      "publishApproved": false
+      "publishApproved": false,
+      "expectedSha256": "f34774c721e68960d187865f5e426a24adf601cff05b0ca4c46661ececbeca2c"
     },
     {
       "id": "hb-makeup-21",
@@ -259,7 +279,8 @@
       "asset": null,
       "identityApproved": false,
       "styleDistinctApproved": false,
-      "publishApproved": false
+      "publishApproved": false,
+      "expectedSha256": null
     },
     {
       "id": "hb-makeup-22",
@@ -271,7 +292,8 @@
       "asset": null,
       "identityApproved": false,
       "styleDistinctApproved": false,
-      "publishApproved": false
+      "publishApproved": false,
+      "expectedSha256": null
     },
     {
       "id": "hb-makeup-23",
@@ -283,7 +305,8 @@
       "asset": null,
       "identityApproved": false,
       "styleDistinctApproved": false,
-      "publishApproved": false
+      "publishApproved": false,
+      "expectedSha256": null
     },
     {
       "id": "hb-makeup-24",
@@ -295,7 +318,8 @@
       "asset": null,
       "identityApproved": false,
       "styleDistinctApproved": false,
-      "publishApproved": false
+      "publishApproved": false,
+      "expectedSha256": null
     },
     {
       "id": "hb-makeup-25",
@@ -307,7 +331,8 @@
       "asset": null,
       "identityApproved": false,
       "styleDistinctApproved": false,
-      "publishApproved": false
+      "publishApproved": false,
+      "expectedSha256": null
     },
     {
       "id": "hb-makeup-26",
@@ -319,7 +344,8 @@
       "asset": null,
       "identityApproved": false,
       "styleDistinctApproved": false,
-      "publishApproved": false
+      "publishApproved": false,
+      "expectedSha256": null
     },
     {
       "id": "hb-makeup-27",
@@ -331,7 +357,8 @@
       "asset": null,
       "identityApproved": false,
       "styleDistinctApproved": false,
-      "publishApproved": false
+      "publishApproved": false,
+      "expectedSha256": null
     },
     {
       "id": "hb-makeup-28",
@@ -343,7 +370,8 @@
       "asset": null,
       "identityApproved": false,
       "styleDistinctApproved": false,
-      "publishApproved": false
+      "publishApproved": false,
+      "expectedSha256": null
     },
     {
       "id": "hb-makeup-29",
@@ -355,7 +383,8 @@
       "asset": null,
       "identityApproved": false,
       "styleDistinctApproved": false,
-      "publishApproved": false
+      "publishApproved": false,
+      "expectedSha256": null
     },
     {
       "id": "hb-makeup-30",
@@ -367,7 +396,8 @@
       "asset": null,
       "identityApproved": false,
       "styleDistinctApproved": false,
-      "publishApproved": false
+      "publishApproved": false,
+      "expectedSha256": null
     },
     {
       "id": "hb-makeup-31",
@@ -379,7 +409,8 @@
       "asset": null,
       "identityApproved": false,
       "styleDistinctApproved": false,
-      "publishApproved": false
+      "publishApproved": false,
+      "expectedSha256": null
     },
     {
       "id": "hb-makeup-32",
@@ -391,7 +422,8 @@
       "asset": null,
       "identityApproved": false,
       "styleDistinctApproved": false,
-      "publishApproved": false
+      "publishApproved": false,
+      "expectedSha256": null
     },
     {
       "id": "hb-makeup-33",
@@ -403,7 +435,8 @@
       "asset": null,
       "identityApproved": false,
       "styleDistinctApproved": false,
-      "publishApproved": false
+      "publishApproved": false,
+      "expectedSha256": null
     },
     {
       "id": "hb-makeup-34",
@@ -415,7 +448,8 @@
       "asset": null,
       "identityApproved": false,
       "styleDistinctApproved": false,
-      "publishApproved": false
+      "publishApproved": false,
+      "expectedSha256": null
     },
     {
       "id": "hb-makeup-35",
@@ -427,7 +461,8 @@
       "asset": null,
       "identityApproved": false,
       "styleDistinctApproved": false,
-      "publishApproved": false
+      "publishApproved": false,
+      "expectedSha256": null
     },
     {
       "id": "hb-makeup-36",
@@ -439,7 +474,8 @@
       "asset": null,
       "identityApproved": false,
       "styleDistinctApproved": false,
-      "publishApproved": false
+      "publishApproved": false,
+      "expectedSha256": null
     },
     {
       "id": "hb-makeup-37",
@@ -451,7 +487,8 @@
       "asset": null,
       "identityApproved": false,
       "styleDistinctApproved": false,
-      "publishApproved": false
+      "publishApproved": false,
+      "expectedSha256": null
     },
     {
       "id": "hb-makeup-38",
@@ -463,7 +500,8 @@
       "asset": null,
       "identityApproved": false,
       "styleDistinctApproved": false,
-      "publishApproved": false
+      "publishApproved": false,
+      "expectedSha256": null
     },
     {
       "id": "hb-makeup-39",
@@ -475,7 +513,8 @@
       "asset": null,
       "identityApproved": false,
       "styleDistinctApproved": false,
-      "publishApproved": false
+      "publishApproved": false,
+      "expectedSha256": null
     },
     {
       "id": "hb-makeup-40",
@@ -487,7 +526,8 @@
       "asset": null,
       "identityApproved": false,
       "styleDistinctApproved": false,
-      "publishApproved": false
+      "publishApproved": false,
+      "expectedSha256": null
     }
   ]
 }
