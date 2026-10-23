@@ -324,11 +324,15 @@ test("look detail controls are outside the full-size image", async ({ page }) =>
   const detail = page.locator(".studio-look-detail__hero");
   await expect(detail).toBeVisible();
   await expect(page.locator(".salon25-look-detail__tools")).toBeVisible();
-  const imageBox = await detail.boundingBox();
-  const actionsBox = await page.locator(".salon25-look-detail__actions").boundingBox();
-  expect(imageBox).not.toBeNull();
-  expect(actionsBox).not.toBeNull();
-  expect(actionsBox!.y).toBeGreaterThanOrEqual(imageBox!.y + imageBox!.height - 1);
+  // Measure both boxes in the same frame: the sheet is still sliding into place,
+  // so two separate measurements can come from different animation frames.
+  const boxes = await page.evaluate(() => {
+    const image = document.querySelector(".studio-look-detail__hero")?.getBoundingClientRect();
+    const actions = document.querySelector(".salon25-look-detail__actions")?.getBoundingClientRect();
+    return image && actions ? { imageBottom: image.bottom, actionsTop: actions.top } : null;
+  });
+  expect(boxes).not.toBeNull();
+  expect(boxes!.actionsTop).toBeGreaterThanOrEqual(boxes!.imageBottom - 1);
 });
 
 test("unavailable offline hairstyle photos show a fallback instead of endless shimmer", async ({ page }) => {
