@@ -202,3 +202,99 @@
   @media(min-width:700px) {.makeup-spotlight {max-width:720px;margin-inline:auto}.makeup-home-tabs {max-width:720px;margin-inline:auto}.makeup-spotlight__image {height:450px}}
   @media(max-width:359px) {.makeup-spotlight__categories button {min-height:3.65rem;gap:.3rem}.makeup-spotlight__categories button strong {font-size:.76rem}}
 }
+
+/* v31.4 — faithfully align makeup cards, detail and supporting actions
+   with the approved blush / garnet Persian salon design sheet.
+   All photos point to the original, unaltered reference model. */
+@layer components {
+  .salon-gallery[data-mode="makeup"] .makeup-gallery-switch {
+    gap:.45rem;max-width:620px;margin-bottom:.15rem
+  }
+  .salon-gallery[data-mode="makeup"] .makeup-gallery-switch button {
+    border-radius:.65rem;min-height:3rem;font-size:.88rem
+  }
+  .makeup-page .studio-head h1 {font-size:clamp(1.65rem,5vw,2.2rem);line-height:1.4}
+  .makeup-page .studio-head p {max-width:42rem}
+  .makeup-grid {row-gap:1.05rem;column-gap:.65rem;align-items:start}
+  .makeup-card {
+    position:relative;display:flex;flex-direction:column;
+    background:var(--color-surface);border:1px solid var(--color-line);
+    border-radius:1rem;box-shadow:var(--shadow-1);overflow:visible
+  }
+  .makeup-card__view {display:flex;flex-direction:column;gap:0;min-width:0}
+  .makeup-card__art {
+    width:100%;border-radius:.9rem .9rem .45rem .45rem;
+    aspect-ratio:3/3.6;overflow:hidden
+  }
+  .makeup-card__art .makeup-art {width:100%;height:100%;overflow:hidden}
+  .makeup-card__art .makeup-art>img {object-fit:cover;object-position:center 40%}
+  .makeup-card__caption {
+    display:flex;min-width:0;flex-direction:column;align-items:center;
+    gap:.17rem;text-align:center;padding:.48rem .35rem .4rem;
+    min-height:4.8rem;background:var(--color-surface)
+  }
+  .makeup-card__caption strong {
+    display:block;font-weight:770;font-size:clamp(.77rem,2.7vw,.91rem);
+    line-height:1.7;color:var(--color-ink)
+  }
+  .makeup-card__caption .makeup-card__tag {
+    display:block;margin:0;color:var(--color-ink-2);font-size:.7rem;line-height:1.55
+  }
+  .makeup-card__caption .makeup-card__palette {justify-content:center;margin:.23rem 0 0}
+  .makeup-card__caption .makeup-card__palette i {width:.75rem;height:.75rem}
+  .makeup-card__actions {display:block;margin:0;padding:.2rem .43rem .55rem}
+  .makeup-card__actions button:first-child {
+    position:absolute;z-index:2;inset-block-start:.45rem;inset-inline-start:.45rem;
+    width:2.75rem;min-width:2.75rem;height:2.75rem;min-height:2.75rem;
+    padding:0;border-radius:50%;font-size:0;gap:0;
+    background:rgba(255,248,247,.95);color:#962344;border:1px solid rgba(255,255,255,.55);
+    box-shadow:0 2px 8px rgba(52,23,32,.16)
+  }
+  .makeup-card__actions button:first-child svg {width:1.22rem;height:1.22rem}
+  .makeup-card__actions button:first-child[aria-pressed="true"] {
+    background:#992647;color:white;border-color:#992647
+  }
+  .makeup-card__actions button:last-child {
+    width:100%;min-height:2.75rem;font-weight:680;font-size:.75rem;
+    border-radius:.75rem;background:#922443;color:white;border-color:#922443
+  }
+  .makeup-card__actions button:focus-visible {outline:3px solid var(--color-gold-ink);outline-offset:2px}
+  .makeup-detail {gap:.82rem}
+  .makeup-detail__art {width:100%;max-width:400px;aspect-ratio:4/4.2;margin-inline:auto}
+  .makeup-detail__meta {margin-top:.2rem}
+  .makeup-detail h2 {font-size:1.3rem;line-height:1.6}
+  .makeup-detail p {line-height:1.8}
+  .makeup-detail__palette-wrap {display:flex;align-items:center;justify-content:space-between;gap:.75rem;flex-wrap:wrap}
+  .makeup-detail__palette-wrap>span {font-size:.8rem;color:var(--color-ink-2)}
+  .makeup-detail__thumbs {margin-block:.1rem}
+  .makeup-detail__service {
+    display:grid;gap:.25rem;border:1px solid var(--color-line-2);
+    border-radius:.85rem;background:var(--color-surface);padding:1rem
+  }
+  .makeup-detail__service-label {font-size:.73rem;color:var(--color-ink-2)}
+  .makeup-detail__service strong {font-size:.95rem;color:var(--color-ink)}
+  .makeup-detail__service>div {display:flex;justify-content:space-between;align-items:center;gap:1rem;font-size:.8rem}
+  .makeup-detail__service>div span {color:var(--color-ink-2)}
+  .makeup-detail__service>div b {color:var(--color-garnet);font-weight:750}
+  .makeup-editorial-note {
+    background:var(--color-sunken);border-radius:.65rem;
+    margin:0 var(--spacing-gutter) .85rem;padding:.65rem .8rem;
+    font-size:.69rem;line-height:1.75
+  }
+  [data-theme="dark"] .makeup-card__actions button:first-child {
+    background:rgba(249,231,228,.96);color:#892743
+  }
+  [data-theme="dark"] .makeup-card__actions button:first-child[aria-pressed="true"] {background:#b44261;color:white}
+  @media(min-width:700px) {
+    .makeup-grid {grid-template-columns:repeat(3,minmax(0,1fr));gap:1.35rem 1rem}
+    .makeup-card__art {aspect-ratio:3/3.6}
+    .makeup-card__caption {min-height:5rem}
+  }
+  @media(max-width:359px) {
+    .makeup-grid {column-gap:.43rem}
+    .makeup-card__caption {padding:.32rem .25rem;min-height:4.5rem}
+    .makeup-card__caption strong {font-size:.74rem}
+    .makeup-card__actions {padding-inline:.32rem}
+    .makeup-card__actions button:last-child {font-size:.69rem}
+  }
+}
