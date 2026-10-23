@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { SERVICES, SERVICE_CATEGORIES, formatMinutes, formatPrice, type ServiceCategory } from "@/data/salon";
 import { useSalon } from "@/lib/salon-store";
+import { MAKEUP_LOOKS } from "@/data/makeup";
+import { MODEL_REFERENCE_SRC, makeupPortraitSrc } from "../makeup-artwork";
 import { Icon } from "../icons";
 import { Button, Chip, Ornament, haptic, useSalonActions } from "../ui";
 
@@ -75,7 +77,7 @@ export function ServicesScreen() {
                     <article className="studio-service-item" key={service.id} data-makeup={service.category === "beauty" ? "" : undefined} data-selected={selected ? "" : undefined}>
                       <button className="studio-service-item__details" onClick={() => openSheet({ kind: "service", id: service.id })} type="button">
                         {service.category === "beauty" ? (
-                          <span className="makeup-service-thumb"><img src="/makeup/model-reference.webp" alt="" loading="lazy" /></span>
+                          <span className="makeup-service-thumb"><img src={makeupPortraitSrc(MAKEUP_LOOKS.find(look=>look.serviceId===service.id) ?? MAKEUP_LOOKS[0]) || MODEL_REFERENCE_SRC} alt="" loading="lazy" /></span>
                         ) : <span className="studio-service-item__index" lang="en">{String(index + 1).padStart(2, "0")}</span>}
                         <span className="studio-service-item__content">
                           <span className="studio-service-item__en" lang="en">{service.en}</span>
