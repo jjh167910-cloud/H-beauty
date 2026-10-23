@@ -165,7 +165,7 @@ export function FinderBody() {
           ))}
         </div>
         <div className="mt-6 grid gap-2">
-          <Button variant="gold" size="lg" orb onClick={() => openBooking({ service: "signature-cut", lookId: picks[0]?.id })}>رزرو مشاوره و کوپ</Button>
+          <Button variant="gold" size="lg" orb onClick={() => openBooking({ service: "signature-cut", lookId: picks[0]?.id })}>درخواست مشاوره و کوپ</Button>
           <div className="flex gap-2">
             <Button variant="tonal" className="flex-1" onClick={() => { setFilter(picks[0]?.category ?? "all"); go("looks"); }}>مدل‌های مشابه</Button>
             <Button variant="secondary" icon="rebook" className="flex-1" onClick={() => setAnswers([])}>از نو</Button>
