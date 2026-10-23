@@ -1,12 +1,13 @@
 import { create } from "zustand";
 import { familyById } from "@/data/catalog";
+import { styleById } from "@/data/makeup-styles";
 import { serviceById, stylistById } from "@/data/salon";
 
 const KEY = "hananeh-atelier-v1";
 
-export type Tab = "home" | "services" | "looks" | "bookings" | "me" | "design";
-/** Order drives transition direction; "design" is the hidden living style guide. */
-export const TABS: Tab[] = ["home", "services", "looks", "bookings", "me", "design"];
+export type Tab = "home" | "services" | "looks" | "makeup" | "bookings" | "me" | "design";
+/** Order drives transition direction; "makeup" and "design" are reached from screens, not the tab bar. */
+export const TABS: Tab[] = ["home", "services", "looks", "makeup", "bookings", "me", "design"];
 
 export type ThemePref = "system" | "light" | "dark";
 
@@ -20,6 +21,8 @@ export type BookingRequest = {
   phone: string;
   note: string;
   lookId: number | null;
+  /** Makeup style the request was made from, if any. */
+  makeupId: string | null;
   createdAt: number;
   sent: boolean;
 };
@@ -30,12 +33,14 @@ export type Draft = {
   time: string;
   note: string;
   lookId: number | null;
+  makeupId: string | null;
 };
 
-const EMPTY_DRAFT: Draft = { stylist: "any", date: "", time: "", note: "", lookId: null };
+const EMPTY_DRAFT: Draft = { stylist: "any", date: "", time: "", note: "", lookId: null, makeupId: null };
 
 type Persisted = {
   favs?: unknown;
+  favMakeup?: unknown;
   compare?: unknown;
   cart?: unknown;
   bookings?: unknown;
@@ -48,6 +53,11 @@ function ids(value: unknown, limit?: number) {
   if (!Array.isArray(value)) return [];
   const next = value.filter((id): id is number => Number.isInteger(id) && familyById.has(id));
   return typeof limit === "number" ? next.slice(0, limit) : next;
+}
+
+function makeupIds(value: unknown) {
+  if (!Array.isArray(value)) return [];
+  return value.filter((id): id is string => typeof id === "string" && styleById.has(id));
 }
 
 function serviceIds(value: unknown) {
@@ -66,6 +76,7 @@ function bookingList(value: unknown): BookingRequest[] {
     services: serviceIds(item.services),
     stylist: stylistById.has(item.stylist) ? item.stylist : "any",
     lookId: typeof item.lookId === "number" && familyById.has(item.lookId) ? item.lookId : null,
+    makeupId: typeof item.makeupId === "string" && styleById.has(item.makeupId) ? item.makeupId : null,
     sent: Boolean(item.sent),
   }));
 }
@@ -73,6 +84,8 @@ function bookingList(value: unknown): BookingRequest[] {
 type SalonState = {
   tab: Tab;
   favs: number[];
+  /** Saved makeup style ids. */
+  favMakeup: string[];
   compare: number[];
   cart: string[];
   draft: Draft;
@@ -89,6 +102,7 @@ type SalonState = {
   hydrate: () => void;
   setTab: (tab: Tab) => void;
   toggleFav: (id: number) => void;
+  toggleFavMakeup: (id: string) => boolean;
   toggleCompare: (id: number) => "added" | "removed" | "limit";
   clearCompare: () => void;
   toggleCart: (id: string) => boolean;
@@ -113,9 +127,9 @@ type SalonState = {
 
 export const useSalon = create<SalonState>((set, get) => {
   function save() {
-    const { favs, compare, cart, bookings, theme, profile, welcomed } = get();
+    const { favs, favMakeup, compare, cart, bookings, theme, profile, welcomed } = get();
     try {
-      localStorage.setItem(KEY, JSON.stringify({ favs, compare, cart, bookings, theme, profile, welcomed }));
+      localStorage.setItem(KEY, JSON.stringify({ favs, favMakeup, compare, cart, bookings, theme, profile, welcomed }));
       if (get().storageError) set({ storageError: false });
     } catch {
       // The UI may still hold edits in memory, but they are not durable.
@@ -131,6 +145,7 @@ export const useSalon = create<SalonState>((set, get) => {
   return {
     tab: "home",
     favs: [],
+    favMakeup: [],
     compare: [],
     cart: [],
     draft: EMPTY_DRAFT,
@@ -152,6 +167,7 @@ export const useSalon = create<SalonState>((set, get) => {
         const profile = data.profile && typeof data.profile === "object" ? (data.profile as Record<string, unknown>) : {};
         set({
           favs: ids(data.favs),
+          favMakeup: makeupIds(data.favMakeup),
           compare: ids(data.compare, 3),
           cart: serviceIds(data.cart),
           bookings: bookingList(data.bookings),
@@ -172,6 +188,11 @@ export const useSalon = create<SalonState>((set, get) => {
     toggleFav: (id) => {
       const favs = get().favs.includes(id) ? get().favs.filter((item) => item !== id) : [...get().favs, id];
       update({ favs });
+    },
+    toggleFavMakeup: (id) => {
+      const has = get().favMakeup.includes(id);
+      update({ favMakeup: has ? get().favMakeup.filter((item) => item !== id) : [...get().favMakeup, id] });
+      return !has;
     },
     toggleCompare: (id) => {
       const current = get().compare;
@@ -207,7 +228,7 @@ export const useSalon = create<SalonState>((set, get) => {
       } catch {
         storageError = true;
       }
-      set({ welcomed: false, favs: [], compare: [], cart: [], bookings: [], profile: { name: "", phone: "" }, theme: "system", draft: EMPTY_DRAFT, storageError });
+      set({ welcomed: false, favs: [], favMakeup: [], compare: [], cart: [], bookings: [], profile: { name: "", phone: "" }, theme: "system", draft: EMPTY_DRAFT, storageError });
     },
     welcome: () => update({ welcomed: true }),
     setFilter: (filter) => set({ filter, savedOnly: false }),

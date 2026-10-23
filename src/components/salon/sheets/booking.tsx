@@ -16,6 +16,8 @@ import {
   timeLabel,
   upcomingDays,
 } from "@/data/salon";
+import { hasPhoto, lookPhoto } from "@/data/makeup-photos";
+import { styleById } from "@/data/makeup-styles";
 import { useSalon, type BookingRequest } from "@/lib/salon-store";
 import { bookingMessage, copyText, shareText, whatsappLink } from "@/lib/share";
 import { Icon } from "../icons";
@@ -32,7 +34,10 @@ export function BookingSheet({ open, onClose }: { open: boolean; onClose: () => 
   const setDraft = useSalon((state) => state.setDraft);
   const setProfile = useSalon((state) => state.setProfile);
   const addBooking = useSalon((state) => state.addBooking);
-  const [step, setStep] = useState(() => (cart.length ? (draft.stylist !== ANY_STYLIST ? 2 : 1) : 0));
+  // A request started from a makeup style opens on the services step, showing the chosen style.
+  const [step, setStep] = useState(() => (draft.makeupId ? 0 : cart.length ? (draft.stylist !== ANY_STYLIST ? 2 : 1) : 0));
+  const makeup = draft.makeupId ? styleById.get(draft.makeupId) ?? null : null;
+  const [browsing, setBrowsing] = useState(() => !makeup);
   const [name, setName] = useState(profile.name);
   const [phone, setPhone] = useState(profile.phone);
   const [touched, setTouched] = useState(false);
@@ -70,6 +75,7 @@ export function BookingSheet({ open, onClose }: { open: boolean; onClose: () => 
       phone: validPhone,
       note: draft.note,
       lookId: draft.lookId,
+      makeupId: draft.makeupId,
       createdAt: Date.now(),
       sent: false,
     };
@@ -128,7 +134,35 @@ export function BookingSheet({ open, onClose }: { open: boolean; onClose: () => 
         ))}
       </ol>
 
-      {step === 0 ? (
+      {step === 0 && makeup ? (
+        <section className="mk-booking rise mt-7" aria-labelledby="mk-booking-title">
+          <h3 id="mk-booking-title">خدمات انتخاب‌شده</h3>
+          <div className="mk-booking__list">
+            {summary.items.map((service, index) => (
+              <article key={service.id} className="mk-booking__item">
+                {index === 0 && hasPhoto(makeup.id)
+                  ? <Media src={lookPhoto(makeup.id, "sm")} alt="" className="mk-booking__photo" />
+                  : <span className="mk-booking__photo mk-booking__photo--icon"><Icon name={service.category} size={24} weight="duotone" /></span>}
+                <span className="mk-booking__copy">
+                  <strong>{service.title}</strong>
+                  {index === 0 ? <small>سبک: {makeup.title}</small> : null}
+                  <span>{formatMinutes(service.minutes)}</span>
+                  <b>{service.price ? `از ${formatPrice(service.price)} تومان` : "قیمت پس از مشاوره"}</b>
+                </span>
+                <IconButton icon="close" size="sm" variant="tonal" label={`حذف ${service.title}`}
+                  onClick={() => { haptic(); toggleCart(service.id); if (index === 0) setDraft({ makeupId: null }); }} />
+              </article>
+            ))}
+          </div>
+          {!browsing ? (
+            <button type="button" className="mk-booking__add" onClick={() => setBrowsing(true)}>
+              <Icon name="plus" size={18} weight="regular" />افزودن یک خدمت دیگر
+            </button>
+          ) : null}
+        </section>
+      ) : null}
+
+      {step === 0 && browsing ? (
         <div className="studio-booking-choices rise mt-7 grid gap-7">
           {SERVICE_CATEGORIES.map((category) => (
             <section key={category.key}>
@@ -220,6 +254,13 @@ export function BookingSheet({ open, onClose }: { open: boolean; onClose: () => 
             <p className="t-footnote text-ink-2">{longDate(date)} · ساعت {timeLabel(draft.time)}</p>
             <p className="t-footnote text-ink-2">{stylistName(draft.stylist)} · {formatMinutes(summary.minutes)}</p>
           </div>
+          {makeup ? (
+            <div className="flex items-center gap-3">
+              {hasPhoto(makeup.id) ? <Media src={lookPhoto(makeup.id, "sm")} className="arch h-14 w-11 shrink-0" /> : null}
+              <span className="min-w-0 flex-1"><span className="t-caption block text-ink-2">سبک میکاپ</span><strong className="t-callout block truncate font-medium">{makeup.title}</strong></span>
+              <IconButton icon="close" label="حذف سبک میکاپ" size="sm" variant="tonal" onClick={() => setDraft({ makeupId: null })} />
+            </div>
+          ) : null}
           {look ? (
             <div className="flex items-center gap-3">
               <Media src={lookThumb(look.repId)} className="arch h-14 w-11 shrink-0" />

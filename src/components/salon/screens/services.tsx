@@ -1,11 +1,20 @@
 import { useState } from "react";
 import { SERVICES, SERVICE_CATEGORIES, formatMinutes, formatPrice, type ServiceCategory } from "@/data/salon";
+import { hasPhoto, lookPhoto } from "@/data/makeup-photos";
 import { useSalon } from "@/lib/salon-store";
 import { Icon } from "../icons";
-import { Button, Chip, Ornament, haptic, useSalonActions } from "../ui";
+import { Button, Chip, Media, Ornament, haptic, useSalonActions } from "../ui";
+
+/** Makeup services show a photo of a matching style instead of a row number. */
+const SERVICE_PHOTO: Record<string, string> = {
+  "natural-makeup": lookPhoto("no-makeup", "sm"),
+  "event-makeup": lookPhoto("full-glam", "sm"),
+  "bridal-signature": lookPhoto("persian-bride", "sm"),
+  "brow-design": lookPhoto("clean-girl", "eyes"),
+};
 
 export function ServicesScreen() {
-  const { openSheet, openBooking } = useSalonActions();
+  const { go, openSheet, openBooking } = useSalonActions();
   const cart = useSalon((state) => state.cart);
   const toggleCart = useSalon((state) => state.toggleCart);
   const [active, setActive] = useState<ServiceCategory | "all">("all");
@@ -63,13 +72,22 @@ export function ServicesScreen() {
                 </div>
                 <span className="studio-group-head__rule" aria-hidden="true" />
               </header>
+              {category.key === "beauty" ? (
+                <button type="button" className="mk-service-link" onClick={() => go("makeup")}>
+                  <Media src={lookPhoto("soft-glam", "sm")} alt="" loading="lazy" />
+                  <span className="mk-service-link__copy"><strong>بخش میکاپ</strong><span>سبک‌های حرفه‌ای میکاپ روی مدل سالن</span></span>
+                  <Icon name="chevron" size={16} />
+                </button>
+              ) : null}
               <div className="studio-service-list">
                 {services.map((service, index) => {
                   const selected = cart.includes(service.id);
                   return (
                     <article className="studio-service-item" key={service.id} data-selected={selected ? "" : undefined}>
                       <button className="studio-service-item__details" onClick={() => openSheet({ kind: "service", id: service.id })} type="button">
-                        <span className="studio-service-item__index" lang="en">{String(index + 1).padStart(2, "0")}</span>
+                        {SERVICE_PHOTO[service.id] && hasPhoto("no-makeup")
+                          ? <Media src={SERVICE_PHOTO[service.id]} alt="" loading="lazy" className="studio-service-item__photo" />
+                          : <span className="studio-service-item__index" lang="en">{String(index + 1).padStart(2, "0")}</span>}
                         <span className="studio-service-item__content">
                           <span className="studio-service-item__en" lang="en">{service.en}</span>
                           <strong>{service.title}</strong>
