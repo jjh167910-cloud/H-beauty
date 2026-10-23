@@ -131,7 +131,7 @@ test("mobile action controls meet minimum tap dimensions", async ({ page }) => {
   for (const route of ["/#/services", "/#/looks"]) {
     await page.goto(route);
     for (const selector of route.includes("services") ? [".studio-service-item__add", ".chip"] : [".salon25-look-card__action", ".chip"]) {
-      const nodes = page.locator(selector);
+      const nodes = page.locator(`${selector}:visible`);
       if (!await nodes.count()) continue;
       const sizes = await nodes.first().evaluate(node => { const box = node.getBoundingClientRect(); return { width: box.width, height: box.height }; });
       expect(sizes.width, selector + " width").toBeGreaterThanOrEqual(44);
