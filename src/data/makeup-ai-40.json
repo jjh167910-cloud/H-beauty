@@ -20,7 +20,10 @@
       "identityApproved": false,
       "styleDistinctApproved": false,
       "publishApproved": false,
-      "expectedSha256": "9f1604f4904a0e6136a65354945d6fe83b224c8e54edec5ea20d61b54979633e"
+      "expectedSha256": "9f1604f4904a0e6136a65354945d6fe83b224c8e54edec5ea20d61b54979633e",
+      "editorialIssues": [
+        "Similar warm nude/rose makeup to 05, 06, 13, 19"
+      ]
     },
     {
       "id": "hb-makeup-02",
@@ -33,7 +36,8 @@
       "identityApproved": false,
       "styleDistinctApproved": false,
       "publishApproved": false,
-      "expectedSha256": "7331aca655fc129b8694ba3c05b9af38a42d245496c8abf2c4132390c8d66b57"
+      "expectedSha256": "7331aca655fc129b8694ba3c05b9af38a42d245496c8abf2c4132390c8d66b57",
+      "editorialIssues": []
     },
     {
       "id": "hb-makeup-03",
@@ -46,7 +50,8 @@
       "identityApproved": false,
       "styleDistinctApproved": false,
       "publishApproved": false,
-      "expectedSha256": "34d66272d01a63b3241df1c3dc189262fce46f151d555e50f985825c94d98342"
+      "expectedSha256": "34d66272d01a63b3241df1c3dc189262fce46f151d555e50f985825c94d98342",
+      "editorialIssues": []
     },
     {
       "id": "hb-makeup-04",
@@ -59,7 +64,8 @@
       "identityApproved": false,
       "styleDistinctApproved": false,
       "publishApproved": false,
-      "expectedSha256": "d3c9b4f8732646f90d00f2318a227dd3e1643a02e2b0d2b3fddd8e8c13a4a80c"
+      "expectedSha256": "d3c9b4f8732646f90d00f2318a227dd3e1643a02e2b0d2b3fddd8e8c13a4a80c",
+      "editorialIssues": []
     },
     {
       "id": "hb-makeup-05",
@@ -72,7 +78,10 @@
       "identityApproved": false,
       "styleDistinctApproved": false,
       "publishApproved": false,
-      "expectedSha256": "16043a1455f1a4788e82bc2b729f6219f6a18084534bfa01b5531ce8e3a065ea"
+      "expectedSha256": "16043a1455f1a4788e82bc2b729f6219f6a18084534bfa01b5531ce8e3a065ea",
+      "editorialIssues": [
+        "Similar warm nude/rose makeup to 01, 06, 13, 19"
+      ]
     },
     {
       "id": "hb-makeup-06",
@@ -85,7 +94,10 @@
       "identityApproved": false,
       "styleDistinctApproved": false,
       "publishApproved": false,
-      "expectedSha256": "99ba5715cdc596156e806544e64baca6697c27e7778b062560ed44cfe4d986ef"
+      "expectedSha256": "99ba5715cdc596156e806544e64baca6697c27e7778b062560ed44cfe4d986ef",
+      "editorialIssues": [
+        "Similar warm nude/rose makeup to 01, 05, 13, 19"
+      ]
     },
     {
       "id": "hb-makeup-07",
@@ -98,7 +110,10 @@
       "identityApproved": false,
       "styleDistinctApproved": false,
       "publishApproved": false,
-      "expectedSha256": "aea73daaf932b1a482c144ae91ecdf81fce4a489e7f4e0303a04c58f9a3d986f"
+      "expectedSha256": "aea73daaf932b1a482c144ae91ecdf81fce4a489e7f4e0303a04c58f9a3d986f",
+      "editorialIssues": [
+        "Potential classic red lipstick overlap with 18"
+      ]
     },
     {
       "id": "hb-makeup-08",
@@ -111,7 +126,8 @@
       "identityApproved": false,
       "styleDistinctApproved": false,
       "publishApproved": false,
-      "expectedSha256": "7c0b40bb6eb4c3515fb06edb1546b3f852c6ee91e1dfd9402c467b642d899c86"
+      "expectedSha256": "7c0b40bb6eb4c3515fb06edb1546b3f852c6ee91e1dfd9402c467b642d899c86",
+      "editorialIssues": []
     },
     {
       "id": "hb-makeup-09",
@@ -124,7 +140,10 @@
       "identityApproved": false,
       "styleDistinctApproved": false,
       "publishApproved": false,
-      "expectedSha256": "48133c802aa05fe1c9d0d7085898b3bfc7d5eea4caabc14f14a451dfeca494ea"
+      "expectedSha256": "48133c802aa05fe1c9d0d7085898b3bfc7d5eea4caabc14f14a451dfeca494ea",
+      "editorialIssues": [
+        "Near-duplicate eye and lip treatment compared to 10 and 17; replacement recommended"
+      ]
     },
     {
       "id": "hb-makeup-10",
@@ -137,7 +156,10 @@
       "identityApproved": false,
       "styleDistinctApproved": false,
       "publishApproved": false,
-      "expectedSha256": "5424452078cfeb6f267dcfa152aaa33c72dbd747533e2e5600f5d9de00faae7c"
+      "expectedSha256": "5424452078cfeb6f267dcfa152aaa33c72dbd747533e2e5600f5d9de00faae7c",
+      "editorialIssues": [
+        "Near-duplicate eye and lip treatment compared to 09 and 17; replacement recommended"
+      ]
     },
     {
       "id": "hb-makeup-11",
@@ -150,7 +172,8 @@
       "identityApproved": false,
       "styleDistinctApproved": false,
       "publishApproved": false,
-      "expectedSha256": "4b9e03c1179814e6b6a769525242cf99c5d6cb9a1f86900eccfb73b20a82e443"
+      "expectedSha256": "4b9e03c1179814e6b6a769525242cf99c5d6cb9a1f86900eccfb73b20a82e443",
+      "editorialIssues": []
     },
     {
       "id": "hb-makeup-12",
@@ -163,7 +186,8 @@
       "identityApproved": false,
       "styleDistinctApproved": false,
       "publishApproved": false,
-      "expectedSha256": "ded76964408bd1b4a38858f461983f646cc5f667bcbb3d9ab89c5e6a23c0a670"
+      "expectedSha256": "ded76964408bd1b4a38858f461983f646cc5f667bcbb3d9ab89c5e6a23c0a670",
+      "editorialIssues": []
     },
     {
       "id": "hb-makeup-13",
@@ -176,7 +200,10 @@
       "identityApproved": false,
       "styleDistinctApproved": false,
       "publishApproved": false,
-      "expectedSha256": "323c2271ce61127060d9f6f71d436cedf42864a6cbafb640380f3ae25e5314c4"
+      "expectedSha256": "323c2271ce61127060d9f6f71d436cedf42864a6cbafb640380f3ae25e5314c4",
+      "editorialIssues": [
+        "Warm rose/nude eye and lip technique overlaps 01, 05, 06, 19"
+      ]
     },
     {
       "id": "hb-makeup-14",
@@ -189,7 +216,8 @@
       "identityApproved": false,
       "styleDistinctApproved": false,
       "publishApproved": false,
-      "expectedSha256": "67b84fd79dbe597834920c3ea999d1ea1653149cca1c0d2d9500c48881869b66"
+      "expectedSha256": "67b84fd79dbe597834920c3ea999d1ea1653149cca1c0d2d9500c48881869b66",
+      "editorialIssues": []
     },
     {
       "id": "hb-makeup-15",
@@ -202,7 +230,8 @@
       "identityApproved": false,
       "styleDistinctApproved": false,
       "publishApproved": false,
-      "expectedSha256": "44447dda546435d947f94febce56b563e66f5e95eb22062e79955ee281261573"
+      "expectedSha256": "44447dda546435d947f94febce56b563e66f5e95eb22062e79955ee281261573",
+      "editorialIssues": []
     },
     {
       "id": "hb-makeup-16",
@@ -215,7 +244,8 @@
       "identityApproved": false,
       "styleDistinctApproved": false,
       "publishApproved": false,
-      "expectedSha256": "ad675847f6072ae83eedaa196e0e95739eb796cec0f0f8cc987275883e2bade9"
+      "expectedSha256": "ad675847f6072ae83eedaa196e0e95739eb796cec0f0f8cc987275883e2bade9",
+      "editorialIssues": []
     },
     {
       "id": "hb-makeup-17",
@@ -228,7 +258,10 @@
       "identityApproved": false,
       "styleDistinctApproved": false,
       "publishApproved": false,
-      "expectedSha256": "3e4576db34a6b5d3e3496509f16ea093d179b9a4d8eee13f2959600fcd1e1875"
+      "expectedSha256": "3e4576db34a6b5d3e3496509f16ea093d179b9a4d8eee13f2959600fcd1e1875",
+      "editorialIssues": [
+        "Near-duplicate eye and lip treatment compared to 09 and 10; replacement recommended"
+      ]
     },
     {
       "id": "hb-makeup-18",
@@ -241,7 +274,10 @@
       "identityApproved": false,
       "styleDistinctApproved": false,
       "publishApproved": false,
-      "expectedSha256": "479268059fb00781010ab401994a859c2a8f0558ce465128032efe9d974f274c"
+      "expectedSha256": "479268059fb00781010ab401994a859c2a8f0558ce465128032efe9d974f274c",
+      "editorialIssues": [
+        "Potential ruby-red lipstick overlap with 07"
+      ]
     },
     {
       "id": "hb-makeup-19",
@@ -254,7 +290,10 @@
       "identityApproved": false,
       "styleDistinctApproved": false,
       "publishApproved": false,
-      "expectedSha256": "e33f266b3e09a36820eac6a40f45dd65e4ed768a0a6369ba752804186db763f4"
+      "expectedSha256": "e33f266b3e09a36820eac6a40f45dd65e4ed768a0a6369ba752804186db763f4",
+      "editorialIssues": [
+        "Warm rose/nude eye and lip treatment overlaps 01, 05, 06, 13"
+      ]
     },
     {
       "id": "hb-makeup-20",
@@ -267,7 +306,8 @@
       "identityApproved": false,
       "styleDistinctApproved": false,
       "publishApproved": false,
-      "expectedSha256": "f34774c721e68960d187865f5e426a24adf601cff05b0ca4c46661ececbeca2c"
+      "expectedSha256": "f34774c721e68960d187865f5e426a24adf601cff05b0ca4c46661ececbeca2c",
+      "editorialIssues": []
     },
     {
       "id": "hb-makeup-21",
@@ -280,7 +320,10 @@
       "identityApproved": false,
       "styleDistinctApproved": false,
       "publishApproved": false,
-      "expectedSha256": "527f344707d220f82729fbf809593bf3ef10bbd597f590d894744a62c498b19f"
+      "expectedSha256": "527f344707d220f82729fbf809593bf3ef10bbd597f590d894744a62c498b19f",
+      "editorialIssues": [
+        "Face-likeness drift: jaw appears narrower and lips fuller than original model"
+      ]
     },
     {
       "id": "hb-makeup-22",
@@ -293,7 +336,10 @@
       "identityApproved": false,
       "styleDistinctApproved": false,
       "publishApproved": false,
-      "expectedSha256": "76c9bb658156a2a8f97f0a9a8840d0abb85d418024c2008a31b2a2af919be540"
+      "expectedSha256": "76c9bb658156a2a8f97f0a9a8840d0abb85d418024c2008a31b2a2af919be540",
+      "editorialIssues": [
+        "Face-likeness drift: jaw appears narrower and lips fuller than original model"
+      ]
     },
     {
       "id": "hb-makeup-23",
@@ -306,7 +352,8 @@
       "identityApproved": false,
       "styleDistinctApproved": false,
       "publishApproved": false,
-      "expectedSha256": null
+      "expectedSha256": null,
+      "editorialIssues": []
     },
     {
       "id": "hb-makeup-24",
@@ -319,7 +366,8 @@
       "identityApproved": false,
       "styleDistinctApproved": false,
       "publishApproved": false,
-      "expectedSha256": null
+      "expectedSha256": null,
+      "editorialIssues": []
     },
     {
       "id": "hb-makeup-25",
@@ -332,7 +380,8 @@
       "identityApproved": false,
       "styleDistinctApproved": false,
       "publishApproved": false,
-      "expectedSha256": null
+      "expectedSha256": null,
+      "editorialIssues": []
     },
     {
       "id": "hb-makeup-26",
@@ -345,7 +394,8 @@
       "identityApproved": false,
       "styleDistinctApproved": false,
       "publishApproved": false,
-      "expectedSha256": null
+      "expectedSha256": null,
+      "editorialIssues": []
     },
     {
       "id": "hb-makeup-27",
@@ -358,7 +408,8 @@
       "identityApproved": false,
       "styleDistinctApproved": false,
       "publishApproved": false,
-      "expectedSha256": null
+      "expectedSha256": null,
+      "editorialIssues": []
     },
     {
       "id": "hb-makeup-28",
@@ -371,7 +422,8 @@
       "identityApproved": false,
       "styleDistinctApproved": false,
       "publishApproved": false,
-      "expectedSha256": null
+      "expectedSha256": null,
+      "editorialIssues": []
     },
     {
       "id": "hb-makeup-29",
@@ -384,7 +436,8 @@
       "identityApproved": false,
       "styleDistinctApproved": false,
       "publishApproved": false,
-      "expectedSha256": null
+      "expectedSha256": null,
+      "editorialIssues": []
     },
     {
       "id": "hb-makeup-30",
@@ -397,7 +450,8 @@
       "identityApproved": false,
       "styleDistinctApproved": false,
       "publishApproved": false,
-      "expectedSha256": null
+      "expectedSha256": null,
+      "editorialIssues": []
     },
     {
       "id": "hb-makeup-31",
@@ -410,7 +464,8 @@
       "identityApproved": false,
       "styleDistinctApproved": false,
       "publishApproved": false,
-      "expectedSha256": null
+      "expectedSha256": null,
+      "editorialIssues": []
     },
     {
       "id": "hb-makeup-32",
@@ -423,7 +478,8 @@
       "identityApproved": false,
       "styleDistinctApproved": false,
       "publishApproved": false,
-      "expectedSha256": null
+      "expectedSha256": null,
+      "editorialIssues": []
     },
     {
       "id": "hb-makeup-33",
@@ -436,7 +492,8 @@
       "identityApproved": false,
       "styleDistinctApproved": false,
       "publishApproved": false,
-      "expectedSha256": null
+      "expectedSha256": null,
+      "editorialIssues": []
     },
     {
       "id": "hb-makeup-34",
@@ -449,7 +506,8 @@
       "identityApproved": false,
       "styleDistinctApproved": false,
       "publishApproved": false,
-      "expectedSha256": null
+      "expectedSha256": null,
+      "editorialIssues": []
     },
     {
       "id": "hb-makeup-35",
@@ -462,7 +520,8 @@
       "identityApproved": false,
       "styleDistinctApproved": false,
       "publishApproved": false,
-      "expectedSha256": null
+      "expectedSha256": null,
+      "editorialIssues": []
     },
     {
       "id": "hb-makeup-36",
@@ -475,7 +534,8 @@
       "identityApproved": false,
       "styleDistinctApproved": false,
       "publishApproved": false,
-      "expectedSha256": null
+      "expectedSha256": null,
+      "editorialIssues": []
     },
     {
       "id": "hb-makeup-37",
@@ -488,7 +548,8 @@
       "identityApproved": false,
       "styleDistinctApproved": false,
       "publishApproved": false,
-      "expectedSha256": null
+      "expectedSha256": null,
+      "editorialIssues": []
     },
     {
       "id": "hb-makeup-38",
@@ -501,7 +562,8 @@
       "identityApproved": false,
       "styleDistinctApproved": false,
       "publishApproved": false,
-      "expectedSha256": null
+      "expectedSha256": null,
+      "editorialIssues": []
     },
     {
       "id": "hb-makeup-39",
@@ -514,7 +576,8 @@
       "identityApproved": false,
       "styleDistinctApproved": false,
       "publishApproved": false,
-      "expectedSha256": null
+      "expectedSha256": null,
+      "editorialIssues": []
     },
     {
       "id": "hb-makeup-40",
@@ -527,7 +590,11 @@
       "identityApproved": false,
       "styleDistinctApproved": false,
       "publishApproved": false,
-      "expectedSha256": null
+      "expectedSha256": null,
+      "editorialIssues": []
     }
-  ]
+  ],
+  "reviewVersion": "v35-eye-and-lip-crop-audit",
+  "editorialReviewMethod": "Human inspection of eye/lip close-ups versus original supplied face. Flags are not automated approval, identity proof, or a definitive duplicate classification.",
+  "reviewEscalations": 12
 }
