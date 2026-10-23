@@ -110,3 +110,31 @@ test("same unmodified face appears in service, detail and booking screens",async
   await page.getByRole("button",{name:"مرحله قبل"}).click();
   await expect(page.getByText("میکاپ نچرال").first()).toBeVisible();
 });
+
+test("homepage makeup mode matches visual brief with original face and burgundy CTA",async({page})=>{
+  await page.setViewportSize({width:390,height:844});
+  await page.addInitScript(key=>localStorage.setItem(key,JSON.stringify({welcomed:true,theme:"light"})),KEY);
+  await page.goto("/#/");
+  const selector=page.getByRole("tablist",{name:"انتخاب بخش اصلی"});
+  await selector.getByRole("tab",{name:"میکاپ"}).click();
+  await expect(selector.getByRole("tab",{name:"میکاپ"})).toHaveAttribute("aria-selected","true");
+  await expect(page.getByRole("heading",{name:/اعتماد به نفس شما/})).toBeVisible();
+  await expect(page.locator('.makeup-spotlight img[src="/makeup/model-reference.webp"]')).toBeVisible();
+  await expect(page.getByRole("button",{name:"درخواست نوبت میکاپ"})).toBeVisible();
+  await page.screenshot({path:"test-results/makeup-home-exact-face-390.png",animations:"disabled"});
+  await page.locator('.makeup-spotlight__categories button').last().click();
+  await expect(page.getByRole("tab",{name:"میکاپ"})).toHaveAttribute("aria-selected","true");
+});
+
+test("makeup service rows all show the same model rather than unrelated stock photos",async({page})=>{
+  await page.setViewportSize({width:390,height:844});
+  await page.addInitScript(key=>localStorage.setItem(key,JSON.stringify({welcomed:true,theme:"light"})),KEY);
+  await page.goto("/#/services");
+  await page.getByRole("group",{name:"دسته‌بندی خدمات"}).getByRole("button",{name:"میکاپ",exact:true}).click();
+  const images=page.locator(".studio-service-item[data-makeup] .makeup-service-thumb img");
+  await expect(images.first()).toBeVisible();
+  const srcs=await images.evaluateAll(elements=>elements.map(x=>x.getAttribute("src")));
+  expect(srcs.length).toBeGreaterThan(1);
+  expect(new Set(srcs)).toEqual(new Set(["/makeup/model-reference.webp"]));
+  await page.screenshot({path:"test-results/makeup-services-exact-face.png",animations:"disabled"});
+});
