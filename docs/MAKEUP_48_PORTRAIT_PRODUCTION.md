@@ -82,6 +82,8 @@ Private manifest shape for **each** of the 48 images (illustrative only; do not 
     "mk-natural-01": {
       "assetSha256": "<actual SHA-256 of mk-natural-01.webp>",
       "provenance": "photograph",
+      "captureId": "<unique camera frame or shoot identifier>",
+      "makeupApplied": false,
       "identityApproved": false,
       "publishApproved": false
     }
@@ -89,6 +91,6 @@ Private manifest shape for **each** of the 48 images (illustrative only; do not 
 }
 ```
 
-Once all 48 images pass, build the final **offline** app with `npm run build:makeup-final`. That command enforces the image gate and pre-caches all 48 individual local WebP files in the service worker. The ordinary `npm run build` remains an editorial concept preview with a shared unretouched reference; it must not be marketed as 48 performed looks. The script checks all 48 file paths, duplicate byte hashes, the original-photo hash, basic WebP validity and minimum extended-WebP dimensions, and SHA-matched identity/publication approvals. This is not a forensic identity detector or a substitute for review.
+Once all 48 images pass, build the final **offline** app with `npm run build:makeup-final`. That command enforces the image gate and pre-caches all 48 individual local WebP files in the service worker. The ordinary `npm run build` remains an editorial concept preview with a shared unretouched reference; it must not be marketed as 48 performed looks. The script checks all 48 file paths, duplicate byte hashes, the original-photo hash, basic WebP validity and minimum extended-WebP dimensions, independently documented capture IDs, actual makeup-application attestations, and SHA-matched identity/publication approvals. The current requirement permits only real photographs, not AI edits. This is not a forensic identity detector or a substitute for review.
 
 Until those assets actually exist and pass both automated and visual review, the application must remain on its draft branch with its current **concept** labeling. Do not claim 48 independently photographed results, and do not deploy marketing pages that imply these were completed salon treatments.
