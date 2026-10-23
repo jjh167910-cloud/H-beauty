@@ -12,12 +12,13 @@ const SHA=bytes=>createHash("sha256").update(bytes).digest("hex");
 const problems=[], seen=new Map();
 const refPath=join(ROOT,"model-reference.webp");
 const refSHA=existsSync(refPath)?SHA(readFileSync(refPath)):null;
-const manifestPath=join(DIR,"approval.json");
+// Approval records may contain sensitive consent details: keep them OUTSIDE public/ and Git.
+const manifestPath=process.env.MAKEUP_APPROVALS_PATH ? resolve(process.env.MAKEUP_APPROVALS_PATH) : resolve(process.cwd(),".makeup-approvals.local.json");
 let approved={};
 if(existsSync(manifestPath)) {
   try { approved=JSON.parse(readFileSync(manifestPath,"utf8")); }
-  catch { problems.push("Invalid results/approval.json"); }
-} else problems.push("Missing results/approval.json with reviewed identity, provenance and publication records");
+  catch { problems.push("Invalid private makeup approvals JSON"); }
+} else problems.push("Missing private .makeup-approvals.local.json (or MAKEUP_APPROVALS_PATH) with identity, provenance and consent records");
 let count=0;
 for(const id of IDS) {
   const filename=`${id}.webp`,path=join(DIR,filename);
