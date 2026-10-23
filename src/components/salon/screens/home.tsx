@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
-import { byRep, lookSrc, lookThumb } from "@/data/catalog";
+import { byRep, lookSrc, lookThumb, persian } from "@/data/catalog";
 import { photoObjectPosition } from "@/data/photo-focal";
+import { MAKEUP_STYLES } from "@/data/makeup-styles";
+import { MAKEUP_PHOTOS, lookPhoto } from "@/data/makeup-photos";
 import { SERVICES, dayOf, formatPrice, greeting, isPast, longDate, monthOf, summarize, timeLabel } from "@/data/salon";
 import { useSalon } from "@/lib/salon-store";
 import { Icon } from "../icons";
@@ -123,6 +125,27 @@ export function HomeScreen() {
           })}
         </div>
         <p className="salon24-section__footnote px-gutter">قیمت‌های نمایش‌داده‌شده «شروع از» هستند و باید توسط سالن تأیید شوند.</p>
+      </section>
+
+      <section className="salon24-section" aria-labelledby="mk-home-title">
+        <div className="salon24-section__head px-gutter">
+          <div><span className="salon24-eyebrow">MAKEUP ATELIER</span><h2 id="mk-home-title">میکاپ برای هر مراسم</h2></div>
+          <TextLink onClick={() => go("makeup")}>بخش میکاپ</TextLink>
+        </div>
+        <div className="px-gutter">
+          <button type="button" className="mk-entry" onClick={() => go("makeup")} aria-label="ورود به بخش میکاپ">
+            <Media src={lookPhoto("soft-glam", "sm")} alt="" loading="lazy" />
+            <span className="mk-entry__copy">
+              <span className="mk-entry__dots" aria-hidden="true">{["soft-glam", "hollywood", "plum-smokey", "romantic-bride", "sunset"].map((id) => {
+                const item = MAKEUP_STYLES.find((entry) => entry.id === id);
+                return item ? <i key={id} style={{ background: item.look.lipColor }} /> : null;
+              })}</span>
+              <strong>{MAKEUP_PHOTOS.length ? `${persian(MAKEUP_PHOTOS.length)} سبک حرفه‌ای میکاپ` : "سبک‌های حرفه‌ای میکاپ"}</strong>
+              <span>از نچرال روزانه تا گلم شب، عروس و سبک‌های رترو؛ همه روی یک مدل.</span>
+              <span className="mk-entry__cta">مشاهده سبک‌ها<Icon name="chevron" size={14} /></span>
+            </span>
+          </button>
+        </div>
       </section>
 
       <section className="salon24-concierge px-gutter" aria-labelledby="salon24-concierge-title">

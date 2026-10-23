@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { familyById } from "@/data/catalog";
+import { styleById } from "@/data/makeup-styles";
 import { serviceById } from "@/data/salon";
 import { Sheet, type SheetState } from "../ui";
 import { BookingSheet } from "./booking";
 import { Discover } from "./discover";
 import { CompareBody, ConsultBody, FinderBody } from "./tools";
 import { LookSheet } from "./look";
+import { MakeupSheet } from "./makeup";
 import { ServiceSheet } from "./service";
 
 const TITLES = { compare: "مقایسه مدل‌ها", consult: "درخواست مشاوره", finder: "استایل‌یاب" } as const;
@@ -26,6 +28,10 @@ export function Sheets({ sheet, onClose }: { sheet: SheetState; onClose: () => v
   if (current.kind === "look") {
     const family = familyById.get(current.id);
     return family ? <LookSheet key={key} open={open} family={family} onClose={onClose} /> : null;
+  }
+  if (current.kind === "makeup") {
+    const style = styleById.get(current.id);
+    return style ? <MakeupSheet key={key} open={open} style={style} onClose={onClose} /> : null;
   }
   if (current.kind === "service") {
     const service = serviceById.get(current.id);

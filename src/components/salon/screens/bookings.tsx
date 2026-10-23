@@ -1,4 +1,6 @@
 import { useMemo, useState } from "react";
+import { hasPhoto, lookPhoto } from "@/data/makeup-photos";
+import { styleById } from "@/data/makeup-styles";
 import { toast } from "sonner";
 import { familyById, lookThumb, persian } from "@/data/catalog";
 import { dayOf, formatMinutes, isPast, longDate, monthOf, shortWeekday, stylistName, summarize, timeLabel } from "@/data/salon";
@@ -72,6 +74,7 @@ function BookingCard({ booking, past }: { booking: BookingRequest; past: boolean
   const restoreBooking = useSalon((state) => state.restoreBooking);
   const { items, minutes } = summarize(booking.services);
   const look = booking.lookId != null ? familyById.get(booking.lookId) : null;
+  const makeup = booking.makeupId ? styleById.get(booking.makeupId) : null;
   const wa = whatsappLink(bookingMessage(booking));
 
   async function send() {
@@ -110,12 +113,13 @@ function BookingCard({ booking, past }: { booking: BookingRequest; past: boolean
             <span className="inline-flex items-center gap-1"><Icon name="profile" size={13} />{stylistName(booking.stylist)}</span>
           </p>
         </div>
-        {look ? <Media src={lookThumb(look.repId)} alt={look.name} className="arch h-16 w-12 shrink-0" /> : null}
+        {look ? <Media src={lookThumb(look.repId)} alt={look.name} className="arch h-16 w-12 shrink-0" />
+          : makeup && hasPhoto(makeup.id) ? <Media src={lookPhoto(makeup.id, "sm")} alt={makeup.title} className="arch h-16 w-12 shrink-0" /> : null}
       </div>
       <p className="sr-only">{longDate(booking.date)}</p>
       <div className="studio-booking-card__actions mt-5 flex gap-2 border-t border-line pt-4">
         {past ? (
-          <Button variant="tonal" icon="rebook" className="flex-1" onClick={() => openBooking({ services: booking.services, stylist: booking.stylist })}>درخواست مجدد</Button>
+          <Button variant="tonal" icon="rebook" className="flex-1" onClick={() => openBooking({ services: booking.services, stylist: booking.stylist, makeupId: booking.makeupId ?? undefined })}>درخواست مجدد</Button>
         ) : wa ? (
           <a className="btn flex-1" href={wa} target="_blank" rel="noreferrer">
             <Icon name="whatsapp" size={18} weight="regular" /> ارسال در واتساپ
