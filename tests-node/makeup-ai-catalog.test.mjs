@@ -11,6 +11,14 @@ test("AI makeup catalog has forty unique Persian style records",()=>{
   assert.equal(d.looks.filter(x=>x.candidate).length,22);
   assert.equal(d.looks.filter(x=>!x.candidate).length,18);
   assert.equal(d.looks.filter(x=>x.editorialIssues.length>0).length,12);
+  assert.equal(d.v36PriorityPairs.length,4);
+  const byId=new Map(d.looks.map(x=>[x.id,x]));
+  assert.ok(d.looks.every(x=>Array.isArray(x.reviewCompareWith)));
+  for(const look of d.looks)for(const target of look.reviewCompareWith){
+    assert.ok(byId.has(target),`Missing comparison target ${target}`);
+    assert.ok(byId.get(target).reviewCompareWith.includes(look.id),`Asymmetric comparison ${look.id} and ${target}`);
+  }
+
   assert.ok(d.looks.every(x=>Array.isArray(x.editorialIssues)));
   assert.equal(d.looks.filter(x=>x.publishApproved).length,0);
   assert.ok(d.looks.every(x=>x.identityApproved===false&&x.styleDistinctApproved===false));
