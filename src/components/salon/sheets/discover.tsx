@@ -137,8 +137,8 @@ export function Discover({ open, startId, onClose }: { open: boolean; startId: n
             <section key={family.id} className="discover__slide" inert={index !== active} aria-hidden={index !== active} aria-roledescription="اسلاید" aria-label={`${persian(index + 1)} از ${persian(list.length)}: ${family.name}`}>
               <div className="discover__stage" onPointerUp={(event) => onTap(event, family)}>
                 <div className="discover__frame" data-morph={family.id === startId ? "" : undefined}>
-                  <img src={lookThumb(family.repId)} alt={family.name} draggable={false} style={{ objectPosition: photoObjectPosition(lookThumb(family.repId)) }} />
-                  {index === active ? <img className="discover__full" src={lookSrc(family.repId)} alt="" style={{ objectPosition: photoObjectPosition(lookSrc(family.repId)) }} aria-hidden="true" draggable={false} onLoad={(event) => event.currentTarget.setAttribute("data-loaded", "")} /> : null}
+                  <img src={lookThumb(family.repId)} alt={family.name} draggable={false} style={{ objectPosition: photoObjectPosition(lookThumb(family.repId), "center") }} />
+                  {index === active ? <img className="discover__full" src={lookSrc(family.repId)} alt="" style={{ objectPosition: photoObjectPosition(lookSrc(family.repId), "center") }} aria-hidden="true" draggable={false} onLoad={(event) => event.currentTarget.setAttribute("data-loaded", "")} /> : null}
                 </div>
               </div>
 
