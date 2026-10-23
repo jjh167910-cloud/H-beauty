@@ -153,8 +153,8 @@ test("wide-hair salon thumbnails use intentional horizontal crop positions", asy
   await page.goto("/");
   const braid = page.locator('.salon24-style-card img[src="/looks/sm/77.webp"]');
   const curly = page.locator('.salon24-style-card img[src="/looks/sm/84.webp"]');
-  await expect(braid).toHaveCSS("object-position", "11% 50%");
-  await expect(curly).toHaveCSS("object-position", "6% 50%");
+  await expect(braid).toHaveCSS("object-position", "11% 32%");
+  await expect(curly).toHaveCSS("object-position", "6% 32%");
   const normal = page.locator('.salon24-style-card img[src="/looks/sm/30.webp"]');
   await expect(normal).toHaveCSS("object-position", "50% 32%");
 });
