@@ -8,8 +8,8 @@ const d=JSON.parse(readFileSync(join(root,"src/data/makeup-ai-40.json"),"utf8"))
 test("AI makeup catalog has forty unique Persian style records",()=>{
   assert.equal(d.looks.length,40);
   for(const field of ["id","slug","nameFa"])assert.equal(new Set(d.looks.map(x=>x[field])).size,40,field);
-  assert.equal(d.looks.filter(x=>x.candidate).length,20);
-  assert.equal(d.looks.filter(x=>!x.candidate).length,20);
+  assert.equal(d.looks.filter(x=>x.candidate).length,22);
+  assert.equal(d.looks.filter(x=>!x.candidate).length,18);
   assert.equal(d.looks.filter(x=>x.publishApproved).length,0);
   assert.ok(d.looks.every(x=>x.identityApproved===false&&x.styleDistinctApproved===false));
   assert.ok(d.looks.every(x=>x.candidate?x.asset?.startsWith("/makeup/ai-portraits/"):x.asset===null));
