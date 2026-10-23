@@ -12,7 +12,11 @@
     "test:offline": "node --test tests-node/*.test.mjs",
     "verify:assets": "node scripts/verify-images.mjs",
     "verify:makeup-48": "node scripts/verify-makeup-48.mjs",
-    "build:makeup-final": "node scripts/verify-makeup-48.mjs && node scripts/build-final-makeup.mjs"
+    "build:makeup-final": "node scripts/verify-makeup-48.mjs && node scripts/build-final-makeup.mjs",
+    "verify:makeup-ai-40": "node scripts/verify-makeup-ai-40.mjs",
+    "verify:makeup-ai-candidates": "node scripts/verify-makeup-ai-40.mjs --candidates",
+    "verify:makeup-ai-release": "node scripts/verify-makeup-ai-40.mjs --release",
+    "build:makeup-ai-review": "node scripts/build-makeup-ai-review.mjs"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.5.4",
