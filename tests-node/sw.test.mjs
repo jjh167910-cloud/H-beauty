@@ -10,7 +10,7 @@ import { finalizeServiceWorker } from '../scripts/finalize-service-worker.mjs';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const TEMPLATE = readFileSync(join(ROOT, 'public/sw.js'), 'utf8');
 
-function simulate(source = TEMPLATE) {
+function simulate(source = TEMPLATE, fetcher = async () => { throw new Error('offline'); }) {
   const handlers = new Map(), stores = new Map(), deleted = [];
   const normalize=req => new URL(typeof req==='string'?req:req.url,'https://salon.test').pathname;
   const CACHE = source.match(/const CACHE='([^']+)'/)?.[1];
@@ -30,7 +30,7 @@ function simulate(source = TEMPLATE) {
       for(const entries of stores.values()) if(entries.has(path))return entries.get(path);
     },
   };
-  const fetch = async () => { throw new Error('offline'); };
+  const fetch = fetcher;
   const self = {
     location:{origin:'https://salon.test'},
     addEventListener:(name,handler)=>handlers.set(name,handler),
@@ -52,14 +52,30 @@ test('installer caches HTML, manifest and vector/raster brand assets',async()=>{
     '/icons/apple-touch-icon.png'])assert.ok(app.stores.get(app.CACHE).has(path),path);
 });
 
-test('activation removes obsolete H-Beauty caches but preserves foreign caches',async()=>{
+test('activation preserves the last app release while clearing older and unrelated caches',async()=>{
   const app=simulate();
-  app.stores.set('h-beauty-v4',new Map());
+  app.stores.set('h-beauty-v3',new Map([['/assets/very-old.js',{body:'too old'}]]));
+  app.stores.set('h-beauty-v4',new Map([['/assets/old.js',{body:'previous app'}]]));
   app.stores.set('other-project-data',new Map());
   await app.trigger('install');await app.trigger('activate');
-  assert.equal(app.stores.has('h-beauty-v4'),false);
+  assert.equal(app.stores.has('h-beauty-v3'),false);
+  assert.equal(app.stores.has('h-beauty-v4'),true);
   assert.equal(app.stores.has('other-project-data'),true);
   assert.equal(app.stores.has(app.CACHE),true);
+  const previousAsset=await app.trigger('fetch', {
+    method:'GET',url:'https://salon.test/assets/old.js',mode:'cors',
+  });
+  assert.equal(previousAsset.body,'previous app');
+});
+
+test('online navigation never swaps a newer HTML into the cached JS version',async()=>{
+  const app=simulate(TEMPLATE, async () => ({ok:true,body:'newer deployment'}));
+  await app.trigger('install');
+  const fresh=await app.trigger('fetch', {
+    method:'GET',url:'https://salon.test/#/looks',mode:'navigate',
+  });
+  assert.equal(fresh.body,'newer deployment');
+  assert.equal(app.stores.get(app.CACHE).get('/index.html').body,'/index.html');
 });
 
 test('offline navigation returns cached application HTML',async()=>{
