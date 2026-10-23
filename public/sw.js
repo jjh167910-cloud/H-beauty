@@ -1,6 +1,6 @@
 /* Offline-first shell and on-demand hairstyle image caching. */
-const CACHE='h-beauty-v3';
-const CORE=['/','/index.html','/manifest.webmanifest','/icons/favicon-32.png','/icons/icon-192.png'];
+const CACHE='h-beauty-v4';
+const CORE=['/','/index.html','/manifest.webmanifest','/icons/favicon-32.png','/icons/icon-192.png','/icons/icon-512.png','/icons/apple-touch-icon.png','/icons/hananeh-signature.svg'];
 self.addEventListener('install',event=>{
   event.waitUntil(caches.open(CACHE).then(c=>c.addAll(CORE)).then(()=>self.skipWaiting()));
 });
