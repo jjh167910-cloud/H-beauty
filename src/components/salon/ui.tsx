@@ -1,6 +1,7 @@
 import { createContext, useContext, useId, useState, type ButtonHTMLAttributes, type ImgHTMLAttributes, type ReactNode } from "react";
 import { Drawer } from "vaul";
 import { cn } from "@/lib/cn";
+import { photoObjectPosition } from "@/data/photo-focal";
 import type { Tab } from "@/lib/salon-store";
 import { Icon, type IconName } from "./icons";
 
@@ -207,6 +208,7 @@ export function Media({ className, alt = "", onLoad, onError, ...props }: ImgHTM
           onError?.(event);
         }}
         {...props}
+        style={{ objectPosition: photoObjectPosition(props.src), ...props.style }}
       />
       {status === "error" ? <span className="media__error" aria-hidden="true">تصویر در دسترس نیست</span> : null}
     </span>
