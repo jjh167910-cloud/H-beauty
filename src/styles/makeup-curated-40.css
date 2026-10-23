@@ -1,0 +1,53 @@
+/* Forty user-curated portraits, matched to the existing Persian luxury salon style.
+   No icons, labels or badges are painted on top of portrait pixels. */
+@layer components {
+  .makeup-page[data-curated="true"] {--hb-curated-accent:#972d50}
+  .makeup-page[data-curated="true"] .makeup-intro {gap:1rem}
+  .makeup-page[data-curated="true"] .makeup-intro__portrait {
+    display:flex;flex-direction:column;max-height:none;border-radius:1.05rem;
+    border:1px solid var(--color-line);background:var(--color-surface)
+  }
+  .makeup-page[data-curated="true"] .makeup-intro__portrait .makeup-art {
+    width:100%;height:auto;aspect-ratio:4/5;flex:none
+  }
+  .makeup-page[data-curated="true"] .makeup-intro__portrait-label {
+    position:static;inset:auto;background:transparent;color:var(--color-ink);
+    font-size:.76rem;font-weight:700;line-height:1.6;padding:.45rem .3rem .6rem
+  }
+  .makeup-page[data-curated="true"] .makeup-grid {gap:1.25rem .7rem}
+  .makeup-page[data-curated="true"] .makeup-card__art {border-radius:1rem;aspect-ratio:4/5}
+  .makeup-page[data-curated="true"] .makeup-card__view {gap:.25rem}
+  .makeup-page[data-curated="true"] .makeup-card__caption {
+    display:flex;flex-direction:column;align-items:flex-start;min-width:0
+  }
+  .makeup-page[data-curated="true"] .makeup-card__view strong {font-size:.83rem;line-height:1.75}
+  .makeup-page[data-curated="true"] .makeup-art>img {
+    width:100%;height:100%;object-fit:cover;object-position:center 36%;
+    filter:none;transform:none;display:block
+  }
+  .makeup-page[data-curated="true"] .makeup-card__actions {margin-top:.55rem}
+  .makeup-page[data-curated="true"] .makeup-card__actions button {min-height:44px}
+  .makeup-page[data-curated="true"] .makeup-card__actions button:last-child {
+    background:var(--hb-curated-accent);color:#fff
+  }
+  .makeup-page[data-curated="true"] .makeup-card__palette {margin-bottom:.2rem}
+  .makeup-detail__art:has(.makeup-art[data-model-source="curated-portrait"]) {
+    aspect-ratio:4/5;border-radius:1rem
+  }
+  .makeup-detail__art .makeup-art[data-model-source="curated-portrait"] img {
+    object-fit:cover;object-position:50% 36%
+  }
+  @media(min-width:700px){
+    .makeup-page[data-curated="true"] .makeup-grid {
+      grid-template-columns:repeat(3,minmax(0,1fr));gap:1.6rem 1rem
+    }
+    .makeup-page[data-curated="true"] .makeup-intro {grid-template-columns:minmax(0,1fr) 230px}
+  }
+  @media(min-width:1024px){
+    .makeup-page[data-curated="true"] .makeup-grid {grid-template-columns:repeat(4,minmax(0,1fr))}
+  }
+  @media(max-width:359px){
+    .makeup-page[data-curated="true"] .makeup-grid {gap:1rem .5rem}
+    .makeup-page[data-curated="true"] .makeup-intro {grid-template-columns:minmax(0,1fr) 106px;gap:.6rem}
+  }
+}
