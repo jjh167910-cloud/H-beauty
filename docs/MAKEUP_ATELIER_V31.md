@@ -1,28 +1,23 @@
-# H-Beauty v31 — Makeup Atelier
+# H-Beauty v31.4 — original-face Makeup Atelier
 
-## Release scope
+**Status: review branch / PR #9. No virtual try-on.**
 
-Adds a second catalog under Gallery → **میکاپ**, without changing the five-button mobile navigation and **without any virtual try-on, face detection, camera access, AI makeup application, or portrait upload**.
+## Model identity and imagery
+- The model is the **exact supplied selfie** (`1000006327.jpg`), cropped without facial editing or AI-based identity synthesis.
+- The published local asset `public/makeup/model-reference.webp` is hashed and immutable at SHA-256 `769e44737d161e77845a9fdb0c6475a75262f01384b369fd9dee3cc20c0cb786`.
+- Every card, detail view, saved look, home feature, booking summary, and service thumbnail references this one asset; thumbnails of eyes and lips are CSS crops of that same image.
+- The 48 cards describe suggested *palette and style concepts* rather than 48 actual makeup applications. **The colors are not painted onto the photograph**; do not call these results or represent them as salon work samples.
+- Because the original image was taken with a phone and fixed makeup, images cannot accurately show 48 visibly different makeup executions while retaining the original pixels. Additional genuine photographs or explicitly approved edits would be needed for that level of variation.
 
-### Content
-- 48 clearly labeled **editorial concept looks** across six categories: Natural, Soft Glam, Evening, Bridal, Eye, Lip.
-- Self-contained, offline SVG facial illustrations illustrate color and finish. They are **not photos of the salon's actual work**, and do not promise a result on the customer's face.
-- Text search, category filters, separate persisted makeup favorites, a detailed palette and request-appointment action.
-- The existing hair gallery, save/compare functionality and photos are preserved.
+## User experience
+- Gallery tab has hair / makeup switch, search, six makeup category chips, 48 concepts, localized titles, proposed swatches, clickable details, and heart favorites.
+- Reference design alignment: blush/porcelain surfaces, garnet appointment CTAs, 3:4 portrait framing, centered card captions, unobtrusive save icon at corner, and service/time/price-status panel in detail.
+- Makeup favorites persist independently of numeric hairstyle IDs without losing existing data.
+- Booking request includes makeup ID, service and optional hairstyle. Consultation-priced services display *قیمت پس از مشاوره*, not invented prices.
+- Offline: no remote photo requests, no file upload/camera/face tracking or paid APIs.
 
-### Booking
-- The existing 4-step booking sheet is reused.
-- `makeupId` is an optional string reference, distinct from numeric hairstyle `lookId`.
-- Old bookings without `makeupId` remain valid on hydration; invalid IDs are ignored.
-- Draft and submitted requests show makeup name; shared request text includes its code.
-- Makeup-only and hair+makeup services can be selected together.
-- Five new makeup services display price as **after consultation**. Existing salon placeholder pricing remains subject to verification.
-- Nail services now have their own category.
-
-### Production/photography content gate
-Before presenting this as a real salon portfolio, commission/approve model photographs for the selected makeup styles. Obtain consent to publish portraits, choose uniform 3:4 framing, and avoid altering customer faces beyond approved retouching. Do not replace the conceptual-art disclaimer until photos genuinely depict approved work and are correctly labeled.
-
-### QA
-Run GitHub review CI (typecheck, Vite build, Playwright UI suite) and inspect actual Android viewport screenshots (320, 390, 768px) in light and dark. In particular verify persisted hairstyles and makeups, booking share text, and offline startup.
-
-**No try-on capability is included in v31.**
+## QA / publishing gate
+- Check `node --test tests-node/*.test.mjs` for the locked source image, service-worker offline shell, and asset integrity.
+- Check TypeScript, Vite production build and Playwright React tests; inspect actual UI screenshots for gallery cards and detail at 320px, 390px, 768px and dark mode.
+- Verify that use of the model's image is authorized for public salon marketing before merging and deploying. Separate photo editing/publication approval from functional QA.
+- Existing production v30 remains unaffected until the review branch is merged.
