@@ -34,8 +34,8 @@ export function MakeupAiReview() {
         <p>۴۰ سبک مشخص، یک چهره مرجع. این مجموعه برای بازبینی داخلی است و عکس‌های هوش مصنوعی، نمونه‌کار واقعی سالن محسوب نمی‌شوند.</p>
         <div className="hb-ai-stats">
           <span><strong>۴۰</strong> سبک برنامه‌ریزی‌شده</span>
-          <span><strong>۲۰</strong> فایل پیشنهادی در بسته بازبینی</span>
-          <span><strong>۲۰</strong> تصویر باقی‌مانده</span>
+          <span><strong>۲۲</strong> فایل پیشنهادی در بسته بازبینی</span>
+          <span><strong>۱۸</strong> تصویر باقی‌مانده</span>
           <span><strong>۰</strong> تصویر تأییدشده برای انتشار</span>
         </div>
       </header>
