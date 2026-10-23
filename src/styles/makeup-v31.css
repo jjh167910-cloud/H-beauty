@@ -60,3 +60,18 @@
   @media(max-width:359px) {.makeup-grid {gap:1.1rem .45rem}.makeup-card__actions {gap:.25rem}.makeup-card__actions button {font-size:.68rem}.makeup-intro {gap:.5rem}.makeup-intro__copy .btn {font-size:.68rem}}
   @media(prefers-reduced-motion:reduce) {.makeup-card__view:hover .makeup-art {transform:none;transition:none}.makeup-gallery-switch button {transition:none}}
 }
+
+@layer components {
+  .makeup-home {display:grid;grid-template-columns:1fr .42fr;align-items:center;gap:.8rem;margin-block:2rem 2.4rem;padding-block:1.25rem;border-block:1px solid var(--color-line);background:var(--color-sunken)}
+  .makeup-home__copy {display:grid;gap:.55rem;justify-items:start;min-width:0}
+  .makeup-home__copy>span {font:.62rem/1.6 var(--font-serif);color:var(--color-gold-ink);letter-spacing:.08em}
+  .makeup-home__copy h2 {font-size:clamp(1.03rem,3.9vw,1.35rem);font-weight:740;line-height:1.55}
+  .makeup-home__copy p {font-size:.75rem;line-height:1.85;color:var(--color-ink-2)}
+  .makeup-home__copy .btn {min-height:2.85rem}
+  .makeup-home__art {overflow:hidden;border-radius:5rem 5rem .6rem .6rem;align-self:stretch;max-height:240px;min-width:0}
+  .makeup-home__art .makeup-art {aspect-ratio:3/4}
+  .makeup-saved__item {width:8rem;min-width:8rem;display:grid;gap:.4rem;text-align:center;font-size:.72rem;color:var(--color-ink);line-height:1.7}
+  .makeup-saved__item .makeup-art {width:8rem;height:9.6rem;border-radius:4rem 4rem .8rem .8rem;overflow:hidden}
+  @media(min-width:700px) {.makeup-home {grid-template-columns:1fr 230px;gap:2rem}.makeup-home__copy p {font-size:.88rem}.makeup-home__art {max-height:330px}}
+  @media(max-width:359px) {.makeup-home {grid-template-columns:1fr .35fr;gap:.4rem}.makeup-home__copy .btn {font-size:.74rem}}
+}
