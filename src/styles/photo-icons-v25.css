@@ -174,7 +174,7 @@
     flex:none;padding:.35rem var(--spacing-gutter) .65rem;
     padding-inline-end:var(--spacing-gutter);
   }
-  .discover__info .t-caption {color:var(--color-gold-ink);}
+  .discover__info .t-caption {color:var(--color-ink-2);font-size:.75rem;line-height:1.6;}
   .discover__info h2 {font-size:1.02rem;line-height:1.5;font-weight:700;color:var(--color-ink);}
   .discover__info .mt-4 {margin-top:.6rem;}
   .discover__info .btn {min-height:2.65rem;padding-inline:.8rem;}
