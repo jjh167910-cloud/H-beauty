@@ -91,6 +91,18 @@ export function MakeupAiReview() {
             <p lang="en" className="hb-ai-eyebrow">LOOK {selected.id.slice(-2)}</p>
             <h2 id="hb-ai-modal-title">{selected.nameFa}</h2>
             <p>{selected.description}</p>
+            {selected.reviewCompareWith.length > 0 && <div className="hb-ai-related" aria-label="سبک‌های مشابه برای بررسی">
+              <span>برای مقایسه میکاپ واقعی با:</span>
+              <div className="hb-ai-related-actions">
+                {selected.reviewCompareWith.map(id=>{
+                  const match=catalog.looks.find(look=>look.id===id);
+                  return match ? <button type="button" key={id}
+                    onClick={()=>setSelected(match)} aria-label={`مقایسه با ${match.nameFa}`}>
+                    {match.nameFa} <small lang="en">{id.slice(-2)}</small>
+                  </button>:null;
+                })}
+              </div>
+            </div>}
             {selected.editorialIssues.length > 0 && <div className="hb-ai-editorial-detail" role="note">
               <strong>هشدار بررسی تخصصی:</strong>
               {selected.editorialIssues.map(issue=><p key={issue}>{issue}</p>)}
