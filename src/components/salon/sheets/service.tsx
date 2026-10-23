@@ -25,7 +25,7 @@ export function ServiceSheet({ open, service, onClose }: { open: boolean; servic
             aria-pressed={picked}
             onClick={() => {
               haptic();
-              toast(toggleCart(service.id) ? "به رزرو اضافه شد." : "از رزرو حذف شد.");
+              toast(toggleCart(service.id) ? "به خدمات انتخابی اضافه شد." : "از خدمات انتخابی حذف شد.");
             }}
           >
             {picked ? "انتخاب شد" : "افزودن"}
@@ -70,7 +70,7 @@ export function ServiceSheet({ open, service, onClose }: { open: boolean; servic
               <button key={stylist.id} type="button" className="list-row" onClick={() => openBooking({ service: service.id, stylist: stylist.id })}>
                 <Avatar name={stylist.name} tone={stylist.tone} className="size-11 text-lg" />
                 <span className="flex-1"><strong className="t-callout block font-medium">{stylist.name}</strong><span className="t-caption text-ink-2">{stylist.role}</span></span>
-                <span className="link">رزرو</span>
+                <span className="link">درخواست</span>
               </button>
             ))}
           </div>
