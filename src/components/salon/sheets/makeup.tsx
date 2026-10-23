@@ -1,7 +1,7 @@
 import { MAKEUP_CATEGORIES, type MakeupLook } from "@/data/makeup";
 import { formatMinutes, formatPrice, serviceById } from "@/data/salon";
 import { useSalon } from "@/lib/salon-store";
-import { MakeupArtwork, MODEL_REFERENCE_SRC } from "../makeup-artwork";
+import { MakeupArtwork, makeupPortraitSrc, MAKEUP_FINAL_IMAGES } from "../makeup-artwork";
 import { Button, Sheet, useSalonActions } from "../ui";
 import { Icon } from "../icons";
 
@@ -30,10 +30,10 @@ export function MakeupSheet({open,look,onClose}:{open:boolean;look:MakeupLook;on
           <span style={{background:look.blush}}/><span style={{background:look.skin}}/>
         </div>
       </div>
-      <div className="makeup-detail__thumbs" aria-label="برش‌های مختلف از همان چهره مرجع">
-        <div className="makeup-detail__thumb makeup-detail__thumb--eyes"><img src={MODEL_REFERENCE_SRC} alt="نمای نزدیک چشم همان مدل مرجع" /></div>
-        <div className="makeup-detail__thumb makeup-detail__thumb--lips"><img src={MODEL_REFERENCE_SRC} alt="نمای نزدیک لب همان مدل مرجع" /></div>
-        <div className="makeup-detail__thumb makeup-detail__thumb--face"><img src={MODEL_REFERENCE_SRC} alt="نمای صورت همان مدل مرجع" /></div>
+      <div className="makeup-detail__thumbs" aria-label={MAKEUP_FINAL_IMAGES ? "نماهای نزدیک از همین تصویر اختصاصی" : "برش‌های مختلف از همان چهره مرجع"}>
+        <div className="makeup-detail__thumb makeup-detail__thumb--eyes"><img src={makeupPortraitSrc(look)} alt="نمای نزدیک چشم همان مدل مرجع" /></div>
+        <div className="makeup-detail__thumb makeup-detail__thumb--lips"><img src={makeupPortraitSrc(look)} alt="نمای نزدیک لب همان مدل مرجع" /></div>
+        <div className="makeup-detail__thumb makeup-detail__thumb--face"><img src={makeupPortraitSrc(look)} alt="نمای صورت همان مدل مرجع" /></div>
       </div>
       {service ? (
         <div className="makeup-detail__service">
@@ -50,7 +50,7 @@ export function MakeupSheet({open,look,onClose}:{open:boolean;look:MakeupLook;on
         <div><dt>فینیش</dt><dd>{look.finish}</dd></div>
         <div><dt>رنگ پیشنهادی</dt><dd>قابل تنظیم با سلیقه شما</dd></div>
       </dl>
-      <p className="makeup-detail__disclaimer">عکس واقعی همان مدل مرجع بدون تغییر چهره استفاده شده است. رنگ‌های پیشنهادی بالا روی عکس اعمال نشده‌اند؛ این صفحه نمونه اجرای میکاپ، قبل/بعد یا قابلیت امتحان مجازی نیست.</p>
+      <p className="makeup-detail__disclaimer">{MAKEUP_FINAL_IMAGES ? "پرتره این سبک به‌صورت اختصاصی تهیه شده است؛ روش تولید و اصالت تصویر در پرونده تصاویر بررسی می‌شود. امتحان مجازی در این بخش فعال نیست." : "عکس واقعی همان مدل مرجع بدون تغییر چهره استفاده شده است. رنگ‌های پیشنهادی بالا روی عکس اعمال نشده‌اند؛ این صفحه نمونه اجرای میکاپ، قبل/بعد یا قابلیت امتحان مجازی نیست."}</p>
     </div>
   </Sheet>;
 }
