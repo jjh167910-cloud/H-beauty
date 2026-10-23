@@ -91,7 +91,27 @@ jobs:
             echo "::error::Deployed Worker did not return the expected H-Beauty SPA."
             exit 1
           }
-          echo "Successfully deployed and fetched the H-Beauty SPA."
+          # A HTTP 200 can still be an older release; compare the generated
+          # content-addressed service worker byte-for-byte with the live one.
+          expected_sha="$(sha256sum dist/sw.js | cut -d' ' -f1)"
+          matched=0
+          for attempt in 1 2 3 4 5 6; do
+            if curl --fail --show-error --silent --location --max-time 30 \
+                "https://h-beauty.mostifa2273.workers.dev/sw.js?revision=${GITHUB_SHA}-${attempt}" \
+                -o /tmp/hbeauty-live-sw.js; then
+              live_sha="$(sha256sum /tmp/hbeauty-live-sw.js | cut -d' ' -f1)"
+              if [ "$expected_sha" = "$live_sha" ]; then
+                matched=1
+                break
+              fi
+            fi
+            sleep 8
+          done
+          if [ "$matched" != 1 ]; then
+            echo "::error::Live h-beauty service worker does not match the current build (stale deployment, wrong Worker, or caching)."
+            exit 1
+          fi
+          echo "Verified the live H-Beauty SPA and exact service worker artifact."
 
       - name: Deployment result
         if: ${{ always() }}
