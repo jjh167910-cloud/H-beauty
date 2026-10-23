@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/** Source-of-truth QA: metadata always; --candidates checks 20 imported files;
+/** Source-of-truth QA: metadata always; --candidates checks 22 imported files;
  * --release requires 40 physically distinct images and a PRIVATE reviewed approvals file.
  * Image hashing cannot verify whether makeup or facial identity are actually distinct.
  */
@@ -28,6 +28,7 @@ for(const look of data.looks){
   if(look.identityApproved || look.styleDistinctApproved || look.publishApproved)
     failures.push("Baseline must never preapprove "+look.id);
   if(!look.description || !look.nameFa)failures.push("Incomplete description "+look.id);
+  if(!Array.isArray(look.editorialIssues)) failures.push("Missing editorial issue register for "+look.id);
   const expectedName=`${look.id}-${look.slug}.webp`;
   const expectedPath=`/makeup/ai-portraits/${expectedName}`;
   if(look.candidate && look.asset!==expectedPath)failures.push("Misrouted asset "+look.id);
@@ -48,7 +49,8 @@ for(const look of data.looks){
     const approval=approvals.looks?.[look.id];
     if(!approval||approval.assetSha256!==hash||approval.identityApproved!==true||
        approval.makeupDistinctApproved!==true||approval.publishApproved!==true||
-       approval.modelPublicationConsent!==true||approval.provenance!=="ai-generated")
+       approval.modelPublicationConsent!==true||approval.provenance!=="ai-generated"||
+       (look.editorialIssues?.length>0 && approval.editorialIssuesResolved!==true))
       failures.push("Private image/identity/style/consent review missing "+look.id);
   }
 }
