@@ -67,7 +67,7 @@ export function MakeupScreen() {
         return <article key={look.id} className="makeup-card">
           <button type="button" className="makeup-card__view" onClick={()=>openSheet({kind:"makeup",id:look.id})}
             aria-label={`جزئیات ${look.name}`}>
-            <span className="makeup-card__art"><MakeupArtwork look={look}/></span>
+            <div className="makeup-card__art"><MakeupArtwork look={look}/></div>
             <span className="makeup-card__caption">
               <strong>{look.name}</strong>
               <span className="makeup-card__tag">{cat?.label} · {look.finish}</span>
@@ -83,7 +83,7 @@ export function MakeupScreen() {
             </button>
             <button type="button" onClick={()=>openBooking({service:look.serviceId,makeupId:look.id})}
               aria-label={`درخواست نوبت برای ${look.name}`}>
-              <Icon name="book" size={16}/> نوبت
+              <Icon name="book" size={16}/> درخواست
             </button>
           </div>
         </article>;
