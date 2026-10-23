@@ -77,7 +77,7 @@ export function ServicesScreen() {
                     <article className="studio-service-item" key={service.id} data-makeup={service.category === "beauty" ? "" : undefined} data-selected={selected ? "" : undefined}>
                       <button className="studio-service-item__details" onClick={() => openSheet({ kind: "service", id: service.id })} type="button">
                         {service.category === "beauty" ? (
-                          <span className="makeup-service-thumb"><img src={makeupPortraitSrc(MAKEUP_LOOKS.find(look=>look.serviceId===service.id) ?? MAKEUP_LOOKS[0]) || MODEL_REFERENCE_SRC} alt="" loading="lazy" /></span>
+                          <span className="makeup-service-thumb"><img src={(() => { const match=MAKEUP_LOOKS.find(look=>look.serviceId===service.id); return match ? makeupPortraitSrc(match) : MODEL_REFERENCE_SRC; })()} alt="" loading="lazy" /></span>
                         ) : <span className="studio-service-item__index" lang="en">{String(index + 1).padStart(2, "0")}</span>}
                         <span className="studio-service-item__content">
                           <span className="studio-service-item__en" lang="en">{service.en}</span>
