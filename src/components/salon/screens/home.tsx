@@ -1,5 +1,7 @@
 import { useMemo, useState } from "react";
 import { byRep, lookSrc, lookThumb } from "@/data/catalog";
+import { MAKEUP_LOOKS } from "@/data/makeup";
+import { MakeupArtwork } from "../makeup-artwork";
 import { photoObjectPosition } from "@/data/photo-focal";
 import { SERVICES, dayOf, formatPrice, greeting, isPast, longDate, monthOf, summarize, timeLabel } from "@/data/salon";
 import { useSalon } from "@/lib/salon-store";
@@ -22,6 +24,7 @@ export function HomeScreen() {
   const bookings = useSalon((state) => state.bookings);
   const clearAll = useSalon((state) => state.clearAll);
   const setFilter = useSalon((state) => state.setFilter);
+  const setGalleryMode = useSalon((state) => state.setGalleryMode);
   const hero = byRep(30);
   const [heroFailed, setHeroFailed] = useState(false);
   const next = useMemo(
@@ -50,7 +53,7 @@ export function HomeScreen() {
           </div>
           <div className="salon24-hero__actions">
             <Button variant="gold" icon="book" onClick={() => openBooking({ service: "event-styling", lookId: hero.id })}>درخواست نوبت</Button>
-            <Button variant="secondary" icon="looks" onClick={() => { clearAll(); go("looks"); }}>گالری مدل مو</Button>
+            <Button variant="secondary" icon="looks" onClick={() => { clearAll(); setGalleryMode("hair"); go("looks"); }}>گالری مدل مو</Button>
           </div>
           <div className="salon24-hero__stage">
             <button type="button" className="salon24-hero__photo" data-image-error={heroFailed || undefined}
@@ -86,19 +89,30 @@ export function HomeScreen() {
       <section className="salon24-section" aria-labelledby="salon24-style-title">
         <div className="salon24-section__head px-gutter">
           <div><span className="salon24-eyebrow">STYLE INSPIRATION</span><h2 id="salon24-style-title">زیبایی از انتخاب شما شروع می‌شود</h2></div>
-          <TextLink onClick={() => { clearAll(); go("looks"); }}>همه مدل‌ها</TextLink>
+          <TextLink onClick={() => { clearAll(); setGalleryMode("hair"); go("looks"); }}>همه مدل‌ها</TextLink>
         </div>
         <div className="salon24-styles rail">
           {STYLES.map((style) => (
             <button key={style.filter} type="button" className="salon24-style-card"
               aria-label={`دیدن مدل‌های ${style.label}`}
-              onClick={() => { clearAll(); setFilter(style.filter); go("looks"); }}>
+              onClick={() => { clearAll(); setGalleryMode("hair"); setFilter(style.filter); go("looks"); }}>
               <Media src={lookThumb(style.repId)} alt="" loading="lazy" />
               <strong>{style.label}</strong>
               <span lang="en">{style.caption}</span>
             </button>
           ))}
         </div>
+      </section>
+
+      <section className="makeup-home px-gutter" aria-labelledby="makeup-home-title">
+        <div className="makeup-home__copy">
+          <span lang="en">HANANEH / MAKEUP ATELIER</span>
+          <h2 id="makeup-home-title">زیبایی در جزئیات چهره</h2>
+          <p>۴۸ ایده میکاپ نچرال، گلم و عروس را ببینید، ذخیره کنید و برای اجرای اختصاصی درخواست نوبت بدهید.</p>
+          <Button variant="gold" onClick={() => { setGalleryMode("makeup"); go("looks"); }}>گالری میکاپ</Button>
+        </div>
+        <button type="button" className="makeup-home__art" onClick={() => { setGalleryMode("makeup"); go("looks"); }}
+          aria-label="مشاهده گالری میکاپ"><MakeupArtwork look={MAKEUP_LOOKS[9]}/></button>
       </section>
 
       <section className="salon24-section salon24-services" aria-labelledby="salon24-services-title">
@@ -143,7 +157,7 @@ export function HomeScreen() {
       <section className="salon24-section" aria-labelledby="salon24-look-title">
         <div className="salon24-section__head px-gutter">
           <div><span className="salon24-eyebrow">THE LOOKBOOK</span><h2 id="salon24-look-title">مدل‌های محبوب برای الهام</h2></div>
-          <TextLink onClick={() => { clearAll(); go("looks"); }}>گالری کامل</TextLink>
+          <TextLink onClick={() => { clearAll(); setGalleryMode("hair"); go("looks"); }}>گالری کامل</TextLink>
         </div>
         <div className="salon24-featured rail">
           {[27, 43, 84, 125].map((repId) => {
