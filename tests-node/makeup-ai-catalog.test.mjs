@@ -42,3 +42,12 @@ test("release check demands private approvals; public images don't imply salon r
   assert.match(gate,/editorialIssuesResolved/);
   assert.ok(existsSync(join(root,"scripts/import-makeup-ai-candidates.mjs")));
 });
+
+test("external Canva and ElevenLabs renders are not falsely treated as approved files",()=>{
+  const ids=["hb-makeup-23","hb-makeup-24","hb-makeup-25","hb-makeup-26"];
+  const views=ids.map(id=>d.looks.find(x=>x.id===id));
+  assert.ok(views.every(Boolean));
+  assert.ok(views.every(x=>x.externalGeneration?.status==="completed-provider-not-imported"));
+  assert.ok(views.every(x=>x.candidate===false&&x.asset===null&&x.publishApproved===false));
+  assert.equal(new Set(views.map(x=>x.externalGeneration.mediaId??x.externalGeneration.generationId)).size,4);
+});
