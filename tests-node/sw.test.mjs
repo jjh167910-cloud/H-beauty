@@ -12,6 +12,7 @@ const TEMPLATE = readFileSync(join(ROOT, 'public/sw.js'), 'utf8');
 
 function simulate(source = TEMPLATE) {
   const handlers = new Map(), stores = new Map(), deleted = [];
+  const normalize=req => new URL(typeof req==='string'?req:req.url,'https://salon.test').pathname;
   const CACHE = source.match(/const CACHE='([^']+)'/)?.[1];
   const caches = {
     open: async name => {
@@ -19,13 +20,13 @@ function simulate(source = TEMPLATE) {
       const entries=stores.get(name);
       return {
         addAll: async urls => { for(const path of urls) entries.set(path,{ok:true,body:path}); },
-        put: async (req,res) => entries.set(typeof req === 'string' ? req : req.url,res),
+        put: async (req,res) => entries.set(normalize(req),res),
       };
     },
     keys: async () => [...stores.keys()],
     delete: async name => { deleted.push(name);return stores.delete(name); },
     match: async req => {
-      const path=typeof req==='string'?req:req.url;
+      const path=normalize(req);
       for(const entries of stores.values()) if(entries.has(path))return entries.get(path);
     },
   };
@@ -89,7 +90,11 @@ test('production finalizer explicitly precaches compiled JS, CSS and fonts',asyn
   assert.ok(!output.urls.some(path=>path.startsWith('/looks/')));
   const app=simulate(readFileSync(join(folder,'sw.js'),'utf8'));
   await app.trigger('install');
-  for(const url of output.urls)assert.ok(app.stores.get(app.CACHE).has(url),url);
+  for(const url of output.urls){
+    assert.ok(app.stores.get(app.CACHE).has(url),url);
+    const response=await app.trigger('fetch',{method:'GET',url:'https://salon.test'+url,mode:'cors'});
+    assert.equal(response.body,url);
+  }
 }));
 
 test('new asset content creates a distinct cache version',()=>fixture(({folder,put})=>{
