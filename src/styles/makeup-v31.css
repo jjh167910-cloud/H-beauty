@@ -166,3 +166,18 @@
     .makeup-detail__thumbs {max-width:400px}
   }
 }
+
+@layer components {
+  .studio-service-item[data-makeup] .studio-service-item__details {align-items:center;gap:.75rem}
+  .studio-service-item[data-makeup] .studio-service-item__description {display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .studio-service-item[data-makeup] .studio-service-item__en {color:var(--color-garnet)}
+  .studio-service-item[data-makeup] .studio-service-item__price strong {color:var(--color-garnet)}
+  .studio-service-item[data-makeup] .studio-service-item__add {background:#922443;border-color:#922443;color:#fff}
+  .makeup-service-thumb {width:4.2rem;height:5.1rem;flex:none;overflow:hidden;border-radius:.7rem;background:var(--color-sunken)}
+  .makeup-service-thumb img {width:100%;height:100%;object-fit:cover;object-position:50% 42%}
+  @media(max-width:359px) {
+    .makeup-service-thumb {width:3.3rem;height:4.25rem}
+    .studio-service-item[data-makeup] .studio-service-item__details {gap:.45rem}
+    .studio-service-item[data-makeup] .studio-service-item__price strong {font-size:.72rem}
+  }
+}
