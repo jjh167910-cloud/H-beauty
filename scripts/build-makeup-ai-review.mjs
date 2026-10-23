@@ -15,5 +15,5 @@ const build=spawnSync(cmd,["run","build"],{
   env:{...process.env,VITE_HB_AI_REVIEW:"true",VITE_HB_AI_CANDIDATES_PRESENT:imported?"true":"false"}
 });
 if(build.error){console.error(build.error);process.exit(1)}
-console.log(imported?"Review build displays the 20 imported, UNAPPROVED AI candidates.":"Review build displays 40 look records WITHOUT missing portrait substitutions.");
+console.log(imported?"Review build displays the 22 imported, UNAPPROVED AI candidates.":"Review build displays 40 look records WITHOUT missing portrait substitutions.");
 process.exit(build.status??1);
