@@ -16,7 +16,10 @@
     "verify:makeup-ai-40": "node scripts/verify-makeup-ai-40.mjs",
     "verify:makeup-ai-candidates": "node scripts/verify-makeup-ai-40.mjs --candidates",
     "verify:makeup-ai-release": "node scripts/verify-makeup-ai-40.mjs --release",
-    "build:makeup-ai-review": "node scripts/build-makeup-ai-review.mjs"
+    "build:makeup-ai-review": "node scripts/build-makeup-ai-review.mjs",
+    "verify:makeup-curated-40": "node scripts/verify-curated-40.mjs",
+    "verify:makeup-curated-release": "node scripts/verify-curated-40.mjs --release",
+    "build:makeup-curated-40": "node scripts/build-curated-40.mjs"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.5.4",
