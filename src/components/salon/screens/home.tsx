@@ -56,7 +56,7 @@ export function HomeScreen() {
             <button type="button" className="salon24-hero__photo" data-image-error={heroFailed || undefined}
               onClick={(event) => openDiscover(hero.id, event.currentTarget.querySelector("img"))}
               aria-label={`دیدن مدل ${hero.name} در لوک‌بوک`}>
-              <img src={lookSrc(hero.repId)} alt={hero.name} fetchPriority="high" style={{ objectPosition: photoObjectPosition(lookSrc(hero.repId)) }} onError={() => setHeroFailed(true)} />
+              <img src={lookSrc(hero.repId)} alt={hero.name} fetchPriority="high" style={{ objectPosition: photoObjectPosition(lookSrc(hero.repId), "30%") }} onError={() => setHeroFailed(true)} />
               {heroFailed ? <span className="salon26-hero__missing" aria-hidden="true">تصویر این مدل اکنون در دسترس نیست.</span> : null}
             </button>
             <div className="salon25-hero__caption">
