@@ -5,3 +5,6 @@ dist/
 .env.*
 .wrangler/
 .DS_Store
+
+# Model identity and image publishing approvals must never be committed
+.makeup-approvals.local.json
