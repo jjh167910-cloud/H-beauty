@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { byRep, lookSrc, lookThumb } from "@/data/catalog";
 import { MAKEUP_LOOKS } from "@/data/makeup";
-import { MakeupArtwork } from "../makeup-artwork";
+import { MakeupArtwork, MAKEUP_FINAL_IMAGES } from "../makeup-artwork";
 import { GalleryModeSwitch } from "../gallery-mode-switch";
 import { photoObjectPosition } from "@/data/photo-focal";
 import { SERVICES, dayOf, formatPrice, greeting, isPast, longDate, monthOf, summarize, timeLabel } from "@/data/salon";
@@ -59,7 +59,7 @@ export function HomeScreen() {
             <button type="button" onClick={() => { setGalleryMode("hair");go("looks"); }}><Icon name="looks" size={24}/><span><strong>مدل مو</strong><small>مدل‌های جدید</small></span></button>
             <button type="button" onClick={() => { setGalleryMode("makeup");go("looks"); }}><Icon name="beauty" size={24}/><span><strong>میکاپ</strong><small>آرایش حرفه‌ای</small></span></button>
           </div>
-          <p className="makeup-spotlight__disclaimer">تصویر ثابت مدل مرجع؛ رنگ‌های پیشنهادی در گالری معرفی می‌شوند، نه به‌صورت تغییر در عکس.</p>
+          <p className="makeup-spotlight__disclaimer">{MAKEUP_FINAL_IMAGES ? "گالری نهایی، تصویر متفاوت هر سبک از همان مدل را نمایش می‌دهد؛ جزئیات منشأ و تأیید انتشار ثبت می‌شوند." : "تصویر ثابت مدل مرجع؛ رنگ‌های پیشنهادی در گالری معرفی می‌شوند، نه به‌صورت تغییر در عکس."}</p>
         </section>
       ) : hero ? (
         <section className="salon24-hero px-gutter" aria-label="استایل منتخب سالن">
