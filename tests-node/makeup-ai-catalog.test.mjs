@@ -53,3 +53,13 @@ test("external Canva and ElevenLabs renders are not falsely treated as approved 
   assert.ok(views.every(x=>x.candidate===false&&x.asset===null&&x.publishApproved===false));
   assert.equal(new Set(views.map(x=>x.externalGeneration.mediaId??x.externalGeneration.generationId)).size,4);
 });
+
+test("review counters derive from data and provider-only portraits remain explicitly unapproved",()=>{
+  const ui=readFileSync(join(root,"src/components/salon/makeup-ai-review.tsx"),"utf8");
+  assert.match(ui,/const candidateCount = catalog\.looks\.filter/);
+  assert.match(ui,/const pendingCount = catalog\.looks\.length - candidateCount/);
+  assert.match(ui,/const providerOnlyCount = catalog\.looks\.filter/);
+  assert.match(ui,/providerOnlyCount\.toLocaleString/);
+  assert.match(ui,/تولیدشده در سرویس خارجی؛ فایل اصلی هنوز بررسی نشده/);
+  assert.ok(!ui.includes("<strong>۲۲</strong>"));
+});
