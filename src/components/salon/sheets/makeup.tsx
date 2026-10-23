@@ -1,6 +1,6 @@
 import { MAKEUP_CATEGORIES, type MakeupLook } from "@/data/makeup";
 import { useSalon } from "@/lib/salon-store";
-import { MakeupArtwork } from "../makeup-artwork";
+import { MakeupArtwork, MODEL_REFERENCE_SRC } from "../makeup-artwork";
 import { Button, Sheet, useSalonActions } from "../ui";
 import { Icon } from "../icons";
 
@@ -19,6 +19,11 @@ export function MakeupSheet({open,look,onClose}:{open:boolean;look:MakeupLook;on
     </div>}>
     <div className="makeup-detail">
       <div className="makeup-detail__art"><MakeupArtwork look={look}/></div>
+      <div className="makeup-detail__thumbs" aria-label="نماهای اصلی از همان چهره مرجع">
+        <div className="makeup-detail__thumb makeup-detail__thumb--eyes"><img src={MODEL_REFERENCE_SRC} alt="نمای نزدیک چشم همان مدل مرجع" /></div>
+        <div className="makeup-detail__thumb makeup-detail__thumb--lips"><img src={MODEL_REFERENCE_SRC} alt="نمای نزدیک لب همان مدل مرجع" /></div>
+        <div className="makeup-detail__thumb makeup-detail__thumb--face"><img src={MODEL_REFERENCE_SRC} alt="نمای صورت همان مدل مرجع" /></div>
+      </div>
       <div className="makeup-detail__meta"><span lang="en">{look.code} / MAKEUP ATELIER</span><span>{category?.label}</span></div>
       <h2>{look.name}</h2><p>{look.description}</p>
       <div className="makeup-detail__palette" aria-label="پالت پیشنهادی میکاپ">
@@ -30,7 +35,7 @@ export function MakeupSheet({open,look,onClose}:{open:boolean;look:MakeupLook;on
         <div><dt>فینیش</dt><dd>{look.finish}</dd></div>
         <div><dt>رنگ پیشنهادی</dt><dd>قابل تنظیم با سلیقه شما</dd></div>
       </dl>
-      <p className="makeup-detail__disclaimer">این تصویرسازی، راهنمای انتخاب رنگ و سبک است؛ عکس نمونه‌کار و شبیه‌سازی روی چهره شما نیست.</p>
+      <p className="makeup-detail__disclaimer">عکس واقعی همان مدل مرجع بدون تغییر چهره استفاده شده است. رنگ‌های پیشنهادی بالا روی عکس اعمال نشده‌اند؛ این صفحه نمونه اجرای میکاپ، قبل/بعد یا قابلیت امتحان مجازی نیست.</p>
     </div>
   </Sheet>;
 }
