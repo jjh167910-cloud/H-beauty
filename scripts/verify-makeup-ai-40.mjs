@@ -12,7 +12,7 @@ const release=process.argv.includes("--release");
 const failures=[],byImageHash=new Map();
 const ids=new Set(),slugs=new Set(),names=new Set();
 if(data.looks.length!==40)failures.push(`Expected 40 records, received ${data.looks.length}`);
-if(data.looks.filter(x=>x.candidate).length!==20)failures.push("Expected 20 staged candidate records");
+if(data.looks.filter(x=>x.candidate).length!==22)failures.push("Expected 22 staged candidate records");
 let approvals={};
 if(release){
   const approvalPath=process.env.HB_AI_APPROVALS_PATH || ".makeup-ai-approvals.local.json";
