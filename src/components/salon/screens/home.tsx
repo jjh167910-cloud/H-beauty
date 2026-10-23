@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { byRep, lookSrc, lookThumb } from "@/data/catalog";
+import { photoObjectPosition } from "@/data/photo-focal";
 import { SERVICES, dayOf, formatPrice, greeting, isPast, longDate, monthOf, summarize, timeLabel } from "@/data/salon";
 import { useSalon } from "@/lib/salon-store";
 import { Icon } from "../icons";
@@ -55,7 +56,7 @@ export function HomeScreen() {
             <button type="button" className="salon24-hero__photo" data-image-error={heroFailed || undefined}
               onClick={(event) => openDiscover(hero.id, event.currentTarget.querySelector("img"))}
               aria-label={`دیدن مدل ${hero.name} در لوک‌بوک`}>
-              <img src={lookSrc(hero.repId)} alt={hero.name} fetchPriority="high" onError={() => setHeroFailed(true)} />
+              <img src={lookSrc(hero.repId)} alt={hero.name} fetchPriority="high" style={{ objectPosition: photoObjectPosition(lookSrc(hero.repId)) }} onError={() => setHeroFailed(true)} />
               {heroFailed ? <span className="salon26-hero__missing" aria-hidden="true">تصویر این مدل اکنون در دسترس نیست.</span> : null}
             </button>
             <div className="salon25-hero__caption">
