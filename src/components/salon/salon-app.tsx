@@ -5,7 +5,7 @@ import { withTransition } from "@/lib/transition";
 import { Docks, TabBar, TopBar } from "./chrome";
 import { HomeScreen } from "./screens/home";
 import { ServicesScreen } from "./screens/services";
-import { LooksScreen } from "./screens/looks";
+import { GalleryScreen } from "./screens/gallery";
 import { BookingsScreen } from "./screens/bookings";
 import { MeScreen } from "./screens/me";
 import { DesignScreen } from "./screens/design";
@@ -157,7 +157,7 @@ export function SalonApp() {
         store.resetDraft();
         if (intent?.services) store.setCart(intent.services);
         else if (intent?.service && !store.cart.includes(intent.service)) store.setCart([...store.cart, intent.service]);
-        if (intent?.stylist || intent?.lookId != null) store.setDraft({ stylist: intent.stylist ?? "any", lookId: intent.lookId ?? null });
+        if (intent?.stylist || intent?.lookId != null || intent?.makeupId) store.setDraft({ stylist: intent.stylist ?? "any", lookId: intent.lookId ?? null, makeupId: intent.makeupId ?? null });
         openSheet({ kind: "booking" });
       },
     }),
@@ -177,7 +177,7 @@ export function SalonApp() {
         <main id="app-content" tabIndex={-1} key={tab}>
           {tab === "home" ? <HomeScreen /> : null}
           {tab === "services" ? <ServicesScreen /> : null}
-          {tab === "looks" ? <LooksScreen /> : null}
+          {tab === "looks" ? <GalleryScreen /> : null}
           {tab === "bookings" ? <BookingsScreen /> : null}
           {tab === "me" ? <MeScreen /> : null}
           {tab === "design" ? <DesignScreen /> : null}
