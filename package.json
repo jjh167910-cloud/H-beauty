@@ -8,7 +8,9 @@
     "build": "vite build",
     "preview": "vite preview --host 0.0.0.0",
     "typecheck": "tsc --noEmit",
-    "test:ui": "playwright test"
+    "test:ui": "playwright test",
+    "test:offline": "node --test tests-node/*.test.mjs",
+    "verify:assets": "node scripts/verify-images.mjs"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.5.4",
