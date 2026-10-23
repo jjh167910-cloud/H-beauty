@@ -138,3 +138,40 @@ test("makeup service rows all show the same model rather than unrelated stock ph
   expect(new Set(srcs)).toEqual(new Set(["/makeup/model-reference.webp"]));
   await page.screenshot({path:"test-results/makeup-services-exact-face.png",animations:"disabled"});
 });
+
+test("reference design: real photo, caption beneath image and saved heart in corner",async({page})=>{
+  await makeup(page,390);
+  const first=page.locator(".makeup-card").first();
+  await first.scrollIntoViewIfNeeded();
+  const photo=first.locator(".makeup-card__art");
+  const caption=first.locator(".makeup-card__caption");
+  const favorite=first.locator('.makeup-card__actions button[aria-pressed]').first();
+  const request=first.getByRole("button",{name:/درخواست نوبت/});
+  await expect(photo.locator('img[src="/makeup/model-reference.webp"]')).toBeVisible();
+  await expect(caption.getByText(/نچرال/).first()).toBeVisible();
+  await expect(favorite).toBeVisible();
+  await expect(request).toBeVisible();
+  const [pb,cb,fb,rb]=await Promise.all([photo.boundingBox(),caption.boundingBox(),favorite.boundingBox(),request.boundingBox()]);
+  expect(pb&&cb&&fb&&rb).toBeTruthy();
+  expect(cb!.y).toBeGreaterThanOrEqual(pb!.y+pb!.height-1);
+  expect(fb!.x).toBeGreaterThanOrEqual(pb!.x-1);
+  expect(fb!.y).toBeGreaterThanOrEqual(pb!.y-1);
+  expect(fb!.y+fb!.height).toBeLessThan(pb!.y+pb!.height*.36);
+  expect(fb!.width).toBeGreaterThanOrEqual(44);
+  expect(fb!.height).toBeGreaterThanOrEqual(44);
+  expect(rb!.y).toBeGreaterThanOrEqual(cb!.y+cb!.height-1);
+  await page.screenshot({path:"test-results/makeup-design-reference-gallery-390.png",animations:"disabled"});
+});
+
+test("reference design: details show same face, eye/lip crops and actual service quote status",async({page})=>{
+  await makeup(page,390);
+  await page.locator(".makeup-card__view").first().click();
+  const detail=page.getByRole("dialog");
+  await expect(detail.locator('.makeup-detail__art img[src="/makeup/model-reference.webp"]')).toBeVisible();
+  await expect(detail.locator(".makeup-detail__thumbs img")).toHaveCount(3);
+  await expect(detail.locator(".makeup-detail__palette span")).toHaveCount(4);
+  await expect(detail.locator(".makeup-detail__service")).toContainText("میکاپ نچرال");
+  await expect(detail.locator(".makeup-detail__service")).toContainText("قیمت پس از مشاوره");
+  await detail.locator(".makeup-detail__service").scrollIntoViewIfNeeded();
+  await page.screenshot({path:"test-results/makeup-design-reference-detail-390.png",animations:"disabled"});
+});
