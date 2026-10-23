@@ -11,3 +11,6 @@ dist/
 
 # Private AI portrait identity, likeness and publication authorizations
 .makeup-ai-approvals.local.json
+
+# Private artwork likeness, consent and publication authorizations
+.makeup-curated-40-approvals.local.json
