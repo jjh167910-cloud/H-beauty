@@ -2,10 +2,9 @@ import { test, expect, type Page } from "playwright/test";
 
 const KEY = "hananeh-atelier-v1";
 
-/**
- * Visual audit captures are encoded in 2400-character JPEG chunks in CI logs.
- * GitHub Actions artifact storage is currently unavailable, so this is a
- * temporary review-only transport for synthetic / no-personal-data screenshots.
+/** Visual audit captures synthetic local state and records image/layout metrics.
+ * Screenshots are written to the test-results directory; raw image bytes are
+ * never printed to CI logs.
  */
 async function prepare(page: Page, welcome = true) {
   await page.setViewportSize({ width: 390, height: 844 });
@@ -47,14 +46,8 @@ async function capture(page: Page, name: string) {
     };
   });
   console.log(`VISUAL_META|${name}|${JSON.stringify(meta)}`);
-  const png = await page.screenshot({ type: "jpeg", quality: 57, fullPage: false, animations: "disabled", path: `test-results/audit-${name}.jpg` });
-  const raw = png.toString("base64");
-  const chunkSize = 2400;
-  console.log(`VISUAL_START|${name}|${Math.ceil(raw.length / chunkSize)}`);
-  for (let index = 0; index < raw.length; index += chunkSize) {
-    console.log(`VISUAL_CHUNK|${name}|${index / chunkSize}|${raw.slice(index, index + chunkSize)}`);
-  }
-  console.log(`VISUAL_END|${name}`);
+  await page.screenshot({ type: "png", fullPage: false, animations: "disabled",
+    path: `test-results/audit-${name}.png` });
   expect(meta.overflowPx).toBeLessThanOrEqual(1);
 }
 
@@ -153,4 +146,15 @@ test("offline homepage portrait failure has a readable fallback", async ({ page 
   await page.goto("/");
   await expect(page.locator(".salon24-hero__photo")).toHaveAttribute("data-image-error", "true");
   await expect(page.locator(".salon26-hero__missing")).toBeVisible();
+});
+
+test("wide-hair salon thumbnails use intentional horizontal crop positions", async ({ page }) => {
+  await prepare(page);
+  await page.goto("/");
+  const braid = page.locator('.salon24-style-card img[src="/looks/sm/77.webp"]');
+  const curly = page.locator('.salon24-style-card img[src="/looks/sm/84.webp"]');
+  await expect(braid).toHaveCSS("object-position", "11% 50%");
+  await expect(curly).toHaveCSS("object-position", "6% 50%");
+  const normal = page.locator('.salon24-style-card img[src="/looks/sm/30.webp"]');
+  await expect(normal).toHaveCSS("object-position", "50% 32%");
 });
