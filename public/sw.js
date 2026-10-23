@@ -12,9 +12,13 @@ self.addEventListener('install', event => {
 });
 self.addEventListener('activate', event => {
   event.waitUntil(caches.keys()
-    .then(keys => Promise.all(keys
-      .filter(key => key.startsWith(PREFIX) && key !== CACHE)
-      .map(key => caches.delete(key))))
+    .then(keys => {
+      // Keep the immediately previous release for tabs still using older chunks.
+      // CacheStorage.keys() lists caches in creation order; don't sort hash names.
+      const older = keys.filter(key => key.startsWith(PREFIX) && key !== CACHE);
+      const retain = older.at(-1);
+      return Promise.all(older.filter(key => key !== retain).map(key => caches.delete(key)));
+    })
     .then(() => self.clients.claim()));
 });
 self.addEventListener('fetch', event => {
@@ -24,10 +28,8 @@ self.addEventListener('fetch', event => {
     event.respondWith((async () => {
       try {
         const response=await fetch(req);
-        if (response.ok) {
-          try { await (await caches.open(CACHE)).put('/index.html', response.clone()); }
-          catch (error) { console.warn('Could not cache salon shell',error); }
-        }
+        // Do not replace an installed version's HTML with a newer deployment:
+        // its compiled JS/CSS manifest belongs to the cache fingerprint.
         return response;
       } catch (error) {
         const shell=await caches.match('/index.html');
