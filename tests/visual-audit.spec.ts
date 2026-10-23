@@ -128,15 +128,31 @@ test("tablet hero keeps photo and booking actions in separate columns", async ({
 test("mobile action controls meet minimum tap dimensions", async ({ page }) => {
   await prepare(page);
   await page.setViewportSize({ width: 320, height: 700 });
-  for (const route of ["/#/services", "/#/looks"]) {
-    await page.goto(route);
-    for (const selector of route.includes("services") ? [".studio-service-item__add", ".chip"] : [".salon25-look-card__action", ".chip"]) {
-      const nodes = page.locator(`${selector}:visible`);
-      if (!await nodes.count()) continue;
-      const sizes = await nodes.first().evaluate(node => { const box = node.getBoundingClientRect(); return { width: box.width, height: box.height }; });
-      expect(sizes.width, selector + " width").toBeGreaterThanOrEqual(44);
-      expect(sizes.height, selector + " height").toBeGreaterThanOrEqual(44);
-    }
+  await page.goto("/#/services");
+  const serviceFilters = page.getByRole("group", { name: "دسته‌بندی خدمات" });
+  await expect(serviceFilters).toBeVisible();
+  await expect(serviceFilters.locator(".chip").first()).toBeVisible();
+  const serviceAdd = page.locator(".studio-service-item__add:visible").first();
+  await expect(serviceAdd).toBeVisible();
+  for (const target of [serviceFilters.locator(".chip").first(), serviceAdd]) {
+    const box = await target.boundingBox();
+    expect(box).not.toBeNull();
+    expect(box!.width).toBeGreaterThanOrEqual(44);
+    expect(box!.height).toBeGreaterThanOrEqual(44);
+  }
+
+  await page.goto("/#/looks");
+  const lookFilters = page.getByRole("group", { name: "فیلتر گروه‌ها" });
+  await expect(lookFilters).toBeVisible();
+  const chip = lookFilters.locator(".chip").first();
+  await expect(chip).toBeVisible();
+  const cardAction = page.locator(".studio-look-card:visible .salon25-look-card__action:visible").first();
+  await expect(cardAction).toBeVisible();
+  for (const target of [chip, cardAction]) {
+    const box = await target.boundingBox();
+    expect(box).not.toBeNull();
+    expect(box!.width).toBeGreaterThanOrEqual(44);
+    expect(box!.height).toBeGreaterThanOrEqual(44);
   }
 });
 
@@ -172,7 +188,7 @@ test("discovery captions remain readable in light and dark salon themes", async 
       await page.reload();
     }
     await page.locator(".studio-look-card > button").first().click();
-    const info = page.locator(".discover__info");
+    const info = page.locator(".discover__slide:not([inert]) .discover__info");
     await expect(info.getByRole("heading")).toBeVisible();
     const colors = await info.evaluate((node) => {
       const expected = document.createElement("span");
