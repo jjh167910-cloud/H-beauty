@@ -25,6 +25,7 @@ export function HomeScreen() {
   const clearAll = useSalon((state) => state.clearAll);
   const setFilter = useSalon((state) => state.setFilter);
   const setGalleryMode = useSalon((state) => state.setGalleryMode);
+  const galleryMode = useSalon((state) => state.galleryMode);
   const hero = byRep(30);
   const [heroFailed, setHeroFailed] = useState(false);
   const next = useMemo(
@@ -40,11 +41,28 @@ export function HomeScreen() {
           <span>{greeting()}{name ? `، ${name.split(" ")[0]}` : ""} <span aria-hidden="true">✦</span></span>
           <span lang="en">HANANEH BEAUTY SALON</span>
         </div>
-        <h1>زیبایی شما، <span>داستان ماست.</span></h1>
-        <p>در سالن زیبایی حنانه، مدل‌های مو و خدمات زیبایی را کشف کنید و برای استایل دلخواهتان درخواست نوبت بدهید.</p>
+        {galleryMode === "makeup" ? <h1>زیبایی، <span>اعتماد به نفس شما</span></h1> : <h1>زیبایی شما، <span>داستان ماست.</span></h1>}
+        <p>{galleryMode === "makeup" ? "گالری میکاپ، رنگ‌های پیشنهادی و خدمات تخصصی زیبایی؛ با یک مدل واقعی و چهره‌ای ثابت." : "در سالن زیبایی حنانه، مدل‌های مو و خدمات زیبایی را کشف کنید و برای استایل دلخواهتان درخواست نوبت بدهید."}</p>
       </header>
 
-      {hero ? (
+      <nav className="makeup-home-tabs px-gutter" role="tablist" aria-label="انتخاب بخش اصلی">
+        <button role="tab" type="button" aria-selected={galleryMode === "hair"} onClick={() => setGalleryMode("hair")}>مدل مو</button>
+        <button role="tab" type="button" aria-selected={galleryMode === "makeup"} onClick={() => setGalleryMode("makeup")}>میکاپ</button>
+      </nav>
+
+      {galleryMode === "makeup" ? (
+        <section className="makeup-spotlight px-gutter" aria-label="معرفی خدمات میکاپ">
+          <Button variant="gold" block icon="book" onClick={() => openBooking({ service:"event-makeup", makeupId:MAKEUP_LOOKS[8].id })}>درخواست نوبت میکاپ</Button>
+          <button type="button" className="makeup-spotlight__image" aria-label="دیدن مجموعه میکاپ" onClick={() => { setGalleryMode("makeup");go("looks"); }}>
+            <MakeupArtwork look={MAKEUP_LOOKS[8]} />
+          </button>
+          <div className="makeup-spotlight__categories">
+            <button type="button" onClick={() => { setGalleryMode("hair");go("looks"); }}><Icon name="looks" size={24}/><span><strong>مدل مو</strong><small>مدل‌های جدید</small></span></button>
+            <button type="button" onClick={() => { setGalleryMode("makeup");go("looks"); }}><Icon name="beauty" size={24}/><span><strong>میکاپ</strong><small>آرایش حرفه‌ای</small></span></button>
+          </div>
+          <p className="makeup-spotlight__disclaimer">تصویر ثابت مدل مرجع؛ رنگ‌های پیشنهادی در گالری معرفی می‌شوند، نه به‌صورت تغییر در عکس.</p>
+        </section>
+      ) : hero ? (
         <section className="salon24-hero px-gutter" aria-label="استایل منتخب سالن">
           <div className="salon26-hero__intro">
             <span lang="en">YOUR BEAUTY, YOUR WAY</span>
