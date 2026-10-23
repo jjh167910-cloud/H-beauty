@@ -3,11 +3,11 @@
   "catalog": "Hananeh Beauty AI makeup inspiration",
   "model": "user-supplied original woman photo",
   "totalPlanned": 40,
-  "availableCandidateAssetsInExternalReviewKit": 20,
+  "availableCandidateAssetsInExternalReviewKit": 22,
   "actualAssetsCommittedToThisBranch": 0,
   "publicReleaseApproved": 0,
   "provenance": "AI-generated inspiration; not salon performance photography",
-  "instructions": "Candidates stored in offline review-kit ZIP. Do not publish or render missing files. No identity or style approval assumed.",
+  "instructions": "22 generated AI portrait candidates exist only in private v34 review ZIP, not committed to public GitHub; 18 styles still missing. All need likeness, makeup distinction and publication consent approvals before release. The two new faces still show possible facial-proportion drift.",
   "looks": [
     {
       "id": "hb-makeup-01",
@@ -275,12 +275,12 @@
       "nameFa": "آبی کبالت گرافیکی",
       "category": "eyes",
       "description": "Electric cobalt cut-crease graphic wing, navy lower lash, nude lips",
-      "candidate": false,
-      "asset": null,
+      "candidate": true,
+      "asset": "/makeup/ai-portraits/hb-makeup-21-cobalt-graphic.webp",
       "identityApproved": false,
       "styleDistinctApproved": false,
       "publishApproved": false,
-      "expectedSha256": null
+      "expectedSha256": "527f344707d220f82729fbf809593bf3ef10bbd597f590d894744a62c498b19f"
     },
     {
       "id": "hb-makeup-22",
@@ -288,12 +288,12 @@
       "nameFa": "کات‌کریس یاسی",
       "category": "eyes",
       "description": "Defined lavender cut crease with plum outer V",
-      "candidate": false,
-      "asset": null,
+      "candidate": true,
+      "asset": "/makeup/ai-portraits/hb-makeup-22-lilac-cut-crease.webp",
       "identityApproved": false,
       "styleDistinctApproved": false,
       "publishApproved": false,
-      "expectedSha256": null
+      "expectedSha256": "76c9bb658156a2a8f97f0a9a8840d0abb85d418024c2008a31b2a2af919be540"
     },
     {
       "id": "hb-makeup-23",
