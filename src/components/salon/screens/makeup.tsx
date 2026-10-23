@@ -27,8 +27,8 @@ export function MakeupScreen() {
     <section className="makeup-intro px-gutter" aria-label="معرفی گالری میکاپ">
       <div className="makeup-intro__copy">
         <span lang="en">THE ART OF YOU · 2026</span>
-        <h2>چهره شما، امضای شما</h2>
-        <p>از نچرال و سافت گلم تا میکاپ مجلسی و عروس؛ رنگ‌ها را کشف کنید و برای اجرای اختصاصی مشاوره بگیرید.</p>
+        <h2>چهره‌ای آشنا، سبک‌های تازه</h2>
+        <p>یک مدل واقعی، شش گروه میکاپ و پالت‌های پیشنهادی؛ برای اجرای اختصاصی با آرتیست مشورت کنید.</p>
         <Button variant="gold" onClick={()=>openBooking({service:"event-makeup"})} icon="book">درخواست نوبت میکاپ</Button>
       </div>
       <button className="makeup-intro__portrait" type="button" aria-label={`مشاهده ${hero.name}`} onClick={()=>openSheet({kind:"makeup",id:hero.id})}>
@@ -58,7 +58,7 @@ export function MakeupScreen() {
       <span>{persian(visible.length)} ایده از {persian(MAKEUP_LOOKS.length)}</span>
       {savedOnly||query||category!=="all"? <Button variant="ghost" size="sm" onClick={reset}>پاک کردن فیلتر</Button> : null}
     </div>
-    <p className="makeup-editorial-note px-gutter">تصاویر، تصویرسازی مفهومی برای معرفی رنگ و حال‌وهوای سبک‌ها هستند؛ نمونه کار اجراشده در سالن یا پیش‌نمایش نتیجه روی چهره شما نیستند.</p>
+    <p className="makeup-editorial-note px-gutter">عکس تمام مدل‌ها متعلق به یک چهره مرجع ثابت است؛ سبک‌ها و رنگ‌های پیشنهادی زیر عکس معرفی می‌شوند و عکس، نتیجه هر میکاپ یا نمونه‌کار سالن نیست.</p>
 
     {visible.length ? <div className="makeup-grid px-gutter">
       {visible.map((look,index)=>{
@@ -69,6 +69,9 @@ export function MakeupScreen() {
             aria-label={`جزئیات ${look.name}`}>
             <span className="makeup-card__art"><MakeupArtwork look={look}/></span>
             <span className="makeup-card__tag">{cat?.label} · {look.finish}</span>
+            <span className="makeup-card__palette" aria-label="پالت رنگ پیشنهادی">
+              <i style={{background:look.lid}}/><i style={{background:look.pigment}}/><i style={{background:look.blush}}/>
+            </span>
             <strong>{look.name}</strong>
             <span className="makeup-card__code" lang="en">{look.code}</span>
           </button>
