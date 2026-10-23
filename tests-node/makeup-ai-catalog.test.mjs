@@ -10,6 +10,8 @@ test("AI makeup catalog has forty unique Persian style records",()=>{
   for(const field of ["id","slug","nameFa"])assert.equal(new Set(d.looks.map(x=>x[field])).size,40,field);
   assert.equal(d.looks.filter(x=>x.candidate).length,22);
   assert.equal(d.looks.filter(x=>!x.candidate).length,18);
+  assert.equal(d.looks.filter(x=>x.editorialIssues.length>0).length,12);
+  assert.ok(d.looks.every(x=>Array.isArray(x.editorialIssues)));
   assert.equal(d.looks.filter(x=>x.publishApproved).length,0);
   assert.ok(d.looks.every(x=>x.identityApproved===false&&x.styleDistinctApproved===false));
   assert.ok(d.looks.every(x=>x.candidate?x.asset?.startsWith("/makeup/ai-portraits/"):x.asset===null));
@@ -29,5 +31,6 @@ test("release check demands private approvals; public images don't imply salon r
   assert.match(gate,/HB_AI_APPROVALS_PATH/);
   assert.match(gate,/modelPublicationConsent/);
   assert.match(gate,/makeupDistinctApproved/);
+  assert.match(gate,/editorialIssuesResolved/);
   assert.ok(existsSync(join(root,"scripts/import-makeup-ai-candidates.mjs")));
 });
