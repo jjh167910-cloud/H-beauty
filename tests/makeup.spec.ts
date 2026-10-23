@@ -175,3 +175,35 @@ test("reference design: details show same face, eye/lip crops and actual service
   await detail.locator(".makeup-detail__service").scrollIntoViewIfNeeded();
   await page.screenshot({path:"test-results/makeup-design-reference-detail-390.png",animations:"disabled"});
 });
+
+test("RTL makeup tabs support keyboard arrows, Home/End and a labeled panel", async ({page}) => {
+  await page.setViewportSize({width:390,height:844});
+  await page.addInitScript(key=>localStorage.setItem(key,JSON.stringify({welcomed:true,theme:"light"})),KEY);
+  await page.goto("/#/looks");
+  const tabs=page.getByRole("tablist",{name:"نوع گالری"});
+  const hair=tabs.getByRole("tab",{name:"مدل مو"});
+  const makeupTab=tabs.getByRole("tab",{name:"میکاپ"});
+  await hair.focus();
+  await expect(hair).toHaveAttribute("aria-selected","true");
+  await page.keyboard.press("ArrowLeft");
+  await expect(makeupTab).toBeFocused();
+  await expect(makeupTab).toHaveAttribute("aria-selected","true");
+  await expect(page.getByRole("tabpanel",{name:"میکاپ"})).toBeVisible();
+  await page.keyboard.press("ArrowRight");
+  await expect(hair).toBeFocused();
+  await expect(hair).toHaveAttribute("aria-selected","true");
+  await page.keyboard.press("End");
+  await expect(makeupTab).toBeFocused();
+  await page.keyboard.press("Home");
+  await expect(hair).toBeFocused();
+
+  await page.goto("/#/");
+  const homeTabs=page.getByRole("tablist",{name:"انتخاب بخش اصلی"});
+  const homeHair=homeTabs.getByRole("tab",{name:"مدل مو"});
+  const homeMakeup=homeTabs.getByRole("tab",{name:"میکاپ"});
+  await homeHair.focus();
+  await page.keyboard.press("ArrowLeft");
+  await expect(homeMakeup).toBeFocused();
+  await expect(homeMakeup).toHaveAttribute("aria-selected","true");
+  await expect(page.getByRole("tabpanel",{name:"معرفی خدمات میکاپ"})).toBeVisible();
+});
