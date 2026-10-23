@@ -58,7 +58,7 @@ export function MakeupScreen() {
       <span>{persian(visible.length)} ایده از {persian(MAKEUP_LOOKS.length)}</span>
       {savedOnly||query||category!=="all"? <Button variant="ghost" size="sm" onClick={reset}>پاک کردن فیلتر</Button> : null}
     </div>
-    <p className="makeup-editorial-note px-gutter">{MAKEUP_FINAL_IMAGES ? "هر سبک تصویر مستقل و تأییدشده خود را دارد. منشأ واقعی یا ویرایش‌شده تصویر باید به‌درستی مشخص باشد؛ تأیید نوبت پس از مشاوره انجام می‌شود." : "عکس تمام مدل‌ها متعلق به یک چهره مرجع ثابت است؛ سبک‌ها و رنگ‌های پیشنهادی زیر عکس معرفی می‌شوند و عکس، نتیجه هر میکاپ یا نمونه‌کار سالن نیست."}</p>
+    <p className="makeup-editorial-note px-gutter">{MAKEUP_FINAL_IMAGES ? "هر سبک یک عکس مستقل و تأییدشده از میکاپ واقعی اجراشده بر همین مدل دارد؛ تأیید نوبت پس از مشاوره انجام می‌شود." : "عکس تمام مدل‌ها متعلق به یک چهره مرجع ثابت است؛ سبک‌ها و رنگ‌های پیشنهادی زیر عکس معرفی می‌شوند و عکس، نتیجه هر میکاپ یا نمونه‌کار سالن نیست."}</p>
 
     {visible.length ? <div className="makeup-grid px-gutter">
       {visible.map((look,index)=>{
