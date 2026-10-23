@@ -10,7 +10,9 @@
     "typecheck": "tsc --noEmit",
     "test:ui": "playwright test",
     "test:offline": "node --test tests-node/*.test.mjs",
-    "verify:assets": "node scripts/verify-images.mjs"
+    "verify:assets": "node scripts/verify-images.mjs",
+    "verify:makeup-plan": "node scripts/verify-makeup-photos.mjs --plan",
+    "verify:makeup-photos": "node scripts/verify-makeup-photos.mjs --release"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.5.4",
