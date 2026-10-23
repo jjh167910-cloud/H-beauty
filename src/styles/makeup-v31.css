@@ -75,3 +75,9 @@
   @media(min-width:700px) {.makeup-home {grid-template-columns:1fr 230px;gap:2rem}.makeup-home__copy p {font-size:.88rem}.makeup-home__art {max-height:330px}}
   @media(max-width:359px) {.makeup-home {grid-template-columns:1fr .35fr;gap:.4rem}.makeup-home__copy .btn {font-size:.74rem}}
 }
+
+@layer components {
+  .makeup-service-link {display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;background:var(--color-sunken);border-radius:.9rem;padding:.9rem 1rem;margin-bottom:.7rem}
+  .makeup-service-link span {font-size:.8rem;line-height:1.8;color:var(--color-ink-2);flex:1 1 14rem}
+  .makeup-service-link .btn {min-height:2.75rem}
+}
