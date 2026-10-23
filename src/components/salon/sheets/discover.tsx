@@ -143,8 +143,8 @@ export function Discover({ open, startId, onClose }: { open: boolean; startId: n
               </div>
 
               <div className="discover__info">
-                <p className="t-caption text-champagne"><span dir="ltr">{family.code}</span> · {labelOf(family.category)}</p>
-                <h2 className="t-title-1 mt-1 text-white">{family.name}</h2>
+                <p className="t-caption"><span dir="ltr">{family.code}</span> · {labelOf(family.category)}</p>
+                <h2 className="t-title-1 mt-1">{family.name}</h2>
                 <div className="mt-4 flex gap-2">
                   <Button variant="gold" icon="book" onClick={() => openBooking({ service: serviceFor(family), lookId: family.id })}>درخواست این استایل</Button>
                   <Button variant="glass" icon="info" onClick={() => openSheet({ kind: "look", id: family.id })}>جزئیات</Button>
