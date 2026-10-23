@@ -67,6 +67,8 @@ test("gallery renders without overflow at 320px and 768px",async({page})=>{
   let overflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
   expect(overflow).toBeLessThanOrEqual(1);
   await page.screenshot({path:"test-results/makeup-gallery-320.png",animations:"disabled"});
+  await page.locator(".makeup-grid").scrollIntoViewIfNeeded();
+  await page.screenshot({path:"test-results/makeup-grid-320.png",animations:"disabled"});
   await page.setViewportSize({width:768,height:1024});
   overflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
   expect(overflow).toBeLessThanOrEqual(1);
