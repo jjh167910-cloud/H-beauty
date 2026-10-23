@@ -174,7 +174,7 @@
     flex:none;padding:.35rem var(--spacing-gutter) .65rem;
     padding-inline-end:var(--spacing-gutter);
   }
-  .discover__info .t-caption {color:var(--color-gold-ink);}
+  .discover__info .t-caption {color:var(--color-ink-2);font-size:.75rem;line-height:1.6;}
   .discover__info h2 {font-size:1.02rem;line-height:1.5;font-weight:700;color:var(--color-ink);}
   .discover__info .mt-4 {margin-top:.6rem;}
   .discover__info .btn {min-height:2.65rem;padding-inline:.8rem;}
@@ -196,5 +196,42 @@
     .discover__frame {height:min(100%,43dvh);}
     .discover__info {padding-block:.15rem .35rem;}
     .discover__info .mt-4 {margin-top:.3rem;}
+  }
+}
+
+/* Offline-first image fallback: never leave a permanent shimmer on broken media. */
+@layer components {
+  .media[data-error] {animation:none;background:var(--color-sunken);border:1px solid var(--color-line);}
+  .media[data-error] > img {opacity:0;}
+  .media__error {
+    position:absolute;inset:0;display:grid;place-items:center;
+    padding:.65rem;color:var(--color-ink-2);
+    font-size:.7rem;font-weight:600;line-height:1.7;text-align:center;
+  }
+}
+
+/* Visual QA: prevent a very tall portrait from hiding the primary booking CTA. */
+@layer components {
+  .salon24-hero__actions {order:-1;}
+  .salon24-hero__photo {background:var(--color-sunken);}
+  .salon24-hero__actions .btn {min-height:3.05rem;font-weight:660;}
+  .salon24-service-row__copy {min-width:0;}
+  .salon24-service-row__price {white-space:normal;max-width:6.25rem;min-width:0;}
+  .studio-look-card {min-width:0;}
+  .studio-look-card__frame,.studio-look-card .look-card__media {width:100%;max-width:100%;}
+  .salon25-look-card__action {min-height:2.85rem;}
+  .studio-profile__field input {min-width:0;width:100%;max-width:100%;}
+  .salon25-look-detail__actions .salon25-look-card__action {min-height:2.85rem;}
+  .look-hero .carousel img {object-fit:cover;object-position:center center;}
+  .discover__frame > img {object-fit:cover;object-position:center center;}
+}
+@media(max-width:370px) {
+  @layer components {
+    .salon24-hero__actions {grid-template-columns:1fr 1fr;}
+    .salon24-hero__actions .btn {font-size:.72rem;min-height:3rem;}
+    .salon24-service-row__price {max-width:5.4rem;font-size:.66rem;}
+    .salon24-service-row__copy strong {font-size:.78rem;}
+    .studio-booking-card__actions {flex-wrap:wrap;}
+    .studio-booking-card__actions .btn {min-width:0;white-space:normal;}
   }
 }

@@ -115,7 +115,7 @@ export function DesignScreen() {
       <section className="px-gutter">
         <SectionHead eyebrow="۰۵" title="دکمه‌ها" />
         <div className="grid gap-3">
-          <Button variant="gold" orb>رزرو این استایل</Button>
+          <Button variant="gold" orb>درخواست این استایل</Button>
           <div className="flex flex-wrap gap-2">
             <Button icon="book">اصلی</Button>
             <Button variant="secondary">ثانویه</Button>

@@ -3,6 +3,7 @@ import { Icon } from "../icons";
 import { toast } from "sonner";
 import { diverseOrder, families, labelOf, lookSrc, lookThumb, matchesFamily, persian, type Family } from "@/data/catalog";
 import { SALON } from "@/data/salon";
+import { photoObjectPosition } from "@/data/photo-focal";
 import { useSalon } from "@/lib/salon-store";
 import { shareText } from "@/lib/share";
 import { Button, IconButton, haptic, useSalonActions } from "../ui";
@@ -136,16 +137,16 @@ export function Discover({ open, startId, onClose }: { open: boolean; startId: n
             <section key={family.id} className="discover__slide" inert={index !== active} aria-hidden={index !== active} aria-roledescription="اسلاید" aria-label={`${persian(index + 1)} از ${persian(list.length)}: ${family.name}`}>
               <div className="discover__stage" onPointerUp={(event) => onTap(event, family)}>
                 <div className="discover__frame" data-morph={family.id === startId ? "" : undefined}>
-                  <img src={lookThumb(family.repId)} alt={family.name} draggable={false} />
-                  {index === active ? <img className="discover__full" src={lookSrc(family.repId)} alt="" aria-hidden="true" draggable={false} onLoad={(event) => event.currentTarget.setAttribute("data-loaded", "")} /> : null}
+                  <img src={lookThumb(family.repId)} alt={family.name} draggable={false} style={{ objectPosition: photoObjectPosition(lookThumb(family.repId), "center") }} />
+                  {index === active ? <img className="discover__full" src={lookSrc(family.repId)} alt="" style={{ objectPosition: photoObjectPosition(lookSrc(family.repId), "center") }} aria-hidden="true" draggable={false} onLoad={(event) => event.currentTarget.setAttribute("data-loaded", "")} /> : null}
                 </div>
               </div>
 
               <div className="discover__info">
-                <p className="t-caption text-champagne"><span dir="ltr">{family.code}</span> · {labelOf(family.category)}</p>
-                <h2 className="t-title-1 mt-1 text-white">{family.name}</h2>
+                <p className="t-caption"><span dir="ltr">{family.code}</span> · {labelOf(family.category)}</p>
+                <h2 className="t-title-1 mt-1">{family.name}</h2>
                 <div className="mt-4 flex gap-2">
-                  <Button variant="gold" icon="book" onClick={() => openBooking({ service: serviceFor(family), lookId: family.id })}>رزرو این استایل</Button>
+                  <Button variant="gold" icon="book" onClick={() => openBooking({ service: serviceFor(family), lookId: family.id })}>درخواست این استایل</Button>
                   <Button variant="glass" icon="info" onClick={() => openSheet({ kind: "look", id: family.id })}>جزئیات</Button>
                 </div>
               </div>

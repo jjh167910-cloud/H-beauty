@@ -1,6 +1,7 @@
 import { createContext, useContext, useId, useState, type ButtonHTMLAttributes, type ImgHTMLAttributes, type ReactNode } from "react";
 import { Drawer } from "vaul";
 import { cn } from "@/lib/cn";
+import { photoObjectPosition } from "@/data/photo-focal";
 import type { Tab } from "@/lib/salon-store";
 import { Icon, type IconName } from "./icons";
 
@@ -184,20 +185,32 @@ export function Seal({ text, className, children }: { text: string; className?: 
 
 /* ---------- Media & identity ---------- */
 
-/** Image in a shimmering placeholder; the shimmer stops once the image loads. */
-export function Media({ className, alt = "", onLoad, ...props }: ImgHTMLAttributes<HTMLImageElement>) {
-  const [loaded, setLoaded] = useState(false);
+/** Photos never shimmer forever: a real fallback appears if an image cannot load.
+ * The state is keyed by the current src so recycled cards cannot show stale imagery.
+ */
+export function Media({ className, alt = "", onLoad, onError, ...props }: ImgHTMLAttributes<HTMLImageElement>) {
+  const [result, setResult] = useState<{ src: string | undefined; status: "loading" | "loaded" | "error" }>({
+    src: props.src, status: "loading",
+  });
+  const status = result.src === props.src ? result.status : "loading";
   return (
-    <span className={cn("media block", className)} data-loaded={loaded ? "" : undefined}>
+    <span className={cn("media block", className)} data-loaded={status === "loaded" ? "" : undefined}
+      data-error={status === "error" ? "" : undefined}>
       <img
         alt={alt}
         decoding="async"
         onLoad={(event) => {
-          setLoaded(true);
+          setResult({ src: props.src, status: "loaded" });
           onLoad?.(event);
         }}
+        onError={(event) => {
+          setResult({ src: props.src, status: "error" });
+          onError?.(event);
+        }}
         {...props}
+        style={{ objectPosition: photoObjectPosition(props.src), ...props.style }}
       />
+      {status === "error" ? <span className="media__error" aria-hidden="true">تصویر در دسترس نیست</span> : null}
     </span>
   );
 }

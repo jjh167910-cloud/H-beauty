@@ -1,5 +1,6 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { byRep, lookSrc, lookThumb } from "@/data/catalog";
+import { photoObjectPosition } from "@/data/photo-focal";
 import { SERVICES, dayOf, formatPrice, greeting, isPast, longDate, monthOf, summarize, timeLabel } from "@/data/salon";
 import { useSalon } from "@/lib/salon-store";
 import { Icon } from "../icons";
@@ -22,6 +23,7 @@ export function HomeScreen() {
   const clearAll = useSalon((state) => state.clearAll);
   const setFilter = useSalon((state) => state.setFilter);
   const hero = byRep(30);
+  const [heroFailed, setHeroFailed] = useState(false);
   const next = useMemo(
     () => bookings.filter((item) => !isPast(item.date, item.time))
       .sort((a, b) => `${a.date}${a.time}`.localeCompare(`${b.date}${b.time}`))[0],
@@ -41,21 +43,28 @@ export function HomeScreen() {
 
       {hero ? (
         <section className="salon24-hero px-gutter" aria-label="استایل منتخب سالن">
+          <div className="salon26-hero__intro">
+            <span lang="en">YOUR BEAUTY, YOUR WAY</span>
+            <h2>استایل دلخواهتان را پیدا کنید.</h2>
+            <p>مدل‌ها را ببینید، ایده‌هایتان را ذخیره کنید و درخواست نوبت را با انتخاب استایل آغاز کنید.</p>
+          </div>
+          <div className="salon24-hero__actions">
+            <Button variant="gold" icon="book" onClick={() => openBooking({ service: "event-styling", lookId: hero.id })}>درخواست نوبت</Button>
+            <Button variant="secondary" icon="looks" onClick={() => { clearAll(); go("looks"); }}>گالری مدل مو</Button>
+          </div>
           <div className="salon24-hero__stage">
-            <button type="button" className="salon24-hero__photo"
+            <button type="button" className="salon24-hero__photo" data-image-error={heroFailed || undefined}
               onClick={(event) => openDiscover(hero.id, event.currentTarget.querySelector("img"))}
               aria-label={`دیدن مدل ${hero.name} در لوک‌بوک`}>
-              <img src={lookSrc(hero.repId)} alt={hero.name} fetchPriority="high" />
+              <img src={lookSrc(hero.repId)} alt={hero.name} fetchPriority="high" style={{ objectPosition: photoObjectPosition(lookSrc(hero.repId), "30%") }} onError={() => setHeroFailed(true)} />
+              {heroFailed ? <span className="salon26-hero__missing" aria-hidden="true">تصویر این مدل اکنون در دسترس نیست.</span> : null}
             </button>
             <div className="salon25-hero__caption">
               <div><span>استایل منتخب سالن</span><h2>{hero.name}</h2></div>
               <span lang="en">HANANEH BEAUTY</span>
             </div>
           </div>
-          <div className="salon24-hero__actions">
-            <Button variant="gold" icon="book" onClick={() => openBooking({ service: "event-styling", lookId: hero.id })}>درخواست نوبت</Button>
-            <Button variant="secondary" icon="looks" onClick={() => { clearAll(); go("looks"); }}>گالری مدل مو</Button>
-          </div>
+
           <p className="salon24-hero__fine">زمان انتخابی پیشنهادی است؛ سالن پس از دریافت درخواست آن را تأیید می‌کند.</p>
         </section>
       ) : null}
