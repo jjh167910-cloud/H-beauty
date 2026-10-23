@@ -14,9 +14,9 @@ const FOCAL_X: Readonly<Record<number, number>> = {
   256: 94, 257: 94, 260: 94, 282: 79,
 };
 
-export function photoObjectPosition(src?: string): string | undefined {
+export function photoObjectPosition(src?: string, vertical = "32%"): string | undefined {
   const match = src?.match(/^\/looks\/(?:sm\/)?(\d+)\.webp$/);
   if (!match) return undefined;
   const focalX = FOCAL_X[Number(match[1])];
-  return focalX == null ? undefined : `${focalX}% center`;
+  return focalX == null ? undefined : `${focalX}% ${vertical}`;
 }
