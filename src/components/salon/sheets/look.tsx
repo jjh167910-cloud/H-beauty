@@ -48,7 +48,7 @@ export function LookSheet({ open, family, onClose }: { open: boolean; family: Fa
           }}
         >
           {family.variantIds.map((id, itemIndex) => (
-            <img key={id} src={lookSrc(id)} alt={family.variantNames[itemIndex] ?? family.name} loading={itemIndex ? "lazy" : "eager"} draggable={false} style={{ animation: "fade 500ms ease both", objectPosition: photoObjectPosition(lookSrc(id)) }} />
+            <img key={id} src={lookSrc(id)} alt={family.variantNames[itemIndex] ?? family.name} loading={itemIndex ? "lazy" : "eager"} draggable={false} style={{ animation: "fade 500ms ease both", objectPosition: photoObjectPosition(lookSrc(id), "center") }} />
           ))}
         </div>
       </div>
