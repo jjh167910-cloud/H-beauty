@@ -1,5 +1,7 @@
 import { toast } from "sonner";
 import { familyById, lookThumb, persian, type Family } from "@/data/catalog";
+import { makeupById } from "@/data/makeup";
+import { MakeupArtwork } from "../makeup-artwork";
 import { SALON } from "@/data/salon";
 import { useSalon, type ThemePref } from "@/lib/salon-store";
 import { Icon, type IconName } from "../icons";
@@ -17,6 +19,8 @@ export function MeScreen() {
   const profile = useSalon((state) => state.profile);
   const setProfile = useSalon((state) => state.setProfile);
   const favs = useSalon((state) => state.favs);
+  const makeupFavs = useSalon((state) => state.makeupFavs);
+  const setGalleryMode = useSalon((state) => state.setGalleryMode);
   const compare = useSalon((state) => state.compare);
   const bookings = useSalon((state) => state.bookings);
   const theme = useSalon((state) => state.theme);
@@ -24,6 +28,7 @@ export function MeScreen() {
   const showSaved = useSalon((state) => state.showSaved);
   const clearData = useSalon((state) => state.clearData);
   const saved = favs.map((id) => familyById.get(id)).filter((family): family is Family => Boolean(family)).reverse();
+  const savedMakeup=makeupFavs.map(id=>makeupById.get(id)).filter((look)=>look!==undefined).reverse();
 
   const actions: Array<{ name: string; hint: string; icon: IconName; onClick: () => void }> = [
     { name: "مقایسه استایل‌ها", hint: compare.length ? `${persian(compare.length)} مدل در کنار هم` : "انتخاب تا سه مدل", icon: "compare", onClick: () => openSheet({ kind: "compare" }) },
@@ -61,13 +66,13 @@ export function MeScreen() {
       </section>
 
       <div className="studio-profile__metrics px-gutter">
-        <button type="button" onClick={() => { showSaved(); go("looks"); }}><strong>{persian(favs.length)}</strong><span>استایل ذخیره‌شده</span></button>
+        <button type="button" onClick={() => { setGalleryMode("hair"); showSaved(); go("looks"); }}><strong>{persian(favs.length)}</strong><span>استایل ذخیره‌شده</span></button>
         <button type="button" onClick={() => go("bookings")}><strong>{persian(bookings.length)}</strong><span>درخواست نوبت</span></button>
         <button type="button" onClick={() => openSheet({ kind: "compare" })}><strong>{persian(compare.length)}</strong><span>برای مقایسه</span></button>
       </div>
 
       <section className="studio-profile__saved">
-        <SectionHead eyebrow="YOUR EDIT" title="استایل‌های محبوب" action={<TextLink onClick={() => { showSaved(); go("looks"); }}>مشاهده همه</TextLink>} />
+        <SectionHead eyebrow="YOUR EDIT" title="استایل‌های محبوب" action={<TextLink onClick={() => { setGalleryMode("hair"); showSaved(); go("looks"); }}>مشاهده همه</TextLink>} />
         {saved.length ? (
           <div className="rail">
             {saved.slice(0, 10).map((family) => (
@@ -82,6 +87,20 @@ export function MeScreen() {
             <Icon name="heart" size={23} /><span>اولین استایل محبوبتان را از لوک‌بوک ذخیره کنید.</span><Icon name="chevron" size={18} />
           </button></div>
         )}
+      </section>
+
+      <section className="studio-profile__saved makeup-saved">
+        <SectionHead eyebrow="YOUR MAKEUP EDIT" title="میکاپ‌های ذخیره‌شده"
+          action={<TextLink onClick={()=>{setGalleryMode("makeup");go("looks")}}>مشاهده همه</TextLink>}/>
+        {savedMakeup.length ? <div className="rail">
+          {savedMakeup.slice(0,10).map(look=><button key={look.id} type="button"
+            className="makeup-saved__item" onClick={()=>openSheet({kind:"makeup",id:look.id})}>
+            <MakeupArtwork look={look}/><span>{look.name}</span>
+          </button>)}
+        </div> : <div className="px-gutter"><button type="button" className="studio-profile__empty"
+          onClick={()=>{setGalleryMode("makeup");go("looks")}}>
+          <Icon name="heart" size={23}/><span>اولین ایده میکاپ محبوبتان را از گالری ذخیره کنید.</span><Icon name="chevron" size={18}/>
+        </button></div>}
       </section>
 
       <section className="px-gutter">
