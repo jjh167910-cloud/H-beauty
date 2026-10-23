@@ -16,6 +16,10 @@ export function MakeupAiReview() {
   const [status, setStatus] = useState<"all"|"candidate"|"missing">("all");
   const [broken, setBroken] = useState<Record<string,boolean>>({});
   const [selected, setSelected] = useState<AiLook|null>(null);
+  const candidateCount = catalog.looks.filter(look => look.candidate).length;
+  const pendingCount = catalog.looks.length - candidateCount;
+  const providerOnlyCount = catalog.looks.filter(look => !look.candidate && "externalGeneration" in look).length;
+  const approvedCount = catalog.looks.filter(look => look.publishApproved).length;
 
   const looks = useMemo(() => catalog.looks.filter(look => {
     if (active !== "all" && look.category !== active) return false;
@@ -33,10 +37,11 @@ export function MakeupAiReview() {
         <h1>گالری اختصاصی <em>میکاپ</em></h1>
         <p>۴۰ سبک مشخص، یک چهره مرجع. این مجموعه برای بازبینی داخلی است و عکس‌های هوش مصنوعی، نمونه‌کار واقعی سالن محسوب نمی‌شوند.</p>
         <div className="hb-ai-stats">
-          <span><strong>۴۰</strong> سبک برنامه‌ریزی‌شده</span>
-          <span><strong>۲۲</strong> فایل پیشنهادی در بسته بازبینی</span>
-          <span><strong>۱۸</strong> تصویر باقی‌مانده</span>
-          <span><strong>۰</strong> تصویر تأییدشده برای انتشار</span>
+          <span><strong>{catalog.looks.length.toLocaleString("fa-IR")}</strong> سبک برنامه‌ریزی‌شده</span>
+          <span><strong>{candidateCount.toLocaleString("fa-IR")}</strong> فایل پیشنهادی در بسته بازبینی</span>
+          <span><strong>{pendingCount.toLocaleString("fa-IR")}</strong> تصویر بدون فایل محلی</span>
+          <span><strong>{providerOnlyCount.toLocaleString("fa-IR")}</strong> خروجی تولیدشده در سرویس خارجی</span>
+          <span><strong>{approvedCount.toLocaleString("fa-IR")}</strong> تصویر تأییدشده برای انتشار</span>
         </div>
       </header>
       <div className="hb-ai-toolbar">
@@ -51,7 +56,7 @@ export function MakeupAiReview() {
           <select aria-label="وضعیت فایل" value={status} onChange={e=>setStatus(e.target.value as "all"|"candidate"|"missing")}>
             <option value="all">همه وضعیت‌ها</option>
             <option value="candidate">تصاویر نامزد بررسی</option>
-            <option value="missing">تصاویر تهیه‌نشده</option>
+            <option value="missing">بدون فایل محلی</option>
           </select>
         </div>
       </div>
@@ -66,7 +71,7 @@ export function MakeupAiReview() {
                 onError={()=>setBroken(s=>({...s,[look.id]:true}))} /> :
                 <div className="hb-ai-placeholder" aria-label="تصویر در نسخه بازبینی حاضر نیست">
                   <span className="hb-ai-placeholder-icon" aria-hidden="true">✦</span>
-                  <span>{look.candidate?"فایل در بسته بازبینی آفلاین":"در انتظار تصویر اختصاصی"}</span>
+                  <span>{look.candidate?"فایل در بسته بازبینی آفلاین":"externalGeneration" in look?"تصویر در سرویس خارجی؛ فایل محلی موجود نیست":"در انتظار تصویر اختصاصی"}</span>
                 </div>}
             </div>
             <div className="hb-ai-look-copy">
@@ -75,7 +80,7 @@ export function MakeupAiReview() {
             </div>
             <div className="hb-ai-look-bottom">
               <small>{categoryLabels[look.category]??look.category}</small>
-              <small className={look.candidate?"hb-ai-review-status":"hb-ai-missing-status"}>{look.candidate?"نامزد بازبینی":"تصویر موجود نیست"}</small>
+              <small className={look.candidate?"hb-ai-review-status":"hb-ai-missing-status"}>{look.candidate?"نامزد بازبینی":"externalGeneration" in look?"خروجی خارجی؛ تأیید نشده":"تصویر موجود نیست"}</small>
             </div>
             {look.editorialIssues.length > 0 && <p className="hb-ai-editorial-warning">نیازمند بازبینی شباهت چهره یا تکرار میکاپ</p>}
           </button>;
@@ -107,7 +112,7 @@ export function MakeupAiReview() {
               <strong>هشدار بررسی تخصصی:</strong>
               {selected.editorialIssues.map(issue=><p key={issue}>{issue}</p>)}
             </div>}
-            <strong>وضعیت: {selected.candidate?"نامزد بازبینی، تأیید نشده":"تصویر در دست تهیه"}</strong>
+            <strong>وضعیت: {selected.candidate?"نامزد بازبینی، تأیید نشده":"externalGeneration" in selected?"تولیدشده در سرویس خارجی؛ فایل اصلی هنوز بررسی نشده":"تصویر در دست تهیه"}</strong>
           </div>
         </section>
       </div>}
