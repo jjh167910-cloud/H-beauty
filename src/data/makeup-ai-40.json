@@ -393,7 +393,15 @@
       "publishApproved": false,
       "expectedSha256": null,
       "editorialIssues": [],
-      "reviewCompareWith": []
+      "reviewCompareWith": [],
+      "externalGeneration": {
+        "provider": "ElevenLabs",
+        "model": "gpt-image-2",
+        "generationId": "eH1MBM7xiolO490QM71n",
+        "reportedWidth": 1536,
+        "reportedHeight": 2048,
+        "status": "completed-provider-not-imported"
+      }
     },
     {
       "id": "hb-makeup-24",
@@ -408,7 +416,14 @@
       "publishApproved": false,
       "expectedSha256": null,
       "editorialIssues": [],
-      "reviewCompareWith": []
+      "reviewCompareWith": [],
+      "externalGeneration": {
+        "provider": "Canva",
+        "mediaId": "MAHY2T8DJK4",
+        "reportedWidth": 1088,
+        "reportedHeight": 1456,
+        "status": "completed-provider-not-imported"
+      }
     },
     {
       "id": "hb-makeup-25",
@@ -423,7 +438,14 @@
       "publishApproved": false,
       "expectedSha256": null,
       "editorialIssues": [],
-      "reviewCompareWith": []
+      "reviewCompareWith": [],
+      "externalGeneration": {
+        "provider": "Canva",
+        "mediaId": "MAHY2TsmYRY",
+        "reportedWidth": 1088,
+        "reportedHeight": 1456,
+        "status": "completed-provider-not-imported"
+      }
     },
     {
       "id": "hb-makeup-26",
@@ -438,7 +460,14 @@
       "publishApproved": false,
       "expectedSha256": null,
       "editorialIssues": [],
-      "reviewCompareWith": []
+      "reviewCompareWith": [],
+      "externalGeneration": {
+        "provider": "Canva",
+        "mediaId": "MAHY2UrdqZo",
+        "reportedWidth": 1088,
+        "reportedHeight": 1456,
+        "status": "completed-provider-not-imported"
+      }
     },
     {
       "id": "hb-makeup-27",
@@ -679,5 +708,6 @@
       "proximity": 0.8797,
       "notes": "Warm nude-rose styling requires visual comparison"
     }
-  ]
+  ],
+  "externalGenerationPolicy": "Provider completion is NOT verified image file import or approval. Do not render until full-resolution originals are retrieved, visually reviewed and SHA-verified; keep candidate=false and asset=null."
 }
