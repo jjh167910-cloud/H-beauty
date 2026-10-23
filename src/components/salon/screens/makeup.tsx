@@ -5,6 +5,7 @@ import { useSalon } from "@/lib/salon-store";
 import { MakeupArtwork, MAKEUP_FINAL_IMAGES } from "../makeup-artwork";
 import { Button, Chip, EmptyState, useSalonActions } from "../ui";
 import { Icon } from "../icons";
+import { MakeupAiReview } from "../makeup-ai-review";
 
 export function MakeupScreen() {
   const {openSheet,openBooking}=useSalonActions();
@@ -17,6 +18,8 @@ export function MakeupScreen() {
   const visible=useMemo(()=>MAKEUP_LOOKS.filter(item=>matchesMakeup(item,query,category,savedOnly,savedSet)),[query,category,savedOnly,savedSet]);
   const reset=()=>{setCategory("all");setQuery("");setSavedOnly(false)};
   const hero=MAKEUP_LOOKS[8];
+  // This review-only screen never changes production defaults or permits publishing candidates.
+  if (import.meta.env.VITE_HB_AI_REVIEW === "true") return <MakeupAiReview />;
   return <div className="studio-page makeup-page pt-2">
     <header className="studio-head px-gutter">
       <span className="studio-kicker">MAKEUP ATELIER / حنانه بیوتی</span>
