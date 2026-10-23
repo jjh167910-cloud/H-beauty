@@ -21,6 +21,7 @@ function simulate(source = TEMPLATE, fetcher = async () => { throw new Error('of
       return {
         addAll: async urls => { for(const path of urls) entries.set(path,{ok:true,body:path}); },
         put: async (req,res) => entries.set(normalize(req),res),
+        match: async req => entries.get(normalize(req)),
       };
     },
     keys: async () => [...stores.keys()],
@@ -55,7 +56,7 @@ test('installer caches HTML, manifest and vector/raster brand assets',async()=>{
 test('activation preserves the last app release while clearing older and unrelated caches',async()=>{
   const app=simulate();
   app.stores.set('h-beauty-v3',new Map([['/assets/very-old.js',{body:'too old'}]]));
-  app.stores.set('h-beauty-v4',new Map([['/assets/old.js',{body:'previous app'}]]));
+  app.stores.set('h-beauty-v4',new Map([['/assets/old.js',{body:'previous app'}],['/index.html',{body:'old HTML'}]]));
   app.stores.set('other-project-data',new Map());
   await app.trigger('install');await app.trigger('activate');
   assert.equal(app.stores.has('h-beauty-v3'),false);
@@ -66,6 +67,10 @@ test('activation preserves the last app release while clearing older and unrelat
     method:'GET',url:'https://salon.test/assets/old.js',mode:'cors',
   });
   assert.equal(previousAsset.body,'previous app');
+  const offlineShell=await app.trigger('fetch', {
+    method:'GET',url:'https://salon.test/#/looks',mode:'navigate',
+  });
+  assert.equal(offlineShell.body,'/index.html');
 });
 
 test('online navigation never swaps a newer HTML into the cached JS version',async()=>{
