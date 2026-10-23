@@ -324,11 +324,14 @@ test("look detail controls are outside the full-size image", async ({ page }) =>
   const detail = page.locator(".studio-look-detail__hero");
   await expect(detail).toBeVisible();
   await expect(page.locator(".salon25-look-detail__tools")).toBeVisible();
-  const imageBox = await detail.boundingBox();
-  const actionsBox = await page.locator(".salon25-look-detail__actions").boundingBox();
-  expect(imageBox).not.toBeNull();
-  expect(actionsBox).not.toBeNull();
-  expect(actionsBox!.y).toBeGreaterThanOrEqual(imageBox!.y + imageBox!.height - 1);
+  // The Vaul drawer animates from the viewport bottom; geometry must be
+  // measured after its transition settles, not on the first visible frame.
+  await expect.poll(async () => {
+    const imageBox = await detail.boundingBox();
+    const actionsBox = await page.locator(".salon25-look-detail__actions").boundingBox();
+    if (!imageBox || !actionsBox) return Number.NEGATIVE_INFINITY;
+    return actionsBox.y - (imageBox.y + imageBox.height);
+  }, { timeout: 7000 }).toBeGreaterThanOrEqual(-1);
 });
 
 test("unavailable offline hairstyle photos show a fallback instead of endless shimmer", async ({ page }) => {
