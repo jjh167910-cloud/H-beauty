@@ -7,6 +7,7 @@ import { Icon, type IconName } from "./icons";
 
 export type SheetState =
   | { kind: "look"; id: number }
+  | { kind: "makeup"; id: string }
   | { kind: "discover"; id: number }
   | { kind: "service"; id: string }
   | { kind: "booking" }
@@ -16,7 +17,7 @@ export type SheetState =
   | null;
 
 /** `services` replaces the cart (rebooking); `service` adds one service to it. */
-export type BookingIntent = { service?: string; services?: string[]; stylist?: string; lookId?: number };
+export type BookingIntent = { service?: string; services?: string[]; stylist?: string; lookId?: number; makeupId?: string };
 
 export type SalonActions = {
   go: (tab: Tab) => void;
