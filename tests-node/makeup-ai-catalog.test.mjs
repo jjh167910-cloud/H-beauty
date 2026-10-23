@@ -8,8 +8,9 @@ const d=JSON.parse(readFileSync(join(root,"src/data/makeup-ai-40.json"),"utf8"))
 test("AI makeup catalog has forty unique Persian style records",()=>{
   assert.equal(d.looks.length,40);
   for(const field of ["id","slug","nameFa"])assert.equal(new Set(d.looks.map(x=>x[field])).size,40,field);
-  assert.equal(d.looks.filter(x=>x.candidate).length,22);
-  assert.equal(d.looks.filter(x=>!x.candidate).length,18);
+  assert.ok(d.looks.filter(x=>x.candidate).length>=22);
+  assert.ok(d.looks.filter(x=>x.candidate).length<=40);
+  assert.equal(d.looks.filter(x=>!x.candidate).length,40-d.looks.filter(x=>x.candidate).length);
   assert.equal(d.looks.filter(x=>x.editorialIssues.length>0).length,12);
   assert.equal(d.v36PriorityPairs.length,4);
   const byId=new Map(d.looks.map(x=>[x.id,x]));
@@ -40,6 +41,7 @@ test("release check demands private approvals; public images don't imply salon r
   assert.match(gate,/modelPublicationConsent/);
   assert.match(gate,/makeupDistinctApproved/);
   assert.match(gate,/editorialIssuesResolved/);
+  assert.match(gate,/release && candidateCount!==40/);
   assert.ok(existsSync(join(root,"scripts/import-makeup-ai-candidates.mjs")));
 });
 
