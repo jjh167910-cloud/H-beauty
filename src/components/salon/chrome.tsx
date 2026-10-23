@@ -16,6 +16,7 @@ const TITLES: Partial<Record<Tab, string>> = {
 
 export function TopBar() {
   const tab = useSalon((state) => state.tab);
+  const galleryMode = useSalon((state) => state.galleryMode);
   const name = useSalon((state) => state.profile.name.trim());
   const { go } = useSalonActions();
   const [scrolled, setScrolled] = useState(false);
@@ -27,7 +28,7 @@ export function TopBar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const title = TITLES[tab];
+  const title = tab==="looks" && galleryMode==="makeup" ? "گالری میکاپ" : TITLES[tab];
 
   return (
     <header className="topbar" data-scrolled={scrolled ? "" : undefined}>
