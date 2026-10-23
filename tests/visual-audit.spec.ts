@@ -175,18 +175,15 @@ test("wide-hair salon thumbnails use intentional horizontal crop positions", asy
   await expect(normal).toHaveCSS("object-position", "50% 32%");
 });
 
-test("discovery captions remain readable in light and dark salon themes", async ({ page }) => {
-  await prepare(page);
-  for (const theme of ["light", "dark"] as const) {
+for (const theme of ["light", "dark"] as const) {
+  test(`discovery captions use readable ${theme} theme colors`, async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    // Each test gets a new page and exactly one initialization script.
+    await page.addInitScript(({ key, color }) => {
+      localStorage.setItem(key, JSON.stringify({ welcomed: true, theme: color, bookings: [] }));
+    }, { key: "hananeh-atelier-v1", color: theme });
     await page.goto("/#/looks");
-    if (theme === "dark") {
-      await page.evaluate(() => {
-        const key = "hananeh-atelier-v1";
-        const data = JSON.parse(localStorage.getItem(key) || "{}");
-        localStorage.setItem(key, JSON.stringify({ ...data, theme: "dark" }));
-      });
-      await page.reload();
-    }
+    await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
     await page.locator(".studio-look-card > button").first().click();
     const info = page.locator(".discover__slide:not([inert]) .discover__info");
     await expect(info.getByRole("heading")).toBeVisible();
@@ -210,5 +207,5 @@ test("discovery captions remain readable in light and dark salon themes", async 
       path: `test-results/discovery-text-contrast-${theme}.png`,
       animations: "disabled",
     });
-  }
-});
+  });
+}
