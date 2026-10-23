@@ -81,3 +81,30 @@
   .makeup-service-link span {font-size:.8rem;line-height:1.8;color:var(--color-ink-2);flex:1 1 14rem}
   .makeup-service-link .btn {min-height:2.75rem}
 }
+
+/* Visual QA v31.1: show actual choices earlier on smaller phones. */
+@layer components {
+  .makeup-page .studio-head {margin-top:0}
+  .makeup-page .studio-head h1 {line-height:1.45}
+  .makeup-intro {margin-block:.65rem .8rem}
+  .makeup-intro__copy {gap:.32rem}
+  .makeup-intro__copy p {display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+  .makeup-intro__portrait {max-height:240px}
+  .makeup-count {min-height:2.3rem}
+  .makeup-editorial-note {padding-bottom:.45rem}
+  @media(max-width:599px) {
+    .makeup-intro {grid-template-columns:minmax(0,1fr) 118px}
+    .makeup-intro__copy>span {display:none}
+    .makeup-intro__copy h2 {font-size:1.08rem;line-height:1.5}
+    .makeup-intro__copy p {font-size:.73rem;line-height:1.65;-webkit-line-clamp:3}
+    .makeup-intro__copy .btn {min-height:2.75rem;font-size:.7rem;padding-inline:.5rem}
+    .makeup-intro__portrait {max-height:180px;align-self:center}
+    .makeup-intro__portrait-label {font-size:.65rem;padding:.35rem}
+  }
+  @media(min-width:600px) {
+    .makeup-intro {grid-template-columns:minmax(0,1fr) 196px;max-width:850px}
+    .makeup-intro__portrait {max-height:255px}
+    .makeup-intro__copy h2 {font-size:1.55rem}
+    .makeup-intro__copy p {max-width:36rem}
+  }
+}
