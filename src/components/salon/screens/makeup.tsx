@@ -68,12 +68,13 @@ export function MakeupScreen() {
           <button type="button" className="makeup-card__view" onClick={()=>openSheet({kind:"makeup",id:look.id})}
             aria-label={`جزئیات ${look.name}`}>
             <span className="makeup-card__art"><MakeupArtwork look={look}/></span>
-            <span className="makeup-card__tag">{cat?.label} · {look.finish}</span>
-            <span className="makeup-card__palette" aria-label="پالت رنگ پیشنهادی">
-              <i style={{background:look.lid}}/><i style={{background:look.pigment}}/><i style={{background:look.blush}}/>
+            <span className="makeup-card__caption">
+              <strong>{look.name}</strong>
+              <span className="makeup-card__tag">{cat?.label} · {look.finish}</span>
+              <span className="makeup-card__palette" aria-label="پالت رنگ پیشنهادی این سبک">
+                <i style={{background:look.lid}}/><i style={{background:look.pigment}}/><i style={{background:look.blush}}/>
+              </span>
             </span>
-            <strong>{look.name}</strong>
-            <span className="makeup-card__code" lang="en">{look.code}</span>
           </button>
           <div className="makeup-card__actions">
             <button type="button" aria-pressed={isSaved} aria-label={isSaved?`حذف ${look.name} از ذخیره‌ها`:`ذخیره ${look.name}`}
