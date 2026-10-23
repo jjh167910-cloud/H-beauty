@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/** Source-of-truth QA: metadata always; --candidates checks 22 imported files;
+/** Source-of-truth QA: metadata always; --candidates checks all staged imported files;
  * --release requires 40 physically distinct images and a PRIVATE reviewed approvals file.
  * Image hashing cannot verify whether makeup or facial identity are actually distinct.
  */
@@ -12,7 +12,9 @@ const release=process.argv.includes("--release");
 const failures=[],byImageHash=new Map();
 const ids=new Set(),slugs=new Set(),names=new Set();
 if(data.looks.length!==40)failures.push(`Expected 40 records, received ${data.looks.length}`);
-if(data.looks.filter(x=>x.candidate).length!==22)failures.push("Expected 22 staged candidate records");
+const candidateCount=data.looks.filter(x=>x.candidate).length;
+if(candidateCount<22 || candidateCount>40) failures.push(`Staged candidates out of range: ${candidateCount} (must be 22–40)`);
+if(release && candidateCount!==40) failures.push(`Release requires 40 portrait candidates; found ${candidateCount}`);
 let approvals={};
 if(release){
   const approvalPath=process.env.HB_AI_APPROVALS_PATH || ".makeup-ai-approvals.local.json";
