@@ -205,5 +205,6 @@ test("RTL makeup tabs support keyboard arrows, Home/End and a labeled panel", as
   await page.keyboard.press("ArrowLeft");
   await expect(homeMakeup).toBeFocused();
   await expect(homeMakeup).toHaveAttribute("aria-selected","true");
-  await expect(page.getByRole("tabpanel",{name:"معرفی خدمات میکاپ"})).toBeVisible();
+  await expect(page.getByRole("tabpanel",{name:"میکاپ"})).toBeVisible();
+  await expect(page.getByRole("region",{name:"معرفی خدمات میکاپ"})).toBeVisible();
 });
