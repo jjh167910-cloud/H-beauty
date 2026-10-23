@@ -25,7 +25,7 @@ self.addEventListener('fetch', event => {
       try {
         const response=await fetch(req);
         if (response.ok) {
-          try { (await caches.open(CACHE)).put('/index.html', response.clone()); }
+          try { await (await caches.open(CACHE)).put('/index.html', response.clone()); }
           catch (error) { console.warn('Could not cache salon shell',error); }
         }
         return response;
