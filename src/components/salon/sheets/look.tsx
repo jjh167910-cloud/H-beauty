@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { labelOf, lookSrc, persian, type Family } from "@/data/catalog";
+import { photoObjectPosition } from "@/data/photo-focal";
 import { SALON } from "@/data/salon";
 import { cn } from "@/lib/cn";
 import { useSalon } from "@/lib/salon-store";
@@ -47,7 +48,7 @@ export function LookSheet({ open, family, onClose }: { open: boolean; family: Fa
           }}
         >
           {family.variantIds.map((id, itemIndex) => (
-            <img key={id} src={lookSrc(id)} alt={family.variantNames[itemIndex] ?? family.name} loading={itemIndex ? "lazy" : "eager"} draggable={false} style={{ animation: "fade 500ms ease both" }} />
+            <img key={id} src={lookSrc(id)} alt={family.variantNames[itemIndex] ?? family.name} loading={itemIndex ? "lazy" : "eager"} draggable={false} style={{ animation: "fade 500ms ease both", objectPosition: photoObjectPosition(lookSrc(id)) }} />
           ))}
         </div>
       </div>
