@@ -2,7 +2,7 @@
  * Hairstyle photos are intentionally cached as viewed, not all preloaded. */
 const PREFIX='h-beauty-';
 const CACHE='h-beauty-v5-unbuilt';
-const CORE=['/','/index.html','/manifest.webmanifest','/icons/favicon-32.png','/icons/icon-192.png','/icons/icon-512.png','/icons/apple-touch-icon.png','/icons/hananeh-signature.svg'];
+const CORE=['/','/index.html','/manifest.webmanifest','/icons/favicon-32.png','/icons/icon-192.png','/icons/icon-512.png','/icons/apple-touch-icon.png','/icons/hananeh-signature.svg','/makeup/model-reference.webp'];
 const BUILD_ASSETS=[]; /* __H_BEAUTY_PRECACHE__ */
 
 self.addEventListener('install', event => {

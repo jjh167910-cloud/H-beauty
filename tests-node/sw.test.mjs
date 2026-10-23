@@ -50,7 +50,7 @@ test('installer caches HTML, manifest and vector/raster brand assets',async()=>{
   const app=simulate();await app.trigger('install');
   for(const path of ['/','/index.html','/manifest.webmanifest',
     '/icons/hananeh-signature.svg','/icons/icon-192.png','/icons/icon-512.png',
-    '/icons/apple-touch-icon.png'])assert.ok(app.stores.get(app.CACHE).has(path),path);
+    '/icons/apple-touch-icon.png','/makeup/model-reference.webp'])assert.ok(app.stores.get(app.CACHE).has(path),path);
 });
 
 test('activation preserves the last app release while clearing older and unrelated caches',async()=>{

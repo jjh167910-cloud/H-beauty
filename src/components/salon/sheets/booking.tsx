@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { familyById, lookThumb, persian } from "@/data/catalog";
+import { makeupById } from "@/data/makeup";
+import { MakeupArtwork } from "../makeup-artwork";
 import {
   ANY_STYLIST,
   SERVICES,
@@ -44,6 +46,7 @@ export function BookingSheet({ open, onClose }: { open: boolean; onClose: () => 
   const slots = useMemo(() => (date ? slotsFor(date, summary.minutes) : []), [date, summary.minutes]);
   const validPhone = normalizePhone(phone);
   const look = draft.lookId != null ? familyById.get(draft.lookId) : null;
+  const makeup = draft.makeupId ? makeupById.get(draft.makeupId) : null;
 
   useEffect(() => {
     if (draft.time && !slots.some((slot) => slot.time === draft.time)) setDraft({ time: "" });
@@ -70,6 +73,7 @@ export function BookingSheet({ open, onClose }: { open: boolean; onClose: () => 
       phone: validPhone,
       note: draft.note,
       lookId: draft.lookId,
+      makeupId: draft.makeupId,
       createdAt: Date.now(),
       sent: false,
     };
@@ -225,6 +229,13 @@ export function BookingSheet({ open, onClose }: { open: boolean; onClose: () => 
               <Media src={lookThumb(look.repId)} className="arch h-14 w-11 shrink-0" />
               <span className="min-w-0 flex-1"><span className="t-caption block text-ink-2">مدل منتخب</span><strong className="t-callout block truncate font-medium">{look.name}</strong></span>
               <IconButton icon="close" label="حذف مدل منتخب" size="sm" variant="tonal" onClick={() => setDraft({ lookId: null })} />
+            </div>
+          ) : null}
+          {makeup ? (
+            <div className="makeup-booking-selection">
+              <MakeupArtwork look={makeup}/>
+              <span className="min-w-0 flex-1"><small>مدل میکاپ منتخب</small><strong>{makeup.name}</strong></span>
+              <IconButton icon="close" label="حذف میکاپ منتخب" size="sm" variant="tonal" onClick={() => setDraft({ makeupId: null })} />
             </div>
           ) : null}
           <label className="field">

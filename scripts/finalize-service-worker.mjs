@@ -25,6 +25,18 @@ export function finalizeServiceWorker(distDir = 'dist') {
     }
   }
   scan(join(root,'assets'));
+  // Final salon release must include all 48 separate portraits in the offline cache.
+  // Draft concept builds keep the original small asset list unchanged.
+  if (process.env.VITE_MAKEUP_FINAL_IMAGES === 'true') {
+    for (const cat of ['natural','soft','evening','bridal','eyes','lips']) {
+      for (let i=1;i<=8;i++) {
+        const id=`mk-${cat}-${String(i).padStart(2,'0')}`;
+        const file=join(root,'makeup','results',id+'.webp');
+        if (!existsSync(file)) throw new Error(`Missing final makeup portrait ${id}: offline release blocked`);
+        files.push(file);
+      }
+    }
+  }
   files.sort();
   if (!files.some(file => file.endsWith('.js')) || !files.some(file => file.endsWith('.css')))
     throw new Error('Built app must contain JavaScript and CSS in dist/assets');

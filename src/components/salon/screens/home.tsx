@@ -1,5 +1,8 @@
 import { useMemo, useState } from "react";
 import { byRep, lookSrc, lookThumb } from "@/data/catalog";
+import { MAKEUP_LOOKS } from "@/data/makeup";
+import { MakeupArtwork, MAKEUP_FINAL_IMAGES } from "../makeup-artwork";
+import { GalleryModeSwitch } from "../gallery-mode-switch";
 import { photoObjectPosition } from "@/data/photo-focal";
 import { SERVICES, dayOf, formatPrice, greeting, isPast, longDate, monthOf, summarize, timeLabel } from "@/data/salon";
 import { useSalon } from "@/lib/salon-store";
@@ -22,6 +25,8 @@ export function HomeScreen() {
   const bookings = useSalon((state) => state.bookings);
   const clearAll = useSalon((state) => state.clearAll);
   const setFilter = useSalon((state) => state.setFilter);
+  const setGalleryMode = useSalon((state) => state.setGalleryMode);
+  const galleryMode = useSalon((state) => state.galleryMode);
   const hero = byRep(30);
   const [heroFailed, setHeroFailed] = useState(false);
   const next = useMemo(
@@ -37,11 +42,26 @@ export function HomeScreen() {
           <span>{greeting()}{name ? `، ${name.split(" ")[0]}` : ""} <span aria-hidden="true">✦</span></span>
           <span lang="en">HANANEH BEAUTY SALON</span>
         </div>
-        <h1>زیبایی شما، <span>داستان ماست.</span></h1>
-        <p>در سالن زیبایی حنانه، مدل‌های مو و خدمات زیبایی را کشف کنید و برای استایل دلخواهتان درخواست نوبت بدهید.</p>
+        {galleryMode === "makeup" ? <h1>زیبایی، <span>اعتماد به نفس شما</span></h1> : <h1>زیبایی شما، <span>داستان ماست.</span></h1>}
+        <p>{galleryMode === "makeup" ? "گالری میکاپ، رنگ‌های پیشنهادی و خدمات تخصصی زیبایی؛ با یک مدل واقعی و چهره‌ای ثابت." : "در سالن زیبایی حنانه، مدل‌های مو و خدمات زیبایی را کشف کنید و برای استایل دلخواهتان درخواست نوبت بدهید."}</p>
       </header>
 
-      {hero ? (
+      <GalleryModeSwitch variant="home" />
+
+      <div role="tabpanel" id="hb-home-mode-panel" aria-labelledby={`hb-home-mode-${galleryMode}`}>
+      {galleryMode === "makeup" ? (
+        <section className="makeup-spotlight px-gutter" aria-label="معرفی خدمات میکاپ">
+          <Button variant="gold" block icon="book" onClick={() => openBooking({ service:"event-makeup", makeupId:MAKEUP_LOOKS[8].id })}>درخواست نوبت میکاپ</Button>
+          <button type="button" className="makeup-spotlight__image" aria-label="دیدن مجموعه میکاپ" onClick={() => { setGalleryMode("makeup");go("looks"); }}>
+            <MakeupArtwork look={MAKEUP_LOOKS[8]} />
+          </button>
+          <div className="makeup-spotlight__categories">
+            <button type="button" onClick={() => { setGalleryMode("hair");go("looks"); }}><Icon name="looks" size={24}/><span><strong>مدل مو</strong><small>مدل‌های جدید</small></span></button>
+            <button type="button" onClick={() => { setGalleryMode("makeup");go("looks"); }}><Icon name="beauty" size={24}/><span><strong>میکاپ</strong><small>آرایش حرفه‌ای</small></span></button>
+          </div>
+          <p className="makeup-spotlight__disclaimer">{MAKEUP_FINAL_IMAGES ? "گالری نهایی، ۴۸ عکس متفاوت از میکاپ‌های اجراشده روی همین مدل را نمایش می‌دهد." : "تصویر ثابت مدل مرجع؛ رنگ‌های پیشنهادی در گالری معرفی می‌شوند، نه به‌صورت تغییر در عکس."}</p>
+        </section>
+      ) : hero ? (
         <section className="salon24-hero px-gutter" aria-label="استایل منتخب سالن">
           <div className="salon26-hero__intro">
             <span lang="en">YOUR BEAUTY, YOUR WAY</span>
@@ -50,7 +70,7 @@ export function HomeScreen() {
           </div>
           <div className="salon24-hero__actions">
             <Button variant="gold" icon="book" onClick={() => openBooking({ service: "event-styling", lookId: hero.id })}>درخواست نوبت</Button>
-            <Button variant="secondary" icon="looks" onClick={() => { clearAll(); go("looks"); }}>گالری مدل مو</Button>
+            <Button variant="secondary" icon="looks" onClick={() => { clearAll(); setGalleryMode("hair"); go("looks"); }}>گالری مدل مو</Button>
           </div>
           <div className="salon24-hero__stage">
             <button type="button" className="salon24-hero__photo" data-image-error={heroFailed || undefined}
@@ -68,6 +88,7 @@ export function HomeScreen() {
           <p className="salon24-hero__fine">زمان انتخابی پیشنهادی است؛ سالن پس از دریافت درخواست آن را تأیید می‌کند.</p>
         </section>
       ) : null}
+      </div>
 
       {next ? (
         <section className="px-gutter">
@@ -86,19 +107,30 @@ export function HomeScreen() {
       <section className="salon24-section" aria-labelledby="salon24-style-title">
         <div className="salon24-section__head px-gutter">
           <div><span className="salon24-eyebrow">STYLE INSPIRATION</span><h2 id="salon24-style-title">زیبایی از انتخاب شما شروع می‌شود</h2></div>
-          <TextLink onClick={() => { clearAll(); go("looks"); }}>همه مدل‌ها</TextLink>
+          <TextLink onClick={() => { clearAll(); setGalleryMode("hair"); go("looks"); }}>همه مدل‌ها</TextLink>
         </div>
         <div className="salon24-styles rail">
           {STYLES.map((style) => (
             <button key={style.filter} type="button" className="salon24-style-card"
               aria-label={`دیدن مدل‌های ${style.label}`}
-              onClick={() => { clearAll(); setFilter(style.filter); go("looks"); }}>
+              onClick={() => { clearAll(); setGalleryMode("hair"); setFilter(style.filter); go("looks"); }}>
               <Media src={lookThumb(style.repId)} alt="" loading="lazy" />
               <strong>{style.label}</strong>
               <span lang="en">{style.caption}</span>
             </button>
           ))}
         </div>
+      </section>
+
+      <section className="makeup-home px-gutter" aria-labelledby="makeup-home-title">
+        <div className="makeup-home__copy">
+          <span lang="en">HANANEH / MAKEUP ATELIER</span>
+          <h2 id="makeup-home-title">زیبایی در جزئیات چهره</h2>
+          <p>۴۸ ایده میکاپ نچرال، گلم و عروس را ببینید، ذخیره کنید و برای اجرای اختصاصی درخواست نوبت بدهید.</p>
+          <Button variant="gold" onClick={() => { setGalleryMode("makeup"); go("looks"); }}>گالری میکاپ</Button>
+        </div>
+        <button type="button" className="makeup-home__art" onClick={() => { setGalleryMode("makeup"); go("looks"); }}
+          aria-label="مشاهده گالری میکاپ"><MakeupArtwork look={MAKEUP_LOOKS[9]}/></button>
       </section>
 
       <section className="salon24-section salon24-services" aria-labelledby="salon24-services-title">
@@ -143,7 +175,7 @@ export function HomeScreen() {
       <section className="salon24-section" aria-labelledby="salon24-look-title">
         <div className="salon24-section__head px-gutter">
           <div><span className="salon24-eyebrow">THE LOOKBOOK</span><h2 id="salon24-look-title">مدل‌های محبوب برای الهام</h2></div>
-          <TextLink onClick={() => { clearAll(); go("looks"); }}>گالری کامل</TextLink>
+          <TextLink onClick={() => { clearAll(); setGalleryMode("hair"); go("looks"); }}>گالری کامل</TextLink>
         </div>
         <div className="salon24-featured rail">
           {[27, 43, 84, 125].map((repId) => {

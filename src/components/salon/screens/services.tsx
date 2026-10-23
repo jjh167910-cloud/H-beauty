@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { SERVICES, SERVICE_CATEGORIES, formatMinutes, formatPrice, type ServiceCategory } from "@/data/salon";
 import { useSalon } from "@/lib/salon-store";
+import { MAKEUP_LOOKS } from "@/data/makeup";
+import { MODEL_REFERENCE_SRC, makeupPortraitSrc } from "../makeup-artwork";
 import { Icon } from "../icons";
 import { Button, Chip, Ornament, haptic, useSalonActions } from "../ui";
 
 export function ServicesScreen() {
-  const { openSheet, openBooking } = useSalonActions();
+  const { openSheet, openBooking, go } = useSalonActions();
+  const setGalleryMode = useSalon((state)=>state.setGalleryMode);
   const cart = useSalon((state) => state.cart);
   const toggleCart = useSalon((state) => state.toggleCart);
   const [active, setActive] = useState<ServiceCategory | "all">("all");
@@ -63,13 +66,19 @@ export function ServicesScreen() {
                 </div>
                 <span className="studio-group-head__rule" aria-hidden="true" />
               </header>
+              {category.key==="beauty" ? <div className="makeup-service-link">
+                <span>برای انتخاب رنگ و سبک پیش از نوبت، گالری میکاپ را ببینید.</span>
+                <Button variant="tonal" size="sm" onClick={()=>{setGalleryMode("makeup");go("looks")}}>گالری میکاپ</Button>
+              </div> : null}
               <div className="studio-service-list">
                 {services.map((service, index) => {
                   const selected = cart.includes(service.id);
                   return (
-                    <article className="studio-service-item" key={service.id} data-selected={selected ? "" : undefined}>
+                    <article className="studio-service-item" key={service.id} data-makeup={service.category === "beauty" ? "" : undefined} data-selected={selected ? "" : undefined}>
                       <button className="studio-service-item__details" onClick={() => openSheet({ kind: "service", id: service.id })} type="button">
-                        <span className="studio-service-item__index" lang="en">{String(index + 1).padStart(2, "0")}</span>
+                        {service.category === "beauty" ? (
+                          <span className="makeup-service-thumb"><img src={(() => { const match=MAKEUP_LOOKS.find(look=>look.serviceId===service.id); return match ? makeupPortraitSrc(match) : MODEL_REFERENCE_SRC; })()} alt="" loading="lazy" /></span>
+                        ) : <span className="studio-service-item__index" lang="en">{String(index + 1).padStart(2, "0")}</span>}
                         <span className="studio-service-item__content">
                           <span className="studio-service-item__en" lang="en">{service.en}</span>
                           <strong>{service.title}</strong>
@@ -101,7 +110,7 @@ export function ServicesScreen() {
 
       <section className="studio-service-footer px-gutter">
         <Ornament />
-        <p>قیمت‌ها برآورد «شروع از» هستند و پس از بررسی شرایط مو در سالن مشخص می‌شوند. همه خدمات قابل درخواست‌اند؛ تأیید نوبت توسط سالن انجام می‌شود.</p>
+        <p>قیمت‌های نمایش‌داده‌شده برآورد «شروع از» هستند و پس از مشاوره و بررسی شرایط خدمت تأیید می‌شوند. همه خدمات قابل درخواست‌اند؛ تأیید نوبت توسط سالن انجام می‌شود.</p>
         <Button variant="gold" orb onClick={() => openBooking()}>ساخت درخواست نوبت</Button>
       </section>
     </div>

@@ -21,7 +21,7 @@ export const SALON = {
   closeHour: 19,
 };
 
-export type ServiceCategory = "cut" | "color" | "care" | "styling" | "bridal" | "beauty";
+export type ServiceCategory = "cut" | "color" | "care" | "styling" | "bridal" | "beauty" | "nails";
 
 export const SERVICE_CATEGORIES: Array<{ key: ServiceCategory; label: string; en: string }> = [
   { key: "cut", label: "کوتاهی و فرم", en: "CUT & SHAPE" },
@@ -29,7 +29,8 @@ export const SERVICE_CATEGORIES: Array<{ key: ServiceCategory; label: string; en
   { key: "care", label: "مراقبت و احیا", en: "TREATMENTS" },
   { key: "styling", label: "استایل و براشینگ", en: "STYLING" },
   { key: "bridal", label: "عروس", en: "BRIDAL" },
-  { key: "beauty", label: "میکاپ و ناخن", en: "BEAUTY" },
+  { key: "beauty", label: "میکاپ", en: "MAKEUP" },
+  { key: "nails", label: "ناخن", en: "NAILS" },
 ];
 
 export type Service = {
@@ -161,8 +162,38 @@ export const SERVICES: Service[] = [
     price: 1_600_000,
   },
   {
+    id:"natural-makeup", category:"beauty", title:"میکاپ نچرال",
+    en:"NATURAL MAKEUP",detail:"پوست شفاف، آرایش سبک روزانه و هماهنگ با رنگ چهره",
+    includes:["بررسی نیازهای پوست","آماده‌سازی پوست","آرایش طبیعی چشم، گونه و لب"],
+    minutes:60,price:null,
+  },
+  {
+    id:"soft-glam-makeup",category:"beauty",title:"میکاپ سافت گلم",
+    en:"SOFT GLAM",detail:"آرایشی متعادل با درخشش ملایم برای مراسم و عکاسی",
+    includes:["انتخاب پالت رنگ","آماده‌سازی پوست","آرایش کامل با جلوه ملایم"],
+    minutes:90,price:null,
+  },
+  {
+    id:"bridal-makeup",category:"beauty",title:"میکاپ اختصاصی عروس",
+    en:"BRIDAL MAKEUP",detail:"مشاوره و آرایش ویژه روز مراسم؛ بدون الزام انتخاب خدمات مو",
+    includes:["مشاوره اولیه","بررسی پالت و سبک دلخواه","میکاپ اختصاصی روز مراسم"],
+    minutes:150,price:null,
+  },
+  {
+    id:"eye-makeup",category:"beauty",title:"آرایش تخصصی چشم",
+    en:"EYE MAKEUP",detail:"از خط چشم ظریف تا اسموکی و جلوه‌های رنگی",
+    includes:["انتخاب مدل چشم","آرایش پلک و خط چشم","تکمیل مژه متناسب با انتخاب"],
+    minutes:45,price:null,
+  },
+  {
+    id:"lip-makeup",category:"beauty",title:"آرایش و فرم‌دهی لب",
+    en:"LIP MAKEUP",detail:"انتخاب رنگ و جلوه لب برای هماهنگی با میکاپ",
+    includes:["مشاوره طیف رنگی","طراحی و تکمیل آرایش لب"],
+    minutes:30,price:null,
+  },
+  {
     id: "luxe-manicure",
-    category: "beauty",
+    category: "nails",
     title: "مانیکور لوکس",
     en: "LUXE MANICURE",
     detail: "فرم‌دهی، کوتیکول و لاک ژل",
@@ -188,7 +219,7 @@ export const STYLISTS: Stylist[] = [
   { id: "hananeh", name: "حنانه", role: "مدیر هنری · مستر استایلیست", focus: ["cut", "styling", "bridal"], tone: "from-[#c9a46c] to-[#7a5a33]" },
   { id: "sara", name: "سارا", role: "کالریست ارشد", focus: ["color", "care"], tone: "from-[#d9a99a] to-[#8f5a4c]" },
   { id: "negar", name: "نگار", role: "متخصص مراقبت و کراتین", focus: ["care", "styling"], tone: "from-[#a9bfae] to-[#4f6a5b]" },
-  { id: "mahsa", name: "مهسا", role: "آرتیست میکاپ و ناخن", focus: ["beauty", "bridal"], tone: "from-[#c7b4d6] to-[#6d5781]" },
+  { id: "mahsa", name: "مهسا", role: "آرتیست میکاپ و ناخن", focus: ["beauty", "bridal", "nails"], tone: "from-[#c7b4d6] to-[#6d5781]" },
 ];
 
 export const stylistById = new Map(STYLISTS.map((stylist) => [stylist.id, stylist]));

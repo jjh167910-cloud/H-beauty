@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { familyById } from "@/data/catalog";
+import { makeupById } from "@/data/makeup";
 import { serviceById, stylistById } from "@/data/salon";
 
 const KEY = "hananeh-atelier-v1";
@@ -20,6 +21,7 @@ export type BookingRequest = {
   phone: string;
   note: string;
   lookId: number | null;
+  makeupId?: string | null;
   createdAt: number;
   sent: boolean;
 };
@@ -30,12 +32,14 @@ export type Draft = {
   time: string;
   note: string;
   lookId: number | null;
+  makeupId: string | null;
 };
 
-const EMPTY_DRAFT: Draft = { stylist: "any", date: "", time: "", note: "", lookId: null };
+const EMPTY_DRAFT: Draft = { stylist: "any", date: "", time: "", note: "", lookId: null, makeupId: null };
 
 type Persisted = {
   favs?: unknown;
+  makeupFavs?: unknown;
   compare?: unknown;
   cart?: unknown;
   bookings?: unknown;
@@ -66,6 +70,7 @@ function bookingList(value: unknown): BookingRequest[] {
     services: serviceIds(item.services),
     stylist: stylistById.has(item.stylist) ? item.stylist : "any",
     lookId: typeof item.lookId === "number" && familyById.has(item.lookId) ? item.lookId : null,
+    makeupId: typeof item.makeupId === "string" && makeupById.has(item.makeupId) ? item.makeupId : null,
     sent: Boolean(item.sent),
   }));
 }
@@ -73,6 +78,8 @@ function bookingList(value: unknown): BookingRequest[] {
 type SalonState = {
   tab: Tab;
   favs: number[];
+  makeupFavs: string[];
+  galleryMode: "hair" | "makeup";
   compare: number[];
   cart: string[];
   draft: Draft;
@@ -89,6 +96,8 @@ type SalonState = {
   hydrate: () => void;
   setTab: (tab: Tab) => void;
   toggleFav: (id: number) => void;
+  toggleMakeupFav: (id: string) => void;
+  setGalleryMode: (mode: "hair" | "makeup") => void;
   toggleCompare: (id: number) => "added" | "removed" | "limit";
   clearCompare: () => void;
   toggleCart: (id: string) => boolean;
@@ -113,9 +122,9 @@ type SalonState = {
 
 export const useSalon = create<SalonState>((set, get) => {
   function save() {
-    const { favs, compare, cart, bookings, theme, profile, welcomed } = get();
+    const { favs, makeupFavs, compare, cart, bookings, theme, profile, welcomed } = get();
     try {
-      localStorage.setItem(KEY, JSON.stringify({ favs, compare, cart, bookings, theme, profile, welcomed }));
+      localStorage.setItem(KEY, JSON.stringify({ favs, makeupFavs, compare, cart, bookings, theme, profile, welcomed }));
       if (get().storageError) set({ storageError: false });
     } catch {
       // The UI may still hold edits in memory, but they are not durable.
@@ -131,6 +140,8 @@ export const useSalon = create<SalonState>((set, get) => {
   return {
     tab: "home",
     favs: [],
+    makeupFavs: [],
+    galleryMode: "hair",
     compare: [],
     cart: [],
     draft: EMPTY_DRAFT,
@@ -152,6 +163,7 @@ export const useSalon = create<SalonState>((set, get) => {
         const profile = data.profile && typeof data.profile === "object" ? (data.profile as Record<string, unknown>) : {};
         set({
           favs: ids(data.favs),
+          makeupFavs: Array.isArray(data.makeupFavs) ? [...new Set(data.makeupFavs.filter((id): id is string => typeof id === "string" && makeupById.has(id)))] : [],
           compare: ids(data.compare, 3),
           cart: serviceIds(data.cart),
           bookings: bookingList(data.bookings),
@@ -173,6 +185,11 @@ export const useSalon = create<SalonState>((set, get) => {
       const favs = get().favs.includes(id) ? get().favs.filter((item) => item !== id) : [...get().favs, id];
       update({ favs });
     },
+    toggleMakeupFav: (id) => {
+      if (!makeupById.has(id)) return;
+      update({makeupFavs:get().makeupFavs.includes(id) ? get().makeupFavs.filter(x=>x!==id) : [...get().makeupFavs,id]});
+    },
+    setGalleryMode: (mode) => set({galleryMode:mode}),
     toggleCompare: (id) => {
       const current = get().compare;
       if (current.includes(id)) {
@@ -207,7 +224,7 @@ export const useSalon = create<SalonState>((set, get) => {
       } catch {
         storageError = true;
       }
-      set({ welcomed: false, favs: [], compare: [], cart: [], bookings: [], profile: { name: "", phone: "" }, theme: "system", draft: EMPTY_DRAFT, storageError });
+      set({ welcomed: false, favs: [], makeupFavs: [], galleryMode: "hair", compare: [], cart: [], bookings: [], profile: { name: "", phone: "" }, theme: "system", draft: EMPTY_DRAFT, storageError });
     },
     welcome: () => update({ welcomed: true }),
     setFilter: (filter) => set({ filter, savedOnly: false }),
