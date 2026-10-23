@@ -72,9 +72,11 @@ export function ServicesScreen() {
                 {services.map((service, index) => {
                   const selected = cart.includes(service.id);
                   return (
-                    <article className="studio-service-item" key={service.id} data-selected={selected ? "" : undefined}>
+                    <article className="studio-service-item" key={service.id} data-makeup={service.category === "beauty" ? "" : undefined} data-selected={selected ? "" : undefined}>
                       <button className="studio-service-item__details" onClick={() => openSheet({ kind: "service", id: service.id })} type="button">
-                        <span className="studio-service-item__index" lang="en">{String(index + 1).padStart(2, "0")}</span>
+                        {service.category === "beauty" ? (
+                          <span className="makeup-service-thumb"><img src="/makeup/model-reference.webp" alt="" loading="lazy" /></span>
+                        ) : <span className="studio-service-item__index" lang="en">{String(index + 1).padStart(2, "0")}</span>}
                         <span className="studio-service-item__content">
                           <span className="studio-service-item__en" lang="en">{service.en}</span>
                           <strong>{service.title}</strong>
