@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { MAKEUP_CATEGORIES, MAKEUP_LOOKS, matchesMakeup, type MakeupCategory } from "@/data/makeup";
 import { persian } from "@/data/catalog";
 import { useSalon } from "@/lib/salon-store";
-import { MakeupArtwork, MAKEUP_FINAL_IMAGES } from "../makeup-artwork";
+import { MakeupArtwork, MAKEUP_FINAL_IMAGES, MAKEUP_CURATED_40 } from "../makeup-artwork";
 import { Button, Chip, EmptyState, useSalonActions } from "../ui";
 import { Icon } from "../icons";
 import { MakeupAiReview } from "../makeup-ai-review";
@@ -17,10 +17,10 @@ export function MakeupScreen() {
   const savedSet=useMemo(()=>new Set(saved),[saved]);
   const visible=useMemo(()=>MAKEUP_LOOKS.filter(item=>matchesMakeup(item,query,category,savedOnly,savedSet)),[query,category,savedOnly,savedSet]);
   const reset=()=>{setCategory("all");setQuery("");setSavedOnly(false)};
-  const hero=MAKEUP_LOOKS[8];
+  const hero=MAKEUP_CURATED_40 ? MAKEUP_LOOKS[16] : MAKEUP_LOOKS[8];
   // This review-only screen never changes production defaults or permits publishing candidates.
   if (import.meta.env.VITE_HB_AI_REVIEW === "true") return <MakeupAiReview />;
-  return <div className="studio-page makeup-page pt-2">
+  return <div className="studio-page makeup-page pt-2" data-curated={MAKEUP_CURATED_40 ? "true" : undefined}>
     <header className="studio-head px-gutter">
       <span className="studio-kicker">MAKEUP ATELIER / حنانه بیوتی</span>
       <h1>گالری <em>میکاپ و زیبایی</em></h1>
@@ -31,7 +31,7 @@ export function MakeupScreen() {
       <div className="makeup-intro__copy">
         <span lang="en">THE ART OF YOU · 2026</span>
         <h2>چهره‌ای آشنا، سبک‌های تازه</h2>
-        <p>{MAKEUP_FINAL_IMAGES ? "۴۸ تصویر اختصاصی از یک مدل ثابت در شش گروه میکاپ؛ جزئیات انتخابی را با آرتیست بررسی کنید." : "یک مدل واقعی، شش گروه میکاپ و پالت‌های پیشنهادی؛ برای اجرای اختصاصی با آرتیست مشورت کنید."}</p>
+        <p>{MAKEUP_CURATED_40 ? "۴۰ تصویر منتخب، شش گروه زیبایی و پرتره‌های هماهنگ؛ سبک دلخواهتان را برای مشاوره با میکاپ‌آرتیست انتخاب کنید." : MAKEUP_FINAL_IMAGES ? "۴۸ تصویر اختصاصی از یک مدل ثابت در شش گروه میکاپ؛ جزئیات انتخابی را با آرتیست بررسی کنید." : "یک مدل واقعی، شش گروه میکاپ و پالت‌های پیشنهادی؛ برای اجرای اختصاصی با آرتیست مشورت کنید."}</p>
         <Button variant="gold" onClick={()=>openBooking({service:"event-makeup"})} icon="book">درخواست نوبت میکاپ</Button>
       </div>
       <button className="makeup-intro__portrait" type="button" aria-label={`مشاهده ${hero.name}`} onClick={()=>openSheet({kind:"makeup",id:hero.id})}>
@@ -61,7 +61,7 @@ export function MakeupScreen() {
       <span>{persian(visible.length)} ایده از {persian(MAKEUP_LOOKS.length)}</span>
       {savedOnly||query||category!=="all"? <Button variant="ghost" size="sm" onClick={reset}>پاک کردن فیلتر</Button> : null}
     </div>
-    <p className="makeup-editorial-note px-gutter">{MAKEUP_FINAL_IMAGES ? "هر سبک یک عکس مستقل و تأییدشده از میکاپ واقعی اجراشده بر همین مدل دارد؛ تأیید نوبت پس از مشاوره انجام می‌شود." : "عکس تمام مدل‌ها متعلق به یک چهره مرجع ثابت است؛ سبک‌ها و رنگ‌های پیشنهادی زیر عکس معرفی می‌شوند و عکس، نتیجه هر میکاپ یا نمونه‌کار سالن نیست."}</p>
+    <p className="makeup-editorial-note px-gutter">{MAKEUP_CURATED_40 ? "تصاویر الهام‌بخش تولیدشده با هوش مصنوعی و انتخاب‌شده توسط شما هستند، نه نمونه آرایش اجراشده در سالن یا تصاویر قبل و بعد؛ نتیجه واقعی با مشاوره مشخص می‌شود." : MAKEUP_FINAL_IMAGES ? "هر سبک یک عکس مستقل و تأییدشده از میکاپ واقعی اجراشده بر همین مدل دارد؛ تأیید نوبت پس از مشاوره انجام می‌شود." : "عکس تمام مدل‌ها متعلق به یک چهره مرجع ثابت است؛ سبک‌ها و رنگ‌های پیشنهادی زیر عکس معرفی می‌شوند و عکس، نتیجه هر میکاپ یا نمونه‌کار سالن نیست."}</p>
 
     {visible.length ? <div className="makeup-grid px-gutter">
       {visible.map((look,index)=>{
