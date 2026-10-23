@@ -108,3 +108,61 @@
     .makeup-intro__copy p {max-width:36rem}
   }
 }
+
+/* v31.2 visual direction — rose porcelain + garnet, portrait cards, no icons over faces. */
+@layer components {
+  .salon-gallery[data-mode="makeup"] {--makeup-accent:#982747;--makeup-soft:#fbeeed}
+  .salon-gallery[data-mode="makeup"] .makeup-gallery-switch {max-width:480px;margin-inline:auto;margin-top:.7rem}
+  .salon-gallery[data-mode="makeup"] .makeup-gallery-switch button {border-radius:.65rem;min-height:2.8rem;background:var(--color-sunken);border-color:transparent}
+  .salon-gallery[data-mode="makeup"] .makeup-gallery-switch button[aria-selected="true"] {background:#922443;color:#fff}
+  .makeup-page .studio-head {padding-bottom:.1rem}
+  .makeup-page .studio-head h1 em {color:var(--color-garnet)}
+  .makeup-page .chip[aria-pressed="true"] {background:#922443;color:#fff}
+  .makeup-page .btn[data-variant="gold"],.makeup-detail + .btn[data-variant="gold"] {background:#922443;border-color:#922443;color:white}
+  .makeup-intro__portrait {border-radius:1.15rem}
+  .makeup-intro__portrait .makeup-art {aspect-ratio:3/4;width:100%;height:100%}
+  .makeup-intro__portrait-label {background:#341d29db;border-radius:.5rem}
+  .makeup-art {display:block;position:relative;width:100%;height:100%;min-height:0;overflow:hidden;background:linear-gradient(140deg,#f6e4dd,#dec3b9)}
+  .makeup-art>img {width:100%;height:100%;display:block;object-fit:cover;object-position:50% 42%;filter:none !important;transform:none;transition:none}
+  .makeup-card__view:hover .makeup-art,.makeup-card__view:hover .makeup-art img {transform:none}
+  .makeup-card__art {border-radius:1rem;aspect-ratio:3/4}
+  .makeup-card {border-radius:1rem}
+  .makeup-card__view {gap:.17rem}
+  .makeup-card__view strong {font-size:.84rem;line-height:1.55;font-weight:720}
+  .makeup-card__tag {font-size:.72rem;color:var(--color-ink-2);margin-top:.42rem}
+  .makeup-card__code {font-size:.61rem;color:var(--color-ink-3)}
+  .makeup-card__palette {display:flex;align-items:center;gap:.3rem;margin:.22rem 0 .16rem;min-height:1.1rem}
+  .makeup-card__palette i {display:inline-block;width:1rem;height:1rem;border-radius:50%;border:1px solid #ffffff9c;box-shadow:0 0 0 1px var(--color-line)}
+  .makeup-card__actions {margin-top:.62rem}
+  .makeup-card__actions button {border-radius:.7rem}
+  .makeup-card__actions button:last-child {background:#922443;color:#fff;border-color:#922443}
+  .makeup-card__actions button:focus-visible,.makeup-intro__portrait:focus-visible {outline:3px solid var(--color-gold-ink);outline-offset:2px}
+  .makeup-editorial-note {font-size:.73rem;padding-block:.35rem .8rem;line-height:1.85;color:var(--color-ink-2)}
+  .makeup-detail__art {border-radius:1.2rem;width:100%;max-width:400px}
+  .makeup-detail__thumbs {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.45rem;max-width:400px;width:100%;margin-inline:auto}
+  .makeup-detail__thumb {overflow:hidden;position:relative;aspect-ratio:4/3;background:var(--color-sunken);border-radius:.65rem}
+  .makeup-detail__thumb img {display:block;width:100%;height:100%;object-fit:cover}
+  .makeup-detail__thumb--eyes img {object-position:50% 28%;transform:scale(2.8)}
+  .makeup-detail__thumb--lips img {object-position:50% 68%;transform:scale(2.5)}
+  .makeup-detail__thumb--face img {object-position:50% 40%;transform:scale(1.25)}
+  .makeup-detail__meta {color:var(--color-ink-2)}
+  .makeup-detail .makeup-detail__disclaimer {border-inline-start:3px solid var(--color-garnet);background:var(--color-sunken)}
+  .makeup-home {background:var(--color-sunken);border-radius:1.1rem;border:1px solid var(--color-line);border-block:1px solid var(--color-line);margin:1.8rem var(--spacing-gutter) 2.3rem;padding:1.05rem}
+  .makeup-home__art {border-radius:.9rem}
+  .makeup-home__copy .btn {background:#922443;color:#fff}
+  .makeup-saved__item .makeup-art {border-radius:.75rem}
+  .makeup-booking-selection .makeup-art {width:3.25rem;height:4.25rem;flex:none;border-radius:.6rem}
+  [data-theme="dark"] .salon-gallery[data-mode="makeup"] {--makeup-soft:#38262f}
+  [data-theme="dark"] .makeup-card__actions button:last-child,
+  [data-theme="dark"] .makeup-page .btn[data-variant="gold"] {background:#9e3655;border-color:#9e3655;color:white}
+  @media(max-width:359px) {
+    .makeup-intro__portrait {max-height:166px}
+    .makeup-page .studio-head p {font-size:.76rem}
+    .makeup-card__view strong {font-size:.77rem}
+    .makeup-card__actions button {font-size:.68rem}
+  }
+  @media(min-width:700px) {
+    .makeup-intro__portrait {max-height:255px}
+    .makeup-detail__thumbs {max-width:400px}
+  }
+}
