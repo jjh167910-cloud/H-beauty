@@ -18,6 +18,10 @@ jobs:
     env:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID || 'a22c80a102037bf59a1a25426cb93d66' }}
+      # Choose exactly one publishing system: GitHub Actions or Cloudflare Workers Builds.
+      HBEAUTY_DEPLOY_MODE: ${{ vars.HBEAUTY_DEPLOY_MODE || 'github-actions' }}
+      # Do not enable the new gallery until all 80 curated image assets are committed.
+      VITE_MAKEUP_CURATED_40: ${{ vars.HBEAUTY_CURATED_40 || 'false' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -33,6 +37,10 @@ jobs:
         run: node --test tests-node/*.test.mjs
       - name: Install dependencies
         run: npm ci --no-audit --no-fund
+
+      - name: Verify 40 curated makeup portraits when enabled
+        if: ${{ env.VITE_MAKEUP_CURATED_40 == 'true' }}
+        run: npm run verify:makeup-curated-40
 
       - name: Typecheck
         run: npm run typecheck
@@ -54,11 +62,25 @@ jobs:
           path: dist
           retention-days: 14
 
-      - name: Deploy to Cloudflare Workers
-        if: ${{ env.CLOUDFLARE_API_TOKEN != '' }}
-        run: npx --yes wrangler@4 deploy
-
-      - name: Explain missing Cloudflare token
-        if: ${{ env.CLOUDFLARE_API_TOKEN == '' }}
+      - name: Validate automatic deployment configuration
         run: |
-          echo "::warning title=Not deployed::Add a CLOUDFLARE_API_TOKEN repository secret (Workers Scripts: Edit) to deploy from GitHub Actions."
+          case "$HBEAUTY_DEPLOY_MODE" in
+            github-actions)
+              if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+                echo "::error title=Deployment blocked::CLOUDFLARE_API_TOKEN GitHub Actions repository secret is missing; builds must not be marked successfully deployed."
+                echo "See docs/HBEAUTY_AUTOMATIC_CLOUDFLARE_SETUP.md"
+                exit 1
+              fi
+              ;;
+            cloudflare-builds)
+              echo "Cloudflare Workers Builds selected. GitHub Actions only tests and packages; Cloudflare publishes from its own Git connection."
+              ;;
+            *)
+              echo "::error::HBEAUTY_DEPLOY_MODE must be github-actions or cloudflare-builds, got: $HBEAUTY_DEPLOY_MODE"
+              exit 1
+              ;;
+          esac
+
+      - name: Deploy to Cloudflare Workers (GitHub Actions mode)
+        if: ${{ env.HBEAUTY_DEPLOY_MODE == 'github-actions' }}
+        run: npx --yes wrangler@4 deploy
