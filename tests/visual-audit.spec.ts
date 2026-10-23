@@ -158,3 +158,41 @@ test("wide-hair salon thumbnails use intentional horizontal crop positions", asy
   const normal = page.locator('.salon24-style-card img[src="/looks/sm/30.webp"]');
   await expect(normal).toHaveCSS("object-position", "50% 32%");
 });
+
+test("discovery captions remain readable in light and dark salon themes", async ({ page }) => {
+  await prepare(page);
+  for (const theme of ["light", "dark"] as const) {
+    await page.goto("/#/looks");
+    if (theme === "dark") {
+      await page.evaluate(() => {
+        const key = "hananeh-atelier-v1";
+        const data = JSON.parse(localStorage.getItem(key) || "{}");
+        localStorage.setItem(key, JSON.stringify({ ...data, theme: "dark" }));
+      });
+      await page.reload();
+    }
+    await page.locator(".studio-look-card > button").first().click();
+    const info = page.locator(".discover__info");
+    await expect(info.getByRole("heading")).toBeVisible();
+    const colors = await info.evaluate((node) => {
+      const expected = document.createElement("span");
+      expected.style.color = "var(--color-ink)";
+      document.body.appendChild(expected);
+      const titleExpected = getComputedStyle(expected).color;
+      expected.style.color = "var(--color-ink-2)";
+      const captionExpected = getComputedStyle(expected).color;
+      expected.remove();
+      return {
+        title: getComputedStyle(node.querySelector("h2")!).color,
+        category: getComputedStyle(node.querySelector(".t-caption")!).color,
+        titleExpected, captionExpected,
+      };
+    });
+    expect(colors.title).toBe(colors.titleExpected);
+    expect(colors.category).toBe(colors.captionExpected);
+    await page.screenshot({
+      path: `test-results/discovery-text-contrast-${theme}.png`,
+      animations: "disabled",
+    });
+  }
+});
