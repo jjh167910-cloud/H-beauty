@@ -77,6 +77,7 @@ export function MakeupAiReview() {
               <small>{categoryLabels[look.category]??look.category}</small>
               <small className={look.candidate?"hb-ai-review-status":"hb-ai-missing-status"}>{look.candidate?"نامزد بازبینی":"تصویر موجود نیست"}</small>
             </div>
+            {look.editorialIssues.length > 0 && <p className="hb-ai-editorial-warning">نیازمند بازبینی شباهت چهره یا تکرار میکاپ</p>}
           </button>;
         })}
       </div>
@@ -90,6 +91,10 @@ export function MakeupAiReview() {
             <p lang="en" className="hb-ai-eyebrow">LOOK {selected.id.slice(-2)}</p>
             <h2 id="hb-ai-modal-title">{selected.nameFa}</h2>
             <p>{selected.description}</p>
+            {selected.editorialIssues.length > 0 && <div className="hb-ai-editorial-detail" role="note">
+              <strong>هشدار بررسی تخصصی:</strong>
+              {selected.editorialIssues.map(issue=><p key={issue}>{issue}</p>)}
+            </div>}
             <strong>وضعیت: {selected.candidate?"نامزد بازبینی، تأیید نشده":"تصویر در دست تهیه"}</strong>
           </div>
         </section>
