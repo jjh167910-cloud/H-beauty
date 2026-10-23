@@ -136,6 +136,7 @@ const ICONS = {
   styling: HairDryer,
   bridal: Crown,
   beauty: PaintBrush,
+  nails: PaintBrush,
 } as const;
 
 export type IconName = keyof typeof ICONS;
