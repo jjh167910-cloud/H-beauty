@@ -1,0 +1,47 @@
+#!/usr/bin/env node
+/** Release gate for all 48 separate makeup portraits; never creates approvals. */
+import { existsSync, readFileSync, readdirSync } from "node:fs";
+import { createHash } from "node:crypto";
+import { resolve, join } from "node:path";
+
+const ROOT=resolve(process.cwd(),"public","makeup");
+const DIR=join(ROOT,"results");
+const CATEGORIES=["natural","soft","evening","bridal","eyes","lips"];
+const IDS=CATEGORIES.flatMap(cat=>Array.from({length:8},(_,n)=>`mk-${cat}-${String(n+1).padStart(2,"0")}`));
+const SHA=bytes=>createHash("sha256").update(bytes).digest("hex");
+const problems=[], seen=new Map();
+const refPath=join(ROOT,"model-reference.webp");
+const refSHA=existsSync(refPath)?SHA(readFileSync(refPath)):null;
+const manifestPath=join(DIR,"approval.json");
+let approved={};
+if(existsSync(manifestPath)) {
+  try { approved=JSON.parse(readFileSync(manifestPath,"utf8")); }
+  catch { problems.push("Invalid results/approval.json"); }
+} else problems.push("Missing results/approval.json with reviewed identity, provenance and publication records");
+let count=0;
+for(const id of IDS) {
+  const filename=`${id}.webp`,path=join(DIR,filename);
+  if(!existsSync(path)){problems.push(`MISSING ${filename}`);continue;}
+  count++;
+  const b=readFileSync(path), hash=SHA(b);
+  if(refSHA===hash)problems.push(`UNCHANGED_REFERENCE ${id}`);
+  if(seen.has(hash))problems.push(`DUPLICATE ${id} identical to ${seen.get(hash)}`);
+  seen.set(hash,id);
+  if(b.toString("ascii",0,4)!=="RIFF"||b.toString("ascii",8,12)!=="WEBP")problems.push(`NOT_WEBP ${id}`);
+  if(b.length<25000)problems.push(`TINY_FILE ${id}`);
+  if(b.length>=30&&b.toString("ascii",12,16)==="VP8X"){
+    const width=1+b.readUIntLE(24,3),height=1+b.readUIntLE(27,3);
+    if(width<900||height<1200)problems.push(`LOW_RESOLUTION ${id}: ${width}x${height}`);
+  }
+  const a=approved?.looks?.[id];
+  if(!a||a.assetSha256!==hash||a.identityApproved!==true||a.publishApproved!==true)
+    problems.push(`NEEDS_REVIEW ${id}: SHA-matched identity and publication approval required`);
+  if(!["photograph","ai-edited-portrait"].includes(a?.provenance))
+    problems.push(`PROVENANCE ${id}: explicitly identify photograph or AI-edited portrait`);
+}
+const files=existsSync(DIR)?readdirSync(DIR).filter(x=>x.endsWith(".webp")):[];
+for(const f of files)if(!IDS.some(id=>f===`${id}.webp`))problems.push(`UNEXPECTED ${f}`);
+console.log(`Makeup portrait gate: ${count}/48 assets, ${problems.length} issues.`);
+problems.forEach(p=>console.error("- "+p));
+if(problems.length)process.exitCode=1;
+else console.log("All 48 individually reviewed assets available. Visual review still required.");
