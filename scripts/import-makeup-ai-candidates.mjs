@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/** Import the 22 existing review candidates from an EXTRACTED review kit.
+/** Import all manifest-listed review candidates from an EXTRACTED review kit.
  * The importer only copies checksum-matched AI candidates; it never approves publication.
  *
  * Usage: node scripts/import-makeup-ai-candidates.mjs /path/to/HBeauty_40_Review_20261023
@@ -28,7 +28,7 @@ for(const look of data.looks.filter(x=>x.candidate)) {
     throw new Error(`Not WebP: ${basename}`);
   tasks.push({source,target:join(targetDir,basename)});
 }
-if(tasks.length!==22)throw new Error(`Expected 22 verified files, got ${tasks.length}`);
+if(tasks.length<22 || tasks.length>40)throw new Error(`Unexpected verified candidate count: ${tasks.length}`);
 mkdirSync(targetDir,{recursive:true});
 for(const t of tasks)copyFileSync(t.source,t.target);
-console.log("Imported exactly 22 SHA-verified review candidates. All remain unapproved. 18 other styles still missing.");
+console.log(`Imported ${tasks.length} SHA-verified review candidates. All remain unapproved; ${40-tasks.length} planned styles have no verified image.`);
