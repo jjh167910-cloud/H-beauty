@@ -8,3 +8,6 @@ dist/
 
 # Model identity and image publishing approvals must never be committed
 .makeup-approvals.local.json
+
+# Private AI portrait identity, likeness and publication authorizations
+.makeup-ai-approvals.local.json
