@@ -37,6 +37,18 @@ export function finalizeServiceWorker(distDir = 'dist') {
       }
     }
   }
+  // Full offline capability for the explicitly enabled, user-uploaded forty-photo gallery.
+  // A broken or missing portrait blocks this build before any live deployment.
+  if(process.env.VITE_MAKEUP_CURATED_40 === "true") {
+    for(let i=1;i<=40;i++){
+      const id=`mk40-${String(i).padStart(2,"0")}`;
+      for(const sub of ["", "sm"]){
+        const image=join(root,"makeup","curated-40",...(sub?[sub]:[]),id+".webp");
+        if(!existsSync(image))throw new Error(`Missing curated makeup file ${image}`);
+        files.push(image);
+      }
+    }
+  }
   files.sort();
   if (!files.some(file => file.endsWith('.js')) || !files.some(file => file.endsWith('.css')))
     throw new Error('Built app must contain JavaScript and CSS in dist/assets');
