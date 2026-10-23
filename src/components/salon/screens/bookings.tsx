@@ -54,7 +54,7 @@ export function BookingsScreen() {
           icon="book"
           title={view === "upcoming" ? "درخواست پیش رویی ندارید" : "سابقه‌ای ثبت نشده"}
           text="خدمت، آرتیست و زمان دلخواه را انتخاب کنید؛ درخواست آماده ارسال برای سالن می‌شود."
-          action={<Button variant="gold" icon="book" onClick={() => openBooking()}>رزرو نوبت</Button>}
+          action={<Button variant="gold" icon="book" onClick={() => openBooking()}>درخواست نوبت</Button>}
         />
       ) : (
         <div className="studio-booking-list mt-3 grid gap-4 px-gutter">
@@ -115,7 +115,7 @@ function BookingCard({ booking, past }: { booking: BookingRequest; past: boolean
       <p className="sr-only">{longDate(booking.date)}</p>
       <div className="studio-booking-card__actions mt-5 flex gap-2 border-t border-line pt-4">
         {past ? (
-          <Button variant="tonal" icon="rebook" className="flex-1" onClick={() => openBooking({ services: booking.services, stylist: booking.stylist })}>رزرو دوباره</Button>
+          <Button variant="tonal" icon="rebook" className="flex-1" onClick={() => openBooking({ services: booking.services, stylist: booking.stylist })}>درخواست مجدد</Button>
         ) : wa ? (
           <a className="btn flex-1" href={wa} target="_blank" rel="noreferrer">
             <Icon name="whatsapp" size={18} weight="regular" /> ارسال در واتساپ
