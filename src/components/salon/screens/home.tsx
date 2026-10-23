@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { byRep, lookSrc, lookThumb } from "@/data/catalog";
 import { MAKEUP_LOOKS } from "@/data/makeup";
 import { MakeupArtwork } from "../makeup-artwork";
+import { GalleryModeSwitch } from "../gallery-mode-switch";
 import { photoObjectPosition } from "@/data/photo-focal";
 import { SERVICES, dayOf, formatPrice, greeting, isPast, longDate, monthOf, summarize, timeLabel } from "@/data/salon";
 import { useSalon } from "@/lib/salon-store";
@@ -45,13 +46,10 @@ export function HomeScreen() {
         <p>{galleryMode === "makeup" ? "گالری میکاپ، رنگ‌های پیشنهادی و خدمات تخصصی زیبایی؛ با یک مدل واقعی و چهره‌ای ثابت." : "در سالن زیبایی حنانه، مدل‌های مو و خدمات زیبایی را کشف کنید و برای استایل دلخواهتان درخواست نوبت بدهید."}</p>
       </header>
 
-      <nav className="makeup-home-tabs px-gutter" role="tablist" aria-label="انتخاب بخش اصلی">
-        <button role="tab" type="button" aria-selected={galleryMode === "hair"} onClick={() => setGalleryMode("hair")}>مدل مو</button>
-        <button role="tab" type="button" aria-selected={galleryMode === "makeup"} onClick={() => setGalleryMode("makeup")}>میکاپ</button>
-      </nav>
+      <GalleryModeSwitch variant="home" />
 
       {galleryMode === "makeup" ? (
-        <section className="makeup-spotlight px-gutter" aria-label="معرفی خدمات میکاپ">
+        <section className="makeup-spotlight px-gutter" role="tabpanel" id="hb-home-mode-panel" aria-labelledby="hb-home-mode-makeup" aria-label="معرفی خدمات میکاپ">
           <Button variant="gold" block icon="book" onClick={() => openBooking({ service:"event-makeup", makeupId:MAKEUP_LOOKS[8].id })}>درخواست نوبت میکاپ</Button>
           <button type="button" className="makeup-spotlight__image" aria-label="دیدن مجموعه میکاپ" onClick={() => { setGalleryMode("makeup");go("looks"); }}>
             <MakeupArtwork look={MAKEUP_LOOKS[8]} />
@@ -63,7 +61,7 @@ export function HomeScreen() {
           <p className="makeup-spotlight__disclaimer">تصویر ثابت مدل مرجع؛ رنگ‌های پیشنهادی در گالری معرفی می‌شوند، نه به‌صورت تغییر در عکس.</p>
         </section>
       ) : hero ? (
-        <section className="salon24-hero px-gutter" aria-label="استایل منتخب سالن">
+        <section className="salon24-hero px-gutter" role="tabpanel" id="hb-home-mode-panel" aria-labelledby="hb-home-mode-hair" aria-label="استایل منتخب سالن">
           <div className="salon26-hero__intro">
             <span lang="en">YOUR BEAUTY, YOUR WAY</span>
             <h2>استایل دلخواهتان را پیدا کنید.</h2>
