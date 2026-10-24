@@ -40,3 +40,36 @@ jobs:
           path: |
             test-results/
           retention-days: 7
+
+  curated80:
+    # Exercise the actual portrait bytes, not only a code-only preview.
+    if: ${{ github.event_name == 'pull_request' && startsWith(github.head_ref, 'feature/makeup80-') }}
+    runs-on: ubuntu-latest
+    env:
+      VITE_MAKEUP_CURATED_80: "true"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Fetch and verify all eighty real uploaded portraits
+        run: |
+          npm run prepare:makeup-curated-80
+          npm run verify:makeup-curated-80
+      - name: Typecheck the enabled makeup catalog
+        run: npm run typecheck
+      - name: Build complete offline makeup edition
+        run: npm run build
+      - name: Verify the 80-photo Chromium browser experience
+        run: npx playwright test tests/makeup-80.spec.ts
+      - name: Upload 80-look screenshots
+        if: always()
+        continue-on-error: true
+        uses: actions/upload-artifact@v4
+        with:
+          name: makeup80-mobile-review
+          path: test-results/
+          retention-days: 7
