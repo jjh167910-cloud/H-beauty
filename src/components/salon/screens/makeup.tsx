@@ -101,7 +101,7 @@ function Gallery({ onOpen }: { onOpen: (view: View) => void }) {
   }, []);
 
   return (
-    <div className="mk-page pt-2">
+    <div className="mk-page pt-2" data-curated80={MAKEUP_CURATED_80 || undefined}>
       <PageBar
         title="گالری میکاپ"
         actions={
@@ -190,7 +190,7 @@ function StyleList({ view, onOpen }: { view: Extract<View, { kind: "list" }>; on
   }, [searching]);
 
   return (
-    <div className="mk-page pt-2">
+    <div className="mk-page pt-2" data-curated80={MAKEUP_CURATED_80 || undefined}>
       <PageBar
         title={title}
         onBack={() => onOpen({ kind: "gallery" })}
@@ -234,7 +234,7 @@ function StyleCard({ item, mode }: { item: MakeupStyle; mode: Mode }) {
   const saved = useSalon((state) => state.favMakeup.includes(item.id));
   const toggle = useSalon((state) => state.toggleFavMakeup);
   return (
-    <article className="mk-card" data-mode={mode}>
+    <article className="mk-card" data-mode={mode} data-curated80={Boolean(item.promptNumber) || undefined}>
       <button type="button" className="mk-card__open" onClick={() => openSheet({ kind: "makeup", id: item.id })} aria-label={`جزئیات سبک ${item.title}`}>
         <span className="mk-card__visual"><Media src={photoFor(item, mode)} alt="" loading="lazy" /></span>
         <strong>{item.title}</strong>
@@ -259,7 +259,7 @@ function SavedLooks({ onOpen }: { onOpen: (view: View) => void }) {
   const hair = favs.map((id) => familyById.get(id)).filter((family): family is NonNullable<typeof family> => Boolean(family));
 
   return (
-    <div className="mk-page pt-2">
+    <div className="mk-page pt-2" data-curated80={MAKEUP_CURATED_80 || undefined}>
       <PageBar title="مدل‌های ذخیره‌شده" onBack={() => onOpen({ kind: "gallery" })} />
       <div className="px-gutter"><Segments active={tab} onMakeup={() => setTab("makeup")} onHair={() => setTab("hair")} /></div>
       {tab === "makeup" ? (
