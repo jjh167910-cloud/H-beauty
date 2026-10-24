@@ -1,6 +1,7 @@
 /** Editorial makeup concepts. NOT photographs of performed salon services.
  * Real client/model photography must be approved before swapping these illustrations. */
 import { CURATED_MAKEUP_40 } from "./makeup-curated-40";
+import { CURATED_MAKEUP_43_82 } from "./makeup-curated-43-82";
 
 export type MakeupCategory = "natural" | "soft" | "evening" | "bridal" | "eyes" | "lips";
 export type MakeupLook = {
@@ -51,10 +52,12 @@ const LEGACY_MAKEUP_LOOKS: MakeupLook[] = MAKEUP_CATEGORIES.flatMap((cat, ci) =>
     };
   })
 );
-/** The curated 40-photo edition is opt-in until all portrait files are imported. */
-export const MAKEUP_LOOKS: MakeupLook[] = import.meta.env.VITE_MAKEUP_CURATED_40 === "true"
-  ? CURATED_MAKEUP_40
-  : LEGACY_MAKEUP_LOOKS;
+/** The 80-photo edition requires both photo collections to be imported. */
+export const MAKEUP_LOOKS: MakeupLook[] = import.meta.env.VITE_MAKEUP_CURATED_80 === "true"
+  ? [...CURATED_MAKEUP_40, ...CURATED_MAKEUP_43_82]
+  : import.meta.env.VITE_MAKEUP_CURATED_40 === "true"
+    ? CURATED_MAKEUP_40
+    : LEGACY_MAKEUP_LOOKS;
 export const makeupById=new Map(MAKEUP_LOOKS.map((look)=>[look.id,look]));
 export function matchesMakeup(look:MakeupLook,query:string,category:MakeupCategory|"all",savedOnly:boolean,saved:ReadonlySet<string>) {
   const q=query.trim().toLocaleLowerCase("fa-IR");
