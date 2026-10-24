@@ -61,12 +61,17 @@ export function MakeupSheet({ open, style, onClose }: { open: boolean; style: Ma
               </figure>
             ))}
           </div>
-          <IconButton icon="heart" variant="glass" love pressed={saved} className="mk-detail__fav"
-            label={saved ? "حذف از ذخیره‌شده‌ها" : "ذخیره این سبک"} onClick={() => { haptic(); toggleFav(style.id); }} />
+          {!(MAKEUP_CURATED_80 && style.promptNumber) ? <IconButton icon="heart" variant="glass" love pressed={saved} className="mk-detail__fav"
+            label={saved ? "حذف از ذخیره‌شده‌ها" : "ذخیره این سبک"} onClick={() => { haptic(); toggleFav(style.id); }} /> : null}
           <span className="mk-detail__count" aria-hidden="true">{persian(slide + 1)}/{persian(SLIDES.length)}</span>
           <span className="mk-detail__tag">نمونه هوش مصنوعی</span>
         </div>
 
+        {MAKEUP_CURATED_80 && style.promptNumber ? <div className="mk-curated-save">
+          <Button variant="tonal" icon="heart" size="sm"
+            onClick={() => { haptic(); toggleFav(style.id); }}>{saved ? "حذف از ذخیره‌شده‌ها" : "ذخیره این سبک"}</Button>
+          <span>تصاویر، طرح الهام‌بخش هستند و نمونه‌کار اجرایی سالن نیستند.</span>
+        </div> : null}
         <div className="mk-detail__intro">
           <small lang="en">{style.en}</small>
           <h2>{style.title}</h2>
