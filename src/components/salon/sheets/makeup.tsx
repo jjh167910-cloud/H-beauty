@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { persian } from "@/data/catalog";
 import { MAKEUP_ARTIST } from "@/data/makeup";
-import { lookPhoto } from "@/data/makeup-photos";
+import { lookPhoto, MAKEUP_CURATED_80 } from "@/data/makeup-photos";
 import { breakdown, serviceForStyle, tagsFor, type MakeupStyle } from "@/data/makeup-styles";
 import { formatMinutes, formatPrice, serviceById } from "@/data/salon";
 import { useSalon } from "@/lib/salon-store";
@@ -52,12 +52,12 @@ export function MakeupSheet({ open, style, onClose }: { open: boolean; style: Ma
         </Button>
       }
     >
-      <div className="mk-detail">
+      <div className="mk-detail" data-curated80={MAKEUP_CURATED_80 && Boolean(style.promptNumber) || undefined}>
         <div className="mk-detail__stage">
           <div className="mk-detail__track" ref={track} onScroll={onScroll} aria-label={`تصاویر سبک ${style.title}`}>
             {SLIDES.map((item, index) => (
               <figure key={item.size} className="mk-detail__slide" data-size={item.size} aria-label={`${item.label} · ${persian(index + 1)} از ${persian(SLIDES.length)}`}>
-                <Media src={lookPhoto(style.id, item.size)} alt={`${item.label} در سبک ${style.title}`} loading={index ? "lazy" : undefined} />
+                <Media src={lookPhoto(style.id, style.promptNumber ? "full" : item.size)} alt={style.promptNumber && index ? `نمای برش‌خوردهٔ ${item.label} از پرتره ${style.title}` : `${item.label} در سبک ${style.title}`} loading={index ? "lazy" : undefined} />
               </figure>
             ))}
           </div>
@@ -71,6 +71,7 @@ export function MakeupSheet({ open, style, onClose }: { open: boolean; style: Ma
           <small lang="en">{style.en}</small>
           <h2>{style.title}</h2>
           <p>{style.detail}</p>
+          {MAKEUP_CURATED_80 && style.promptNumber ? <p className="mk-detail__source-note">تصویر هوش مصنوعیِ منتخب، برای الهام میکاپ است؛ نمای چشم و لب از همان عکس اصلی برش خورده است، نه نمونه اجرای واقعی سالن.</p> : null}
           <ul className="mk-tags" aria-label="ویژگی‌ها">
             {tagsFor(style).map((tag) => <li key={tag}>{tag}</li>)}
           </ul>
@@ -79,7 +80,7 @@ export function MakeupSheet({ open, style, onClose }: { open: boolean; style: Ma
         <div className="mk-thumbs" role="group" aria-label="انتخاب تصویر">
           {SLIDES.map((item, index) => (
             <button key={item.size} type="button" aria-pressed={slide === index} aria-label={`نمای ${item.label}`} onClick={() => show(index)}>
-              <Media src={lookPhoto(style.id, item.size === "full" ? "sm" : item.size)} alt="" loading="lazy" />
+              <Media src={lookPhoto(style.id, style.promptNumber ? "sm" : item.size === "full" ? "sm" : item.size)} alt="" loading="lazy" />
             </button>
           ))}
         </div>
