@@ -25,6 +25,21 @@ export function finalizeServiceWorker(distDir = 'dist') {
     }
   }
   scan(join(root,'assets'));
+  // Only the selected 80-photo edition adds portrait masters + thumbnails to
+  // the offline PWA. Missing files fail the build instead of showing broken cards.
+  if (process.env.VITE_MAKEUP_CURATED_80 === "true") {
+    for (const [collection,start,end] of [["curated-40",1,40],["curated-80",43,82]]) {
+      for(let number=start; number<=end; number++){
+        const id=collection==="curated-40"
+          ? `mk40-${String(number).padStart(2,"0")}` : `mk80-${number}`;
+        for(const sub of ["","sm"]){
+          const image=join(root,"makeup",collection,...(sub?[sub]:[]),id+".webp");
+          if(!existsSync(image))throw new Error(`Missing curated makeup portrait ${image}`);
+          files.push(image);
+        }
+      }
+    }
+  }
   files.sort();
   if (!files.some(file => file.endsWith('.js')) || !files.some(file => file.endsWith('.css')))
     throw new Error('Built app must contain JavaScript and CSS in dist/assets');

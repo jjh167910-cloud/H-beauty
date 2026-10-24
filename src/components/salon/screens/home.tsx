@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { byRep, lookSrc, lookThumb, persian } from "@/data/catalog";
 import { photoObjectPosition } from "@/data/photo-focal";
 import { MAKEUP_STYLES } from "@/data/makeup-styles";
-import { MAKEUP_PHOTOS, lookPhoto } from "@/data/makeup-photos";
+import { MAKEUP_PHOTOS, lookPhoto, MAKEUP_CURATED_80 } from "@/data/makeup-photos";
 import { SERVICES, dayOf, formatPrice, greeting, isPast, longDate, monthOf, summarize, timeLabel } from "@/data/salon";
 import { useSalon } from "@/lib/salon-store";
 import { Icon } from "../icons";
@@ -134,9 +134,9 @@ export function HomeScreen() {
         </div>
         <div className="px-gutter">
           <button type="button" className="mk-entry" onClick={() => go("makeup")} aria-label="ورود به بخش میکاپ">
-            <Media src={lookPhoto("soft-glam", "sm")} alt="" loading="lazy" />
+            <Media src={lookPhoto(MAKEUP_CURATED_80 ? MAKEUP_STYLES[0].id : "soft-glam", "sm")} alt="" loading="lazy" />
             <span className="mk-entry__copy">
-              <span className="mk-entry__dots" aria-hidden="true">{["soft-glam", "hollywood", "plum-smokey", "romantic-bride", "sunset"].map((id) => {
+              <span className="mk-entry__dots" aria-hidden="true">{(MAKEUP_CURATED_80 ? MAKEUP_STYLES.slice(0,5).map((style)=>style.id) : ["soft-glam", "hollywood", "plum-smokey", "romantic-bride", "sunset"]).map((id) => {
                 const item = MAKEUP_STYLES.find((entry) => entry.id === id);
                 return item ? <i key={id} style={{ background: item.look.lipColor }} /> : null;
               })}</span>
