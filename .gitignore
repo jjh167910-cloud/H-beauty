@@ -14,3 +14,5 @@ dist/
 
 # Private artwork likeness, consent and publication authorizations
 .makeup-curated-40-approvals.local.json
+
+.makeup-curated-80-approvals.local.json
