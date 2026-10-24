@@ -73,6 +73,7 @@ export function MakeupScreen() {
             <div className="makeup-card__art"><MakeupArtwork look={look}/></div>
             <span className="makeup-card__caption">
               <strong>{look.name}</strong>
+              {MAKEUP_CURATED_40 && look.nameEn ? <small className="makeup-card__english" lang="en" dir="ltr">LOOK {String(look.promptNumber).padStart(2,"0")} · {look.nameEn}</small> : null}
               <span className="makeup-card__tag">{cat?.label} · {look.finish}</span>
               <span className="makeup-card__palette" aria-label="پالت رنگ پیشنهادی این سبک">
                 <i style={{background:look.lid}}/><i style={{background:look.pigment}}/><i style={{background:look.blush}}/>
