@@ -19,7 +19,7 @@ test("explicit opt-out is honored even with the MP3 present", () => {
 test("explicit enable with missing file fails instead of silently shipping no music", () => {
   assert.throws(
     () => resolveMusicFlag({ installed: false, configured: "true" }),
-    /MP3.*missing/
+    /\.mp3 is missing/
   );
 });
 
