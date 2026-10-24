@@ -21,6 +21,15 @@
     display:flex;flex-direction:column;align-items:flex-start;min-width:0
   }
   .makeup-page[data-curated="true"] .makeup-card__view strong {font-size:.83rem;line-height:1.75}
+  .makeup-page[data-curated="true"] .makeup-card__english {
+    display:block;font-family:var(--font-serif);font-weight:550;font-size:.68rem;
+    letter-spacing:.035em;color:var(--color-ink-2);line-height:1.45;
+    text-align:left;align-self:stretch;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+  .makeup-detail .makeup-detail__english {
+    margin-top:-.9rem;text-align:left;line-height:1.5;
+    font-family:var(--font-serif);letter-spacing:.04em;color:var(--color-ink-2);font-size:.87rem;
+  }
   .makeup-page[data-curated="true"] .makeup-art>img {
     width:100%;height:100%;object-fit:cover;object-position:center 36%;
     filter:none;transform:none;display:block
