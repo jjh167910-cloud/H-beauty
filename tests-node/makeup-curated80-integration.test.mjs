@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {readFileSync} from "node:fs";
+import {spawnSync} from "node:child_process";
 
 const source=path=>readFileSync(path,"utf8");
 const records=path=>source(path).split("\n")
@@ -73,4 +74,14 @@ test("zip importer and deployment build are opt-in and integrity-pinned",()=>{
  assert.equal(pkg.scripts["verify:makeup-curated-80"],"node scripts/verify-curated-80.mjs");
  const lock=source("assets/hbeauty-makeup-80.sha256").split(/\s+/)[0];
  assert.match(lock,/^[a-f0-9]{64}$/);
+});
+
+test("archive importer parses on Node 22 and fails closed when the archive is absent",()=>{
+ const syntax=spawnSync(process.execPath,["--check","scripts/import-makeup80-archive.mjs"],{encoding:"utf8"});
+ assert.equal(syntax.status,0,syntax.stderr);
+ const required=source("scripts/import-makeup80-archive.mjs");
+ assert.match(required,/archive hash mismatch/);
+ assert.match(required,/SHA256 mismatch/);
+ assert.match(required,/unknown or duplicated image path/);
+ assert.match(required,/Missing|missing/);
 });
