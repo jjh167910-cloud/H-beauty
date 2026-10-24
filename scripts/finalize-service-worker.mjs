@@ -40,6 +40,19 @@ export function finalizeServiceWorker(distDir = 'dist') {
       }
     }
   }
+  // Opt-in soundtrack: the exact audio bytes enter the offline PWA cache.
+  // Missing or modified files must block an enabled music release.
+  if (process.env.VITE_SALON_MUSIC === "true") {
+    const audio=join(root,'audio','hananeh-salon-ambience.mp3');
+    const lock=resolve('assets/hananeh-salon-ambience.sha256');
+    if (!existsSync(audio) || !existsSync(lock)) throw new Error('Salon music enabled but MP3 or SHA256 lock is missing');
+    const bytes=readFileSync(audio);
+    if (bytes.length<100000 || bytes.length>8*1024*1024) throw new Error('Salon music MP3 size outside expected limits');
+    const expected=readFileSync(lock,'utf8').trim().split(/\s+/)[0];
+    if (createHash('sha256').update(bytes).digest('hex')!==expected)
+      throw new Error('Salon music checksum mismatch; publication blocked');
+    files.push(audio);
+  }
   files.sort();
   if (!files.some(file => file.endsWith('.js')) || !files.some(file => file.endsWith('.css')))
     throw new Error('Built app must contain JavaScript and CSS in dist/assets');
