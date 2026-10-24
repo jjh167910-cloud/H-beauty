@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { byRep, lookSrc, lookThumb } from "@/data/catalog";
+import { byRep, lookSrc, lookThumb, persian } from "@/data/catalog";
 import { MAKEUP_LOOKS } from "@/data/makeup";
 import { MakeupArtwork, MAKEUP_FINAL_IMAGES, MAKEUP_CURATED_40 } from "../makeup-artwork";
 import { GalleryModeSwitch } from "../gallery-mode-switch";
