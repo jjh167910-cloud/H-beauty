@@ -73,3 +73,35 @@ jobs:
           name: makeup80-mobile-review
           path: test-results/
           retention-days: 7
+
+  music-fixture:
+    # No copyrighted recording is uploaded or published by this job.
+    # The generated tone only tests the enabled music product path.
+    if: ${{ github.event_name == 'pull_request' && startsWith(github.head_ref, 'feature/looping-background-music-') }}
+    runs-on: ubuntu-latest
+    env:
+      VITE_SALON_MUSIC: "true"
+      VITE_MAKEUP_CURATED_80: "false"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Generate independent synthetic MP3 for music tests
+        run: |
+          mkdir -p public/audio
+          ffmpeg -nostdin -hide_banner -loglevel error -f lavfi \\
+            -i "sine=frequency=440:sample_rate=44100:duration=9" \\
+            -ac 1 -ar 44100 -b:a 128k -y public/audio/hananeh-salon-ambience.mp3
+          sha256sum public/audio/hananeh-salon-ambience.mp3 > assets/hananeh-salon-ambience.sha256
+      - name: Typecheck with music enabled
+        run: npm run typecheck
+      - name: Build and precache sample audio
+        run: |
+          npm run build
+          grep -q '/audio/hananeh-salon-ambience.mp3' dist/sw.js
+      - name: Verify real playback, navigation and mute preference in Chromium
+        run: npx playwright test tests/background-music.spec.ts
