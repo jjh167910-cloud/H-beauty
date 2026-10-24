@@ -33,7 +33,7 @@ This revision ties every original English prompt name to an accurate Persian sal
 | 25 | Siren Eyes | چشم سایرن | `mk40-23.webp` |
 | 26 | Fox Eye | چشم روباهی | `mk40-25.webp` |
 | 27 | Graphic Liner | خط چشم گرافیکی | `mk40-22.webp` |
-| 28 | Colour Liner | خط چشم آبی رنگی | `mk40-26.webp` |
+| 28 | Colour Liner | خط چشم رنگی | `mk40-26.webp` |
 | 29 | Boho Bride | عروس بوهو | `mk40-30.webp` |
 | 30 | Henna Night | شب حنا | `mk40-28.webp` |
 | 31 | Sunset Eyes | چشم غروب | `mk40-29.webp` |
