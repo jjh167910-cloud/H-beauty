@@ -39,12 +39,24 @@ export function finalizeServiceWorker(distDir = 'dist') {
   }
   // Full offline capability for the explicitly enabled, user-uploaded forty-photo gallery.
   // A broken or missing portrait blocks this build before any live deployment.
-  if(process.env.VITE_MAKEUP_CURATED_40 === "true") {
+  if(process.env.VITE_MAKEUP_CURATED_40 === "true" || process.env.VITE_MAKEUP_CURATED_80 === "true") {
     for(let i=1;i<=40;i++){
       const id=`mk40-${String(i).padStart(2,"0")}`;
       for(const sub of ["", "sm"]){
         const image=join(root,"makeup","curated-40",...(sub?[sub]:[]),id+".webp");
         if(!existsSync(image))throw new Error(`Missing curated makeup file ${image}`);
+        files.push(image);
+      }
+    }
+  }
+  // 80-look mode extends rather than replaces the forty verified original portraits.
+  // Precache both full-size and thumbnail files for genuine complete offline viewing.
+  if (process.env.VITE_MAKEUP_CURATED_80 === "true") {
+    for (let number=43;number<=82;number++) {
+      const id=`mk80-${number}`;
+      for (const sub of ["", "sm"]) {
+        const image=join(root,"makeup","curated-80",...(sub?[sub]:[]),id+".webp");
+        if(!existsSync(image))throw new Error(`Missing 80-look portrait ${image}: refusing offline build`);
         files.push(image);
       }
     }
