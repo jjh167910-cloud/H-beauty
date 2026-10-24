@@ -65,7 +65,7 @@ export function hasPhoto(id: string) {
 }
 
 export function lookPhoto(id: string, size: "full" | "sm" | "eyes" | "lips" = "full") {
-  if (/^mk40-\\d{2}$/.test(id) || /^mk80-(?:4[3-9]|[5-7]\\d|8[0-2])$/.test(id)) {
+  if (/^mk40-\d{2}$/.test(id) || /^mk80-(?:4[3-9]|[5-7]\d|8[0-2])$/.test(id)) {
     const set=id.startsWith("mk40-")?"curated-40":"curated-80";
     const stem="/makeup/"+set+"/"+(size==="full"?"":"sm/")+id+".webp";
     return stem;
