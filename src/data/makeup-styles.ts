@@ -62,7 +62,7 @@ function style(id: string, category: StyleCategory, title: string, en: string, d
   return { id, category, title, en, detail, look, reference };
 }
 
-export const LEGACY_MAKEUP_STYLES: MakeupStyle[] = [
+const LEGACY_MAKEUP_STYLES: MakeupStyle[] = [
   /* ---------- Everyday ---------- */
   style("no-makeup", "everyday", "میکاپ بدون میکاپ", "NO-MAKEUP MAKEUP", "پوست یکدست با پوشش بسیار سبک؛ فقط کمی ریمل و بالم رنگی.",
     { skin: "sheer", shadow: "wash", lid: ["#d9b19f", "#c39a87"], liner: "none", lashes: "natural", brow: "natural", blush: "apples", blushColor: "#e3a394", lip: "gloss", lipColor: "#c9877c" }),
