@@ -10,6 +10,26 @@ const root=resolve("."),pkg=join(root,"assets/hbeauty-makeup-80.zip");
 const lock=join(root,"assets/hbeauty-makeup-80.sha256");
 const hash=b=>createHash("sha256").update(b).digest("hex");
 function fail(message){throw Error("H-Beauty 80-image archive: "+message)}
+// A published source ZIP is fetched only in the explicitly enabled 80-look build.
+// The expected SHA256 is pinned in Git, so a changed CDN object fails closed.
+const VERIFIED_ASSET_URL = "https://d2ol7oe51mr4n9.cloudfront.net/user_3JeOUdb9NaNBnQHWcT0xYSQ6MdR/8af92322-5f13-4d6e-8d1f-b04a0e747281.zip";
+if(!existsSync(pkg) && (process.env.VITE_MAKEUP_CURATED_80 === "true" || process.argv.includes("--download"))){
+ if(!existsSync(lock))fail("required SHA256 lock missing");
+ const expectedDownload=readFileSync(lock,"utf8").trim().split(/\s+/)[0];
+ console.log("Downloading original 80-look portrait bundle for the opted-in build...");
+ const response=await fetch(process.env.HBEAUTY_MAKEUP80_ASSET_URL||VERIFIED_ASSET_URL,
+   {signal:AbortSignal.timeout(150000),headers:{"Accept":"application/zip"}});
+ if(!response.ok)fail("portrait archive download failed: HTTP "+response.status);
+ const contentLength=Number(response.headers.get("content-length")||0);
+ if(contentLength>35*1048576)fail("download exceeds 35 MiB limit");
+ const archiveBytes=Buffer.from(await response.arrayBuffer());
+ if(archiveBytes.length>35*1048576||hash(archiveBytes)!==expectedDownload)
+   fail("downloaded archive SHA256 mismatch; no images imported");
+ mkdirSync(dirname(pkg),{recursive:true});
+ writeFileSync(pkg+".tmp-makeup80",archiveBytes,{flag:"wx"});
+ renameSync(pkg+".tmp-makeup80",pkg);
+ console.log("Verified archive download:",archiveBytes.length,"bytes");
+}
 if(!existsSync(pkg)){
  if(process.argv.includes("--if-present")){console.log("No image archive; expecting 160 existing files");process.exit(0)}
  fail("Upload hbeauty-makeup-80.zip into assets/ before activating 80-look mode");
