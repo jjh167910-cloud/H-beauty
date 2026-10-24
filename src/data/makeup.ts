@@ -7,7 +7,7 @@ export type MakeupLook = {
   id: string; code: string; name: string; category: MakeupCategory;
   description: string; serviceId: string; finish: string;
   pigment: string; lid: string; blush: string; scarf: string; skin: string;
-  image?: string; thumb?: string; nameEn?: string;
+  image?: string; thumb?: string; nameEn?: string; promptNumber?: number;
 };
 export const MAKEUP_CATEGORIES: ReadonlyArray<{
   key: MakeupCategory; label: string; english: string; description: string; serviceId: string;
