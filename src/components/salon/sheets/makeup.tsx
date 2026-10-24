@@ -22,7 +22,9 @@ export function MakeupSheet({open,look,onClose}:{open:boolean;look:MakeupLook;on
     <div className="makeup-detail">
       <div className="makeup-detail__art"><MakeupArtwork look={look} full/></div>
       <div className="makeup-detail__meta"><span lang="en">{look.code} / MAKEUP ATELIER</span><span>{category?.label}</span></div>
-      <h2>{look.name}</h2><p>{look.description}</p>
+      <h2>{look.name}</h2>
+      {MAKEUP_CURATED_40 && look.nameEn ? <p className="makeup-detail__english" lang="en" dir="ltr">{look.nameEn}</p> : null}
+      <p>{look.description}</p>
       <div className="makeup-detail__palette-wrap">
         <span>پالت رنگ پیشنهادی</span>
         <div className="makeup-detail__palette" aria-label="پالت پیشنهادی میکاپ">
