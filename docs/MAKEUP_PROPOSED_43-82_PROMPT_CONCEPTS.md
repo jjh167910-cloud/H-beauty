@@ -1,3 +1,5 @@
+> **SUPERSEDED FOR IMPLEMENTATION (24 October 2026):** The user has now uploaded `HBeauty_Makeup_43-82.zip` containing forty *different* numbered makeup portraits. The uploaded filenames (e.g. 43 Office Polished, 61 Persian Kohl, 70 Yalda Night, 82 J-Beauty Coral) are the authoritative actual 43–82 styles. This document is preserved only as an unused conceptual prompt bank. **Do not apply its names to the uploaded images or the app.** The implemented source of truth is `src/data/makeup-curated-43-82.ts`.
+
 # Proposed makeup looks 43–82 · H-Beauty
 
 **STATUS: PROMPTS ONLY — NO IMAGES GENERATED, IMPORTED, OR PUBLICATION-APPROVED.** Do not enable any of these as existing photos, portfolio works, or live cards. The currently implemented 40 portrait labels (numbers 02–42 excluding 07) remain unchanged.
