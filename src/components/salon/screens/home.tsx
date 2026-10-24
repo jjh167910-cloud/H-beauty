@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
-import { byRep, lookSrc, lookThumb } from "@/data/catalog";
+import { byRep, lookSrc, lookThumb, persian } from "@/data/catalog";
 import { MAKEUP_LOOKS } from "@/data/makeup";
-import { MakeupArtwork, MAKEUP_FINAL_IMAGES } from "../makeup-artwork";
+import { MakeupArtwork, MAKEUP_FINAL_IMAGES, MAKEUP_CURATED_40 } from "../makeup-artwork";
 import { GalleryModeSwitch } from "../gallery-mode-switch";
 import { photoObjectPosition } from "@/data/photo-focal";
 import { SERVICES, dayOf, formatPrice, greeting, isPast, longDate, monthOf, summarize, timeLabel } from "@/data/salon";
@@ -59,7 +59,7 @@ export function HomeScreen() {
             <button type="button" onClick={() => { setGalleryMode("hair");go("looks"); }}><Icon name="looks" size={24}/><span><strong>مدل مو</strong><small>مدل‌های جدید</small></span></button>
             <button type="button" onClick={() => { setGalleryMode("makeup");go("looks"); }}><Icon name="beauty" size={24}/><span><strong>میکاپ</strong><small>آرایش حرفه‌ای</small></span></button>
           </div>
-          <p className="makeup-spotlight__disclaimer">{MAKEUP_FINAL_IMAGES ? "گالری نهایی، ۴۸ عکس متفاوت از میکاپ‌های اجراشده روی همین مدل را نمایش می‌دهد." : "تصویر ثابت مدل مرجع؛ رنگ‌های پیشنهادی در گالری معرفی می‌شوند، نه به‌صورت تغییر در عکس."}</p>
+          <p className="makeup-spotlight__disclaimer">{MAKEUP_CURATED_40 ? `${persian(MAKEUP_LOOKS.length)} تصویر منتخب برای الهام میکاپ؛ تصاویر هوش مصنوعی هستند و نمونه‌کار انجام‌شده در سالن محسوب نمی‌شوند.` : MAKEUP_FINAL_IMAGES ? "گالری نهایی، ۴۸ عکس متفاوت از میکاپ‌های اجراشده روی همین مدل را نمایش می‌دهد." : "تصویر ثابت مدل مرجع؛ رنگ‌های پیشنهادی در گالری معرفی می‌شوند، نه به‌صورت تغییر در عکس."}</p>
         </section>
       ) : hero ? (
         <section className="salon24-hero px-gutter" aria-label="استایل منتخب سالن">

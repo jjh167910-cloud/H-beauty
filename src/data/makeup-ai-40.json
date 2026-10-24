@@ -1,0 +1,713 @@
+{
+  "schemaVersion": 1,
+  "catalog": "Hananeh Beauty AI makeup inspiration",
+  "model": "user-supplied original woman photo",
+  "totalPlanned": 40,
+  "availableCandidateAssetsInExternalReviewKit": 22,
+  "actualAssetsCommittedToThisBranch": 0,
+  "publicReleaseApproved": 0,
+  "provenance": "AI-generated inspiration; not salon performance photography",
+  "instructions": "22 generated AI portrait candidates exist only in private v34 review ZIP, not committed to public GitHub; 18 styles still missing. All need likeness, makeup distinction and publication consent approvals before release. The two new faces still show possible facial-proportion drift.",
+  "looks": [
+    {
+      "id": "hb-makeup-01",
+      "slug": "natural-satin",
+      "nameFa": "نچرال ساتن",
+      "category": "natural",
+      "description": "Satin skin, matte taupe eyes, natural rose lips",
+      "candidate": true,
+      "asset": "/makeup/ai-portraits/hb-makeup-01-natural-satin.webp",
+      "identityApproved": false,
+      "styleDistinctApproved": false,
+      "publishApproved": false,
+      "expectedSha256": "9f1604f4904a0e6136a65354945d6fe83b224c8e54edec5ea20d61b54979633e",
+      "editorialIssues": [
+        "Similar warm nude/rose makeup to 05, 06, 13, 19"
+      ],
+      "reviewCompareWith": [
+        "hb-makeup-05"
+      ]
+    },
+    {
+      "id": "hb-makeup-02",
+      "slug": "peach-soft",
+      "nameFa": "هلویی لطیف",
+      "category": "natural",
+      "description": "Soft pastel peach eyes, blush and peach-nude lips",
+      "candidate": true,
+      "asset": "/makeup/ai-portraits/hb-makeup-02-peach-soft.webp",
+      "identityApproved": false,
+      "styleDistinctApproved": false,
+      "publishApproved": false,
+      "expectedSha256": "7331aca655fc129b8694ba3c05b9af38a42d245496c8abf2c4132390c8d66b57",
+      "editorialIssues": [],
+      "reviewCompareWith": []
+    },
+    {
+      "id": "hb-makeup-03",
+      "slug": "rose-gold",
+      "nameFa": "رزگلد مجلسی",
+      "category": "evening",
+      "description": "Rose-gold metallic eyelids, fine liner and rosy lips",
+      "candidate": true,
+      "asset": "/makeup/ai-portraits/hb-makeup-03-rose-gold.webp",
+      "identityApproved": false,
+      "styleDistinctApproved": false,
+      "publishApproved": false,
+      "expectedSha256": "34d66272d01a63b3241df1c3dc189262fce46f151d555e50f985825c94d98342",
+      "editorialIssues": [],
+      "reviewCompareWith": []
+    },
+    {
+      "id": "hb-makeup-04",
+      "slug": "classic-bridal",
+      "nameFa": "عروس کلاسیک",
+      "category": "bridal",
+      "description": "Classic sculpted eyes, subtle shimmer, satin rose lips",
+      "candidate": true,
+      "asset": "/makeup/ai-portraits/hb-makeup-04-classic-bridal.webp",
+      "identityApproved": false,
+      "styleDistinctApproved": false,
+      "publishApproved": false,
+      "expectedSha256": "d3c9b4f8732646f90d00f2318a227dd3e1643a02e2b0d2b3fddd8e8c13a4a80c",
+      "editorialIssues": [],
+      "reviewCompareWith": []
+    },
+    {
+      "id": "hb-makeup-05",
+      "slug": "champagne-glow",
+      "nameFa": "شامپاینی درخشان",
+      "category": "bridal",
+      "description": "Refined champagne eyes, fresh skin, nude-rose lips",
+      "candidate": true,
+      "asset": "/makeup/ai-portraits/hb-makeup-05-champagne-glow.webp",
+      "identityApproved": false,
+      "styleDistinctApproved": false,
+      "publishApproved": false,
+      "expectedSha256": "16043a1455f1a4788e82bc2b729f6219f6a18084534bfa01b5531ce8e3a065ea",
+      "editorialIssues": [
+        "Similar warm nude/rose makeup to 01, 06, 13, 19"
+      ],
+      "reviewCompareWith": [
+        "hb-makeup-01"
+      ]
+    },
+    {
+      "id": "hb-makeup-06",
+      "slug": "bronze-glam",
+      "nameFa": "برنزی گرم",
+      "category": "evening",
+      "description": "Bronze smoked eye, subtle sculpted complexion",
+      "candidate": true,
+      "asset": "/makeup/ai-portraits/hb-makeup-06-bronze-glam.webp",
+      "identityApproved": false,
+      "styleDistinctApproved": false,
+      "publishApproved": false,
+      "expectedSha256": "99ba5715cdc596156e806544e64baca6697c27e7778b062560ed44cfe4d986ef",
+      "editorialIssues": [
+        "Similar warm nude/rose makeup to 01, 05, 13, 19"
+      ],
+      "reviewCompareWith": [
+        "hb-makeup-13"
+      ]
+    },
+    {
+      "id": "hb-makeup-07",
+      "slug": "classic-red",
+      "nameFa": "قرمز کلاسیک",
+      "category": "lips",
+      "description": "Statement classic red lipstick, neutral eyes",
+      "candidate": true,
+      "asset": "/makeup/ai-portraits/hb-makeup-07-classic-red.webp",
+      "identityApproved": false,
+      "styleDistinctApproved": false,
+      "publishApproved": false,
+      "expectedSha256": "aea73daaf932b1a482c144ae91ecdf81fce4a489e7f4e0303a04c58f9a3d986f",
+      "editorialIssues": [
+        "Potential classic red lipstick overlap with 18"
+      ],
+      "reviewCompareWith": []
+    },
+    {
+      "id": "hb-makeup-08",
+      "slug": "plum-evening",
+      "nameFa": "آلویی مجلسی",
+      "category": "evening",
+      "description": "Plum-shaded smoky eyes and berry lips",
+      "candidate": true,
+      "asset": "/makeup/ai-portraits/hb-makeup-08-plum-evening.webp",
+      "identityApproved": false,
+      "styleDistinctApproved": false,
+      "publishApproved": false,
+      "expectedSha256": "7c0b40bb6eb4c3515fb06edb1546b3f852c6ee91e1dfd9402c467b642d899c86",
+      "editorialIssues": [],
+      "reviewCompareWith": []
+    },
+    {
+      "id": "hb-makeup-09",
+      "slug": "brown-smoky",
+      "nameFa": "اسموکی قهوه‌ای",
+      "category": "eyes",
+      "description": "Strong smoked dark-brown eyes, restrained nude lip",
+      "candidate": true,
+      "asset": "/makeup/ai-portraits/hb-makeup-09-brown-smoky.webp",
+      "identityApproved": false,
+      "styleDistinctApproved": false,
+      "publishApproved": false,
+      "expectedSha256": "48133c802aa05fe1c9d0d7085898b3bfc7d5eea4caabc14f14a451dfeca494ea",
+      "editorialIssues": [
+        "Near-duplicate eye and lip treatment compared to 10 and 17; replacement recommended"
+      ],
+      "reviewCompareWith": [
+        "hb-makeup-17",
+        "hb-makeup-10"
+      ]
+    },
+    {
+      "id": "hb-makeup-10",
+      "slug": "winged-liner",
+      "nameFa": "خط چشم کلاسیک",
+      "category": "eyes",
+      "description": "Precisely winged black eyeliner and neutral eyelids",
+      "candidate": true,
+      "asset": "/makeup/ai-portraits/hb-makeup-10-winged-liner.webp",
+      "identityApproved": false,
+      "styleDistinctApproved": false,
+      "publishApproved": false,
+      "expectedSha256": "5424452078cfeb6f267dcfa152aaa33c72dbd747533e2e5600f5d9de00faae7c",
+      "editorialIssues": [
+        "Near-duplicate eye and lip treatment compared to 09 and 17; replacement recommended"
+      ],
+      "reviewCompareWith": [
+        "hb-makeup-09",
+        "hb-makeup-17"
+      ]
+    },
+    {
+      "id": "hb-makeup-11",
+      "slug": "emerald-smoky",
+      "nameFa": "زمردی اسموکی",
+      "category": "eyes",
+      "description": "Saturated emerald smoke, well-blended outer corners",
+      "candidate": true,
+      "asset": "/makeup/ai-portraits/hb-makeup-11-emerald-smoky.webp",
+      "identityApproved": false,
+      "styleDistinctApproved": false,
+      "publishApproved": false,
+      "expectedSha256": "4b9e03c1179814e6b6a769525242cf99c5d6cb9a1f86900eccfb73b20a82e443",
+      "editorialIssues": [],
+      "reviewCompareWith": []
+    },
+    {
+      "id": "hb-makeup-12",
+      "slug": "burgundy-velvet",
+      "nameFa": "زرشکی مخملی",
+      "category": "evening",
+      "description": "Burgundy smoky eye, rich muted lips",
+      "candidate": true,
+      "asset": "/makeup/ai-portraits/hb-makeup-12-burgundy-velvet.webp",
+      "identityApproved": false,
+      "styleDistinctApproved": false,
+      "publishApproved": false,
+      "expectedSha256": "ded76964408bd1b4a38858f461983f646cc5f667bcbb3d9ab89c5e6a23c0a670",
+      "editorialIssues": [],
+      "reviewCompareWith": []
+    },
+    {
+      "id": "hb-makeup-13",
+      "slug": "copper-metallic",
+      "nameFa": "مسی متالیک",
+      "category": "eyes",
+      "description": "Metallic copper eyelids, warm peach lip",
+      "candidate": true,
+      "asset": "/makeup/ai-portraits/hb-makeup-13-copper-metallic.webp",
+      "identityApproved": false,
+      "styleDistinctApproved": false,
+      "publishApproved": false,
+      "expectedSha256": "323c2271ce61127060d9f6f71d436cedf42864a6cbafb640380f3ae25e5314c4",
+      "editorialIssues": [
+        "Warm rose/nude eye and lip technique overlaps 01, 05, 06, 19"
+      ],
+      "reviewCompareWith": [
+        "hb-makeup-06"
+      ]
+    },
+    {
+      "id": "hb-makeup-14",
+      "slug": "hollywood-warm",
+      "nameFa": "هالیوودی گرم",
+      "category": "evening",
+      "description": "Classic luminous Hollywood eye and sculpted cheek",
+      "candidate": true,
+      "asset": "/makeup/ai-portraits/hb-makeup-14-hollywood-warm.webp",
+      "identityApproved": false,
+      "styleDistinctApproved": false,
+      "publishApproved": false,
+      "expectedSha256": "67b84fd79dbe597834920c3ea999d1ea1653149cca1c0d2d9500c48881869b66",
+      "editorialIssues": [],
+      "reviewCompareWith": []
+    },
+    {
+      "id": "hb-makeup-15",
+      "slug": "pearl-bridal",
+      "nameFa": "عروس مرواریدی",
+      "category": "bridal",
+      "description": "Pearl bridal sheen, delicate liner, blush rose lips",
+      "candidate": true,
+      "asset": "/makeup/ai-portraits/hb-makeup-15-pearl-bridal.webp",
+      "identityApproved": false,
+      "styleDistinctApproved": false,
+      "publishApproved": false,
+      "expectedSha256": "44447dda546435d947f94febce56b563e66f5e95eb22062e79955ee281261573",
+      "editorialIssues": [],
+      "reviewCompareWith": []
+    },
+    {
+      "id": "hb-makeup-16",
+      "slug": "velvet-plum",
+      "nameFa": "آلویی مخملی",
+      "category": "lips",
+      "description": "Soft matte plum velvet lips, understated eyes",
+      "candidate": true,
+      "asset": "/makeup/ai-portraits/hb-makeup-16-velvet-plum.webp",
+      "identityApproved": false,
+      "styleDistinctApproved": false,
+      "publishApproved": false,
+      "expectedSha256": "ad675847f6072ae83eedaa196e0e95739eb796cec0f0f8cc987275883e2bade9",
+      "editorialIssues": [],
+      "reviewCompareWith": []
+    },
+    {
+      "id": "hb-makeup-17",
+      "slug": "peach-radiance",
+      "nameFa": "درخشش هلویی",
+      "category": "natural",
+      "description": "Peach cheek glow, light warm lids",
+      "candidate": true,
+      "asset": "/makeup/ai-portraits/hb-makeup-17-peach-radiance.webp",
+      "identityApproved": false,
+      "styleDistinctApproved": false,
+      "publishApproved": false,
+      "expectedSha256": "3e4576db34a6b5d3e3496509f16ea093d179b9a4d8eee13f2959600fcd1e1875",
+      "editorialIssues": [
+        "Near-duplicate eye and lip treatment compared to 09 and 10; replacement recommended"
+      ],
+      "reviewCompareWith": [
+        "hb-makeup-09",
+        "hb-makeup-10"
+      ]
+    },
+    {
+      "id": "hb-makeup-18",
+      "slug": "crimson-lip",
+      "nameFa": "قرمز یاقوتی",
+      "category": "lips",
+      "description": "Vivid ruby lips, minimalist eye shadow",
+      "candidate": true,
+      "asset": "/makeup/ai-portraits/hb-makeup-18-crimson-lip.webp",
+      "identityApproved": false,
+      "styleDistinctApproved": false,
+      "publishApproved": false,
+      "expectedSha256": "479268059fb00781010ab401994a859c2a8f0558ce465128032efe9d974f274c",
+      "editorialIssues": [
+        "Potential ruby-red lipstick overlap with 07"
+      ],
+      "reviewCompareWith": []
+    },
+    {
+      "id": "hb-makeup-19",
+      "slug": "mauve-luxe",
+      "nameFa": "موو لوکس",
+      "category": "soft",
+      "description": "Refined mauve tonal makeup and satin lip",
+      "candidate": true,
+      "asset": "/makeup/ai-portraits/hb-makeup-19-mauve-luxe.webp",
+      "identityApproved": false,
+      "styleDistinctApproved": false,
+      "publishApproved": false,
+      "expectedSha256": "e33f266b3e09a36820eac6a40f45dd65e4ed768a0a6369ba752804186db763f4",
+      "editorialIssues": [
+        "Warm rose/nude eye and lip treatment overlaps 01, 05, 06, 13"
+      ],
+      "reviewCompareWith": []
+    },
+    {
+      "id": "hb-makeup-20",
+      "slug": "sunlit-bronze",
+      "nameFa": "برنزی آفتابی",
+      "category": "natural",
+      "description": "Warm bronzed complexion with sunlit eyelids",
+      "candidate": true,
+      "asset": "/makeup/ai-portraits/hb-makeup-20-sunlit-bronze.webp",
+      "identityApproved": false,
+      "styleDistinctApproved": false,
+      "publishApproved": false,
+      "expectedSha256": "f34774c721e68960d187865f5e426a24adf601cff05b0ca4c46661ececbeca2c",
+      "editorialIssues": [],
+      "reviewCompareWith": []
+    },
+    {
+      "id": "hb-makeup-21",
+      "slug": "cobalt-graphic",
+      "nameFa": "آبی کبالت گرافیکی",
+      "category": "eyes",
+      "description": "Electric cobalt cut-crease graphic wing, navy lower lash, nude lips",
+      "candidate": true,
+      "asset": "/makeup/ai-portraits/hb-makeup-21-cobalt-graphic.webp",
+      "identityApproved": false,
+      "styleDistinctApproved": false,
+      "publishApproved": false,
+      "expectedSha256": "527f344707d220f82729fbf809593bf3ef10bbd597f590d894744a62c498b19f",
+      "editorialIssues": [
+        "Face-likeness drift: jaw appears narrower and lips fuller than original model"
+      ],
+      "reviewCompareWith": []
+    },
+    {
+      "id": "hb-makeup-22",
+      "slug": "lilac-cut-crease",
+      "nameFa": "کات‌کریس یاسی",
+      "category": "eyes",
+      "description": "Defined lavender cut crease with plum outer V",
+      "candidate": true,
+      "asset": "/makeup/ai-portraits/hb-makeup-22-lilac-cut-crease.webp",
+      "identityApproved": false,
+      "styleDistinctApproved": false,
+      "publishApproved": false,
+      "expectedSha256": "76c9bb658156a2a8f97f0a9a8840d0abb85d418024c2008a31b2a2af919be540",
+      "editorialIssues": [
+        "Face-likeness drift: jaw appears narrower and lips fuller than original model"
+      ],
+      "reviewCompareWith": []
+    },
+    {
+      "id": "hb-makeup-23",
+      "slug": "silver-chrome",
+      "nameFa": "نقره‌ای کروم",
+      "category": "eyes",
+      "description": "Cool chrome-silver metallic lids with graphite tightlining",
+      "candidate": false,
+      "asset": null,
+      "identityApproved": false,
+      "styleDistinctApproved": false,
+      "publishApproved": false,
+      "expectedSha256": null,
+      "editorialIssues": [],
+      "reviewCompareWith": [],
+      "externalGeneration": {
+        "provider": "ElevenLabs",
+        "model": "gpt-image-2",
+        "generationId": "eH1MBM7xiolO490QM71n",
+        "reportedWidth": 1536,
+        "reportedHeight": 2048,
+        "status": "completed-provider-not-imported"
+      }
+    },
+    {
+      "id": "hb-makeup-24",
+      "slug": "matte-terracotta",
+      "nameFa": "تراکوتای مات",
+      "category": "natural",
+      "description": "Full-matte burnt terracotta monochrome with clay lips",
+      "candidate": false,
+      "asset": null,
+      "identityApproved": false,
+      "styleDistinctApproved": false,
+      "publishApproved": false,
+      "expectedSha256": null,
+      "editorialIssues": [],
+      "reviewCompareWith": [],
+      "externalGeneration": {
+        "provider": "Canva",
+        "mediaId": "MAHY2T8DJK4",
+        "reportedWidth": 1088,
+        "reportedHeight": 1456,
+        "status": "completed-provider-not-imported"
+      }
+    },
+    {
+      "id": "hb-makeup-25",
+      "slug": "cherry-gloss",
+      "nameFa": "لب آلبالویی براق",
+      "category": "lips",
+      "description": "Glass-shine deep cherry-red lips, minimal eye",
+      "candidate": false,
+      "asset": null,
+      "identityApproved": false,
+      "styleDistinctApproved": false,
+      "publishApproved": false,
+      "expectedSha256": null,
+      "editorialIssues": [],
+      "reviewCompareWith": [],
+      "externalGeneration": {
+        "provider": "Canva",
+        "mediaId": "MAHY2TsmYRY",
+        "reportedWidth": 1088,
+        "reportedHeight": 1456,
+        "status": "completed-provider-not-imported"
+      }
+    },
+    {
+      "id": "hb-makeup-26",
+      "slug": "coral-sunset",
+      "nameFa": "غروب مرجانی",
+      "category": "eyes",
+      "description": "Coral-orange-yellow sunset gradient on lids",
+      "candidate": false,
+      "asset": null,
+      "identityApproved": false,
+      "styleDistinctApproved": false,
+      "publishApproved": false,
+      "expectedSha256": null,
+      "editorialIssues": [],
+      "reviewCompareWith": [],
+      "externalGeneration": {
+        "provider": "Canva",
+        "mediaId": "MAHY2UrdqZo",
+        "reportedWidth": 1088,
+        "reportedHeight": 1456,
+        "status": "completed-provider-not-imported"
+      }
+    },
+    {
+      "id": "hb-makeup-27",
+      "slug": "navy-smoky",
+      "nameFa": "اسموکی سرمه‌ای",
+      "category": "eyes",
+      "description": "Full matte navy-black smoky upper and lower eyes",
+      "candidate": false,
+      "asset": null,
+      "identityApproved": false,
+      "styleDistinctApproved": false,
+      "publishApproved": false,
+      "expectedSha256": null,
+      "editorialIssues": [],
+      "reviewCompareWith": []
+    },
+    {
+      "id": "hb-makeup-28",
+      "slug": "negative-space-liner",
+      "nameFa": "خط چشم گرافیکی",
+      "category": "eyes",
+      "description": "Architectural black negative-space double liner",
+      "candidate": false,
+      "asset": null,
+      "identityApproved": false,
+      "styleDistinctApproved": false,
+      "publishApproved": false,
+      "expectedSha256": null,
+      "editorialIssues": [],
+      "reviewCompareWith": []
+    },
+    {
+      "id": "hb-makeup-29",
+      "slug": "olive-gold",
+      "nameFa": "زیتونی طلایی",
+      "category": "eyes",
+      "description": "Antique olive lids, gilded gold inner corners",
+      "candidate": false,
+      "asset": null,
+      "identityApproved": false,
+      "styleDistinctApproved": false,
+      "publishApproved": false,
+      "expectedSha256": null,
+      "editorialIssues": [],
+      "reviewCompareWith": []
+    },
+    {
+      "id": "hb-makeup-30",
+      "slug": "raspberry-velvet",
+      "nameFa": "تمشکی مخملی",
+      "category": "lips",
+      "description": "Strong raspberry matte lipstick with minimal eyes",
+      "candidate": false,
+      "asset": null,
+      "identityApproved": false,
+      "styleDistinctApproved": false,
+      "publishApproved": false,
+      "expectedSha256": null,
+      "editorialIssues": [],
+      "reviewCompareWith": []
+    },
+    {
+      "id": "hb-makeup-31",
+      "slug": "icy-lavender",
+      "nameFa": "یاسی یخی",
+      "category": "eyes",
+      "description": "Icy pastel lavender lids, cool pearl accent",
+      "candidate": false,
+      "asset": null,
+      "identityApproved": false,
+      "styleDistinctApproved": false,
+      "publishApproved": false,
+      "expectedSha256": null,
+      "editorialIssues": [],
+      "reviewCompareWith": []
+    },
+    {
+      "id": "hb-makeup-32",
+      "slug": "matte-cinnamon",
+      "nameFa": "دارچینی یکدست",
+      "category": "natural",
+      "description": "Earthy cinnamon monochrome eye cheek and lip",
+      "candidate": false,
+      "asset": null,
+      "identityApproved": false,
+      "styleDistinctApproved": false,
+      "publishApproved": false,
+      "expectedSha256": null,
+      "editorialIssues": [],
+      "reviewCompareWith": []
+    },
+    {
+      "id": "hb-makeup-33",
+      "slug": "caramel-smoky",
+      "nameFa": "اسموکی کاراملی",
+      "category": "eyes",
+      "description": "Soft caramel-to-chocolate matte smokey gradient",
+      "candidate": false,
+      "asset": null,
+      "identityApproved": false,
+      "styleDistinctApproved": false,
+      "publishApproved": false,
+      "expectedSha256": null,
+      "editorialIssues": [],
+      "reviewCompareWith": []
+    },
+    {
+      "id": "hb-makeup-34",
+      "slug": "champagne-halo",
+      "nameFa": "هاله شامپاینی",
+      "category": "bridal",
+      "description": "Dark taupe inner and outer eye with champagne halo center",
+      "candidate": false,
+      "asset": null,
+      "identityApproved": false,
+      "styleDistinctApproved": false,
+      "publishApproved": false,
+      "expectedSha256": null,
+      "editorialIssues": [],
+      "reviewCompareWith": []
+    },
+    {
+      "id": "hb-makeup-35",
+      "slug": "double-wing-liner",
+      "nameFa": "خط چشم دوگانه",
+      "category": "eyes",
+      "description": "Clean symmetric double-wing line with skin negative space",
+      "candidate": false,
+      "asset": null,
+      "identityApproved": false,
+      "styleDistinctApproved": false,
+      "publishApproved": false,
+      "expectedSha256": null,
+      "editorialIssues": [],
+      "reviewCompareWith": []
+    },
+    {
+      "id": "hb-makeup-36",
+      "slug": "ruby-drama",
+      "nameFa": "یاقوتی دراماتیک",
+      "category": "evening",
+      "description": "Bold oxblood eyes, burgundy wing and dark ruby lip",
+      "candidate": false,
+      "asset": null,
+      "identityApproved": false,
+      "styleDistinctApproved": false,
+      "publishApproved": false,
+      "expectedSha256": null,
+      "editorialIssues": [],
+      "reviewCompareWith": []
+    },
+    {
+      "id": "hb-makeup-37",
+      "slug": "pearl-pink",
+      "nameFa": "صورتی صدفی",
+      "category": "bridal",
+      "description": "Pearlescent pink eyes, flushed cheeks, translucent rose lip",
+      "candidate": false,
+      "asset": null,
+      "identityApproved": false,
+      "styleDistinctApproved": false,
+      "publishApproved": false,
+      "expectedSha256": null,
+      "editorialIssues": [],
+      "reviewCompareWith": []
+    },
+    {
+      "id": "hb-makeup-38",
+      "slug": "matte-mocha",
+      "nameFa": "موکای مات",
+      "category": "natural",
+      "description": "Fully matte mocha eyes and soft sculpted mocha lips",
+      "candidate": false,
+      "asset": null,
+      "identityApproved": false,
+      "styleDistinctApproved": false,
+      "publishApproved": false,
+      "expectedSha256": null,
+      "editorialIssues": [],
+      "reviewCompareWith": []
+    },
+    {
+      "id": "hb-makeup-39",
+      "slug": "turquoise-liner",
+      "nameFa": "خط چشم فیروزه‌ای",
+      "category": "eyes",
+      "description": "Sharp vibrant turquoise winged eyeliner, neutral lids",
+      "candidate": false,
+      "asset": null,
+      "identityApproved": false,
+      "styleDistinctApproved": false,
+      "publishApproved": false,
+      "expectedSha256": null,
+      "editorialIssues": [],
+      "reviewCompareWith": []
+    },
+    {
+      "id": "hb-makeup-40",
+      "slug": "glass-rose",
+      "nameFa": "رز شیشه‌ای",
+      "category": "lips",
+      "description": "Glass-like rose lip, dewy rosy cheeks and natural eyes",
+      "candidate": false,
+      "asset": null,
+      "identityApproved": false,
+      "styleDistinctApproved": false,
+      "publishApproved": false,
+      "expectedSha256": null,
+      "editorialIssues": [],
+      "reviewCompareWith": []
+    }
+  ],
+  "reviewVersion": "v36-eye-lip-comparison-priorities",
+  "editorialReviewMethod": "Manual comparisons supported by 231 non-biometric eye/lip appearance metrics; numeric similarity is for sorting, not makeup/identity certification.",
+  "reviewEscalations": 12,
+  "v36PriorityPairs": [
+    {
+      "a": "hb-makeup-09",
+      "b": "hb-makeup-17",
+      "proximity": 0.9352,
+      "notes": "Strong visual overlap of neutral eyes, nude lips"
+    },
+    {
+      "a": "hb-makeup-06",
+      "b": "hb-makeup-13",
+      "proximity": 0.9157,
+      "notes": "Very similar warm bronze/copper lids and natural lips"
+    },
+    {
+      "a": "hb-makeup-09",
+      "b": "hb-makeup-10",
+      "proximity": 0.8909,
+      "notes": "Earlier flagged almost identical neutral eye and lip treatment"
+    },
+    {
+      "a": "hb-makeup-01",
+      "b": "hb-makeup-05",
+      "proximity": 0.8797,
+      "notes": "Warm nude-rose styling requires visual comparison"
+    }
+  ],
+  "externalGenerationPolicy": "Provider completion is NOT verified image file import or approval. Do not render until full-resolution originals are retrieved, visually reviewed and SHA-verified; keep candidate=false and asset=null."
+}
