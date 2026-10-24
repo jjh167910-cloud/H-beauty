@@ -93,9 +93,7 @@ jobs:
       - name: Generate independent synthetic MP3 for music tests
         run: |
           mkdir -p public/audio
-          ffmpeg -nostdin -hide_banner -loglevel error -f lavfi \\
-            -i "sine=frequency=440:sample_rate=44100:duration=9" \\
-            -ac 1 -ar 44100 -b:a 128k -y public/audio/hananeh-salon-ambience.mp3
+          ffmpeg -nostdin -hide_banner -loglevel error -f lavfi -i "sine=frequency=440:sample_rate=44100:duration=9" -ac 1 -ar 44100 -b:a 128k -y public/audio/hananeh-salon-ambience.mp3
           sha256sum public/audio/hananeh-salon-ambience.mp3 > assets/hananeh-salon-ambience.sha256
       - name: Typecheck with music enabled
         run: npm run typecheck
