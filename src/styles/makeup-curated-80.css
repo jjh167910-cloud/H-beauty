@@ -1,0 +1,15 @@
+/* Expansion edition controls — distinct from the existing salon category filters. */
+@layer components {
+  .makeup-edition-switch {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.48rem; margin: .35rem 0 1rem}
+  .makeup-edition-switch button {min-height:44px;display:grid;place-items:center;
+    border:1px solid var(--color-line-2);background:var(--color-surface);
+    color:var(--color-ink-2);padding:.55rem .25rem;border-radius:.75rem;
+    font-size:clamp(.67rem,2.6vw,.81rem);font-weight:660;line-height:1.5;text-align:center}
+  .makeup-edition-switch button[aria-pressed="true"] {background:var(--color-garnet,#922443);border-color:var(--color-garnet,#922443);color:#fff}
+  .makeup-edition-switch button:focus-visible {outline:3px solid var(--color-gold-ink);outline-offset:3px}
+  .makeup-page[data-curated="true"] .makeup-card {content-visibility:auto;contain-intrinsic-size:auto 365px}
+  .makeup-page[data-curated="true"] .makeup-card__art {overflow:hidden;isolation:isolate}
+  .makeup-page[data-curated="true"] .makeup-card__caption {min-height:3.7rem}
+  @media(max-width:359px){.makeup-edition-switch {gap:.24rem}.makeup-edition-switch button {font-size:.62rem;padding-inline:.15rem}}
+  @media(prefers-reduced-motion:reduce){.makeup-edition-switch button {transition:none}}
+}
