@@ -70,31 +70,37 @@ export function BackgroundMusicControl() {
   if (!AVAILABLE) return null;
 
   const toggle = () => {
-    const next = !enabled;
+    // A browser can block autoplay even when music is preferred. In that
+    // state the first speaker tap must START the track, not mute it.
+    const next = !enabled || !playing;
     unlockedRef.current = true;
     try { window.localStorage.setItem(PREF_KEY, next ? "on" : "off"); }
-    catch { /* Continue without persistent storage. */ }
+    catch { /* Audio still works without storage permission. */ }
     setEnabled(next);
-    if (!next) audioRef.current?.pause();
-    else if (audioRef.current) {
-      audioRef.current.volume = VOLUME;
-      // Directly inside click to satisfy mobile's activation requirement.
-      void audioRef.current.play().catch(() => setPlaying(false));
-    }
+
+    const audio = audioRef.current;
+    if (!audio) return;
+    if (!next) { audio.pause(); return; }
+    setError(false);
+    audio.volume = VOLUME;
+    // Retry a temporarily missing stream on a direct user activation.
+    if (audio.error) audio.load();
+    void audio.play().catch(() => setPlaying(false));
   };
 
   return (
     <span className="salon-music">
       <audio ref={audioRef} src={TRACK} preload="metadata" loop
         onPlay={() => setPlaying(true)} onPause={() => setPlaying(false)}
-        onError={() => { setError(true); setPlaying(false); }} aria-hidden="true" />
+        onError={() => { setError(true); setPlaying(false); }}
+        onCanPlay={() => setError(false)} aria-hidden="true" />
       <button type="button" className="salon-music__toggle icon-btn"
         data-music-control="" data-playing={playing ? "" : undefined}
-        aria-label={enabled ? "قطع موسیقی پس‌زمینه" : "پخش موسیقی پس‌زمینه"}
-        aria-pressed={enabled}
-        title={error ? "فایل موسیقی در دسترس نیست" : enabled ? "قطع موسیقی" : "پخش موسیقی"}
-        disabled={error} onClick={toggle}>
-        {enabled ? <SpeakerHigh size={21} weight="light" aria-hidden="true" /> :
+        aria-label={playing ? "قطع موسیقی پس‌زمینه" : "پخش موسیقی پس‌زمینه"}
+        aria-pressed={playing}
+        title={error ? "موسیقی در دسترس نیست؛ تلاش دوباره" : playing ? "قطع موسیقی" : "پخش موسیقی"}
+        onClick={toggle}>
+        {playing ? <SpeakerHigh size={21} weight="light" aria-hidden="true" /> :
           <SpeakerSlash size={21} weight="light" aria-hidden="true" />}
         {playing ? <span className="salon-music__dot" aria-hidden="true" /> : null}
       </button>
