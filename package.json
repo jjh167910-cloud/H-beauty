@@ -19,7 +19,10 @@
     "build:makeup-ai-review": "node scripts/build-makeup-ai-review.mjs",
     "verify:makeup-curated-40": "node scripts/verify-curated-40.mjs",
     "verify:makeup-curated-release": "node scripts/verify-curated-40.mjs --release",
-    "build:makeup-curated-40": "node scripts/build-curated-40.mjs"
+    "build:makeup-curated-40": "node scripts/build-curated-40.mjs",
+    "verify:makeup-curated-80": "node scripts/verify-curated-80.mjs",
+    "verify:makeup-curated-80-release": "node scripts/verify-curated-80.mjs --release",
+    "build:makeup-curated-80": "node scripts/build-curated-80.mjs"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.5.4",
