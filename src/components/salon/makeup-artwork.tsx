@@ -1,8 +1,9 @@
 import type { MakeupLook } from "@/data/makeup";
 export const MODEL_REFERENCE_SRC = "/makeup/model-reference.webp";
 export const MAKEUP_FINAL_IMAGES = import.meta.env.VITE_MAKEUP_FINAL_IMAGES === "true";
-/** User-uploaded forty-photo catalog remains explicitly opt-in until image deployment. */
-export const MAKEUP_CURATED_40 = import.meta.env.VITE_MAKEUP_CURATED_40 === "true";
+/** Uploaded photo catalogs remain opt-in until their verified asset bundles are present. */
+export const MAKEUP_CURATED_80 = import.meta.env.VITE_MAKEUP_CURATED_80 === "true";
+export const MAKEUP_CURATED_40 = MAKEUP_CURATED_80 || import.meta.env.VITE_MAKEUP_CURATED_40 === "true";
 export function makeupPortraitSrc(look: MakeupLook, size: "full"|"thumb" = "full") {
   if(MAKEUP_CURATED_40) return size === "thumb"
     ? (look.thumb ?? look.image ?? MODEL_REFERENCE_SRC)
