@@ -1,5 +1,6 @@
 import { useId } from "react";
 import type { NailStyle } from "@/data/nail-styles";
+import { NailOrnament } from "./nail-ornament";
 
 /** Offline pedicure color-and-shape illustration: never mistaken for a customer photo. */
 export function PedicurePreview({ style }: { style: NailStyle }) {
@@ -32,7 +33,20 @@ export function PedicurePreview({ style }: { style: NailStyle }) {
             fill={`url(#pedi-skin-${id})`} stroke="#B78975" strokeWidth=".85"/>
           <rect x={t.x-t.w/2} y={t.y-t.ry+10} width={t.w} height={t.h}
             rx={Math.min(t.w/3,8)} fill={`url(#pedi-nail-${id})`} stroke="#B17B71" strokeOpacity=".3"/>
-          {style.finish==="french"?<path d={`M ${t.x-t.w*.37} ${t.y-t.ry+18} Q ${t.x} ${t.y-t.ry+10} ${t.x+t.w*.37} ${t.y-t.ry+18}`} stroke="#FFFDF8" strokeWidth={i?3:4} fill="none" strokeLinecap="round"/>:null}
+
+          {style.motif ? (
+            <>
+              <clipPath id={`pedi-${id}-clip-${i}`}>
+                <rect x={t.x-t.w/2} y={t.y-t.ry+10} width={t.w} height={t.h} rx={Math.min(t.w/3,8)}/>
+              </clipPath>
+              <g clipPath={`url(#pedi-${id}-clip-${i})`}>
+                <g transform={`translate(${t.x} ${t.y-t.ry+10+t.h/2}) scale(${t.w/36} ${t.h/80})`}>
+                  <NailOrnament motif={style.motif} accent={style.accent} base={style.base} index={i}/>
+                </g>
+              </g>
+            </>
+          ) : null}
+          {style.finish==="french" && style.motif!=="double-french"?<path d={`M ${t.x-t.w*.37} ${t.y-t.ry+18} Q ${t.x} ${t.y-t.ry+10} ${t.x+t.w*.37} ${t.y-t.ry+18}`} stroke="#FFFDF8" strokeWidth={i?3:4} fill="none" strokeLinecap="round"/>:null}
           {style.finish==="glitter"?<circle cx={t.x-3} cy={t.y-t.ry+18} r={i===0?3:1.8} fill="white" opacity=".85"/>:null}
           <path d={`M ${t.x-t.w*.23} ${t.y-t.ry+16} L ${t.x-t.w*.23} ${t.y-t.ry+t.h*.72}`} stroke="#FFFFFF" strokeWidth="2" opacity=".43" strokeLinecap="round"/>
         </g>
