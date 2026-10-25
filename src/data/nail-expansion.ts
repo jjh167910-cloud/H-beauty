@@ -67,6 +67,21 @@ const PEDICURE_FAMILIES: readonly Family[] = [
   {id:"marble",fa:"پدیکور مرمری",en:"Marble Pedicure",detail:"رگه‌های مرمری لایه‌لایه",finish:"art",motif:"marble",shape:"square",length:"short"},
 ];
 
+/** Stable family selector keys match generated IDs, not translated names. */
+export type NailAtlasFamilyOption = {
+  key: string; title: string; english: string; prefix: string;
+};
+export const NAIL_ATLAS_FAMILIES: Readonly<Record<"manicure"|"pedicure", readonly NailAtlasFamilyOption[]>> = {
+  manicure: MANICURE_FAMILIES.map(family=>({
+    key:family.id,title:family.fa,english:family.en,
+    prefix:`nail-atlas-${family.id}-`,
+  })),
+  pedicure: PEDICURE_FAMILIES.map(family=>({
+    key:family.id,title:family.fa,english:family.en,
+    prefix:`pedi-atlas-${family.id}-`,
+  })),
+};
+
 function makeManicure(family: Family, shade: Shade, familyIndex: number, shadeIndex: number): NailStyle {
   const shapeCycle: NailShape[] = ["almond","oval","square","coffin"];
   const lengthCycle: NailStyle["length"][]=["short","medium","long"];
