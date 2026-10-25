@@ -9,22 +9,32 @@ import { inflateRawSync } from "node:zlib";
 import { resolve, dirname } from "node:path";
 
 export const NAIL_ARCHIVE = "assets/Hananeh_Nail_Studio_34_Look_Editorial_Pack_v2.zip";
-const LOCK_PATH = "assets/hbeauty-nail-editorial-v2.sha256";
+export const NAIL_ARCHIVE_V3 = "assets/Hananeh_Nail_Studio_34_Look_Editorial_Pack_v3.zip";
+const LOCK_V2 = "assets/hbeauty-nail-editorial-v2.sha256";
+const LOCK_V3 = "assets/hbeauty-nail-editorial-v3.sha256";
 const SIGNATURE = 0x02014b50;
 
-export function installNailPack(archivePath=NAIL_ARCHIVE) {
-  if (!existsSync(archivePath)) return {installed:false,count:0};
+export function installNailPack(archivePath) {
+  // Prefer the corrected v3 archive. The v2 archive remains supported so
+  // existing checked-out builds do not unexpectedly break.
+  const selected=archivePath ?? (existsSync(NAIL_ARCHIVE_V3) ? NAIL_ARCHIVE_V3 : NAIL_ARCHIVE);
+  if (!existsSync(selected)) return {installed:false,count:0,edition:null};
+  const edition=selected.endsWith("_v3.zip") ? 3 : 2;
+  const lockPath=edition===3 ? LOCK_V3 : LOCK_V2;
+  archivePath=selected;
   const bytes=readFileSync(archivePath);
   if(bytes.length<10_000 || bytes.length>8*1024*1024)
     throw new Error("Nail archive file size is unexpected");
 
-  const lock=readFileSync(resolve(LOCK_PATH),'utf8').trim().split(/\r?\n/);
+  const lock=readFileSync(resolve(lockPath),'utf8').trim().split(/\r?\n/);
   const expected=new Map(lock.map(line=>{
     const parts=line.match(/^([a-f0-9]{64})\s+(public\/nails\/photos\/(?:nail|pedi)-[a-z0-9-]+\.webp)$/);
     if(!parts)throw new Error("Invalid nail ZIP allowlist");
     return [parts[2],parts[1]];
   }));
   if(expected.size!==34) throw new Error("Expected 34 nail image checksums");
+  if(edition===3 && new Set(expected.values()).size!==34)
+    throw new Error("Nail v3 photo lock contains duplicate images");
 
   // Find end of ZIP's central directory. We never extract arbitrary paths.
   let eocd=-1;
@@ -72,6 +82,6 @@ export function installNailPack(archivePath=NAIL_ARCHIVE) {
     mkdirSync(dirname(target),{recursive:true});
     writeFileSync(target,data);
   }
-  console.log("Installed verified nail photo ZIP: 34 files");
-  return {installed:true,count:34};
+  console.log(`Installed verified nail photo ZIP v${edition}: 34 unique paths`);
+  return {installed:true,count:34,edition};
 }

@@ -9,6 +9,7 @@ import { spawnSync } from "node:child_process";
 import { existsSync, statSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { createHash } from "node:crypto";
 import { installNailPack } from "./install-nail-photo-pack.mjs";
 
 export const MUSIC_PATH = "public/audio/hananeh-salon-ambience.mp3";
@@ -28,13 +29,13 @@ export function resolveMusicFlag({ installed, configured } = {}) {
 }
 
 function build() {
-  installNailPack();
+  const installedPhotoPack = installNailPack();
   const file = resolve(MUSIC_PATH);
   const installed = existsSync(file) && statSync(file).isFile();
   const configured = process.env.VITE_SALON_MUSIC;
   const enabled = resolveMusicFlag({ installed, configured });
-  // The full v2 photo pack is optional. Only expose its URLs after every
-  // SHA256-locked asset exists: no partial, broken, or mislabeled cards.
+  // All 34 photos must be installed together. V3 fixes two duplicate designs,
+  // and can coexist with older installations from the V2 generation.
   const nailLock=resolve("assets/hbeauty-nail-editorial-v2.sha256");
   const nailPaths=readFileSync(nailLock,"utf8").trim().split(/\r?\n/)
     .map(line=>line.trim().split(/\s+/).at(-1));
@@ -46,8 +47,16 @@ function build() {
   if (process.env.VITE_NAIL_EDITORIAL_V2==="true" && present.length!==34)
     throw new Error("VITE_NAIL_EDITORIAL_V2=true without complete 34-photo pack");
   const nailEdition=present.length===34?"true":"false";
-  const env = { ...process.env, VITE_SALON_MUSIC: enabled, VITE_NAIL_EDITORIAL_V2:nailEdition };
-  console.log(`Nail editorial v2 photos: ${nailEdition==="true"?"34 verified assets detected":"offline vector previews active"}`);
+  let photoVersion=installedPhotoPack.edition ?? 2;
+  if(nailEdition==="true" && !installedPhotoPack.edition){
+    const v3Lock=readFileSync(resolve("assets/hbeauty-nail-editorial-v3.sha256"),"utf8");
+    const expected=v3Lock.split(/\r?\n/).find(line=>line.endsWith("public/nails/photos/nail-marble.webp"))?.split(/\s+/)[0];
+    const actual=createHash("sha256").update(readFileSync(resolve("public/nails/photos/nail-marble.webp"))).digest("hex");
+    if(expected===actual) photoVersion=3;
+  }
+  const env = { ...process.env, VITE_SALON_MUSIC: enabled,
+    VITE_NAIL_EDITORIAL_V2:nailEdition, VITE_NAIL_EDITORIAL_V3:nailEdition==="true" && photoVersion===3 ? "true" : "false", NAIL_EDITORIAL_LOCK_VERSION:String(photoVersion) };
+  console.log(`Nail editorial photos: ${nailEdition==="true"?"34 photos, integrity gated v"+photoVersion:"offline vector previews active"}`);
   console.log(`Salon music: ${enabled === "true" ? "ENABLED (asset found)" : "disabled (asset missing or explicit opt-out)"}`);
   if (enabled === "true") {
     console.log("Salon music checksum is verified during service-worker packaging.");

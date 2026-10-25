@@ -9,6 +9,8 @@ import { Chip, Button, haptic, useSalonActions } from "../ui";
 export function NailsScreen() {
   const { go, openSheet, openBooking } = useSalonActions();
   const [kind,setKind] = useState<NailKind>("manicure");
+  const featuredId=kind==="pedicure" ? "pedi-french" : "nail-pearl-chrome";
+  const featured=NAIL_STYLES.find(item=>item.id===featuredId)!;
   const [finish, setFinish] = useState<NailFinish | "all">("all");
   const [shape, setShape] = useState<NailShape | "all">("all");
   const [color, setColor] = useState<NailColor | "all">("all");
@@ -58,13 +60,13 @@ export function NailsScreen() {
         <div className="nail-hero__card">
           <div className="nail-hero__copy">
             <span lang="en">EDITOR'S SELECTION</span>
-            <strong>زیبایی در جزئیات است.</strong>
-            <p>از نود مینیمال تا فرنچ و کروم؛ گالری اختصاصی ایده‌های ناخن.</p>
-            <button type="button" onClick={() => { haptic(); openSheet({ kind:"nail", id:"nail-pearl-chrome" }); }}>
+            <strong>{kind==="pedicure" ? "پدیکور، ظرافت در هر قدم." : "زیبایی در جزئیات است."}</strong>
+            <p>{kind==="pedicure" ? "از فرنچ ظریف تا رنگ‌های کلاسیک؛ ایده‌های زیبایی ناخن پا." : "از نود مینیمال تا فرنچ و کروم؛ گالری اختصاصی ایده‌های ناخن."}</p>
+            <button type="button" onClick={() => { haptic(); openSheet({ kind:"nail", id:featuredId }); }}>
               کشف طرح منتخب <Icon name="chevron" size={17}/>
             </button>
           </div>
-          <NailVisual style={NAIL_STYLES[12]} className="nail-hero__art" priority />
+          <NailVisual style={featured} className="nail-hero__art" priority />
         </div>
       </section>
 
@@ -75,7 +77,7 @@ export function NailsScreen() {
             <h2>{kind === "pedicure" ? "گالری پدیکور" : "گالری طراحی ناخن"}</h2>
             <p>{persian(results.length)} طرح از {persian(NAIL_STYLES.filter(item=>(item.kind??"manicure")===kind).length)} ایده</p>
           </div>
-          <Button size="sm" variant="tonal" icon="book" onClick={() => openBooking({ service: "luxe-manicure" })}>درخواست نوبت</Button>
+          <Button size="sm" variant="tonal" icon="book" onClick={() => openBooking({ service: kind==="pedicure" ? "classic-pedicure" : "luxe-manicure" })}>درخواست نوبت</Button>
         </div>
         <div className="nail-kind-control px-gutter" role="group" aria-label="انتخاب گالری دست یا پا">
           <button type="button" aria-pressed={kind==="manicure"} onClick={()=>{setKind("manicure");reset();}}>مانیکور · ۲۸ طرح</button>
@@ -159,7 +161,7 @@ export function NailsScreen() {
           <h2>مانیکور، پدیکور و طراحی اختصاصی</h2>
           <p>برای خدمات زیبایی دست و پا، ژلیش یا اجرای طرح انتخابی درخواست نوبت بدهید. قیمت و زمان نهایی پس از مشاوره مشخص می‌شود.</p>
           <div>
-            <Button variant="gold" size="md" onClick={() => openBooking({ service:"nail-art" })}>مشاوره اجرای طرح</Button>
+            <Button variant="gold" size="md" onClick={() => openBooking({ service:kind==="pedicure" ? "gel-pedicure" : "nail-art" })}>مشاوره اجرای طرح</Button>
             <Button variant="secondary" size="md" onClick={() => go("services")}>منوی خدمات ناخن</Button>
           </div>
         </div>
