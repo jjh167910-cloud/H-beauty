@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { NailStyle } from "@/data/nail-styles";
 import { nailStyleShareUrl } from "@/data/nail-links";
 import { NAIL_FINISHES, NAIL_SHAPES, NAIL_STYLES } from "@/data/nail-styles";
@@ -15,6 +15,13 @@ export function NailSheet({ open, style, onClose }: { open: boolean; style: Nail
   const [shareStatus, setShareStatus] = useState<"copied"|"manual"|null>(null);
   const [manualLink,setManualLink] = useState("");
   const imageRoot=useRef<HTMLDivElement>(null);
+  // Drawer.Portal mounts after the Sheet's initial passive effects. A callback
+  // ref makes mounting the actual image element an explicit effect dependency.
+  const [mountedImageRoot,setMountedImageRoot]=useState<HTMLDivElement|null>(null);
+  const attachImageRoot=useCallback((node:HTMLDivElement|null)=>{
+    imageRoot.current=node;
+    setMountedImageRoot(node);
+  },[]);
   const [imageSave,setImageSave]=useState<{id:string;status:"idle"|"saving"|"saved"|"error"}>({id:style.id,status:"idle"});
   const saveStatus=imageSave.id===style.id?imageSave.status:"idle";
   const [imageShare,setImageShare]=useState<{id:string;status:"idle"|"sharing"|"shared"|"downloaded"|"cancelled"|"error"}>({id:style.id,status:"idle"});
@@ -28,7 +35,7 @@ export function NailSheet({ open, style, onClose }: { open: boolean; style: Nail
   const readyToShare=preparedImage?.id===style.id;
   useEffect(()=>{
     if(!open)return;
-    const root=imageRoot.current;
+    const root=mountedImageRoot;
     if(!root)return;
     let disposed=false,generation=0;
     setPreparedImage(null);
@@ -59,7 +66,7 @@ export function NailSheet({ open, style, onClose }: { open: boolean; style: Nail
       root.removeEventListener("load",imageChanged,true);
       root.removeEventListener("error",imageChanged,true);
     };
-  },[open,style.id]);
+  },[open,style.id,mountedImageRoot]);
   const shareImage=()=>{
     if(!preparedImage||preparedImage.id!==style.id)return;
     setImageShare({id:style.id,status:"sharing"});
@@ -128,7 +135,7 @@ export function NailSheet({ open, style, onClose }: { open: boolean; style: Nail
   return (
     <Sheet open={open} onClose={onClose} title={style.title}>
       <article className="nail-detail">
-        <div ref={imageRoot} id="nail-detail-image" className={`nail-detail__visual${inspectLevel>0 ? " nail-detail__visual--full" : ""}${inspectLevel===2 ? " nail-detail__visual--zoom" : ""}`}
+        <div ref={attachImageRoot} id="nail-detail-image" className={`nail-detail__visual${inspectLevel>0 ? " nail-detail__visual--full" : ""}${inspectLevel===2 ? " nail-detail__visual--zoom" : ""}`}
           data-inspection-level={inspectLevel}>
           <NailVisual style={style} priority />
         </div>
