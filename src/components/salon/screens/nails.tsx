@@ -1,10 +1,12 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { normalize, persian } from "@/data/catalog";
-import { NAIL_STYLES, NAIL_FINISHES, NAIL_COLORS, NAIL_SHAPES, NAIL_LENGTHS, type NailFinish, type NailShape, type NailColor, type NailLength, type NailKind } from "@/data/nail-styles";
+import { NAIL_STYLES, NAIL_COUNTS, NAIL_FINISHES, NAIL_COLORS, NAIL_SHAPES, NAIL_LENGTHS, type NailFinish, type NailShape, type NailColor, type NailLength, type NailKind } from "@/data/nail-styles";
 import { useSalon } from "@/lib/salon-store";
 import { Icon } from "../icons";
 import { NailVisual } from "../nail-visual";
 import { Chip, Button, haptic, useSalonActions } from "../ui";
+
+const PAGE_SIZE = 24;
 
 export function NailsScreen() {
   const { go, openSheet, openBooking } = useSalonActions();
@@ -17,11 +19,13 @@ export function NailsScreen() {
   const [length, setLength] = useState<NailLength | "all">("all");
   const [savedOnly, setSavedOnly] = useState(false);
   const [query, setQuery] = useState("");
+  const [visibleCount,setVisibleCount] = useState(PAGE_SIZE);
+  const [order,setOrder] = useState<"curated" | "alphabetical">("curated");
   const favorites = useSalon((state) => state.favNails);
   const toggleFavorite = useSalon((state) => state.toggleFavNail);
   const results = useMemo(() => {
     const q = normalize(query).toLowerCase();
-    return NAIL_STYLES.filter((style) =>
+    const filtered = NAIL_STYLES.filter((style) =>
       (style.kind ?? "manicure") === kind &&
       (finish === "all" || finish === style.finish) &&
       (shape === "all" || shape === style.shape) &&
@@ -30,10 +34,14 @@ export function NailsScreen() {
       (!savedOnly || favorites.includes(style.id)) &&
       (!q || normalize(`${style.title} ${style.en} ${style.description}`).toLowerCase().includes(q))
     );
-  }, [kind, finish, shape, color, length, savedOnly, favorites, query]);
+    if(order==="alphabetical") return [...filtered].sort((a,b)=>a.title.localeCompare(b.title,"fa"));
+    return filtered;
+  }, [kind, finish, shape, color, length, savedOnly, favorites, query, order]);
+  useEffect(()=>setVisibleCount(PAGE_SIZE),[kind,finish,shape,color,length,savedOnly,query,order]);
+  const visible = results.slice(0,visibleCount);
 
   const reset = () => {
-    setFinish("all"); setShape("all"); setColor("all"); setLength("all"); setSavedOnly(false); setQuery("");
+    setFinish("all"); setShape("all"); setColor("all"); setLength("all"); setSavedOnly(false); setQuery(""); setOrder("curated"); setVisibleCount(PAGE_SIZE);
   };
 
   return (
@@ -75,13 +83,13 @@ export function NailsScreen() {
           <div>
             <span lang="en">THE COLLECTION</span>
             <h2>{kind === "pedicure" ? "گالری پدیکور" : "گالری طراحی ناخن"}</h2>
-            <p>{persian(results.length)} طرح از {persian(NAIL_STYLES.filter(item=>(item.kind??"manicure")===kind).length)} ایده</p>
+            <p>{persian(results.length)} طرح از {persian(NAIL_COUNTS[kind])} ایده</p>
           </div>
           <Button size="sm" variant="tonal" icon="book" onClick={() => openBooking({ service: kind==="pedicure" ? "classic-pedicure" : "luxe-manicure" })}>درخواست نوبت</Button>
         </div>
         <div className="nail-kind-control px-gutter" role="group" aria-label="انتخاب گالری دست یا پا">
-          <button type="button" aria-pressed={kind==="manicure"} onClick={()=>{setKind("manicure");reset();}}>مانیکور · ۲۸ طرح</button>
-          <button type="button" aria-pressed={kind==="pedicure"} onClick={()=>{setKind("pedicure");reset();}}>پدیکور · ۶ طرح</button>
+          <button type="button" aria-pressed={kind==="manicure"} onClick={()=>{setKind("manicure");reset();}}>مانیکور · {persian(NAIL_COUNTS.manicure)} طرح</button>
+          <button type="button" aria-pressed={kind==="pedicure"} onClick={()=>{setKind("pedicure");reset();}}>پدیکور · {persian(NAIL_COUNTS.pedicure)} طرح</button>
         </div>
         <label className="nail-search mx-gutter">
           <Icon name="search" size={18} />
@@ -115,9 +123,18 @@ export function NailsScreen() {
       </section>
 
       <section className="nail-collection px-gutter" aria-label="طرح‌های ناخن">
+        <div className="nail-collection__toolbar" role="group" aria-label="ترتیب و تعداد طرح‌ها">
+          <span aria-live="polite">{persian(visible.length)} از {persian(results.length)} طرح</span>
+          <label>چیدمان
+            <select aria-label="چیدمان طرح‌ها" value={order} onChange={(e)=>setOrder(e.target.value as "curated"|"alphabetical")}>
+              <option value="curated">منتخب آتلیه</option>
+              <option value="alphabetical">نام فارسی</option>
+            </select>
+          </label>
+        </div>
         {results.length ? (
           <div className="nail-grid">
-            {results.map((style, index) => {
+            {visible.map((style, index) => {
               const saved = favorites.includes(style.id);
               return (
                 <article className="nail-card" key={style.id}>
@@ -153,6 +170,15 @@ export function NailsScreen() {
             <Button variant="tonal" onClick={reset}>نمایش همه طرح‌ها</Button>
           </div>
         )}
+        {results.length > visibleCount ? (
+          <div className="nail-more">
+            <div className="nail-more__track" aria-hidden="true"><span style={{width:`${Math.round(100*visible.length/results.length)}%`}} /></div>
+            <p>نمایش {persian(visible.length)} از {persian(results.length)} طرح</p>
+            <button type="button" onClick={()=>setVisibleCount(current=>current+PAGE_SIZE)}>
+              نمایش طرح‌های بیشتر <Icon name="chevron" size={18}/>
+            </button>
+          </div>
+        ) : null}
       </section>
 
       <section className="nail-services px-gutter">
