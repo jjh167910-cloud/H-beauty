@@ -1,4 +1,6 @@
+import { useState } from "react";
 import type { NailStyle } from "@/data/nail-styles";
+import { nailStyleShareUrl } from "@/data/nail-links";
 import { NAIL_FINISHES, NAIL_SHAPES, NAIL_STYLES } from "@/data/nail-styles";
 import { NAIL_ATLAS_FAMILIES } from "@/data/nail-expansion";
 import { serviceById, formatMinutes } from "@/data/salon";
@@ -9,6 +11,19 @@ import { Button, Sheet, haptic, useSalonActions } from "../ui";
 
 export function NailSheet({ open, style, onClose }: { open: boolean; style: NailStyle; onClose: () => void }) {
   const { openBooking, openSheet } = useSalonActions();
+  const [shareStatus, setShareStatus] = useState<"copied"|"manual"|null>(null);
+  const [manualLink,setManualLink] = useState("");
+  const share = async () => {
+    const url = nailStyleShareUrl(style.id, window.location.href);
+    try {
+      if (!navigator.clipboard?.writeText) throw new Error("Clipboard unavailable");
+      await navigator.clipboard.writeText(url);
+      setShareStatus("copied");
+    } catch {
+      setManualLink(url);
+      setShareStatus("manual");
+    }
+  };
   const favorites = useSalon((state) => state.favNails);
   const toggle = useSalon((state) => state.toggleFavNail);
   const saved = favorites.includes(style.id);
@@ -68,6 +83,21 @@ export function NailSheet({ open, style, onClose }: { open: boolean; style: Nail
             aria-pressed={saved} onClick={() => { haptic(); toggle(style.id); }}>
             <Icon name="heart" size={22} weight={saved ? "fill" : "light"} />
           </button>
+        </div>
+        <div className="nail-detail__share">
+          <button type="button" className="nail-detail__share-button" onClick={share}
+            aria-label={`کپی لینک طرح ${style.title}`}>
+            <Icon name="share" size={19} />
+            <span>اشتراک لینک همین طرح</span>
+          </button>
+          {shareStatus==="copied" ? <p role="status">لینک طرح کپی شد.</p> : null}
+          {shareStatus==="manual" ? (
+            <div className="nail-detail__share-fallback">
+              <label htmlFor="nail-share-link">کپی خودکار ممکن نبود؛ لینک را از این بخش کپی کنید.</label>
+              <input id="nail-share-link" dir="ltr" value={manualLink}
+                onFocus={event=>event.currentTarget.select()} readOnly aria-label="لینک قابل کپی طرح"/>
+            </div>
+          ) : null}
         </div>
         {service ? <p className="nail-detail__note">خدمت پیشنهادی: {service.title} · مدت تقریبی {formatMinutes(service.minutes)} · قیمت پس از مشاوره</p> : null}
         <span className="nail-detail__en" lang="en">HANANEH BEAUTY / NAIL ATELIER</span>
