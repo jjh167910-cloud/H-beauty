@@ -9,6 +9,7 @@ import { spawnSync } from "node:child_process";
 import { existsSync, statSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { installNailPack } from "./install-nail-photo-pack.mjs";
 
 export const MUSIC_PATH = "public/audio/hananeh-salon-ambience.mp3";
 
@@ -27,6 +28,7 @@ export function resolveMusicFlag({ installed, configured } = {}) {
 }
 
 function build() {
+  installNailPack();
   const file = resolve(MUSIC_PATH);
   const installed = existsSync(file) && statSync(file).isFile();
   const configured = process.env.VITE_SALON_MUSIC;
