@@ -34,29 +34,39 @@ function build() {
   const installed = existsSync(file) && statSync(file).isFile();
   const configured = process.env.VITE_SALON_MUSIC;
   const enabled = resolveMusicFlag({ installed, configured });
-  // All 34 photos must be installed together. V3 fixes two duplicate designs,
-  // and can coexist with older installations from the V2 generation.
-  const nailLock=resolve("assets/hbeauty-nail-editorial-v2.sha256");
-  const nailPaths=readFileSync(nailLock,"utf8").trim().split(/\r?\n/)
-    .map(line=>line.trim().split(/\s+/).at(-1));
-  const present=nailPaths.filter(path=>existsSync(resolve(path)));
-  if (nailPaths.length!==34 || new Set(nailPaths).size!==34)
-    throw new Error("Nail editorial v2 lock must contain 34 unique files");
-  if (present.length>4 && present.length!==34)
-    throw new Error(`Nail editorial v2 pack incomplete: ${present.length}/34 files found`);
-  if (process.env.VITE_NAIL_EDITORIAL_V2==="true" && present.length!==34)
-    throw new Error("VITE_NAIL_EDITORIAL_V2=true without complete 34-photo pack");
-  const nailEdition=present.length===34?"true":"false";
+  // Prefer quality-gated V4: only nine native high-resolution photographs;
+  // the other 25 styles keep detailed and accurate SVG illustrations.
+  // Legacy V2/V3 and four-photo releases continue working.
+  const lockV2=readFileSync(resolve("assets/hbeauty-nail-editorial-v2.sha256"),"utf8");
+  const lockV4=readFileSync(resolve("assets/hbeauty-nail-editorial-v4.sha256"),"utf8");
+  const paths=contents=>contents.trim().split(/\r?\n/).map(line=>line.trim().split(/\s+/).at(-1));
+  const all34=paths(lockV2);
+  const selectedV4=paths(lockV4);
+  if(all34.length!==34||selectedV4.length!==9)
+    throw new Error("Nail photo lock must specify 34 original / 9 quality-approved assets");
+  const count34=all34.filter(path=>existsSync(resolve(path))).length;
+  const count9=selectedV4.filter(path=>existsSync(resolve(path))).length;
   let photoVersion=installedPhotoPack.edition ?? 2;
-  if(nailEdition==="true" && !installedPhotoPack.edition){
+  if(!installedPhotoPack.edition && count34===34){
     const v3Lock=readFileSync(resolve("assets/hbeauty-nail-editorial-v3.sha256"),"utf8");
     const expected=v3Lock.split(/\r?\n/).find(line=>line.endsWith("public/nails/photos/nail-marble.webp"))?.split(/\s+/)[0];
     const actual=createHash("sha256").update(readFileSync(resolve("public/nails/photos/nail-marble.webp"))).digest("hex");
-    if(expected===actual) photoVersion=3;
-  }
-  const env = { ...process.env, VITE_SALON_MUSIC: enabled,
-    VITE_NAIL_EDITORIAL_V2:nailEdition, VITE_NAIL_EDITORIAL_V3:nailEdition==="true" && photoVersion===3 ? "true" : "false", NAIL_EDITORIAL_LOCK_VERSION:String(photoVersion) };
-  console.log(`Nail editorial photos: ${nailEdition==="true"?"34 photos, integrity gated v"+photoVersion:"offline vector previews active"}`);
+    if(expected===actual)photoVersion=3;
+  } else if(!installedPhotoPack.edition && count34<34 && count9===9) photoVersion=4;
+  const count=photoVersion===4?count9:count34;
+  const expected=photoVersion===4?9:34;
+  // V1's optional exact four-photo release remains supported.
+  if(count!==expected && count>4)
+    throw new Error(`Incomplete nail photo release: ${count}/${expected}`);
+  if(process.env.VITE_NAIL_EDITORIAL_V2==="true" && count!==expected)
+    throw new Error("Nail photo edition requested without complete verified pack");
+  const nailEdition=count===expected?"true":"false";
+  const env={...process.env,
+    VITE_SALON_MUSIC:enabled,
+    VITE_NAIL_EDITORIAL_V2:nailEdition,
+    VITE_NAIL_EDITORIAL_V3:nailEdition==="true" && photoVersion>=3?"true":"false",
+    NAIL_EDITORIAL_LOCK_VERSION:String(photoVersion)};
+  console.log(`Nail photographic edition: ${nailEdition==="true"?`v${photoVersion} (${expected} files)`:"vector-only / legacy optional 4-photo"}`);
   console.log(`Salon music: ${enabled === "true" ? "ENABLED (asset found)" : "disabled (asset missing or explicit opt-out)"}`);
   if (enabled === "true") {
     console.log("Salon music checksum is verified during service-worker packaging.");
