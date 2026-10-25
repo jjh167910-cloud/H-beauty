@@ -7,6 +7,7 @@ import { HomeScreen } from "./screens/home";
 import { ServicesScreen } from "./screens/services";
 import { LooksScreen } from "./screens/looks";
 import { MakeupScreen } from "./screens/makeup";
+import { NailsScreen } from "./screens/nails";
 import { BookingsScreen } from "./screens/bookings";
 import { MeScreen } from "./screens/me";
 import { DesignScreen } from "./screens/design";
@@ -160,6 +161,7 @@ export function SalonApp() {
         else if (intent?.service && !store.cart.includes(intent.service)) store.setCart([...store.cart, intent.service]);
         if (intent?.stylist || intent?.lookId != null) store.setDraft({ stylist: intent.stylist ?? "any", lookId: intent.lookId ?? null });
         if (intent?.makeupId) store.setDraft({ makeupId: intent.makeupId });
+        if (intent?.nailStyleId) store.setDraft({ nailStyleId: intent.nailStyleId });
         if (intent?.note) store.setDraft({ note: intent.note });
         openSheet({ kind: "booking" });
       },
@@ -182,6 +184,7 @@ export function SalonApp() {
           {tab === "services" ? <ServicesScreen /> : null}
           {tab === "looks" ? <LooksScreen /> : null}
           {tab === "makeup" ? <MakeupScreen /> : null}
+          {tab === "nails" ? <NailsScreen /> : null}
           {tab === "bookings" ? <BookingsScreen /> : null}
           {tab === "me" ? <MeScreen /> : null}
           {tab === "design" ? <DesignScreen /> : null}
