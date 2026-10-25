@@ -40,6 +40,33 @@ export function finalizeServiceWorker(distDir = 'dist') {
       }
     }
   }
+  // AI-generated editorial nail images are optional but must be an exact,
+  // complete collection if any are installed. No silent 404 cards, no partial
+  // or tampered asset packages. The matching originals are user-provided.
+  const nailIds=['nail-milky-silk','nail-classic-french','nail-ruby-red','nail-pearl-chrome'];
+  const nailPaths=nailIds.map(id=>join(root,'nails','photos',id+'.webp'));
+  const installedNails=nailPaths.filter(existsSync);
+  if (installedNails.length && installedNails.length !== nailIds.length)
+    throw new Error('Nail photo pack incomplete: install all four matching WebP files before publishing');
+  if(installedNails.length===nailIds.length) {
+    const lock=resolve('assets/hbeauty-nail-editorial-v1.sha256');
+    if (!existsSync(lock)) throw new Error('Nail photo pack SHA256 lock missing');
+    const expected=new Map(readFileSync(lock,'utf8').trim().split(/\r?\n/).map(line=>{
+      const matched=line.match(/^([a-f\d]{64})\s+(.+)$/i);
+      if(!matched)throw new Error('Invalid nail photo SHA256 lock entry');
+      return [matched[2],matched[1]];
+    }));
+    for(const file of nailPaths) {
+      const relativePath='public/nails/photos/'+file.split(sep).at(-1);
+      const correct=expected.get(relativePath);
+      if(!correct)throw new Error('Missing checksum entry for '+relativePath);
+      const bytes=readFileSync(file);
+      if (bytes.length<10_000 || bytes.length>500_000)throw new Error('Unexpected nail image size for '+relativePath);
+      if (createHash('sha256').update(bytes).digest('hex')!==correct)
+        throw new Error('Nail photo checksum mismatch: '+relativePath);
+      files.push(file);
+    }
+  }
   // Opt-in soundtrack: the exact audio bytes enter the offline PWA cache.
   // Missing or modified files must block an enabled music release.
   if (process.env.VITE_SALON_MUSIC === "true") {
