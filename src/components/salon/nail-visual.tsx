@@ -51,7 +51,7 @@ export function NailVisual({
   const photo = Boolean(source && !failed);
 
   return (
-    <span className={`nail-visual ${className}`} role="img" aria-label={`نمونه الهام‌بخش طرح ناخن ${style.title}؛ تصویرسازی نمایشی، نه اجرای واقعی سالن`}>
+    <span className={`nail-visual ${className}`} data-media-source={photo && ready ? "ai-photo" : "vector"} role="img" aria-label={photo && ready ? `عکس الهام‌بخش ساخته‌شده با هوش مصنوعی، طرح ${style.title}؛ اجرای واقعی سالن نیست` : `تصویرسازی برداری طرح ${style.title}؛ اجرای واقعی سالن نیست`}>
       <span className="nail-visual__fallback" aria-hidden="true">
         {style.kind === "pedicure" ? <PedicurePreview style={style} /> : <NailPreview style={style} />}
       </span>

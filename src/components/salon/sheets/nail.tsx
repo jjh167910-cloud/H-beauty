@@ -41,6 +41,10 @@ export function NailSheet({ open, style, onClose }: { open: boolean; style: Nail
         <div className="nail-detail__visual">
           <NailVisual style={style} />
         </div>
+        <div className="nail-detail__source" aria-live="polite">
+          <span className="nail-detail__source--photo">مرجع عکاسی الهام‌بخش؛ ساخته‌شده با هوش مصنوعی</span>
+          <span className="nail-detail__source--illustration">پیش‌نمایش برداری رنگ و فرم ناخن</span>
+        </div>
         <small className="nail-detail__en" lang="en">{style.en.toUpperCase()}</small>
         <h3>{style.title}</h3>
         <p>{style.description}</p>

@@ -5,7 +5,7 @@ import { NAIL_STYLES, NAIL_COUNTS, NAIL_FINISHES, NAIL_COLORS, NAIL_SHAPES, NAIL
 import { nailKindFromHash } from "@/data/nail-links";
 import { useSalon } from "@/lib/salon-store";
 import { Icon } from "../icons";
-import { NailVisual } from "../nail-visual";
+import { NailVisual, NAIL_EDITORIAL_PHOTOS } from "../nail-visual";
 import { NailCompareSheet } from "../sheets/nail-compare";
 import { Chip, Button, haptic, useSalonActions } from "../ui";
 
@@ -22,6 +22,7 @@ export function NailsScreen() {
   const [color, setColor] = useState<NailColor | "all">("all");
   const [length, setLength] = useState<NailLength | "all">("all");
   const [savedOnly, setSavedOnly] = useState(false);
+  const [photoOnly,setPhotoOnly] = useState(false);
   const [query, setQuery] = useState("");
   const [visibleCount,setVisibleCount] = useState(PAGE_SIZE);
   const [order,setOrder] = useState<"curated" | "alphabetical">("curated");
@@ -39,6 +40,9 @@ export function NailsScreen() {
   const favorites = useSalon((state) => state.favNails);
   const toggleFavorite = useSalon((state) => state.toggleFavNail);
   const familyOptions = NAIL_ATLAS_FAMILIES[kind];
+  const photographicCount = NAIL_STYLES.filter(style=>
+    (style.kind ?? "manicure")===kind && Boolean(NAIL_EDITORIAL_PHOTOS[style.id])
+  ).length;
   const activeFamily = familyOptions.find(item=>item.key===family);
   const results = useMemo(() => {
     const q = normalize(query).toLowerCase();
@@ -50,16 +54,17 @@ export function NailsScreen() {
       (color === "all" || color === style.color) &&
       (length === "all" || length === style.length) &&
       (!savedOnly || favorites.includes(style.id)) &&
+      (!photoOnly || Boolean(NAIL_EDITORIAL_PHOTOS[style.id])) &&
       (!q || normalize(`${style.title} ${style.en} ${style.description}`).toLowerCase().includes(q))
     );
     if(order==="alphabetical") return [...filtered].sort((a,b)=>a.title.localeCompare(b.title,"fa"));
     return filtered;
-  }, [kind, activeFamily, finish, shape, color, length, savedOnly, favorites, query, order]);
-  useEffect(()=>setVisibleCount(PAGE_SIZE),[kind,family,finish,shape,color,length,savedOnly,query,order]);
+  }, [kind, activeFamily, finish, shape, color, length, savedOnly, photoOnly, favorites, query, order]);
+  useEffect(()=>setVisibleCount(PAGE_SIZE),[kind,family,finish,shape,color,length,savedOnly,photoOnly,query,order]);
   const visible = results.slice(0,visibleCount);
 
   const reset = () => {
-    setFamily("all"); setFinish("all"); setShape("all"); setColor("all"); setLength("all"); setSavedOnly(false); setQuery(""); setOrder("curated"); setVisibleCount(PAGE_SIZE);
+    setFamily("all"); setFinish("all"); setShape("all"); setColor("all"); setLength("all"); setSavedOnly(false); setPhotoOnly(false); setQuery(""); setOrder("curated"); setVisibleCount(PAGE_SIZE);
   };
 
   return (
@@ -114,6 +119,22 @@ export function NailsScreen() {
           <input type="search" value={query} onChange={(event) => setQuery(event.target.value)}
             placeholder="جست‌وجوی رنگ، فرم یا سبک" aria-label="جست‌وجو در گالری ناخن"/>
         </label>
+        <div className="nail-photo-refine px-gutter" role="group" aria-label="نوع پیش‌نمایش ناخن">
+          <div className="nail-photo-refine__description">
+            <strong>نوع تصویر</strong>
+            <span>{photographicCount
+              ? `${persian(photographicCount)} مرجع عکاسی الهام‌بخش در این مجموعه`
+              : "در این مجموعه هنوز عکسِ تأییدشده نداریم؛ همه طرح‌ها تصویرسازی‌اند."}</span>
+          </div>
+          <button type="button"
+            aria-label="فقط طرح‌های دارای عکس الهام‌بخش"
+            aria-pressed={photoOnly}
+            disabled={photographicCount===0}
+            onClick={()=>setPhotoOnly(value=>!value)}
+            className="nail-photo-refine__toggle">
+            {photoOnly ? "نمایش همه" : "فقط عکس‌ها"}
+          </button>
+        </div>
         <div className="nail-filter-label nail-filter-label--family px-gutter">
           <span>مجموعه‌های تخصصی</span>
           <span className="nail-filter-label__hint">{persian(familyOptions.length)} مجموعه · {kind==="pedicure"?"۶":"۱۲"} رنگ‌بندی در هر مجموعه</span>
@@ -193,6 +214,10 @@ export function NailsScreen() {
                     <span className="nail-card__info">
                       <small lang="en">{String(index + 1).padStart(2,"0")} / {style.en}</small>
                       <strong>{style.title}</strong>
+                      <span className="nail-card__media-type">
+                        <span className="nail-card__media-type--photo">عکس الهام‌بخشِ ساخته‌شده با هوش مصنوعی</span>
+                        <span className="nail-card__media-type--illustration">تصویرسازی طرح</span>
+                      </span>
                       <span>{style.description}</span>
                     </span>
                   </button>

@@ -368,3 +368,41 @@
   .nail-compare__design>button{font-size:.67rem;padding-inline:.25rem;}
   .nail-card__compare span{font-size:.62rem;}
 }
+
+
+/* Source-aware editorial disclosure. Show true loaded media, never promised media. */
+.nail-photo-refine {
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:.6rem;margin-block:.1rem .45rem;
+}
+.nail-photo-refine__description {display:grid;gap:.2rem;flex:1;min-width:0;}
+.nail-photo-refine__description strong {font-size:.76rem;font-weight:680;}
+.nail-photo-refine__description>span {font-size:.71rem;color:var(--color-ink-2);line-height:1.65;}
+.nail-photo-refine__toggle {
+  border:1px solid var(--color-line-2);border-radius:99px;
+  min-width:102px;min-height:44px;padding:.5rem .85rem;
+  color:var(--color-ink);background:var(--color-surface);
+  font-size:.72rem;font-weight:650;white-space:nowrap;
+}
+.nail-photo-refine__toggle[aria-pressed="true"] {
+  color:var(--color-surface);background:var(--color-ink);
+  border-color:var(--color-ink);
+}
+.nail-photo-refine__toggle:disabled {opacity:.5;cursor:not-allowed;}
+.nail-photo-refine__toggle:focus-visible {outline:2px solid var(--color-gold-ink);outline-offset:2px;}
+.nail-card__media-type,
+.nail-detail__source {display:block;font-size:.67rem;color:var(--color-ink-2);line-height:1.7;}
+.nail-card__info>.nail-card__media-type {font-size:.65rem;line-height:1.7;}
+.nail-detail__source {margin-block:-.1rem .05rem;}
+.nail-card__media-type--photo,
+.nail-detail__source--photo {display:none;}
+/* Image successful and decoded? Only then identify it as a photograph.
+ * Broken, blocked and offline-missing assets retain the vector label. */
+.nail-card:has(.nail-visual__photo[data-ready]) .nail-card__media-type--photo,
+.nail-detail:has(.nail-visual__photo[data-ready]) .nail-detail__source--photo {display:inline;}
+.nail-card:has(.nail-visual__photo[data-ready]) .nail-card__media-type--illustration,
+.nail-detail:has(.nail-visual__photo[data-ready]) .nail-detail__source--illustration {display:none;}
+@media(max-width:360px){
+  .nail-photo-refine__toggle {min-width:94px;padding:.45rem .6rem;}
+  .nail-photo-refine__description>span {font-size:.68rem;}
+}
