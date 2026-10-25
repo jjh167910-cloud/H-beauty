@@ -17,6 +17,19 @@ Candidate structural screening requires: a valid RIFF/WebP container and support
 
 **Limitations:** this fast Node preflight checks headers and metadata, not decoded image pixels; malformed compressed payloads can still pass a header check. A passing status of `STRUCTURAL_PREFLIGHT_ONLY` is **not permission to publish**.
 
+## Automated pixel review (new)
+
+After `npm ci` and `npm run build` have placed the SHA-pinned nine approved photographs in `public/nails/photos/`, run:
+
+```sh
+npm run review:nail-photo-pixels -- --baseline
+npm run review:nail-photo-pixels -- ./candidate-single-images
+```
+
+The first command decodes all nine approved images in a real Chromium canvas and asserts they maintain the known optical-detail and transparency baseline. The second first executes the structural intake, then independently decodes every candidate, measures full-resolution four-neighbour grayscale Laplacian variance (>60), tests for transparent canvas pixels, and compares native-image 32×32 RGB projections against the approved images and each candidate (>0.045 normalized mean pixel distance). It also records an advisory grayscale dHash warning for potentially reused compositions after color changes.
+
+Malformed WebP pixels must fail the real browser decode, even if the file claims to be 1024×1024 in its headers. The CI negative fixture explicitly tests this attack. Results are `PIXEL_PREFLIGHT_ONLY`, `BASELINE_VERIFIED`, or `REJECTED`. None mean that toe or finger anatomy, artistic fidelity, material appearance, photography rights, lack of AI artifacts, or native provenance has been approved. Sharpness and different RGB pixels alone **cannot prove genuine optical resolution** or that a contact sheet was not aggressively sharpened. Never change the nine-photo public allowlist based on this program alone.
+
 ## Mandatory second-stage review before a photo can ship
 
 - Decode every candidate in Chromium at full native dimensions, with no image errors.
