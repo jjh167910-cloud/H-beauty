@@ -139,5 +139,6 @@ test("pedicure reference is saved in the existing appointment flow", async ({pag
   const booking=page.getByRole("dialog",{name:"درخواست نوبت"});
   await expect(booking).toBeVisible();
   await expect(booking.getByText("پدیکور قرمز یاقوتی").first()).toBeVisible();
-  await expect(booking.getByText("پدیکور و ژلیش").first()).toBeVisible();
+  const cart=await page.evaluate(()=>JSON.parse(localStorage.getItem("hananeh-atelier-v1")||"{}").cart||[]);
+  expect(cart).toContain("gel-pedicure");
 });
