@@ -7,7 +7,7 @@ import { serviceById, formatMinutes } from "@/data/salon";
 import { useSalon } from "@/lib/salon-store";
 import { Icon } from "../icons";
 import { NailVisual } from "../nail-visual";
-import { saveNailReferenceCard } from "@/lib/nail-reference-card";
+import { saveNailReferenceCard, shareNailReferenceCard } from "@/lib/nail-reference-card";
 import { Button, Sheet, haptic, useSalonActions } from "../ui";
 
 export function NailSheet({ open, style, onClose }: { open: boolean; style: NailStyle; onClose: () => void }) {
@@ -17,6 +17,18 @@ export function NailSheet({ open, style, onClose }: { open: boolean; style: Nail
   const imageRoot=useRef<HTMLDivElement>(null);
   const [imageSave,setImageSave]=useState<{id:string;status:"idle"|"saving"|"saved"|"error"}>({id:style.id,status:"idle"});
   const saveStatus=imageSave.id===style.id?imageSave.status:"idle";
+  const [imageShare,setImageShare]=useState<{id:string;status:"idle"|"sharing"|"shared"|"downloaded"|"cancelled"|"error"}>({id:style.id,status:"idle"});
+  const shareImageStatus=imageShare.id===style.id?imageShare.status:"idle";
+  const shareImage=async()=>{
+    if(!imageRoot.current)return;
+    setImageShare({id:style.id,status:"sharing"});
+    try{
+      const result=await shareNailReferenceCard(style,imageRoot.current);
+      setImageShare({id:style.id,status:result.status});
+    }catch{
+      setImageShare({id:style.id,status:"error"});
+    }
+  };
   const saveImage=async()=>{
     if(!imageRoot.current)return;
     setImageSave({id:style.id,status:"saving"});
@@ -161,6 +173,15 @@ export function NailSheet({ open, style, onClose }: { open: boolean; style: Nail
           </button>
           {saveStatus==="saved" ? <p role="status">دانلود کارت تصویر این طرح آغاز شد.</p> : null}
           {saveStatus==="error" ? <p role="alert">ذخیره تصویر ممکن نشد؛ همچنان می‌توانید لینک طرح را به اشتراک بگذارید.</p> : null}
+          <button type="button" className="nail-detail__share-button"
+            onClick={shareImage} disabled={shareImageStatus==="sharing"}
+            aria-label={`اشتراک تصویر طرح ${style.title}`}>
+            <Icon name="share" size={19}/>
+            <span>{shareImageStatus==="sharing"?"در حال آماده‌سازی اشتراک…" : "اشتراک تصویر با برنامه‌های گوشی"}</span>
+          </button>
+          {shareImageStatus==="shared"?<p role="status">تصویر طرح به برنامهٔ انتخابی تحویل داده شد.</p>:null}
+          {shareImageStatus==="downloaded"?<p role="status">اشتراک مستقیم در دسترس نبود؛ دانلود تصویر آغاز شد.</p>:null}
+          {shareImageStatus==="error"?<p role="alert">اشتراک تصویر ممکن نشد. می‌توانید فایل را ذخیره کنید.</p>:null}
           <button type="button" className="nail-detail__share-button" onClick={share}
             aria-label={`کپی لینک طرح ${style.title}`}>
             <Icon name="share" size={19} />
