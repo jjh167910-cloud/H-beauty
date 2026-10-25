@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import type { NailStyle } from "@/data/nail-styles";
 import { nailStyleShareUrl } from "@/data/nail-links";
 import { NAIL_FINISHES, NAIL_SHAPES, NAIL_STYLES } from "@/data/nail-styles";
@@ -7,12 +7,25 @@ import { serviceById, formatMinutes } from "@/data/salon";
 import { useSalon } from "@/lib/salon-store";
 import { Icon } from "../icons";
 import { NailVisual } from "../nail-visual";
+import { saveNailReferenceCard } from "@/lib/nail-reference-card";
 import { Button, Sheet, haptic, useSalonActions } from "../ui";
 
 export function NailSheet({ open, style, onClose }: { open: boolean; style: NailStyle; onClose: () => void }) {
   const { openBooking, openSheet } = useSalonActions();
   const [shareStatus, setShareStatus] = useState<"copied"|"manual"|null>(null);
   const [manualLink,setManualLink] = useState("");
+  const imageRoot=useRef<HTMLDivElement>(null);
+  const [imageSave,setImageSave]=useState<"idle"|"saving"|"saved"|"error">("idle");
+  const saveImage=async()=>{
+    if(!imageRoot.current)return;
+    setImageSave("saving");
+    try{
+      await saveNailReferenceCard(style,imageRoot.current);
+      setImageSave("saved");
+    }catch{
+      setImageSave("error");
+    }
+  };
   // The inspector is local to the currently selected design; changing
   // variants cannot inherit a stale crop/zoom position from another style.
   const [inspection,setInspection] = useState<{id:string;level:0|1|2}>({id:style.id,level:0});
@@ -60,7 +73,7 @@ export function NailSheet({ open, style, onClose }: { open: boolean; style: Nail
   return (
     <Sheet open={open} onClose={onClose} title={style.title}>
       <article className="nail-detail">
-        <div id="nail-detail-image" className={`nail-detail__visual${inspectLevel>0 ? " nail-detail__visual--full" : ""}${inspectLevel===2 ? " nail-detail__visual--zoom" : ""}`}
+        <div ref={imageRoot} id="nail-detail-image" className={`nail-detail__visual${inspectLevel>0 ? " nail-detail__visual--full" : ""}${inspectLevel===2 ? " nail-detail__visual--zoom" : ""}`}
           data-inspection-level={inspectLevel}>
           <NailVisual style={style} priority />
         </div>
@@ -139,6 +152,14 @@ export function NailSheet({ open, style, onClose }: { open: boolean; style: Nail
           </button>
         </div>
         <div className="nail-detail__share">
+          <button type="button" className="nail-detail__share-button"
+            onClick={saveImage} disabled={imageSave==="saving"}
+            aria-label={`ذخیره تصویر طرح ${style.title}`}>
+            <Icon name="download" size={19}/>
+            <span>{imageSave==="saving" ? "در حال آماده‌سازی تصویر…" : "ذخیره تصویر طرح برای مشاوره"}</span>
+          </button>
+          {imageSave==="saved" ? <p role="status">کارت تصویر طرح آماده و ذخیره شد.</p> : null}
+          {imageSave==="error" ? <p role="alert">ذخیره تصویر ممکن نشد؛ همچنان می‌توانید لینک طرح را به اشتراک بگذارید.</p> : null}
           <button type="button" className="nail-detail__share-button" onClick={share}
             aria-label={`کپی لینک طرح ${style.title}`}>
             <Icon name="share" size={19} />
