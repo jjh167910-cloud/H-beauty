@@ -106,4 +106,10 @@ export const NAIL_STYLES: readonly NailStyle[] = [
   ...NAIL_EXPANSION,
 ] as const;
 
+export const NAIL_COUNTS = {
+  manicure: NAIL_STYLES.filter(style => (style.kind ?? "manicure") === "manicure").length,
+  pedicure: NAIL_STYLES.filter(style => style.kind === "pedicure").length,
+  total: NAIL_STYLES.length,
+} as const;
+
 export const nailById = new Map(NAIL_STYLES.map((style) => [style.id, style]));
