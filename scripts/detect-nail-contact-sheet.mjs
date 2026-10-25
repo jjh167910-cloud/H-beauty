@@ -29,7 +29,9 @@ function seamCenters(positions,dimension) {
 }
 
 function repeatedRun(values,dimension,minLength) {
-  if(values.length<minLength)return [];
+  // Hundreds of unrelated thin highlights should not trigger cubic search.
+  // A true salon contact sheet cannot have 40+ meaningful column gutters.
+  if(values.length<minLength||values.length>40)return [];
   for(let start=0;start<=values.length-minLength;start++){
     for(let end=start+minLength;end<=values.length;end++){
       const part=values.slice(start,end);
