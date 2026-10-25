@@ -27,6 +27,10 @@ jobs:
         run: npm run typecheck
       - name: Build Vite
         run: npm run build
+      - name: Validate real native photographic pixels against published baseline
+        # Unlike RIFF header checks, this decodes every V4 WebP in Chromium
+        # and checks sharpness, opacity and intrinsic dimensions.
+        run: npm run review:nail-photo-pixels -- --baseline
       - name: Verify Cloudflare Worker packaging without deploying
         # Reproduce Wrangler's configuration-driven build on a clean CI
         # checkout. No Cloudflare token or production mutation is required.
