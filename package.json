@@ -12,6 +12,7 @@
     "test:offline": "node --test tests-node/*.test.mjs",
     "verify:assets": "node scripts/verify-images.mjs",
     "review:nail-photo-candidates": "node scripts/audit-nail-photo-candidates.mjs",
+    "review:nail-photo-pixels": "node scripts/review-nail-photo-pixels.mjs",
     "prepare:makeup-curated-80": "node scripts/import-makeup80-archive.mjs --if-present",
     "verify:makeup-curated-80": "node scripts/verify-curated-80.mjs",
     "verify:makeup-curated-80-release": "node scripts/verify-curated-80.mjs --release",
