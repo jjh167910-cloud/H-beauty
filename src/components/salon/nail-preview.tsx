@@ -32,7 +32,7 @@ export function NailPreview({ style, className = "" }: { style: NailStyle; class
   const art = style.finish === "art";
 
   return (
-    <svg viewBox="0 0 290 255" className={className} role="img" data-nail-finish={style.finish}
+    <svg viewBox="0 0 290 255" className={className} role="img" data-nail-finish={style.finish} data-nail-motif={style.motif ?? "legacy"}
       aria-label={`پیش‌نمایش تصویری طرح ${style.title}، نمونهٔ شماتیک رنگ و فرم ناخن`}>
       <defs>
         <NailMaterialGradient id={grad} style={style}/>

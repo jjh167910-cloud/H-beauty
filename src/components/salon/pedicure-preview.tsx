@@ -14,7 +14,7 @@ export function PedicurePreview({ style }: { style: NailStyle }) {
     {x:253,y:154,rx:17,ry:29,w:16,h:16},
   ];
   return (
-    <svg viewBox="0 0 312 262" role="img" aria-label={`شبیه‌سازی رنگ پدیکور ${style.title}`} width="100%" height="100%">
+    <svg viewBox="0 0 312 262" role="img" data-nail-finish={style.finish} data-nail-motif={style.motif ?? "legacy"} aria-label={`شبیه‌سازی رنگ پدیکور ${style.title}`} width="100%" height="100%">
       <defs>
         <linearGradient id={`pedi-skin-${id}`} x1="0" x2="1" y1="0" y2="1">
           <stop offset="0" stopColor="#F2CEBB"/><stop offset=".5" stopColor="#DCA990"/><stop offset="1" stopColor="#B77967"/>
@@ -37,9 +37,21 @@ export function PedicurePreview({ style }: { style: NailStyle }) {
                 <rect x={t.x-t.w/2} y={t.y-t.ry+10} width={t.w} height={t.h} rx={Math.min(t.w/3,8)}/>
               </clipPath>
               <g clipPath={`url(#pedi-${id}-clip-${i})`}>
-                <g transform={`translate(${t.x} ${t.y-t.ry+10+t.h/2}) scale(${t.w/36} ${t.h/80})`}>
-                  <NailOrnament motif={style.motif} accent={style.accent} base={style.base} index={i}/>
-                </g>
+                {style.motif==="minimal" ? (
+                  // A single salon-scale accent dot: 80-unit manicure patterns
+                  // shrink too far on the 16–31px-wide pedicure nail beds.
+                  <g>
+                    <circle cx={t.x} cy={t.y-t.ry+10+t.h*.47}
+                      r={Math.max(2.1,t.w*.125)}
+                      fill={style.color==="dark"?"#FFF5EA":"#57413C"}/>
+                    <circle cx={t.x-.5} cy={t.y-t.ry+10+t.h*.47-1}
+                      r={Math.max(.55,t.w*.025)} fill="#FFF9F0" opacity=".66"/>
+                  </g>
+                ) : (
+                  <g transform={`translate(${t.x} ${t.y-t.ry+10+t.h/2}) scale(${t.w/36} ${t.h/80})`}>
+                    <NailOrnament motif={style.motif} accent={style.accent} base={style.base} index={i}/>
+                  </g>
+                )}
               </g>
             </>
           ) : null}
