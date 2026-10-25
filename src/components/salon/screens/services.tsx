@@ -119,7 +119,7 @@ export function ServicesScreen() {
 
       <section className="studio-service-footer px-gutter">
         <Ornament />
-        <p>قیمت‌ها برآورد «شروع از» هستند و پس از بررسی شرایط مو در سالن مشخص می‌شوند. همه خدمات قابل درخواست‌اند؛ تأیید نوبت توسط سالن انجام می‌شود.</p>
+        <p>قیمت‌ها برآورد «شروع از» هستند و پس از بررسی جزئیات هر خدمت در سالن مشخص می‌شوند. همه خدمات قابل درخواست‌اند؛ تأیید نوبت توسط سالن انجام می‌شود.</p>
         <Button variant="gold" orb onClick={() => openBooking()}>ساخت درخواست نوبت</Button>
       </section>
     </div>
