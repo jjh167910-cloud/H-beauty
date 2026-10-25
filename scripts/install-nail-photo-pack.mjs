@@ -10,17 +10,20 @@ import { resolve, dirname } from "node:path";
 
 export const NAIL_ARCHIVE = "assets/Hananeh_Nail_Studio_34_Look_Editorial_Pack_v2.zip";
 export const NAIL_ARCHIVE_V3 = "assets/Hananeh_Nail_Studio_34_Look_Editorial_Pack_v3.zip";
+export const NAIL_ARCHIVE_V4 = "assets/Hananeh_Nail_Studio_Quality_9_v4.zip";
 const LOCK_V2 = "assets/hbeauty-nail-editorial-v2.sha256";
 const LOCK_V3 = "assets/hbeauty-nail-editorial-v3.sha256";
+const LOCK_V4 = "assets/hbeauty-nail-editorial-v4.sha256";
 const SIGNATURE = 0x02014b50;
 
 export function installNailPack(archivePath) {
   // Prefer the corrected v3 archive. The v2 archive remains supported so
   // existing checked-out builds do not unexpectedly break.
-  const selected=archivePath ?? (existsSync(NAIL_ARCHIVE_V3) ? NAIL_ARCHIVE_V3 : NAIL_ARCHIVE);
+  const selected=archivePath ?? (existsSync(NAIL_ARCHIVE_V4) ? NAIL_ARCHIVE_V4 : existsSync(NAIL_ARCHIVE_V3) ? NAIL_ARCHIVE_V3 : NAIL_ARCHIVE);
   if (!existsSync(selected)) return {installed:false,count:0,edition:null};
-  const edition=selected.endsWith("_v3.zip") ? 3 : 2;
-  const lockPath=edition===3 ? LOCK_V3 : LOCK_V2;
+  const edition=selected.endsWith("_v4.zip") ? 4 : selected.endsWith("_v3.zip") ? 3 : 2;
+  const lockPath=edition===4 ? LOCK_V4 : edition===3 ? LOCK_V3 : LOCK_V2;
+  const expectedCount=edition===4 ? 9 : 34;
   archivePath=selected;
   const bytes=readFileSync(archivePath);
   if(bytes.length<10_000 || bytes.length>8*1024*1024)
@@ -32,8 +35,8 @@ export function installNailPack(archivePath) {
     if(!parts)throw new Error("Invalid nail ZIP allowlist");
     return [parts[2],parts[1]];
   }));
-  if(expected.size!==34) throw new Error("Expected 34 nail image checksums");
-  if(edition===3 && new Set(expected.values()).size!==34)
+  if(expected.size!==expectedCount) throw new Error(`Expected ${expectedCount} nail image checksums`);
+  if(edition>=3 && new Set(expected.values()).size!==expectedCount)
     throw new Error("Nail v3 photo lock contains duplicate images");
 
   // Find end of ZIP's central directory. We never extract arbitrary paths.
@@ -43,7 +46,7 @@ export function installNailPack(archivePath) {
   if(eocd<0)throw new Error("ZIP central directory missing");
   const count=bytes.readUInt16LE(eocd+10);
   let at=bytes.readUInt32LE(eocd+16);
-  if(count<34||count>50)throw new Error("Unexpected nail archive entry count");
+  if(count<expectedCount||count>50)throw new Error("Unexpected nail archive entry count");
 
   const decoded=new Map();
   for(let i=0;i<count;i++){
@@ -75,13 +78,13 @@ export function installNailPack(archivePath) {
       throw new Error("Nail image SHA256 mismatch "+path);
     decoded.set(path,data);
   }
-  if(decoded.size!==34)throw new Error(`Nail archive incomplete: ${decoded.size}/34 entries`);
+  if(decoded.size!==expectedCount)throw new Error(`Nail archive incomplete: ${decoded.size}/${expectedCount} entries`);
   // Write only after validating every file. No partial publication.
   for(const [path,data] of decoded) {
     const target=resolve(path);
     mkdirSync(dirname(target),{recursive:true});
     writeFileSync(target,data);
   }
-  console.log(`Installed verified nail photo ZIP v${edition}: 34 unique paths`);
-  return {installed:true,count:34,edition};
+  console.log(`Installed verified nail photo ZIP v${edition}: ${expectedCount} unique paths`);
+  return {installed:true,count:expectedCount,edition};
 }
