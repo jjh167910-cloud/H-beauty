@@ -16,7 +16,7 @@ const STYLES = [
   { repId: 125, filter: "pixie", label: "موی کوتاه", caption: "SHORT HAIR" },
 ] as const;
 
-const FEATURED_SERVICES = ["signature-cut", "bespoke-balayage", "event-styling", "event-makeup", "luxe-manicure"];
+const FEATURED_SERVICES = ["signature-cut", "bespoke-balayage", "event-styling", "event-makeup", "luxe-manicure", "spa-pedicure"];
 
 export function HomeScreen() {
   const { go, openSheet, openBooking, openDiscover } = useSalonActions();
