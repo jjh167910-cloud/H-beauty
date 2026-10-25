@@ -17,6 +17,7 @@ import {existsSync, readFileSync} from "node:fs";
 import {resolve} from "node:path";
 import {fileURLToPath} from "node:url";
 import {auditPhotoCandidates} from "./audit-nail-photo-candidates.mjs";
+import {inspectPanelGrid} from "./detect-nail-contact-sheet.mjs";
 
 const ROOT=resolve(fileURLToPath(new URL("../",import.meta.url)));
 const expectedLock=resolve(ROOT,"assets/hbeauty-nail-editorial-v4.sha256");
@@ -78,6 +79,26 @@ async function decodePixels(page,id,bytes){
     if(!ctx)throw Error("Chromium 2D canvas unavailable");
     ctx.drawImage(img,0,0);
     const rgba=ctx.getImageData(0,0,w,h).data;
+    // Scan for bright, neutral gutters that persist across most of an
+    // image. A repeated grid is evidence of a multi-image contact sheet,
+    // even if exported as a sharp 1024px WebP.
+    const lightNeutral=(k)=>{
+      const r=rgba[k],g=rgba[k+1],b=rgba[k+2];
+      return Math.min(r,g,b)>190 && Math.max(r,g,b)-Math.min(r,g,b)<55;
+    };
+    const verticalLines=[], horizontalLines=[];
+    const yStep=Math.max(1,Math.floor(h/360));
+    const xStep=Math.max(1,Math.floor(w/360));
+    for(let x=Math.ceil(w*.05);x<Math.floor(w*.95);x++){
+      let hits=0,total=0;
+      for(let y=0;y<h;y+=yStep){hits+=Number(lightNeutral((y*w+x)*4));total++;}
+      if(hits/total>.62)verticalLines.push(x);
+    }
+    for(let y=Math.ceil(h*.05);y<Math.floor(h*.95);y++){
+      let hits=0,total=0;
+      for(let x=0;x<w;x+=xStep){hits+=Number(lightNeutral((y*w+x)*4));total++;}
+      if(hits/total>.91)horizontalLines.push(y);
+    }
     const gray=new Float32Array(w*h);
     let transparent=0;
     for(let p=0;p<gray.length;p++){
@@ -119,7 +140,8 @@ async function decodePixels(page,id,bytes){
       pattern=(pattern<<1n)|(lum(k)>lum(k+4)?1n:0n);
     }
     return {id:name,width:w,height:h,sharpness,
-      transparencyFraction:transparent/(w*h),rgb,edgeHash:pattern.toString(16).padStart(16,"0")};
+      transparencyFraction:transparent/(w*h),rgb,edgeHash:pattern.toString(16).padStart(16,"0"),
+      seamPositions:{vertical:verticalLines,horizontal:horizontalLines}};
   },{name:id,base64:bytes.toString("base64")});
 }
 
@@ -149,6 +171,11 @@ export async function auditNailPixels(directory,{baselineOnly=false}={}){
     await page.close();
     const failures=[],warnings=[];
     for(const photo of [...decodedRefs,...decodedCandidates]){
+      const grid=inspectPanelGrid({vertical:photo.seamPositions.vertical,
+        horizontal:photo.seamPositions.horizontal,width:photo.width,height:photo.height});
+      if(grid.likelyContactSheet)
+        failures.push(photo.id+": multi-panel contact sheet detected ("+
+          grid.regularVerticalCount+" vertical and "+grid.regularHorizontalCount+" horizontal separators)");
       if(photo.sharpness<=MIN_SHARPNESS)
         failures.push(photo.id+": insufficient fine detail (Laplacian variance "+photo.sharpness.toFixed(1)+")");
       if(photo.transparencyFraction>.01)
@@ -167,9 +194,11 @@ export async function auditNailPixels(directory,{baselineOnly=false}={}){
       }
     }
     // Never report entire 3072-channel thumbnails or source media in logs.
-    const compact=photos=>photos.map(({id,width,height,sharpness,transparencyFraction,edgeHash})=>({
+    const compact=photos=>photos.map(({id,width,height,sharpness,transparencyFraction,edgeHash,seamPositions})=>({
       id,width,height,sharpness:Number(sharpness.toFixed(2)),
-      transparencyFraction:Number(transparencyFraction.toFixed(5)),edgeHash
+      transparencyFraction:Number(transparencyFraction.toFixed(5)),edgeHash,
+      panelGrid:inspectPanelGrid({vertical:seamPositions.vertical,
+        horizontal:seamPositions.horizontal,width,height})
     }));
     return {status:failures.length?"REJECTED":baselineOnly?"BASELINE_VERIFIED":"PIXEL_PREFLIGHT_ONLY",
       thresholds:{minSharpnessExclusive:MIN_SHARPNESS,minNormalizedRgbDiffExclusive:MIN_PIXEL_DISTANCE},
