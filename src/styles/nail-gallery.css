@@ -235,3 +235,43 @@
 }
 .nail-more button:focus-visible{outline:2px solid var(--color-gold-ink);outline-offset:2px;}
 @media(prefers-reduced-motion:reduce){.nail-more__track span{transition:none;}}
+
+
+/* Clearly grouped design families and tactile shade selection in style details */
+.nail-filter-label--family {
+  display:flex;justify-content:space-between;align-items:baseline;gap:.6rem;flex-wrap:wrap;
+}
+.nail-filter-label__hint {
+  font-size:.66rem;font-weight:400;color:var(--color-ink-3);
+}
+.nail-families {
+  padding-block:.15rem .4rem;
+}
+.nail-detail__colorways {
+  border-block:1px solid var(--color-line);padding-block:1rem;
+  display:grid;gap:.75rem;
+}
+.nail-detail__colorways-head {
+  display:flex;align-items:center;justify-content:space-between;gap:.6rem;
+}
+.nail-detail__colorways-head strong {
+  font-size:.82rem;font-weight:650;
+}
+.nail-detail__colorways-head span{
+  font-size:.71rem;color:var(--color-ink-2);
+}
+.nail-detail__swatches {
+  display:grid;grid-template-columns:repeat(6,minmax(0,1fr));
+  gap:.55rem;justify-items:center;
+}
+.nail-detail__swatch {
+  border-radius:999px;background:transparent;border:2px solid transparent;
+  display:grid;place-items:center;width:44px;height:44px;padding:4px;
+}
+.nail-detail__swatch>span {
+  display:block;width:30px;height:30px;border-radius:50%;border:1px solid #79707855;
+  box-shadow:inset 1px 2px 3px #ffffff66,0 1px 3px #34202922;
+}
+.nail-detail__swatch[aria-pressed="true"] {border-color:var(--color-gold-ink);}
+.nail-detail__swatch:focus-visible {outline:2px solid var(--color-gold-ink);outline-offset:2px;}
+@media(max-width:499px) {.nail-detail__swatches{grid-template-columns:repeat(4,minmax(0,1fr));gap:.35rem;}}
