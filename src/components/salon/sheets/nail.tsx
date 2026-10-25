@@ -31,9 +31,20 @@ export function NailSheet({ open, style, onClose }: { open: boolean; style: Nail
   const finish = NAIL_FINISHES.find((entry) => entry.key === style.finish)?.title ?? style.finish;
   const shape = NAIL_SHAPES.find((entry) => entry.key === style.shape)?.title ?? style.shape;
   const family = NAIL_ATLAS_FAMILIES[style.kind ?? "manicure"].find(entry=>style.id.startsWith(entry.prefix));
-  const colorways = family
+  const familyVariants = family
     ? NAIL_STYLES.filter(item=>item.id.startsWith(family.prefix))
     : [];
+  // A shade-only action must never silently change a saved design's shape
+  // or length. Older catalog references had independently varied metadata,
+  // so display those as explicitly different variants instead.
+  const colorways = familyVariants.filter(item=>
+    item.shape===style.shape && item.length===style.length);
+  const otherVariants = familyVariants.filter(item=>
+    item.shape!==style.shape || item.length!==style.length);
+  const shapeLabel=(candidate:NailStyle)=>
+    NAIL_SHAPES.find(item=>item.key===candidate.shape)?.title ?? candidate.shape;
+  const lengthLabel=(candidate:NailStyle)=>
+    candidate.length==="short"?"کوتاه":candidate.length==="medium"?"متوسط":"بلند";
 
   return (
     <Sheet open={open} onClose={onClose} title={style.title}>
@@ -53,10 +64,10 @@ export function NailSheet({ open, style, onClose }: { open: boolean; style: Nail
           <span>فرم: {shape}</span>
           <span>طول: {style.length === "short" ? "کوتاه" : style.length === "medium" ? "متوسط" : "بلند"}</span>
         </div>
-        {family && colorways.length ? (
-          <section className="nail-detail__colorways" aria-label="انتخاب رنگ‌بندی همین طرح">
+        {family && familyVariants.length ? (
+          <section className="nail-detail__colorways" aria-label="رنگ‌بندی و فرم‌های همین مجموعه">
             <div className="nail-detail__colorways-head">
-              <strong>رنگ‌بندی این مجموعه</strong>
+              <strong>رنگ‌بندی با فرم و طول یکسان</strong>
               <span>{colorways.length.toLocaleString("fa-IR")} رنگ</span>
             </div>
             <div className="nail-detail__swatches" role="group" aria-label="انتخاب رنگ‌بندی">
@@ -74,6 +85,25 @@ export function NailSheet({ open, style, onClose }: { open: boolean; style: Nail
                 </button>
               ))}
             </div>
+            {otherVariants.length ? (
+              <div className="nail-detail__alternative-forms">
+                <strong>رنگ‌ها با فرم یا طول متفاوت</strong>
+                <p>انتخاب‌های زیر ممکن است علاوه بر رنگ، فرم یا طول ناخن را نیز تغییر دهند.</p>
+                <div className="nail-detail__alternative-list" role="group" aria-label="انتخاب مدل با فرم یا طول متفاوت">
+                  {otherVariants.map(option=>(
+                    <button key={option.id} type="button"
+                      aria-label={`انتخاب مدل ${option.title} با فرم ${shapeLabel(option)} و طول ${lengthLabel(option)}`}
+                      title={option.title}
+                      onClick={()=>{haptic();openSheet({kind:"nail",id:option.id});}}>
+                      <span className="nail-detail__alternative-dot"
+                        style={{background:`linear-gradient(135deg,${option.base},${option.accent})`}}/>
+                      <span>{option.title}</span>
+                      <small>{shapeLabel(option)} · {lengthLabel(option)}</small>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ) : null}
           </section>
         ) : null}
         <p className="nail-detail__note">این طرح نمونهٔ الهام‌بخش ساخته‌شده با هوش مصنوعی یا تصویرسازی برداری است و عکس اجرای واقعی سالن نیست. انتخاب مواد، قیمت و زمان اجرا پس از مشاوره تعیین می‌شوند.</p>
