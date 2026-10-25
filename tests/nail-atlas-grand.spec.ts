@@ -16,7 +16,7 @@ test("grand atlas has 220 manicures and pages results by 24 cards",async({page})
   await expect(page.getByRole("group",{name:"انتخاب گالری دست یا پا"})
     .getByRole("button",{name:"مانیکور · ۲۲۰ طرح"})).toBeVisible();
   await expect(page.locator(".nail-card")).toHaveCount(24);
-  await expect(page.getByText("۲۴ از ۲۲۰ طرح")).toBeVisible();
+  await expect(page.locator(".nail-collection__toolbar").getByText("۲۴ از ۲۲۰ طرح")).toBeVisible();
   await page.getByRole("button",{name:"نمایش طرح‌های بیشتر"}).click();
   await expect(page.locator(".nail-card")).toHaveCount(48);
   const overflow=await page.evaluate(()=>
@@ -30,7 +30,7 @@ test("grand atlas pedicure collection has 78 styles with lazy paging",async({pag
   await atlas(page,390);
   const group=page.getByRole("group",{name:"انتخاب گالری دست یا پا"});
   await group.getByRole("button",{name:"پدیکور · ۷۸ طرح"}).click();
-  await expect(page.getByText("۲۴ از ۷۸ طرح")).toBeVisible();
+  await expect(page.locator(".nail-collection__toolbar").getByText("۲۴ از ۷۸ طرح")).toBeVisible();
   await expect(page.locator(".nail-card")).toHaveCount(24);
   await page.getByRole("group",{name:"فیلتر نوع طراحی ناخن"})
     .getByRole("button",{name:"هاله‌ای"}).click();
