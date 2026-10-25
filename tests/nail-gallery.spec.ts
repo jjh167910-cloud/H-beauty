@@ -115,3 +115,29 @@ test("installed editorial nail images show photo without hiding alt fallback",as
   expect(crop).toBe("cover");
   await expect(card.locator(".nail-visual__fallback svg")).toHaveCount(1);
 });
+
+test("pedicure has six dedicated designs, distinct from manicure", async ({ page }) => {
+  await ready(page,320);
+  const group=page.getByRole("group",{name:"انتخاب گالری دست یا پا"});
+  await group.getByRole("button",{name:"پدیکور · ۶ طرح"}).click();
+  await expect(page.getByRole("heading",{name:"گالری پدیکور"})).toBeVisible();
+  await expect(page.locator(".nail-card")).toHaveCount(6);
+  await expect(page.locator(".nail-card svg[aria-label*='پدیکور']").first()).toBeVisible();
+  const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
+  expect(overflow).toBeLessThanOrEqual(1);
+  await group.getByRole("button",{name:"مانیکور · ۲۸ طرح"}).click();
+  await expect(page.locator(".nail-card")).toHaveCount(28);
+});
+
+test("pedicure reference is saved in the existing appointment flow", async ({page}) => {
+  await ready(page,390);
+  await page.getByRole("group",{name:"انتخاب گالری دست یا پا"}).getByRole("button",{name:"پدیکور · ۶ طرح"}).click();
+  await page.getByRole("button",{name:"مشاهده طرح پدیکور قرمز یاقوتی"}).click();
+  const detail=page.getByRole("dialog",{name:"پدیکور قرمز یاقوتی"});
+  await expect(detail).toBeVisible();
+  await detail.getByRole("button",{name:"درخواست اجرای همین طرح"}).click();
+  const booking=page.getByRole("dialog",{name:"درخواست نوبت"});
+  await expect(booking).toBeVisible();
+  await expect(booking.getByText("پدیکور قرمز یاقوتی").first()).toBeVisible();
+  await expect(booking.getByText("پدیکور و ژلیش").first()).toBeVisible();
+});
