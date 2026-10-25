@@ -34,8 +34,15 @@ async function visit(page:Page) {
 
 async function pixelCrop(page:Page,kind:"manicure"|"pedicure") {
   return page.locator(".nail-card .nail-visual__fallback svg").evaluate(async(svg,which)=>{
-    // SVG is serialized intact, with its live gradient, clipPath and motif.
-    const svgText=new XMLSerializer().serializeToString(svg);
+    // The crop is defined in viewBox units. A detached <svg> with missing or
+    // percentage dimensions otherwise rasterizes at a browser fallback size,
+    // causing the sampled nail region to miss the design entirely.
+    const [sourceWidth,sourceHeight]=which==="manicure" ? [290,255] : [312,262];
+    const copy=svg.cloneNode(true) as SVGSVGElement;
+    copy.setAttribute("xmlns","http://www.w3.org/2000/svg");
+    copy.setAttribute("width",String(sourceWidth));
+    copy.setAttribute("height",String(sourceHeight));
+    const svgText=new XMLSerializer().serializeToString(copy);
     const img=new Image();
     img.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(svgText);
     await img.decode();
