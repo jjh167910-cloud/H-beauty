@@ -10,6 +10,7 @@ import { Button, IconButton, haptic, useSalonActions } from "./ui";
 const TITLES: Partial<Record<Tab, string>> = {
   services: "منوی خدمات",
   looks: "گالری مدل مو",
+  nails: "آتلیه ناخن",
   bookings: "درخواست‌های من",
   me: "حساب من",
   design: "سیستم طراحی",
