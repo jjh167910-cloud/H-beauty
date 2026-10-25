@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { normalize, persian } from "@/data/catalog";
+import { NAIL_ATLAS_FAMILIES } from "@/data/nail-expansion";
 import { NAIL_STYLES, NAIL_COUNTS, NAIL_FINISHES, NAIL_COLORS, NAIL_SHAPES, NAIL_LENGTHS, type NailFinish, type NailShape, type NailColor, type NailLength, type NailKind } from "@/data/nail-styles";
 import { useSalon } from "@/lib/salon-store";
 import { Icon } from "../icons";
@@ -13,6 +14,7 @@ export function NailsScreen() {
   const [kind,setKind] = useState<NailKind>("manicure");
   const featuredId=kind==="pedicure" ? "pedi-french" : "nail-pearl-chrome";
   const featured=NAIL_STYLES.find(item=>item.id===featuredId)!;
+  const [family,setFamily] = useState("all");
   const [finish, setFinish] = useState<NailFinish | "all">("all");
   const [shape, setShape] = useState<NailShape | "all">("all");
   const [color, setColor] = useState<NailColor | "all">("all");
@@ -23,10 +25,13 @@ export function NailsScreen() {
   const [order,setOrder] = useState<"curated" | "alphabetical">("curated");
   const favorites = useSalon((state) => state.favNails);
   const toggleFavorite = useSalon((state) => state.toggleFavNail);
+  const familyOptions = NAIL_ATLAS_FAMILIES[kind];
+  const activeFamily = familyOptions.find(item=>item.key===family);
   const results = useMemo(() => {
     const q = normalize(query).toLowerCase();
     const filtered = NAIL_STYLES.filter((style) =>
       (style.kind ?? "manicure") === kind &&
+      (!activeFamily || style.id.startsWith(activeFamily.prefix)) &&
       (finish === "all" || finish === style.finish) &&
       (shape === "all" || shape === style.shape) &&
       (color === "all" || color === style.color) &&
@@ -36,12 +41,12 @@ export function NailsScreen() {
     );
     if(order==="alphabetical") return [...filtered].sort((a,b)=>a.title.localeCompare(b.title,"fa"));
     return filtered;
-  }, [kind, finish, shape, color, length, savedOnly, favorites, query, order]);
-  useEffect(()=>setVisibleCount(PAGE_SIZE),[kind,finish,shape,color,length,savedOnly,query,order]);
+  }, [kind, activeFamily, finish, shape, color, length, savedOnly, favorites, query, order]);
+  useEffect(()=>setVisibleCount(PAGE_SIZE),[kind,family,finish,shape,color,length,savedOnly,query,order]);
   const visible = results.slice(0,visibleCount);
 
   const reset = () => {
-    setFinish("all"); setShape("all"); setColor("all"); setLength("all"); setSavedOnly(false); setQuery(""); setOrder("curated"); setVisibleCount(PAGE_SIZE);
+    setFamily("all"); setFinish("all"); setShape("all"); setColor("all"); setLength("all"); setSavedOnly(false); setQuery(""); setOrder("curated"); setVisibleCount(PAGE_SIZE);
   };
 
   return (
@@ -96,6 +101,16 @@ export function NailsScreen() {
           <input type="search" value={query} onChange={(event) => setQuery(event.target.value)}
             placeholder="جست‌وجوی رنگ، فرم یا سبک" aria-label="جست‌وجو در گالری ناخن"/>
         </label>
+        <div className="nail-filter-label nail-filter-label--family px-gutter">
+          <span>مجموعه‌های تخصصی</span>
+          <span className="nail-filter-label__hint">{persian(familyOptions.length)} مجموعه · {kind==="pedicure"?"۶":"۱۲"} رنگ‌بندی در هر مجموعه</span>
+        </div>
+        <div className="chip-row studio-chip-row nail-families" role="group" aria-label="فیلتر مجموعه طراحی ناخن">
+          <Chip active={family==="all"} onClick={()=>setFamily("all")}>همه مجموعه‌ها</Chip>
+          {familyOptions.map(option=>(
+            <Chip key={option.key} active={family===option.key} onClick={()=>setFamily(option.key)}>{option.title}</Chip>
+          ))}
+        </div>
         <div className="nail-filter-label px-gutter">سبک و جلوه</div>
         <div className="chip-row studio-chip-row" role="group" aria-label="فیلتر نوع طراحی ناخن">
           {NAIL_FINISHES.map((option) => (
