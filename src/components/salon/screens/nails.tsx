@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { normalize, persian } from "@/data/catalog";
-import { NAIL_STYLES, NAIL_FINISHES, NAIL_COLORS, NAIL_SHAPES, type NailFinish, type NailShape, type NailColor } from "@/data/nail-styles";
+import { NAIL_STYLES, NAIL_FINISHES, NAIL_COLORS, NAIL_SHAPES, NAIL_LENGTHS, type NailFinish, type NailShape, type NailColor, type NailLength } from "@/data/nail-styles";
 import { useSalon } from "@/lib/salon-store";
 import { Icon } from "../icons";
 import { NailPreview } from "../nail-preview";
@@ -11,6 +11,7 @@ export function NailsScreen() {
   const [finish, setFinish] = useState<NailFinish | "all">("all");
   const [shape, setShape] = useState<NailShape | "all">("all");
   const [color, setColor] = useState<NailColor | "all">("all");
+  const [length, setLength] = useState<NailLength | "all">("all");
   const [savedOnly, setSavedOnly] = useState(false);
   const [query, setQuery] = useState("");
   const favorites = useSalon((state) => state.favNails);
@@ -21,13 +22,14 @@ export function NailsScreen() {
       (finish === "all" || finish === style.finish) &&
       (shape === "all" || shape === style.shape) &&
       (color === "all" || color === style.color) &&
+      (length === "all" || length === style.length) &&
       (!savedOnly || favorites.includes(style.id)) &&
       (!q || normalize(`${style.title} ${style.en} ${style.description}`).toLowerCase().includes(q))
     );
-  }, [finish, shape, color, savedOnly, favorites, query]);
+  }, [finish, shape, color, length, savedOnly, favorites, query]);
 
   const reset = () => {
-    setFinish("all"); setShape("all"); setColor("all"); setSavedOnly(false); setQuery("");
+    setFinish("all"); setShape("all"); setColor("all"); setLength("all"); setSavedOnly(false); setQuery("");
   };
 
   return (
@@ -88,6 +90,12 @@ export function NailsScreen() {
         <div className="chip-row studio-chip-row" role="group" aria-label="فیلتر فرم ناخن">
           {NAIL_SHAPES.map((option) => (
             <Chip key={option.key} active={shape === option.key} onClick={() => setShape(option.key)}>{option.title}</Chip>
+          ))}
+        </div>
+        <div className="nail-filter-label px-gutter">طول ناخن</div>
+        <div className="chip-row studio-chip-row" role="group" aria-label="فیلتر طول ناخن">
+          {NAIL_LENGTHS.map((option) => (
+            <Chip key={option.key} active={length === option.key} onClick={() => setLength(option.key)}>{option.title}</Chip>
           ))}
         </div>
         <div className="nail-filter-label px-gutter">رنگ</div>
