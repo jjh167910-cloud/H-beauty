@@ -31,6 +31,7 @@ export function NailSheet({ open, style, onClose }: { open: boolean; style: Nail
     const root=imageRoot.current;
     if(!root)return;
     let disposed=false,generation=0;
+    setPreparedImage(null);
     setPrepareFailed(null);
     const prepare=()=>{
       if(disposed||!root.isConnected)return;
