@@ -1,14 +1,20 @@
+import { NAIL_EXPANSION } from "./nail-expansion";
 /** Reference nail concepts. Editorial vector swatches, not photographs of salon work. */
-export type NailFinish = "gloss" | "french" | "chrome" | "ombre" | "glitter" | "art";
+export type NailFinish = "gloss" | "french" | "chrome" | "ombre" | "glitter" | "art" | "matte" | "cat-eye" | "jelly" | "aura" | "foil" | "3d";
 export type NailShape = "almond" | "oval" | "square" | "coffin";
 export type NailColor = "nude" | "pink" | "red" | "dark" | "color";
 export type NailLength = "short" | "medium" | "long";
 export type NailKind = "manicure" | "pedicure";
+export type NailMotif = "plain" | "velvet" | "beam" | "jelly" | "aura" | "foil" |
+  "botanical" | "geometry" | "stars" | "waves" | "minimal" | "pearls" |
+  "leaves" | "gradient" | "prism" | "double-french" | "watercolor" | "marble";
 
 export type NailStyle = {
   id: string;
   /** Old styles remain manicure by default for stored customer favorites. */
   kind?: NailKind;
+  /** Decorative motif rendered in the local SVG inspiration sheet. */
+  motif?: NailMotif;
   title: string;
   en: string;
   description: string;
@@ -30,6 +36,12 @@ export const NAIL_FINISHES: ReadonlyArray<{ key: NailFinish | "all"; title: stri
   { key: "ombre", title: "آمبره" },
   { key: "glitter", title: "اکلیلی" },
   { key: "art", title: "دیزاین" },
+  { key: "matte", title: "مات مخملی" },
+  { key: "cat-eye", title: "چشم‌گربه‌ای" },
+  { key: "jelly", title: "ژلی شفاف" },
+  { key: "aura", title: "هاله‌ای" },
+  { key: "foil", title: "ورق فلزی" },
+  { key: "3d", title: "سه‌بعدی" },
 ];
 
 export const NAIL_SHAPES: ReadonlyArray<{ key: NailShape | "all"; title: string }> = [
@@ -91,6 +103,13 @@ export const NAIL_STYLES: readonly NailStyle[] = [
   { id:"pedi-blush",kind:"pedicure",title:"پدیکور صورتی ملایم",en:"Soft Blush Pedicure",description:"صورتی طبیعی با جلوه تمیز و براق",finish:"gloss",shape:"square",color:"pink",length:"short",base:"#D8A0A0",accent:"#F7D7CF",serviceId:"classic-pedicure" },
   { id:"pedi-lavender",kind:"pedicure",title:"پدیکور یاسی",en:"Lavender Pedicure",description:"رنگ یاسی پاستلی و سبک تابستانی",finish:"gloss",shape:"square",color:"color",length:"short",base:"#AF98D6",accent:"#EFE4FF",serviceId:"gel-pedicure" },
   { id:"pedi-sparkle",kind:"pedicure",title:"پدیکور اکلیلی",en:"Sparkle Pedicure",description:"ریزاکلیل رزگلد برای درخشش ظریف",finish:"glitter",shape:"square",color:"pink",length:"short",base:"#CC9D9C",accent:"#F5DCCB",serviceId:"gel-pedicure" },
+  ...NAIL_EXPANSION,
 ] as const;
+
+export const NAIL_COUNTS = {
+  manicure: NAIL_STYLES.filter(style => (style.kind ?? "manicure") === "manicure").length,
+  pedicure: NAIL_STYLES.filter(style => style.kind === "pedicure").length,
+  total: NAIL_STYLES.length,
+} as const;
 
 export const nailById = new Map(NAIL_STYLES.map((style) => [style.id, style]));

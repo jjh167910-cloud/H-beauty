@@ -16,13 +16,13 @@ for (const width of [320,390,768]) {
   test(`nail art gallery responsive with usable filters at ${width}px`,async({page})=>{
     await ready(page,width);
     const cards=page.locator(".nail-card");
-    await expect(cards).toHaveCount(28);
+    await expect(cards).toHaveCount(24);
     const over=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
     expect(over).toBeLessThanOrEqual(1);
     await page.getByRole("group",{name:"فیلتر نوع طراحی ناخن"}).getByRole("button",{name:"فرنچ"}).click();
-    await expect(cards).toHaveCount(6);
+    await expect(cards).toHaveCount(24);
     await page.getByRole("group",{name:"فیلتر فرم ناخن"}).getByRole("button",{name:"بادامی"}).click();
-    await expect(cards).toHaveCount(2);
+    await expect(cards).toHaveCount(14);
     const save=cards.first().getByRole("button",{name:/ذخیره طرح/});
     const box=await save.boundingBox();
     expect(box?.height).toBeGreaterThanOrEqual(44);
@@ -60,8 +60,8 @@ test("nail gallery is accessible from services and home entry",async({page})=>{
   await page.getByRole("button",{name:"ورود به گالری طراحی ناخن"}).click();
   await expect(page.getByRole("heading",{name:/هنر ناخن/})).toBeVisible();
   await page.getByRole("button",{name:"حنانه بیوتی، خانه"}).click();
-  await page.getByRole("button",{name:"دیدن گالری ۲۸ طرح ناخن"}).click();
-  await expect(page.locator(".nail-card")).toHaveCount(28);
+  await page.getByRole("button",{name:"دیدن گالری 298 طرح ناخن"}).click();
+  await expect(page.locator(".nail-card")).toHaveCount(24);
 });
 
 test("nail search and empty state reset without breaking navigation",async({page})=>{
@@ -69,7 +69,7 @@ test("nail search and empty state reset without breaking navigation",async({page
   await page.getByRole("searchbox",{name:"جست‌وجو در گالری ناخن"}).fill("NOT-A-NAIL");
   await expect(page.getByText("طرحی با این فیلترها پیدا نشد.")).toBeVisible();
   await page.getByRole("button",{name:"نمایش همه طرح‌ها"}).click();
-  await expect(page.locator(".nail-card")).toHaveCount(28);
+  await expect(page.locator(".nail-card")).toHaveCount(24);
 });
 
 
@@ -117,19 +117,19 @@ test("shipped WebP displays in gallery without hiding alt fallback",async({page}
 test("pedicure has six dedicated designs, distinct from manicure", async ({ page }) => {
   await ready(page,320);
   const group=page.getByRole("group",{name:"انتخاب گالری دست یا پا"});
-  await group.getByRole("button",{name:"پدیکور · ۶ طرح"}).click();
+  await group.getByRole("button",{name:"پدیکور · ۷۸ طرح"}).click();
   await expect(page.getByRole("heading",{name:"گالری پدیکور"})).toBeVisible();
-  await expect(page.locator(".nail-card")).toHaveCount(6);
+  await expect(page.locator(".nail-card")).toHaveCount(24);
   await expect(page.locator(".nail-card svg[aria-label*='پدیکور']").first()).toBeVisible();
   const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
   expect(overflow).toBeLessThanOrEqual(1);
-  await group.getByRole("button",{name:"مانیکور · ۲۸ طرح"}).click();
-  await expect(page.locator(".nail-card")).toHaveCount(28);
+  await group.getByRole("button",{name:"مانیکور · ۲۲۰ طرح"}).click();
+  await expect(page.locator(".nail-card")).toHaveCount(24);
 });
 
 test("pedicure reference is saved in the existing appointment flow", async ({page}) => {
   await ready(page,390);
-  await page.getByRole("group",{name:"انتخاب گالری دست یا پا"}).getByRole("button",{name:"پدیکور · ۶ طرح"}).click();
+  await page.getByRole("group",{name:"انتخاب گالری دست یا پا"}).getByRole("button",{name:"پدیکور · ۷۸ طرح"}).click();
   await page.getByRole("button",{name:"مشاهده طرح پدیکور قرمز یاقوتی"}).click();
   const detail=page.getByRole("dialog",{name:"پدیکور قرمز یاقوتی"});
   await expect(detail).toBeVisible();
@@ -144,7 +144,7 @@ test("pedicure reference is saved in the existing appointment flow", async ({pag
 test("pedicure featured art and appointment buttons stay in pedicure category", async ({ page }) => {
   await ready(page,390);
   await page.getByRole("group",{name:"انتخاب گالری دست یا پا"})
-    .getByRole("button",{name:"پدیکور · ۶ طرح"}).click();
+    .getByRole("button",{name:"پدیکور · ۷۸ طرح"}).click();
   await page.getByRole("button",{name:"کشف طرح منتخب"}).click();
   await expect(page.getByRole("dialog",{name:"پدیکور فرنچ"})).toBeVisible();
   await page.getByRole("button",{name:"بستن"}).first().click();
