@@ -37,9 +37,21 @@ export function PedicurePreview({ style }: { style: NailStyle }) {
                 <rect x={t.x-t.w/2} y={t.y-t.ry+10} width={t.w} height={t.h} rx={Math.min(t.w/3,8)}/>
               </clipPath>
               <g clipPath={`url(#pedi-${id}-clip-${i})`}>
-                <g transform={`translate(${t.x} ${t.y-t.ry+10+t.h/2}) scale(${t.w/36} ${t.h/80})`}>
-                  <NailOrnament motif={style.motif} accent={style.accent} base={style.base} index={i}/>
-                </g>
+                {style.motif==="minimal" ? (
+                  // A single salon-scale accent dot: 80-unit manicure patterns
+                  // shrink too far on the 16–31px-wide pedicure nail beds.
+                  <g>
+                    <circle cx={t.x} cy={t.y-t.ry+10+t.h*.47}
+                      r={Math.max(2.1,t.w*.125)}
+                      fill={style.color==="dark"?"#FFF5EA":"#57413C"}/>
+                    <circle cx={t.x-.5} cy={t.y-t.ry+10+t.h*.47-1}
+                      r={Math.max(.55,t.w*.025)} fill="#FFF9F0" opacity=".66"/>
+                  </g>
+                ) : (
+                  <g transform={`translate(${t.x} ${t.y-t.ry+10+t.h/2}) scale(${t.w/36} ${t.h/80})`}>
+                    <NailOrnament motif={style.motif} accent={style.accent} base={style.base} index={i}/>
+                  </g>
+                )}
               </g>
             </>
           ) : null}
