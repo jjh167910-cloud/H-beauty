@@ -155,3 +155,39 @@
 .nail-service-entry small{font-size:.71rem;color:var(--color-ink-2);line-height:1.7;}
 .nail-service-entry>:last-child{flex-shrink:0;}
 @media (max-width:355px){.nail-home-banner__copy{width:64%;padding:1rem;}.nail-home-banner__copy strong{font-size:1.06rem;}.nail-home-banner__art{width:50%;}}
+
+
+/* Optional photographed nail references: exact same frames as vector fallback. */
+.nail-visual {
+  position:relative;display:block;isolation:isolate;overflow:hidden;
+  width:100%;height:100%;
+}
+.nail-visual__fallback,
+.nail-visual__photo {
+  position:absolute;inset:0;display:block;width:100%;height:100%;
+}
+.nail-visual__fallback {display:grid;place-items:center;}
+.nail-visual__fallback svg {width:100%;height:100%;object-fit:contain;}
+.nail-visual__photo {
+  object-fit:cover;object-position:center;
+  opacity:0;
+  transition:opacity .25s ease;
+}
+.nail-visual__photo[data-ready] {opacity:1;}
+.nail-card__picture .nail-visual {height:100%;}
+.nail-card__picture .nail-visual__photo {object-position:center 52%;}
+.nail-hero__art .nail-visual__photo {
+  object-position:54% 45%;
+  -webkit-mask-image:radial-gradient(ellipse 75% 84% at 54% 50%,#000 65%,transparent 100%);
+  mask-image:radial-gradient(ellipse 75% 84% at 54% 50%,#000 65%,transparent 100%);
+}
+.nail-home-banner__art .nail-visual__photo {
+  object-position:54% 50%;
+  -webkit-mask-image:linear-gradient(to right,#000 76%,transparent);
+  mask-image:linear-gradient(to right,#000 76%,transparent);
+}
+.nail-detail__visual .nail-visual{width:100%;height:auto;aspect-ratio:290/255;max-height:19rem;}
+.nail-detail__visual .nail-visual__photo{object-position:center;}
+@media (prefers-reduced-motion:reduce){
+  .nail-visual__photo{transition:none;}
+}
