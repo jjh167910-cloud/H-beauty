@@ -57,7 +57,14 @@ test("inspector retains crisp vector fallback when photographic references are o
   await detail.getByRole("button",{name:"نمایش تمام تصویر بدون برش"}).click();
   const visual=detail.locator("#nail-detail-image");
   await expect(visual.locator(".nail-visual[data-media-source='vector']")).toBeVisible();
-  await expect(visual.locator(".nail-visual__fallback svg")).toBeVisible();
+  const fallback=visual.locator(".nail-visual__fallback svg");
+  await expect(fallback).toBeVisible();
+  const normal=await fallback.boundingBox();
+  expect(normal).not.toBeNull();
   await detail.getByRole("button",{name:"بزرگ‌نمایی ۲ برابر و جابه‌جایی تصویر"}).click();
-  await expect(visual.locator(".nail-visual__fallback svg")).toBeVisible();
+  await expect(fallback).toBeVisible();
+  const zoomed=await fallback.boundingBox();
+  expect(zoomed).not.toBeNull();
+  expect(zoomed!.width).toBeGreaterThanOrEqual(normal!.width*1.9);
+  expect(zoomed!.height).toBeGreaterThanOrEqual(normal!.height*1.9);
 });
