@@ -188,6 +188,44 @@
 }
 .nail-detail__visual .nail-visual{width:100%;height:auto;aspect-ratio:290/255;max-height:19rem;}
 .nail-detail__visual .nail-visual__photo{object-position:center;}
+
+/* Photo inspection stays inside the existing accessible detail sheet:
+   actual WebP bytes and high-resolution SVG, never enlarged contact crops. */
+.nail-detail__inspect-actions{
+  display:flex;align-items:center;justify-content:space-between;gap:.5rem;
+  flex-wrap:wrap;margin-block-start:-.45rem;
+}
+.nail-detail__inspect-button{
+  min-height:44px;padding:.55rem .8rem;border-radius:.75rem;
+  border:1px solid var(--color-line-2);background:var(--color-sunken);
+  font-size:.77rem;font-weight:650;color:var(--color-ink);cursor:pointer;
+}
+.nail-detail__inspect-button:focus-visible{
+  outline:2px solid var(--color-gold-ink);outline-offset:2px;
+}
+.nail-detail__inspect-actions [role="status"]{
+  font-size:.67rem;line-height:1.7;color:var(--color-ink-2);
+}
+.nail-detail__visual--full{
+  max-height:65dvh;overflow:auto;overscroll-behavior:contain;
+  scrollbar-width:thin;
+}
+.nail-detail__visual--full .nail-visual{
+  width:100%;aspect-ratio:1/1;max-height:none;
+}
+.nail-detail__visual--full .nail-visual__photo{object-fit:contain;object-position:center;}
+.nail-detail__visual--full .nail-visual__fallback svg{object-fit:contain;}
+.nail-detail__visual--zoom{
+  touch-action:pan-x pan-y;
+}
+.nail-detail__visual--zoom .nail-visual{
+  width:200%;height:auto;max-height:none;
+  aspect-ratio:1/1;
+}
+@media(prefers-reduced-motion:reduce){
+  .nail-detail__visual--full .nail-visual__photo{transition:none;}
+}
+
 @media (prefers-reduced-motion:reduce){
   .nail-visual__photo{transition:none;}
 }
