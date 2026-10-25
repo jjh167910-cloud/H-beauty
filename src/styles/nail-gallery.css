@@ -406,3 +406,44 @@
   .nail-photo-refine__toggle {min-width:94px;padding:.45rem .6rem;}
   .nail-photo-refine__description>span {font-size:.68rem;}
 }
+
+
+/* Shape-safe color navigation: swatches never silently alter nail geometry. */
+.nail-detail__alternative-forms{
+  display:grid;gap:.65rem;margin-top:.25rem;padding-top:.85rem;
+  border-top:1px solid var(--color-line);
+}
+.nail-detail__alternative-forms>strong{
+  font-size:.8rem;font-weight:650;line-height:1.6;
+}
+.nail-detail__alternative-forms>p{
+  color:var(--color-ink-2);font-size:.72rem;line-height:1.85;
+}
+.nail-detail__alternative-list{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:.5rem;align-items:stretch;
+}
+.nail-detail__alternative-list button{
+  min-width:0;min-height:54px;display:grid;align-content:center;
+  grid-template-columns:18px minmax(0,1fr);grid-template-rows:auto auto;
+  text-align:start;column-gap:.45rem;row-gap:.08rem;
+  border:1px solid var(--color-line-2);border-radius:.7rem;
+  padding:.55rem .65rem;background:var(--color-surface);
+  color:var(--color-ink);
+}
+.nail-detail__alternative-list button:focus-visible{
+  outline:2px solid var(--color-gold-ink);outline-offset:2px;
+}
+.nail-detail__alternative-dot{
+  grid-row:1 / span 2;display:block;align-self:center;
+  width:16px;height:16px;border:1px solid #8f7c7d77;border-radius:50%;
+}
+.nail-detail__alternative-list button>span:nth-child(2){
+  font-size:.72rem;font-weight:640;overflow-wrap:anywhere;line-height:1.45;
+}
+.nail-detail__alternative-list button>small{
+  color:var(--color-ink-2);font-size:.64rem;line-height:1.5;
+}
+@media(max-width:375px){
+  .nail-detail__alternative-list{grid-template-columns:minmax(0,1fr);}
+}
