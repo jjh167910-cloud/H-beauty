@@ -45,7 +45,7 @@ export function PedicurePreview({ style }: { style: NailStyle }) {
           ) : null}
           {style.finish==="french" && style.motif!=="double-french"?<path d={`M ${t.x-t.w*.37} ${t.y-t.ry+18} Q ${t.x} ${t.y-t.ry+10} ${t.x+t.w*.37} ${t.y-t.ry+18}`} stroke="#FFFDF8" strokeWidth={i?3:4} fill="none" strokeLinecap="round"/>:null}
           {style.finish==="glitter"?<circle cx={t.x-3} cy={t.y-t.ry+18} r={i===0?3:1.8} fill="white" opacity=".85"/>:null}
-          <path d={`M ${t.x-t.w*.23} ${t.y-t.ry+16} L ${t.x-t.w*.23} ${t.y-t.ry+t.h*.72}`} stroke="#FFFFFF" strokeWidth="2" opacity=".43" strokeLinecap="round"/>
+          {style.finish!=="matte" ? <path d={`M ${t.x-t.w*.23} ${t.y-t.ry+16} L ${t.x-t.w*.23} ${t.y-t.ry+t.h*.72}`} stroke="#FFFFFF" strokeWidth="2" opacity={style.finish==="jelly"?".16":style.finish==="chrome"?".7":".43"} strokeLinecap="round"/> : null}
         </g>
       ))}
     </svg>
