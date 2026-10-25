@@ -39,10 +39,13 @@ export function NailVisual({
   style,
   className = "",
   priority = false,
+  onPhotoUnavailable,
 }: {
   style: NailStyle;
   className?: string;
   priority?: boolean;
+  /** The gallery can remove broken assets from its photo-only results. */
+  onPhotoUnavailable?: (styleId: string) => void;
 }) {
   const [failed, setFailed] = useState(false);
   const [ready, setReady] = useState(false);
@@ -67,7 +70,10 @@ export function NailVisual({
           width={600}
           height={600}
           onLoad={() => setReady(true)}
-          onError={() => setFailed(true)}
+          onError={() => {
+            setFailed(true);
+            onPhotoUnavailable?.(style.id);
+          }}
         />
       ) : null}
     </span>
