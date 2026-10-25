@@ -142,3 +142,17 @@ test("pedicure reference is saved in the existing appointment flow", async ({pag
   const cart=await page.evaluate(()=>JSON.parse(localStorage.getItem("hananeh-atelier-v1")||"{}").cart||[]);
   expect(cart).toContain("gel-pedicure");
 });
+
+test("pedicure featured art and appointment buttons stay in pedicure category", async ({ page }) => {
+  await ready(page,390);
+  await page.getByRole("group",{name:"انتخاب گالری دست یا پا"})
+    .getByRole("button",{name:"پدیکور · ۶ طرح"}).click();
+  await page.getByRole("button",{name:"کشف طرح منتخب"}).click();
+  await expect(page.getByRole("dialog",{name:"پدیکور فرنچ"})).toBeVisible();
+  await page.getByRole("button",{name:"بستن"}).first().click();
+  await page.getByRole("button",{name:"درخواست نوبت",exact:true}).click();
+  await expect(page.getByRole("dialog",{name:"درخواست نوبت"})).toBeVisible();
+  const cart=await page.evaluate(()=>JSON.parse(localStorage.getItem("hananeh-atelier-v1")||"{}").cart||[]);
+  expect(cart).toContain("classic-pedicure");
+  expect(cart).not.toContain("luxe-manicure");
+});
