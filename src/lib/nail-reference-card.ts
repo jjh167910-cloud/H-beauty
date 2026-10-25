@@ -145,9 +145,14 @@ export async function saveNailReferenceCard(style:NailStyle,visual:HTMLElement):
  * A user-cancelled share must not unexpectedly create a local download.
  * Neither path posts a customer image to an H-Beauty server.
  */
-export async function shareNailReferenceCard(style:NailStyle,visual:HTMLElement):
-  Promise<{status:"shared"|"downloaded"|"cancelled";source:SavedSource}> {
-  const {blob,source}=await createNailReferenceCard(style,visual);
+export function sharePreparedNailReferenceCard(
+  style:NailStyle,
+  prepared:{blob:Blob;source:SavedSource}
+):Promise<{status:"shared"|"downloaded"|"cancelled";source:SavedSource}> {
+  // CRITICAL: this function must be invoked directly by the button's click
+  // handler. No canvas rendering, blob encoding or await may precede share().
+  // Mobile browsers require transient user activation to open their share UI.
+  const {blob,source}=prepared;
   const filename="H-Beauty-"+style.id+".png";
   if(typeof File!=="undefined" &&
      typeof navigator.share==="function" &&
@@ -157,20 +162,30 @@ export async function shareNailReferenceCard(style:NailStyle,visual:HTMLElement)
     try{eligible=navigator.canShare({files:[file]});}catch{eligible=false;}
     if(eligible) {
       try{
-        await navigator.share({
+        const sharePromise=navigator.share({
           files:[file],
           title:"Hananeh Beauty — "+style.en,
           text:"مرجع طرح ناخن "+style.title+" — تصویر الهام‌بخش، نه عکس اجرای واقعی سالن",
         });
-        return {status:"shared",source};
+        // Navigator.share was invoked synchronously with the original click.
+        // Only await the *result* after the browser accepted that call.
+        return sharePromise.then(()=>({status:"shared" as const,source}))
+          .catch((error:unknown)=>{
+            if(error instanceof DOMException && error.name==="AbortError")
+              return {status:"cancelled" as const,source};
+            // Some share targets reject files after opening the share sheet.
+            // Offer the same local PNG via the existing download mechanism.
+            downloadReferenceBlob(style,blob);
+            return {status:"downloaded" as const,source};
+          });
       }catch(error){
         if(error instanceof DOMException && error.name==="AbortError")
-          return {status:"cancelled",source};
+          return Promise.resolve({status:"cancelled" as const,source});
         // A platform may deny file sharing despite canShare() returning true.
         // Fall back to a local download, never to server-side uploading.
       }
     }
   }
   downloadReferenceBlob(style,blob);
-  return {status:"downloaded",source};
+  return Promise.resolve({status:"downloaded",source});
 }

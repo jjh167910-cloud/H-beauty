@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { NailStyle } from "@/data/nail-styles";
 import { nailStyleShareUrl } from "@/data/nail-links";
 import { NAIL_FINISHES, NAIL_SHAPES, NAIL_STYLES } from "@/data/nail-styles";
@@ -7,7 +7,7 @@ import { serviceById, formatMinutes } from "@/data/salon";
 import { useSalon } from "@/lib/salon-store";
 import { Icon } from "../icons";
 import { NailVisual } from "../nail-visual";
-import { saveNailReferenceCard, shareNailReferenceCard } from "@/lib/nail-reference-card";
+import { createNailReferenceCard, saveNailReferenceCard, sharePreparedNailReferenceCard } from "@/lib/nail-reference-card";
 import { Button, Sheet, haptic, useSalonActions } from "../ui";
 
 export function NailSheet({ open, style, onClose }: { open: boolean; style: NailStyle; onClose: () => void }) {
@@ -15,19 +15,79 @@ export function NailSheet({ open, style, onClose }: { open: boolean; style: Nail
   const [shareStatus, setShareStatus] = useState<"copied"|"manual"|null>(null);
   const [manualLink,setManualLink] = useState("");
   const imageRoot=useRef<HTMLDivElement>(null);
+  // Drawer.Portal mounts after the Sheet's initial passive effects. A callback
+  // ref makes mounting the actual image element an explicit effect dependency.
+  const [mountedImageRoot,setMountedImageRoot]=useState<HTMLDivElement|null>(null);
+  const attachImageRoot=useCallback((node:HTMLDivElement|null)=>{
+    imageRoot.current=node;
+    setMountedImageRoot(node);
+  },[]);
   const [imageSave,setImageSave]=useState<{id:string;status:"idle"|"saving"|"saved"|"error"}>({id:style.id,status:"idle"});
   const saveStatus=imageSave.id===style.id?imageSave.status:"idle";
   const [imageShare,setImageShare]=useState<{id:string;status:"idle"|"sharing"|"shared"|"downloaded"|"cancelled"|"error"}>({id:style.id,status:"idle"});
   const shareImageStatus=imageShare.id===style.id?imageShare.status:"idle";
-  const shareImage=async()=>{
-    if(!imageRoot.current)return;
+  // Build the PNG before the tap. navigator.share() must run synchronously
+  // inside that tap; encoding a canvas after tapping may lose activation.
+  const [preparedImage,setPreparedImage]=useState<{
+    id:string;blob:Blob;source:"ai-photo"|"vector"
+  }|null>(null);
+  const [prepareFailed,setPrepareFailed]=useState<string|null>(null);
+  const readyToShare=preparedImage?.id===style.id;
+  useEffect(()=>{
+    if(!open)return;
+    const root=mountedImageRoot;
+    if(!root)return;
+    let disposed=false,generation=0;
+    setPreparedImage(null);
+    setPrepareFailed(null);
+    const prepare=()=>{
+      if(disposed||!root.isConnected)return;
+      // Do not silently export an SVG while an approved photograph is
+      // still loading. An image error removes it and enables vector fallback.
+      if(root.querySelector(".nail-visual__photo:not([data-ready])"))return;
+      const sequence=++generation;
+      void createNailReferenceCard(style,root).then(card=>{
+        if(!disposed&&sequence===generation) {
+          setPreparedImage({id:style.id,...card});
+          setPrepareFailed(null);
+        }
+      }).catch(()=>{
+        if(!disposed&&sequence===generation)
+          setPrepareFailed(style.id);
+      });
+    };
+    const imageChanged=()=>{requestAnimationFrame(prepare);};
+    root.addEventListener("load",imageChanged,true);
+    root.addEventListener("error",imageChanged,true);
+    // React applies data-ready *after* img.onload. A single animation frame
+    // can still see the not-ready DOM, then never retry. Observe the actual
+    // committed image state (also handles an offline fallback removing <img>).
+    const observer=new MutationObserver(imageChanged);
+    observer.observe(root,{
+      attributes:true,
+      attributeFilter:["data-ready","data-media-source","src"],
+      childList:true,
+      subtree:true,
+    });
+    const animation=requestAnimationFrame(prepare);
+    return ()=>{
+      disposed=true;generation++;
+      cancelAnimationFrame(animation);
+      observer.disconnect();
+      root.removeEventListener("load",imageChanged,true);
+      root.removeEventListener("error",imageChanged,true);
+    };
+  },[open,style.id,mountedImageRoot]);
+  const shareImage=()=>{
+    if(!preparedImage||preparedImage.id!==style.id)return;
     setImageShare({id:style.id,status:"sharing"});
-    try{
-      const result=await shareNailReferenceCard(style,imageRoot.current);
+    // Do not await anything before invoking this: the native share sheet
+    // is gated by browser transient activation on the original button tap.
+    void sharePreparedNailReferenceCard(style,preparedImage).then(result=>{
       setImageShare({id:style.id,status:result.status});
-    }catch{
+    }).catch(()=>{
       setImageShare({id:style.id,status:"error"});
-    }
+    });
   };
   const saveImage=async()=>{
     if(!imageRoot.current)return;
@@ -86,7 +146,7 @@ export function NailSheet({ open, style, onClose }: { open: boolean; style: Nail
   return (
     <Sheet open={open} onClose={onClose} title={style.title}>
       <article className="nail-detail">
-        <div ref={imageRoot} id="nail-detail-image" className={`nail-detail__visual${inspectLevel>0 ? " nail-detail__visual--full" : ""}${inspectLevel===2 ? " nail-detail__visual--zoom" : ""}`}
+        <div ref={attachImageRoot} id="nail-detail-image" className={`nail-detail__visual${inspectLevel>0 ? " nail-detail__visual--full" : ""}${inspectLevel===2 ? " nail-detail__visual--zoom" : ""}`}
           data-inspection-level={inspectLevel}>
           <NailVisual style={style} priority />
         </div>
@@ -174,14 +234,16 @@ export function NailSheet({ open, style, onClose }: { open: boolean; style: Nail
           {saveStatus==="saved" ? <p role="status">دانلود کارت تصویر این طرح آغاز شد.</p> : null}
           {saveStatus==="error" ? <p role="alert">ذخیره تصویر ممکن نشد؛ همچنان می‌توانید لینک طرح را به اشتراک بگذارید.</p> : null}
           <button type="button" className="nail-detail__share-button"
-            onClick={shareImage} disabled={shareImageStatus==="sharing"}
+            onClick={shareImage} disabled={shareImageStatus==="sharing" || !readyToShare}
             aria-label={`اشتراک تصویر طرح ${style.title}`}>
             <Icon name="share" size={19}/>
-            <span>{shareImageStatus==="sharing"?"در حال آماده‌سازی اشتراک…" : "اشتراک تصویر با برنامه‌های گوشی"}</span>
+            <span>{!readyToShare?"در حال آماده‌سازی کارت تصویر…" : shareImageStatus==="sharing"?"در حال اشتراک‌گذاری…" : "اشتراک تصویر با برنامه‌های گوشی"}</span>
           </button>
           {shareImageStatus==="shared"?<p role="status">تصویر طرح به برنامهٔ انتخابی تحویل داده شد.</p>:null}
           {shareImageStatus==="downloaded"?<p role="status">اشتراک مستقیم در دسترس نبود؛ دانلود تصویر آغاز شد.</p>:null}
           {shareImageStatus==="error"?<p role="alert">اشتراک تصویر ممکن نشد. می‌توانید فایل را ذخیره کنید.</p>:null}
+          {prepareFailed===style.id&&!readyToShare?
+            <p role="alert">آماده‌سازی تصویر برای اشتراک ممکن نشد؛ از ذخیره تصویر یا کپی لینک استفاده کنید.</p>:null}
           <button type="button" className="nail-detail__share-button" onClick={share}
             aria-label={`کپی لینک طرح ${style.title}`}>
             <Icon name="share" size={19} />
