@@ -1,0 +1,77 @@
+/**
+ * Import one ZIP into the Vite public assets directory on the CI/build runner.
+ * This avoids manually extracting 34 images in the GitHub interface.
+ * No dependencies, archive paths restricted to the committed SHA256 allowlist.
+ */
+import { readFileSync, existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { createHash } from "node:crypto";
+import { inflateRawSync } from "node:zlib";
+import { resolve, dirname } from "node:path";
+
+export const NAIL_ARCHIVE = "assets/Hananeh_Nail_Studio_34_Look_Editorial_Pack_v2.zip";
+const LOCK_PATH = "assets/hbeauty-nail-editorial-v2.sha256";
+const SIGNATURE = 0x02014b50;
+
+export function installNailPack(archivePath=NAIL_ARCHIVE) {
+  if (!existsSync(archivePath)) return {installed:false,count:0};
+  const bytes=readFileSync(archivePath);
+  if(bytes.length<10_000 || bytes.length>8*1024*1024)
+    throw new Error("Nail archive file size is unexpected");
+
+  const lock=readFileSync(resolve(LOCK_PATH),'utf8').trim().split(/\r?\n/);
+  const expected=new Map(lock.map(line=>{
+    const parts=line.match(/^([a-f0-9]{64})\s+(public\/nails\/photos\/(?:nail|pedi)-[a-z0-9-]+\.webp)$/);
+    if(!parts)throw new Error("Invalid nail ZIP allowlist");
+    return [parts[2],parts[1]];
+  }));
+  if(expected.size!==34) throw new Error("Expected 34 nail image checksums");
+
+  // Find end of ZIP's central directory. We never extract arbitrary paths.
+  let eocd=-1;
+  for(let i=bytes.length-22; i>=Math.max(0,bytes.length-65557);i--)
+    if(bytes.readUInt32LE(i)===0x06054b50){eocd=i;break;}
+  if(eocd<0)throw new Error("ZIP central directory missing");
+  const count=bytes.readUInt16LE(eocd+10);
+  let at=bytes.readUInt32LE(eocd+16);
+  if(count<34||count>50)throw new Error("Unexpected nail archive entry count");
+
+  const decoded=new Map();
+  for(let i=0;i<count;i++){
+    if(at+46>eocd || bytes.readUInt32LE(at)!==SIGNATURE)
+      throw new Error("Malformed ZIP directory");
+    const flags=bytes.readUInt16LE(at+8);
+    const method=bytes.readUInt16LE(at+10);
+    const compressed=bytes.readUInt32LE(at+20);
+    const plainSize=bytes.readUInt32LE(at+24);
+    const nameLen=bytes.readUInt16LE(at+28);
+    const extraLen=bytes.readUInt16LE(at+30);
+    const commentLen=bytes.readUInt16LE(at+32);
+    const localOffset=bytes.readUInt32LE(at+42);
+    if(at+46+nameLen+extraLen+commentLen>eocd)throw new Error("Malformed ZIP entry length");
+    const path=bytes.subarray(at+46,at+46+nameLen).toString('utf8');
+    at+=46+nameLen+extraLen+commentLen;
+    if(!expected.has(path))continue;
+    if(decoded.has(path)||flags&1||!([0,8].includes(method))||plainSize<7_000||plainSize>500_000)
+      throw new Error("Invalid ZIP nail photo entry "+path);
+    if(localOffset+30>bytes.length||bytes.readUInt32LE(localOffset)!==0x04034b50)
+      throw new Error("Invalid ZIP local header");
+    const offset=localOffset+30+bytes.readUInt16LE(localOffset+26)+bytes.readUInt16LE(localOffset+28);
+    if(offset+compressed>bytes.length)throw new Error("Truncated nail ZIP");
+    const packed=bytes.subarray(offset,offset+compressed);
+    const data=method===8?inflateRawSync(packed):packed;
+    if(data.length!==plainSize||data.subarray(0,4).toString()!=="RIFF"||data.subarray(8,12).toString()!=="WEBP")
+      throw new Error("Not a valid WebP in ZIP: "+path);
+    if(createHash('sha256').update(data).digest('hex')!==expected.get(path))
+      throw new Error("Nail image SHA256 mismatch "+path);
+    decoded.set(path,data);
+  }
+  if(decoded.size!==34)throw new Error(`Nail archive incomplete: ${decoded.size}/34 entries`);
+  // Write only after validating every file. No partial publication.
+  for(const [path,data] of decoded) {
+    const target=resolve(path);
+    mkdirSync(dirname(target),{recursive:true});
+    writeFileSync(target,data);
+  }
+  console.log("Installed verified nail photo ZIP: 34 files");
+  return {installed:true,count:34};
+}
