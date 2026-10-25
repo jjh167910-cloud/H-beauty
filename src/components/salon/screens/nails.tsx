@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { normalize, persian } from "@/data/catalog";
 import { NAIL_ATLAS_FAMILIES } from "@/data/nail-expansion";
 import { NAIL_STYLES, NAIL_COUNTS, NAIL_FINISHES, NAIL_COLORS, NAIL_SHAPES, NAIL_LENGTHS, type NailFinish, type NailShape, type NailColor, type NailLength, type NailKind } from "@/data/nail-styles";
@@ -23,6 +23,17 @@ export function NailsScreen() {
   const [length, setLength] = useState<NailLength | "all">("all");
   const [savedOnly, setSavedOnly] = useState(false);
   const [photoOnly,setPhotoOnly] = useState(false);
+  // The photo whitelist proves source quality, not that a WebP is reachable
+  // on this device. Keep a session-only record of failed asset requests.
+  const [unavailablePhotos,setUnavailablePhotos] = useState<Set<string>>(()=>new Set());
+  const markPhotoUnavailable=useCallback((id:string)=>{
+    setUnavailablePhotos(previous=>{
+      if(previous.has(id))return previous;
+      const updated=new Set(previous);
+      updated.add(id);
+      return updated;
+    });
+  },[]);
   const [query, setQuery] = useState("");
   const [visibleCount,setVisibleCount] = useState(PAGE_SIZE);
   const [order,setOrder] = useState<"curated" | "alphabetical">("curated");
@@ -41,7 +52,9 @@ export function NailsScreen() {
   const toggleFavorite = useSalon((state) => state.toggleFavNail);
   const familyOptions = NAIL_ATLAS_FAMILIES[kind];
   const photographicCount = NAIL_STYLES.filter(style=>
-    (style.kind ?? "manicure")===kind && Boolean(NAIL_EDITORIAL_PHOTOS[style.id])
+    (style.kind ?? "manicure")===kind &&
+    Boolean(NAIL_EDITORIAL_PHOTOS[style.id]) &&
+    !unavailablePhotos.has(style.id)
   ).length;
   const activeFamily = familyOptions.find(item=>item.key===family);
   const results = useMemo(() => {
@@ -54,12 +67,12 @@ export function NailsScreen() {
       (color === "all" || color === style.color) &&
       (length === "all" || length === style.length) &&
       (!savedOnly || favorites.includes(style.id)) &&
-      (!photoOnly || Boolean(NAIL_EDITORIAL_PHOTOS[style.id])) &&
+      (!photoOnly || (Boolean(NAIL_EDITORIAL_PHOTOS[style.id]) && !unavailablePhotos.has(style.id))) &&
       (!q || normalize(`${style.title} ${style.en} ${style.description}`).toLowerCase().includes(q))
     );
     if(order==="alphabetical") return [...filtered].sort((a,b)=>a.title.localeCompare(b.title,"fa"));
     return filtered;
-  }, [kind, activeFamily, finish, shape, color, length, savedOnly, photoOnly, favorites, query, order]);
+  }, [kind, activeFamily, finish, shape, color, length, savedOnly, photoOnly, unavailablePhotos, favorites, query, order]);
   useEffect(()=>setVisibleCount(PAGE_SIZE),[kind,family,finish,shape,color,length,savedOnly,photoOnly,query,order]);
   const visible = results.slice(0,visibleCount);
 
@@ -97,7 +110,7 @@ export function NailsScreen() {
               کشف طرح منتخب <Icon name="chevron" size={17}/>
             </button>
           </div>
-          <NailVisual style={featured} className="nail-hero__art" priority />
+          <NailVisual style={featured} className="nail-hero__art" priority onPhotoUnavailable={markPhotoUnavailable} />
         </div>
       </section>
 
@@ -124,12 +137,14 @@ export function NailsScreen() {
             <strong>نوع تصویر</strong>
             <span>{photographicCount
               ? `${persian(photographicCount)} مرجع عکاسی الهام‌بخش در این مجموعه`
-              : "در این مجموعه هنوز عکسِ تأییدشده نداریم؛ همه طرح‌ها تصویرسازی‌اند."}</span>
+              : kind==="pedicure"
+                ? "در این مجموعه هنوز عکسِ تأییدشده نداریم؛ همه طرح‌ها تصویرسازی‌اند."
+                : "عکس‌های تأییدشده در این دستگاه بارگذاری نشدند؛ پیش‌نمایش برداری در دسترس است."}</span>
           </div>
           <button type="button"
             aria-label="فقط طرح‌های دارای عکس الهام‌بخش"
             aria-pressed={photoOnly}
-            disabled={photographicCount===0}
+            disabled={photographicCount===0 && !photoOnly}
             onClick={()=>setPhotoOnly(value=>!value)}
             className="nail-photo-refine__toggle">
             {photoOnly ? "نمایش همه" : "فقط عکس‌ها"}
@@ -209,7 +224,7 @@ export function NailsScreen() {
                   <button type="button" className="nail-card__open" onClick={() => openSheet({ kind: "nail", id: style.id })}
                     aria-label={`مشاهده طرح ${style.title}`}>
                     <span className="nail-card__picture">
-                      <NailVisual style={style} className="nail-card__art"/>
+                      <NailVisual style={style} className="nail-card__art" priority={photoOnly} onPhotoUnavailable={markPhotoUnavailable}/>
                     </span>
                     <span className="nail-card__info">
                       <small lang="en">{String(index + 1).padStart(2,"0")} / {style.en}</small>

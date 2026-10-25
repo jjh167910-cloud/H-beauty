@@ -27,6 +27,26 @@ jobs:
         run: npm run typecheck
       - name: Build Vite
         run: npm run build
+      - name: Verify Cloudflare Worker packaging without deploying
+        # Reproduce Wrangler's configuration-driven build on a clean CI
+        # checkout. No Cloudflare token or production mutation is required.
+        run: npx --yes wrangler@4 deploy --dry-run --outdir /tmp/hbeauty-worker-preview
+      - name: Verify optional 80-portrait release in Wrangler dry-run
+        env:
+          VITE_MAKEUP_CURATED_80: "true"
+        run: |
+          npm run prepare:makeup-curated-80
+          npm run verify:makeup-curated-80
+          npx --yes wrangler@4 deploy --dry-run --outdir /tmp/hbeauty-worker-curated80
+      - name: Check GitHub publishing fallback readiness
+        env:
+          HAS_DEPLOY_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN != '' }}
+        run: |
+          if [ "$HAS_DEPLOY_TOKEN" = "true" ]; then
+            echo "::notice::Direct deployment via GitHub Actions has a Cloudflare API token configured."
+          else
+            echo "::notice::GitHub direct deployment is unavailable without a Cloudflare API token secret."
+          fi
       - name: Verify runner Chrome
         run: google-chrome --version
       - name: Mobile RTL and booking regression
@@ -40,6 +60,36 @@ jobs:
           path: |
             test-results/
           retention-days: 7
+
+
+  public-worker-smoke:
+    # Independent network probe: CI success is not evidence that Cloudflare
+    # published this pull request (or even that the existing site is online).
+    runs-on: ubuntu-latest
+    steps:
+      - name: Probe current public Worker and service worker
+        shell: bash
+        run: |
+          set -o pipefail
+          base="https://h-beauty.mostifa2273.workers.dev"
+          if ! curl --fail --show-error --silent --location --retry 2 --retry-delay 2 --max-time 25 "$base/" -o /tmp/hbeauty-public.html; then
+            echo "::warning::Current public Worker could not be reached from GitHub Actions."
+            exit 0
+          fi
+          if ! grep -q 'id="root"' /tmp/hbeauty-public.html; then
+            echo "::warning::Current public URL did not return the expected H-Beauty SPA."
+            exit 0
+          fi
+          if ! curl --fail --show-error --silent --location --max-time 25 "$base/sw.js" -o /tmp/hbeauty-public-sw.js; then
+            echo "::warning::Public app loads, but its offline service worker could not be fetched."
+            exit 0
+          fi
+          if ! grep -q 'h-beauty-v5-' /tmp/hbeauty-public-sw.js; then
+            echo "::warning::Public service worker lacks the current H-Beauty cache marker."
+            exit 0
+          fi
+          echo "Verified the existing H-Beauty public site and service worker are reachable from the runner."
+          echo "NOTE: This does NOT prove the PR commit is deployed."
 
   curated80:
     # Exercise the actual portrait bytes, not only a code-only preview.
