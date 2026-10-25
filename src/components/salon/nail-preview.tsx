@@ -32,7 +32,7 @@ export function NailPreview({ style, className = "" }: { style: NailStyle; class
   const art = style.finish === "art";
 
   return (
-    <svg viewBox="0 0 290 255" className={className} role="img"
+    <svg viewBox="0 0 290 255" className={className} role="img" data-nail-finish={style.finish}
       aria-label={`پیش‌نمایش تصویری طرح ${style.title}، نمونهٔ شماتیک رنگ و فرم ناخن`}>
       <defs>
         <linearGradient id={grad} x1="0" y1="0" x2={chrome ? "1" : "0.52"} y2="1">
