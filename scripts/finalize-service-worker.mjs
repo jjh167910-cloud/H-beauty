@@ -43,7 +43,8 @@ export function finalizeServiceWorker(distDir = 'dist') {
   // 34-asset photo edition, V3 corrected or legacy V2. No image can be
   // packaged unverified; the V3 release additionally forbids exact duplicates.
   if (process.env.VITE_NAIL_EDITORIAL_V2 === 'true') {
-    const photoVersion=process.env.NAIL_EDITORIAL_LOCK_VERSION === "3" ? 3 : 2;
+    const photoVersion=["2","3","4"].includes(process.env.NAIL_EDITORIAL_LOCK_VERSION)
+      ? Number(process.env.NAIL_EDITORIAL_LOCK_VERSION) : 2;
     const lock=resolve(`assets/hbeauty-nail-editorial-v${photoVersion}.sha256`);
     if (!existsSync(lock)) throw new Error('Nail photo checksum lock missing');
     const entries=readFileSync(lock,'utf8').trim().split(/\r?\n/).map(line=>{
@@ -51,10 +52,11 @@ export function finalizeServiceWorker(distDir = 'dist') {
       if (!match) throw new Error('Invalid V2 nail image lock entry: '+line);
       return {hash:match[1],path:match[2]};
     });
-    if(entries.length !== 34 || new Set(entries.map(entry=>entry.path)).size!==34)
-      throw new Error('Nail pack must contain 34 unique design references');
-    if(photoVersion===3 && new Set(entries.map(entry=>entry.hash)).size!==34)
-      throw new Error('Nail v3 images contain duplicate SHA256 checksums');
+    const required=photoVersion===4?9:34;
+    if(entries.length!==required || new Set(entries.map(entry=>entry.path)).size!==required)
+      throw new Error(`Nail pack must contain ${required} unique image paths`);
+    if(photoVersion>=3 && new Set(entries.map(entry=>entry.hash)).size!==required)
+      throw new Error('Nail premium photo pack contains byte-identical duplicates');
     for(const entry of entries){
       const image=join(root,entry.path.slice('public/'.length));
       if(!existsSync(image))throw new Error('Missing V2 nail photo '+entry.path);
