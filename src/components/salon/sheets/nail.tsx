@@ -3,7 +3,7 @@ import { NAIL_FINISHES, NAIL_SHAPES } from "@/data/nail-styles";
 import { serviceById, formatMinutes } from "@/data/salon";
 import { useSalon } from "@/lib/salon-store";
 import { Icon } from "../icons";
-import { NailPreview } from "../nail-preview";
+import { NailVisual } from "../nail-visual";
 import { Button, Sheet, haptic, useSalonActions } from "../ui";
 
 export function NailSheet({ open, style, onClose }: { open: boolean; style: NailStyle; onClose: () => void }) {
@@ -19,7 +19,7 @@ export function NailSheet({ open, style, onClose }: { open: boolean; style: Nail
     <Sheet open={open} onClose={onClose} title={style.title}>
       <article className="nail-detail">
         <div className="nail-detail__visual">
-          <NailPreview style={style} />
+          <NailVisual style={style} />
         </div>
         <small className="nail-detail__en" lang="en">{style.en.toUpperCase()}</small>
         <h3>{style.title}</h3>
@@ -29,7 +29,7 @@ export function NailSheet({ open, style, onClose }: { open: boolean; style: Nail
           <span>فرم: {shape}</span>
           <span>طول: {style.length === "short" ? "کوتاه" : style.length === "medium" ? "متوسط" : "بلند"}</span>
         </div>
-        <p className="nail-detail__note">این طرح پیش‌نمایش گرافیکی است و عکس اجرای واقعی نیست. انتخاب مواد، قیمت و زمان اجرا پس از مشاوره تعیین می‌شوند.</p>
+        <p className="nail-detail__note">این طرح نمونهٔ الهام‌بخش ساخته‌شده با هوش مصنوعی یا تصویرسازی برداری است و عکس اجرای واقعی سالن نیست. انتخاب مواد، قیمت و زمان اجرا پس از مشاوره تعیین می‌شوند.</p>
         <div className="nail-detail__actions">
           <Button variant="gold" icon="book" onClick={() => {
             haptic();

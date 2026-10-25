@@ -3,7 +3,7 @@ import { normalize, persian } from "@/data/catalog";
 import { NAIL_STYLES, NAIL_FINISHES, NAIL_COLORS, NAIL_SHAPES, NAIL_LENGTHS, type NailFinish, type NailShape, type NailColor, type NailLength } from "@/data/nail-styles";
 import { useSalon } from "@/lib/salon-store";
 import { Icon } from "../icons";
-import { NailPreview } from "../nail-preview";
+import { NailVisual } from "../nail-visual";
 import { Chip, Button, haptic, useSalonActions } from "../ui";
 
 export function NailsScreen() {
@@ -62,7 +62,7 @@ export function NailsScreen() {
               کشف طرح منتخب <Icon name="chevron" size={17}/>
             </button>
           </div>
-          <NailPreview style={NAIL_STYLES[12]} className="nail-hero__art" />
+          <NailVisual style={NAIL_STYLES[12]} className="nail-hero__art" priority />
         </div>
       </section>
 
@@ -116,7 +116,7 @@ export function NailsScreen() {
                   <button type="button" className="nail-card__open" onClick={() => openSheet({ kind: "nail", id: style.id })}
                     aria-label={`مشاهده طرح ${style.title}`}>
                     <span className="nail-card__picture">
-                      <NailPreview style={style} className="nail-card__art"/>
+                      <NailVisual style={style} className="nail-card__art"/>
                     </span>
                     <span className="nail-card__info">
                       <small lang="en">{String(index + 1).padStart(2,"0")} / {style.en}</small>
@@ -125,7 +125,7 @@ export function NailsScreen() {
                     </span>
                   </button>
                   <div className="nail-card__footer">
-                    <span>پیش‌نمایش رنگ و فرم</span>
+                    <span>نمونه الهام‌بخش</span>
                     <button type="button" className="nail-card__favorite"
                       onClick={() => { haptic(); toggleFavorite(style.id); }}
                       aria-label={saved ? `حذف ${style.title} از علاقه‌مندی‌ها` : `ذخیره طرح ${style.title}`}
@@ -159,7 +159,7 @@ export function NailsScreen() {
         </div>
       </section>
 
-      <p className="nail-disclaimer px-gutter">این تصاویر شبیه‌سازی گرافیکیِ رنگ و فرم ناخن‌اند، نه عکس اجرای واقعی سالن؛ نتیجه بر اساس طول و فرم ناخن و مواد مصرفی متفاوت است.</p>
+      <p className="nail-disclaimer px-gutter">تصاویر این مجموعه نمونه‌های الهام‌بخش ساخته‌شده با هوش مصنوعی یا تصویرسازی برداری‌اند؛ عکس اجرای واقعی سالن نیستند. نتیجهٔ نهایی بسته به طول ناخن، رنگ و مواد مصرفی متفاوت خواهد بود.</p>
     </div>
   );
 }

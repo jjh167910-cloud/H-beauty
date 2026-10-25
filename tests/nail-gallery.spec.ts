@@ -91,3 +91,27 @@ test("submitted booking persists exact selected nail style ID",async({page})=>{
     return item?.nailStyleId;
   })).toBe("nail-classic-french");
 });
+
+test("optional photo failure leaves vector artwork and accessible details intact",async({page})=>{
+  await ready(page,390);
+  const card=page.locator(".nail-card").filter({hasText:"شیری ابریشمی"});
+  await expect(card).toBeVisible();
+  await expect(card.locator(".nail-visual__fallback svg")).toBeVisible();
+  // The optional WebP isn't in the public repository until explicitly uploaded.
+  // A missing image must never leave a broken IMG element on the card.
+  await expect(card.locator("img.nail-visual__photo")).toHaveCount(0);
+  await card.getByRole("button",{name:"مشاهده طرح شیری ابریشمی"}).click();
+  await expect(page.getByRole("dialog",{name:"شیری ابریشمی"})).toBeVisible();
+});
+
+test("installed editorial nail images show photo without hiding alt fallback",async({page})=>{
+  await page.route("**/nails/photos/nail-milky-silk.webp",route=>
+    route.fulfill({path:"public/makeup/looks/no-makeup.webp",contentType:"image/webp"}));
+  await ready(page,390);
+  const card=page.locator(".nail-card").filter({hasText:"شیری ابریشمی"});
+  await expect(card.locator(".nail-visual__photo[data-ready]")).toBeVisible();
+  const crop=await card.locator(".nail-visual__photo").evaluate(el=>
+    getComputedStyle(el).objectFit);
+  expect(crop).toBe("cover");
+  await expect(card.locator(".nail-visual__fallback svg")).toHaveCount(1);
+});

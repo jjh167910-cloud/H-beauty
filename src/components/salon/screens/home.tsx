@@ -3,7 +3,7 @@ import { byRep, lookSrc, lookThumb, persian } from "@/data/catalog";
 import { photoObjectPosition } from "@/data/photo-focal";
 import { MAKEUP_STYLES } from "@/data/makeup-styles";
 import { NAIL_STYLES } from "@/data/nail-styles";
-import { NailPreview } from "../nail-preview";
+import { NailVisual } from "../nail-visual";
 import { MAKEUP_PHOTOS, lookPhoto, MAKEUP_CURATED_80 } from "@/data/makeup-photos";
 import { SERVICES, dayOf, formatPrice, greeting, isPast, longDate, monthOf, summarize, timeLabel } from "@/data/salon";
 import { useSalon } from "@/lib/salon-store";
@@ -158,7 +158,7 @@ export function HomeScreen() {
         <div className="px-gutter">
           <button type="button" className="nail-home-banner" onClick={() => go("nails")} aria-label="دیدن گالری ۲۸ طرح ناخن">
             <span className="nail-home-banner__copy"><small lang="en">NAIL EDIT / 2026</small><strong>از مانیکور تا پدیکور</strong><span>۲۸ ایده رنگ و طراحی برای انتخاب استایل شما</span><b>مشاهده طرح‌ها <Icon name="chevron" size={15}/></b></span>
-            <NailPreview style={NAIL_STYLES[12]} className="nail-home-banner__art" />
+            <NailVisual style={NAIL_STYLES[12]} className="nail-home-banner__art" priority />
           </button>
         </div>
       </section>
