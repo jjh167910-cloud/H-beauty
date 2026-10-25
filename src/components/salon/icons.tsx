@@ -15,6 +15,7 @@ import {
   Diamond,
   FlowerLotus,
   HairDryer,
+  HandPalm,
   Heart,
   House,
   IconContext,
@@ -136,6 +137,7 @@ const ICONS = {
   styling: HairDryer,
   bridal: Crown,
   beauty: PaintBrush,
+  nails: HandPalm,
 } as const;
 
 export type IconName = keyof typeof ICONS;
