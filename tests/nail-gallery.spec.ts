@@ -150,7 +150,7 @@ test("pedicure featured art and appointment buttons stay in pedicure category", 
   await page.getByRole("button",{name:"کشف طرح منتخب"}).click();
   await expect(page.getByRole("dialog",{name:"پدیکور فرنچ"})).toBeVisible();
   await page.getByRole("button",{name:"بستن"}).first().click();
-  await page.getByRole("button",{name:"درخواست نوبت",exact:true}).click();
+  await page.locator(".nail-filters__top").getByRole("button",{name:"درخواست نوبت",exact:true}).click();
   await expect(page.getByRole("dialog",{name:"درخواست نوبت"})).toBeVisible();
   const cart=await page.evaluate(()=>JSON.parse(localStorage.getItem("hananeh-atelier-v1")||"{}").cart||[]);
   expect(cart).toContain("classic-pedicure");
