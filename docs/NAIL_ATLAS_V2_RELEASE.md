@@ -10,7 +10,7 @@
 
 ## Installing original image files
 The GitHub connector in ChatGPT cannot directly transfer the locally generated binary WebP files. The accompanying ZIP contains the complete `public/nails/photos/` directory and the exact v2 SHA256 lock. The lock is also committed in `assets/hbeauty-nail-editorial-v2.sha256`.
-A complete set of 34 files must be placed under `public/nails/photos/` without renaming or re-encoding. The build then automatically activates `VITE_NAIL_EDITORIAL_V2=true` and packages all files for offline PWA use.
+**Recommended one-file installation:** upload `Hananeh_Nail_Studio_34_Look_Editorial_Pack_v2.zip` unchanged to the repository’s `assets/` folder. The build script safely extracts only the 34 SHA256-verified WebPs before Vite runs. This avoids 34 separate GitHub file selections. Alternatively, place all 34 WebPs under `public/nails/photos/` without renaming or re-encoding. The build then automatically activates `VITE_NAIL_EDITORIAL_V2=true` and packages all files for offline PWA use.
 **Do not claim the 24 photographic cards are live until that binary upload and Cloudflare deployment are verified.** Missing all photos leaves the gallery working with offline vector previews.
 
 ## QA gates
