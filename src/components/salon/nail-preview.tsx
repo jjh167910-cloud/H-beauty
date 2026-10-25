@@ -27,7 +27,6 @@ export function NailPreview({ style, className = "" }: { style: NailStyle; class
   const grad = `nail-${style.id}-${uid}`;
   const chrome = style.finish === "chrome";
   const french = style.finish === "french";
-  const ombre = style.finish === "ombre";
   const sparkle = style.finish === "glitter";
   const matte = style.finish === "matte";
   const art = style.finish === "art";
