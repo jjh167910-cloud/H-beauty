@@ -11,6 +11,7 @@ import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createHash } from "node:crypto";
 import { installNailPack } from "./install-nail-photo-pack.mjs";
+import { reconstructNailArchive } from "./restore-embedded-nail-v4.mjs";
 
 export const MUSIC_PATH = "public/audio/hananeh-salon-ambience.mp3";
 
@@ -29,6 +30,8 @@ export function resolveMusicFlag({ installed, configured } = {}) {
 }
 
 function build() {
+  const verifiedEmbeddedArchive = reconstructNailArchive();
+  console.log(`Verified bundled salon photos: ${verifiedEmbeddedArchive.bytes} bytes, sha256 ${verifiedEmbeddedArchive.sha256}`);
   const installedPhotoPack = installNailPack();
   const file = resolve(MUSIC_PATH);
   const installed = existsSync(file) && statSync(file).isFile();
