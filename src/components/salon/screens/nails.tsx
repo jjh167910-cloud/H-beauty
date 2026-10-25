@@ -5,6 +5,7 @@ import { NAIL_STYLES, NAIL_COUNTS, NAIL_FINISHES, NAIL_COLORS, NAIL_SHAPES, NAIL
 import { useSalon } from "@/lib/salon-store";
 import { Icon } from "../icons";
 import { NailVisual } from "../nail-visual";
+import { NailCompareSheet } from "../sheets/nail-compare";
 import { Chip, Button, haptic, useSalonActions } from "../ui";
 
 const PAGE_SIZE = 24;
@@ -23,6 +24,17 @@ export function NailsScreen() {
   const [query, setQuery] = useState("");
   const [visibleCount,setVisibleCount] = useState(PAGE_SIZE);
   const [order,setOrder] = useState<"curated" | "alphabetical">("curated");
+  const [compareIds,setCompareIds] = useState<string[]>([]);
+  const [compareOpen,setCompareOpen] = useState(false);
+  const toggleCompare=(id:string)=>{
+    setCompareIds(previous=>previous.includes(id)
+      ? previous.filter(item=>item!==id)
+      : previous.length<2 ? [...previous,id] : previous);
+  };
+  const selectedForCompare = compareIds
+    .map(id=>NAIL_STYLES.find(item=>item.id===id))
+    .filter((style): style is (typeof NAIL_STYLES)[number]=>Boolean(style));
+  useEffect(()=>{setCompareIds([]);setCompareOpen(false);},[kind]);
   const favorites = useSalon((state) => state.favNails);
   const toggleFavorite = useSalon((state) => state.toggleFavNail);
   const familyOptions = NAIL_ATLAS_FAMILIES[kind];
@@ -138,6 +150,25 @@ export function NailsScreen() {
       </section>
 
       <section className="nail-collection px-gutter" aria-label="طرح‌های ناخن">
+        <div className="nail-compare-picker" aria-label="انتخاب طرح برای مقایسه">
+          <div className="nail-compare-picker__copy">
+            <strong>مقایسه دو طرح</strong>
+            <span role="status" aria-live="polite">
+              {persian(compareIds.length)} از ۲ طرح انتخاب شده
+            </span>
+          </div>
+          <div className="nail-compare-picker__actions">
+            {compareIds.length>0 ? (
+              <button type="button" className="nail-compare-picker__clear"
+                onClick={()=>setCompareIds([])}>پاک کردن</button>
+            ) : null}
+            <button type="button" className="nail-compare-picker__open"
+              disabled={selectedForCompare.length!==2} onClick={()=>setCompareOpen(true)}>
+              <Icon name="compare" size={17}/>
+              مقایسه طرح‌ها
+            </button>
+          </div>
+        </div>
         <div className="nail-collection__toolbar" role="group" aria-label="ترتیب و تعداد طرح‌ها">
           <span aria-live="polite">{persian(visible.length)} از {persian(results.length)} طرح</span>
           <label>چیدمان
@@ -152,7 +183,7 @@ export function NailsScreen() {
             {visible.map((style, index) => {
               const saved = favorites.includes(style.id);
               return (
-                <article className="nail-card" key={style.id}>
+                <article className="nail-card" key={style.id} data-compared={compareIds.includes(style.id) ? "" : undefined}>
                   <button type="button" className="nail-card__open" onClick={() => openSheet({ kind: "nail", id: style.id })}
                     aria-label={`مشاهده طرح ${style.title}`}>
                     <span className="nail-card__picture">
@@ -165,7 +196,16 @@ export function NailsScreen() {
                     </span>
                   </button>
                   <div className="nail-card__footer">
-                    <span>نمونه الهام‌بخش</span>
+                    <button type="button" className="nail-card__compare"
+                      aria-pressed={compareIds.includes(style.id)}
+                      disabled={compareIds.length===2 && !compareIds.includes(style.id)}
+                      aria-label={compareIds.includes(style.id)
+                        ? `حذف ${style.title} از مقایسه`
+                        : `مقایسه طرح ${style.title}`}
+                      onClick={()=>{haptic();toggleCompare(style.id);}}>
+                      <Icon name="compare" size={17}/>
+                      <span>{compareIds.includes(style.id)?"انتخاب‌شده":"مقایسه"}</span>
+                    </button>
                     <button type="button" className="nail-card__favorite"
                       onClick={() => { haptic(); toggleFavorite(style.id); }}
                       aria-label={saved ? `حذف ${style.title} از علاقه‌مندی‌ها` : `ذخیره طرح ${style.title}`}
@@ -208,6 +248,14 @@ export function NailsScreen() {
         </div>
       </section>
 
+      {selectedForCompare.length===2 ? (
+        <NailCompareSheet
+          open={compareOpen}
+          first={selectedForCompare[0]}
+          second={selectedForCompare[1]}
+          onClose={()=>setCompareOpen(false)}
+        />
+      ) : null}
       <p className="nail-disclaimer px-gutter">تصاویر این مجموعه نمونه‌های الهام‌بخش ساخته‌شده با هوش مصنوعی یا تصویرسازی برداری‌اند؛ عکس اجرای واقعی سالن نیستند. نتیجهٔ نهایی بسته به طول ناخن، رنگ و مواد مصرفی متفاوت خواهد بود.</p>
     </div>
   );
