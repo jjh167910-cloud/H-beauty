@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Toaster } from "sonner";
 import { TABS, useSalon, type Tab } from "@/lib/salon-store";
-import { nailStyleFromHash } from "@/data/nail-links";
+import { nailStyleFromHash, nailKindFromHash } from "@/data/nail-links";
 import { withTransition } from "@/lib/transition";
 import { Docks, TabBar, TopBar } from "./chrome";
 import { HomeScreen } from "./screens/home";
@@ -94,8 +94,8 @@ export function SalonApp() {
       let target: SheetState = null;
       if (state?.sheet) {
         const linkedId = nailStyleFromHash(window.location.hash);
-        if (linkedId) target = { kind: "nail", id: linkedId };
-        else if (state.sheetState) target = state.sheetState;
+        if (state.sheetState) target = state.sheetState;
+        else if (linkedId) target = { kind: "nail", id: linkedId };
       }
       sheetRef.current = target;
       setSheet(target);
@@ -129,7 +129,7 @@ export function SalonApp() {
     const id = nailStyleFromHash(window.location.hash);
     if (!id) return;
     const linkedUrl = window.location.href;
-    window.history.replaceState(null, "", "#/nails");
+    window.history.replaceState(null, "", nailKindFromHash(window.location.hash)==="pedicure" ? "#/nails?kind=pedicure" : "#/nails");
     const next: Exclude<SheetState, null> = { kind: "nail", id };
     window.history.pushState({ sheet: true, sheetState: next }, "", linkedUrl);
     sheetRef.current = next;
