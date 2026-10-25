@@ -69,3 +69,23 @@ test("nail search and empty state reset without breaking navigation",async({page
   await page.getByRole("button",{name:"نمایش همه طرح‌ها"}).click();
   await expect(page.locator(".nail-card")).toHaveCount(28);
 });
+
+
+test("submitted booking persists exact selected nail style ID",async({page})=>{
+  await ready(page,390);
+  await page.getByRole("button",{name:"مشاهده طرح فرنچ کلاسیک"}).click();
+  await page.getByRole("button",{name:"درخواست اجرای همین طرح"}).click();
+  const wizard=page.getByRole("dialog",{name:"درخواست نوبت"});
+  await expect(wizard).toBeVisible();
+  await wizard.getByRole("button",{name:"ادامه"}).click(); // choose stylist
+  await wizard.getByRole("button",{name:"ادامه"}).click(); // choose time
+  await wizard.locator(".slot").first().click();
+  await wizard.getByRole("button",{name:"ادامه"}).click();
+  await wizard.getByRole("textbox",{name:"نام و نام خانوادگی"}).fill("کاربر آزمایشی");
+  await wizard.getByRole("textbox",{name:"شماره همراه"}).fill("09123456789");
+  await wizard.getByRole("button",{name:"ثبت درخواست"}).click();
+  await expect.poll(()=>page.evaluate(()=>{
+    const item=JSON.parse(localStorage.getItem("hananeh-atelier-v1") || "{}").bookings?.[0];
+    return item?.nailStyleId;
+  })).toBe("nail-classic-french");
+});
