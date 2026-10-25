@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { normalize, persian } from "@/data/catalog";
 import { NAIL_ATLAS_FAMILIES } from "@/data/nail-expansion";
-import { NAIL_STYLES, NAIL_COUNTS, NAIL_FINISHES, NAIL_COLORS, NAIL_SHAPES, NAIL_LENGTHS, type NailFinish, type NailShape, type NailColor, type NailLength, type NailKind } from "@/data/nail-styles";
+import { NAIL_STYLES, nailById, NAIL_COUNTS, NAIL_FINISHES, NAIL_COLORS, NAIL_SHAPES, NAIL_LENGTHS, type NailFinish, type NailShape, type NailColor, type NailLength, type NailKind } from "@/data/nail-styles";
+import { nailStyleFromHash } from "@/data/nail-links";
 import { useSalon } from "@/lib/salon-store";
 import { Icon } from "../icons";
 import { NailVisual } from "../nail-visual";
@@ -12,7 +13,10 @@ const PAGE_SIZE = 24;
 
 export function NailsScreen() {
   const { go, openSheet, openBooking } = useSalonActions();
-  const [kind,setKind] = useState<NailKind>("manicure");
+  const [kind,setKind] = useState<NailKind>(() => {
+    const id = nailStyleFromHash(window.location.hash);
+    return id && nailById.get(id)?.kind === "pedicure" ? "pedicure" : "manicure";
+  });
   const featuredId=kind==="pedicure" ? "pedi-french" : "nail-pearl-chrome";
   const featured=NAIL_STYLES.find(item=>item.id===featuredId)!;
   const [family,setFamily] = useState("all");
