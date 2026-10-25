@@ -7,7 +7,7 @@ import { NailOrnament } from "./nail-ornament";
  * The uncluttered art is a color/shape guide; the real finish may differ.
  */
 const SHAPES: Record<NailShape, string> = {
-  almond: "M -18 37 C -19 17 -17 -9 -13 -22 C -8 -35 -3 -40 0 -41 C 3 -40 8 -35 13 -22 C 17 -9 19 17 18 37 Q 0 45 -18 37 Z",
+  almond: "M -18 37 C -19 13 -16 -11 -10 -25 C -7 -34 -4 -38 0 -39 C 4 -38 7 -34 10 -25 C 16 -11 19 13 18 37 Q 0 45 -18 37 Z",
   oval: "M -18 37 L -18 -20 Q -18 -39 0 -39 Q 18 -39 18 -20 L 18 37 Q 0 46 -18 37 Z",
   square: "M -18 37 L -18 -35 Q 0 -39 18 -35 L 18 37 Q 0 44 -18 37 Z",
   coffin: "M -18 37 L -13 -34 L 13 -34 L 18 37 Q 0 46 -18 37 Z",
@@ -32,7 +32,7 @@ export function NailPreview({ style, className = "" }: { style: NailStyle; class
   const art = style.finish === "art";
 
   return (
-    <svg viewBox="0 0 290 255" className={className} role="img"
+    <svg viewBox="0 0 290 255" className={className} role="img" data-nail-finish={style.finish}
       aria-label={`پیش‌نمایش تصویری طرح ${style.title}، نمونهٔ شماتیک رنگ و فرم ناخن`}>
       <defs>
         <linearGradient id={grad} x1="0" y1="0" x2={chrome ? "1" : "0.52"} y2="1">
@@ -45,11 +45,25 @@ export function NailPreview({ style, className = "" }: { style: NailStyle; class
           <stop offset="0%" stopColor={style.accent} stopOpacity="0.32" />
           <stop offset="100%" stopColor={style.accent} stopOpacity="0" />
         </radialGradient>
+        <linearGradient id={`${grad}-skin`} x1="0" x2="1" y1="0" y2=".18">
+          <stop offset="0%" stopColor="#B77E71" />
+          <stop offset="19%" stopColor="#DBA38F" />
+          <stop offset="47%" stopColor="#F3C6AF" />
+          <stop offset="76%" stopColor="#E6B09D" />
+          <stop offset="100%" stopColor="#B98177" />
+        </linearGradient>
       </defs>
       <ellipse cx="145" cy="132" rx="137" ry="106" fill={`url(#${grad}-glow)`} />
-      <ellipse cx="145" cy="206" rx="94" ry="11" fill="#372124" opacity="0.065" />
+      <ellipse cx="145" cy="215" rx="113" ry="17" fill="#372124" opacity=".07" />
       {NAILS.map((nail,i) => (
         <g key={i} transform={`translate(${nail.x} ${nail.y}) rotate(${nail.r}) scale(${nail.scale * (style.length === "long" ? 1.16 : style.length === "short" ? 0.92 : 1)})`}>
+          <path data-nail-finger="true"
+            d="M -19 -24 C -24 -13 -22 17 -24 42 C -25 66 -27 98 -26 128 L -27 220 L 27 220 L 26 128 C 27 95 25 65 24 39 C 22 11 23 -11 19 -24 C 12 -38 -11 -39 -19 -24 Z"
+            fill={`url(#${grad}-skin)`} stroke="#AB7C73" strokeWidth=".7" strokeOpacity=".6" />
+          <path d="M -18 -13 C -20 13 -17 55 -20 93" stroke="#FFF0DD"
+            strokeWidth="2.7" strokeOpacity=".26" strokeLinecap="round" fill="none" />
+          <path d="M 17 -11 C 19 19 19 48 19 70" stroke="#A96968"
+            strokeWidth="1.2" strokeOpacity=".18" strokeLinecap="round" fill="none" />
           <path d={SHAPES[style.shape]} transform="translate(1 5)" fill="#352224" opacity=".10" />
           <path d={SHAPES[style.shape]} fill={`url(#${grad})`} stroke={style.accent} strokeOpacity=".40" strokeWidth="0.8" />
           {style.motif ? (
@@ -76,7 +90,8 @@ export function NailPreview({ style, className = "" }: { style: NailStyle; class
           ) : null}
           {chrome ? <path d="M -9 26 C -15 6 -13 -18 -6 -31" stroke="#FFFFFF" strokeOpacity=".67" strokeWidth="3" fill="none" strokeLinecap="round" /> : null}
           {!matte ? <path d="M -11 25 C -13 8 -12 -12 -7 -22" stroke="#FFFFFF" strokeOpacity={chrome?".36":".42"} strokeWidth="2.3" fill="none" strokeLinecap="round" /> : null}
-          <path d="M -9 38 Q 0 40 9 38" stroke="#7F655A" strokeOpacity=".17" strokeWidth=".7" fill="none" />
+          <path d="M -14 35 Q 0 46 14 35" stroke="#A36B66" strokeOpacity=".38" strokeWidth="1.35" fill="none" />
+          <path d="M -9 38 Q 0 40 9 38" stroke="#FFF5E8" strokeOpacity=".28" strokeWidth=".7" fill="none" />
         </g>
       ))}
       <path d="M 54 239 H 236" stroke={style.accent} opacity=".28" strokeWidth=".75"/>
