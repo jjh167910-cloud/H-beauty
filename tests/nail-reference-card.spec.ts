@@ -33,7 +33,7 @@ test("approved photographed nail saves branded PNG reference without another upl
     detail.getByRole("button",{name:"ذخیره تصویر طرح شیری ابریشمی"}).click()
   ]);
   await assertDownloadedCard(download,"nail-milky-silk");
-  await expect(detail.getByRole("status").filter({hasText:"کارت تصویر طرح آماده و ذخیره شد."})).toBeVisible();
+  await expect(detail.getByRole("status").filter({hasText:"دانلود کارت تصویر این طرح آغاز شد."})).toBeVisible();
   await expect(detail.getByRole("button",{name:"درخواست اجرای همین طرح"})).toBeVisible();
   expect(await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth))
     .toBeLessThanOrEqual(1);
@@ -48,7 +48,7 @@ test("vector-only nail exports a real PNG without external photos or a network A
     detail.getByRole("button",{name:"ذخیره تصویر طرح فرنچ میکرو"}).click()
   ]);
   await assertDownloadedCard(download,"nail-micro-french");
-  await expect(detail.getByRole("status").filter({hasText:"کارت تصویر طرح آماده و ذخیره شد."})).toBeVisible();
+  await expect(detail.getByRole("status").filter({hasText:"دانلود کارت تصویر این طرح آغاز شد."})).toBeVisible();
   await expect(detail.getByRole("button",{name:"کپی لینک طرح فرنچ میکرو"})).toBeVisible();
 });
 
@@ -57,6 +57,7 @@ test("reference card always names the requested design after switching colorways
   await detail.getByRole("button",{name:"انتخاب رنگ ژلی شفاف یاقوتی"}).click();
   const changed=page.getByRole("dialog",{name:"ژلی شفاف یاقوتی"});
   await expect(changed).toBeVisible();
+  await expect(changed.getByText("دانلود کارت تصویر این طرح آغاز شد.")).toHaveCount(0);
   const [download]=await Promise.all([
     page.waitForEvent("download"),
     changed.getByRole("button",{name:"ذخیره تصویر طرح ژلی شفاف یاقوتی"}).click()
