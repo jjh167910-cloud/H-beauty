@@ -57,7 +57,7 @@ test("comparing pedicure stays in pedicure and clears when switching to manicure
   await page.getByRole("group",{name:"انتخاب گالری دست یا پا"})
     .getByRole("button",{name:"پدیکور · ۷۸ طرح"}).click();
   await page.getByRole("button",{name:"مقایسه طرح پدیکور نود کلاسیک"}).click();
-  await page.getByRole("button",{name:"مقایسه طرح پدیکور فرنچ"}).click();
+  await page.getByRole("button",{name:"مقایسه طرح پدیکور فرنچ",exact:true}).click();
   await page.getByRole("button",{name:"مقایسه طرح‌ها"}).click();
   const sheet=page.getByRole("dialog",{name:"مقایسه طرح‌های ناخن"});
   await expect(sheet.locator(".nail-compare__design")).toHaveCount(2);
