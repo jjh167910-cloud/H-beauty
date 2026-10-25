@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { normalize, persian } from "@/data/catalog";
-import { NAIL_STYLES, NAIL_FINISHES, NAIL_COLORS, NAIL_SHAPES, NAIL_LENGTHS, type NailFinish, type NailShape, type NailColor, type NailLength } from "@/data/nail-styles";
+import { NAIL_STYLES, NAIL_FINISHES, NAIL_COLORS, NAIL_SHAPES, NAIL_LENGTHS, type NailFinish, type NailShape, type NailColor, type NailLength, type NailKind } from "@/data/nail-styles";
 import { useSalon } from "@/lib/salon-store";
 import { Icon } from "../icons";
 import { NailVisual } from "../nail-visual";
@@ -8,6 +8,7 @@ import { Chip, Button, haptic, useSalonActions } from "../ui";
 
 export function NailsScreen() {
   const { go, openSheet, openBooking } = useSalonActions();
+  const [kind,setKind] = useState<NailKind>("manicure");
   const [finish, setFinish] = useState<NailFinish | "all">("all");
   const [shape, setShape] = useState<NailShape | "all">("all");
   const [color, setColor] = useState<NailColor | "all">("all");
@@ -19,6 +20,7 @@ export function NailsScreen() {
   const results = useMemo(() => {
     const q = normalize(query).toLowerCase();
     return NAIL_STYLES.filter((style) =>
+      (style.kind ?? "manicure") === kind &&
       (finish === "all" || finish === style.finish) &&
       (shape === "all" || shape === style.shape) &&
       (color === "all" || color === style.color) &&
@@ -26,7 +28,7 @@ export function NailsScreen() {
       (!savedOnly || favorites.includes(style.id)) &&
       (!q || normalize(`${style.title} ${style.en} ${style.description}`).toLowerCase().includes(q))
     );
-  }, [finish, shape, color, length, savedOnly, favorites, query]);
+  }, [kind, finish, shape, color, length, savedOnly, favorites, query]);
 
   const reset = () => {
     setFinish("all"); setShape("all"); setColor("all"); setLength("all"); setSavedOnly(false); setQuery("");
@@ -70,10 +72,14 @@ export function NailsScreen() {
         <div className="nail-filters__top px-gutter">
           <div>
             <span lang="en">THE COLLECTION</span>
-            <h2>گالری طراحی ناخن</h2>
-            <p>{persian(results.length)} طرح از {persian(NAIL_STYLES.length)} ایده</p>
+            <h2>{kind === "pedicure" ? "گالری پدیکور" : "گالری طراحی ناخن"}</h2>
+            <p>{persian(results.length)} طرح از {persian(NAIL_STYLES.filter(item=>(item.kind??"manicure")===kind).length)} ایده</p>
           </div>
           <Button size="sm" variant="tonal" icon="book" onClick={() => openBooking({ service: "luxe-manicure" })}>درخواست نوبت</Button>
+        </div>
+        <div className="nail-kind-control px-gutter" role="group" aria-label="انتخاب گالری دست یا پا">
+          <button type="button" aria-pressed={kind==="manicure"} onClick={()=>{setKind("manicure");reset();}}>مانیکور · ۲۸ طرح</button>
+          <button type="button" aria-pressed={kind==="pedicure"} onClick={()=>{setKind("pedicure");reset();}}>پدیکور · ۶ طرح</button>
         </div>
         <label className="nail-search mx-gutter">
           <Icon name="search" size={18} />

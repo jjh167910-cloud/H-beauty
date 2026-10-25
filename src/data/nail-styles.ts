@@ -3,9 +3,12 @@ export type NailFinish = "gloss" | "french" | "chrome" | "ombre" | "glitter" | "
 export type NailShape = "almond" | "oval" | "square" | "coffin";
 export type NailColor = "nude" | "pink" | "red" | "dark" | "color";
 export type NailLength = "short" | "medium" | "long";
+export type NailKind = "manicure" | "pedicure";
 
 export type NailStyle = {
   id: string;
+  /** Old styles remain manicure by default for stored customer favorites. */
+  kind?: NailKind;
   title: string;
   en: string;
   description: string;
@@ -82,6 +85,12 @@ export const NAIL_STYLES: readonly NailStyle[] = [
   { id:"nail-sage-garden",title:"باغ زیتونی",en:"Sage Garden",description:"سبز سیج روشن با جزئیات سفید",finish:"art",shape:"oval",color:"color",length:"medium",base:"#97AA9C",accent:"#F5EEE8",serviceId:"nail-art" },
   { id:"nail-lilac-bloom",title:"شکوفه یاسی",en:"Lilac Bloom",description:"یاسی پاستلی با جزئیات ریز",finish:"art",shape:"almond",color:"color",length:"medium",base:"#B9A5CD",accent:"#F6E5F6",serviceId:"nail-art" },
   { id:"nail-cobalt-lines",title:"آبی کبالت",en:"Cobalt Accent",description:"آبی عمیق با خطوط دقیق مینیمال",finish:"art",shape:"coffin",color:"color",length:"long",base:"#325590",accent:"#CFDFF9",serviceId:"nail-art" },
+  { id:"pedi-classic-nude",kind:"pedicure",title:"پدیکور نود کلاسیک",en:"Classic Nude Pedicure",description:"فرم طبیعی با پوشش صورتی نود ملایم",finish:"gloss",shape:"square",color:"nude",length:"short",base:"#E1B3A4",accent:"#FAE0D6",serviceId:"classic-pedicure" },
+  { id:"pedi-french",kind:"pedicure",title:"پدیکور فرنچ",en:"French Pedicure",description:"فرنچ ظریف سفید روی ناخن‌های مرتب پا",finish:"french",shape:"square",color:"nude",length:"short",base:"#DFB0AC",accent:"#FFFDF4",serviceId:"gel-pedicure" },
+  { id:"pedi-ruby",kind:"pedicure",title:"پدیکور قرمز یاقوتی",en:"Ruby Pedicure",description:"رنگ قرمز براق و کلاسیک برای ناخن‌های پا",finish:"gloss",shape:"square",color:"red",length:"short",base:"#A32B36",accent:"#EA8A94",serviceId:"gel-pedicure" },
+  { id:"pedi-blush",kind:"pedicure",title:"پدیکور صورتی ملایم",en:"Soft Blush Pedicure",description:"صورتی طبیعی با جلوه تمیز و براق",finish:"gloss",shape:"square",color:"pink",length:"short",base:"#D8A0A0",accent:"#F7D7CF",serviceId:"classic-pedicure" },
+  { id:"pedi-lavender",kind:"pedicure",title:"پدیکور یاسی",en:"Lavender Pedicure",description:"رنگ یاسی پاستلی و سبک تابستانی",finish:"gloss",shape:"square",color:"color",length:"short",base:"#AF98D6",accent:"#EFE4FF",serviceId:"gel-pedicure" },
+  { id:"pedi-sparkle",kind:"pedicure",title:"پدیکور اکلیلی",en:"Sparkle Pedicure",description:"ریزاکلیل رزگلد برای درخشش ظریف",finish:"glitter",shape:"square",color:"pink",length:"short",base:"#CC9D9C",accent:"#F5DCCB",serviceId:"gel-pedicure" },
 ] as const;
 
 export const nailById = new Map(NAIL_STYLES.map((style) => [style.id, style]));

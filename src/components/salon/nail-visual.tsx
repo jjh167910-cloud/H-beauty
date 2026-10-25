@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { NailStyle } from "@/data/nail-styles";
 import { NailPreview } from "./nail-preview";
+import { PedicurePreview } from "./pedicure-preview";
 
 /**
  * Four licensed-to-project, AI-generated editorial references, delivered as
@@ -9,12 +10,29 @@ import { NailPreview } from "./nail-preview";
  *
  * Upload assets into public/nails/photos/ from Hananeh_Nail_Photo_Pack_v1.zip.
  */
-export const NAIL_EDITORIAL_PHOTOS: Readonly<Record<string, string>> = {
-  "nail-milky-silk": "/nails/photos/nail-milky-silk.webp",
-  "nail-classic-french": "/nails/photos/nail-classic-french.webp",
-  "nail-ruby-red": "/nails/photos/nail-ruby-red.webp",
-  "nail-pearl-chrome": "/nails/photos/nail-pearl-chrome.webp",
-};
+// Editorial images are illustrative concepts, not customer results. The 34-look
+// asset set has 24 visually matched photo references. For the ten references whose
+// generated images do not faithfully show the named finish, keep accurate vector
+// art instead of misrepresenting them. Enabling requires the complete verified pack.
+export const V2_APPROVED_PHOTOS = [
+  "nail-milky-silk","nail-ballet-pink","nail-old-money","nail-ruby-red",
+  "nail-merlot","nail-cocoa","nail-classic-french","nail-gold-french",
+  "nail-pearl-chrome","nail-rose-chrome","nail-silver-chrome",
+  "nail-peach-ombre","nail-champagne","nail-rose-glitter",
+  "nail-midnight-glitter","nail-botanical","nail-modern-lines",
+  "nail-cobalt-lines",
+  "pedi-classic-nude","pedi-french","pedi-ruby",
+  "pedi-blush","pedi-lavender","pedi-sparkle",
+] as const;
+export const NAIL_EDITORIAL_PHOTOS: Readonly<Record<string,string>> =
+  import.meta.env.VITE_NAIL_EDITORIAL_V2 === "true"
+  ? Object.fromEntries(V2_APPROVED_PHOTOS.map(id=>[id,`/nails/photos/${id}.webp`]))
+  : {
+    "nail-milky-silk": "/nails/photos/nail-milky-silk.webp",
+    "nail-classic-french": "/nails/photos/nail-classic-french.webp",
+    "nail-ruby-red": "/nails/photos/nail-ruby-red.webp",
+    "nail-pearl-chrome": "/nails/photos/nail-pearl-chrome.webp",
+  };
 
 export function NailVisual({
   style,
@@ -34,7 +52,7 @@ export function NailVisual({
   return (
     <span className={`nail-visual ${className}`} role="img" aria-label={`نمونه الهام‌بخش طرح ناخن ${style.title}؛ تصویرسازی نمایشی، نه اجرای واقعی سالن`}>
       <span className="nail-visual__fallback" aria-hidden="true">
-        <NailPreview style={style} />
+        {style.kind === "pedicure" ? <PedicurePreview style={style} /> : <NailPreview style={style} />}
       </span>
       {photo ? (
         <img
