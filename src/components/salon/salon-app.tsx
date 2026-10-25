@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Toaster } from "sonner";
 import { TABS, useSalon, type Tab } from "@/lib/salon-store";
+import { nailStyleFromHash } from "@/data/nail-links";
 import { withTransition } from "@/lib/transition";
 import { Docks, TabBar, TopBar } from "./chrome";
 import { HomeScreen } from "./screens/home";
@@ -17,7 +18,7 @@ import { Welcome } from "./welcome";
 import { SalonProvider, type BookingIntent, type SalonActions, type SheetState } from "./ui";
 
 function tabFromHash(): Tab {
-  const key = window.location.hash.replace(/^#\/?/, "") as Tab;
+  const key = window.location.hash.replace(/^#\/?/, "").split("?")[0] as Tab;
   return TABS.includes(key) ? key : "home";
 }
 
@@ -109,6 +110,14 @@ export function SalonApp() {
     sheetRef.current = next;
     setSheet(next);
   }, []);
+
+  // Opening a shared link starts at its exact salon reference instead of the
+  // general catalogue. This is intentionally only an initial-navigation
+  // effect, never a repeated opener when a visitor closes the sheet.
+  useEffect(() => {
+    const id = nailStyleFromHash(window.location.hash);
+    if (id) openSheet({ kind: "nail", id });
+  }, [openSheet]);
 
   const closeSheet = useCallback(() => {
     if (!sheetRef.current) return;
