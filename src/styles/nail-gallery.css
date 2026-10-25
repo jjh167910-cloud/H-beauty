@@ -1,0 +1,132 @@
+/* Hananeh Beauty Nail Atelier — editorial, quiet, offline-capable design language. */
+.nail-page {
+  --nail-ink: var(--color-ink);
+  color: var(--nail-ink);
+  padding-bottom: 2.5rem;
+}
+.nail-toolbar {
+  display: flex;
+  gap: .7rem;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 3rem;
+}
+.nail-toolbar__label {
+  font: 600 .61rem/1.5 var(--font-serif);
+  letter-spacing: .19em;
+  color: var(--color-ink-2);
+  text-align: center;
+}
+.nail-toolbar__back,.nail-toolbar__saved {
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .3rem;
+  border: 1px solid var(--color-line);
+  border-radius: 999px;
+  background: var(--color-surface);
+}
+.nail-toolbar__saved {padding:0 .6rem;color:var(--color-rose);}
+.nail-toolbar__saved span {font-size:.72rem;color:var(--color-ink-2);}
+.nail-toolbar__saved[aria-pressed="true"] {background:var(--color-rose-soft);}
+.nail-intro {padding-block:1.3rem 1.6rem;}
+.nail-kicker {display:block;font:500 .63rem/1.4 var(--font-serif);letter-spacing:.2em;color:var(--color-gold-ink);direction:ltr;text-align:end;}
+.nail-intro h1 {margin-top:.5rem;font-weight:410;font-size:clamp(2.05rem,6.3vw,3rem);line-height:1.65;letter-spacing:-.035em;}
+.nail-intro h1 em {font-family:var(--font-calligraphy);font-weight:500;color:var(--color-gold-ink);font-style:normal;white-space:nowrap;}
+.nail-intro p {max-width:31rem;font-size:.82rem;line-height:2.0;color:var(--color-ink-2);margin-top:.15rem;}
+.nail-hero {margin-block-end:2.4rem;}
+.nail-hero__card {
+  position:relative;
+  overflow:hidden;
+  isolation:isolate;
+  min-height:18.5rem;
+  display:flex;
+  align-items:center;
+  background:linear-gradient(137deg,#251a25,#483144 55%,#241922);
+  color:#f9f0e7;
+  border-radius:1.3rem;
+  padding:1.35rem;
+  box-shadow:var(--shadow-3);
+}
+.nail-hero__card:before {
+  content:"";position:absolute;inset:0;
+  background:radial-gradient(ellipse at 25% 25%,rgba(255,231,198,.14),transparent 62%);
+  pointer-events:none;
+}
+.nail-hero__copy {position:relative;z-index:2;width:53%;display:grid;align-content:center;justify-items:start;gap:.7rem;min-width:0;}
+.nail-hero__copy>span {font:500 .58rem/1.4 var(--font-serif);letter-spacing:.13em;color:#d3b991;}
+.nail-hero__copy strong {font-size:1.7rem;line-height:1.65;font-weight:450;}
+.nail-hero__copy p {font-size:.74rem;line-height:1.9;color:#e9dcd9;}
+.nail-hero__copy button {display:flex;align-items:center;gap:.35rem;border-bottom:1px solid #bea078;min-height:44px;font-size:.77rem;color:#f9d9ab;}
+.nail-hero__art {position:absolute;inset-inline-start:44%;inset-block:0;width:60%;height:100%;object-fit:contain;transform:scale(1.25);filter:drop-shadow(0 12px 13px #17101a80);pointer-events:none;}
+.nail-filters {display:grid;gap:.6rem;margin-bottom:1rem;}
+.nail-filters__top {display:flex;align-items:center;justify-content:space-between;gap:.8rem;flex-wrap:wrap;margin-block-end:.35rem;}
+.nail-filters__top span {font:.55rem/1.4 var(--font-serif);letter-spacing:.19em;color:var(--color-gold-ink);}
+.nail-filters__top h2 {font-size:1.4rem;font-weight:560;line-height:1.6;}
+.nail-filters__top p {font-size:.75rem;color:var(--color-ink-2);}
+.nail-search {
+  min-width:0;display:flex;align-items:center;gap:.65rem;
+  padding-inline:.9rem;border:1px solid var(--color-line-2);
+  border-radius:.85rem;background:var(--color-surface);
+  min-height:48px;color:var(--color-ink-2);margin-block:.2rem .45rem;
+}
+.nail-search:focus-within {outline:2px solid var(--color-gold);outline-offset:1px;}
+.nail-search input {border:0;background:transparent;outline:none;width:100%;min-width:0;font-size:.82rem;color:var(--color-ink);}
+.nail-search input::placeholder {color:var(--color-ink-3);}
+.nail-filter-label {font-size:.72rem;font-weight:650;color:var(--color-ink-2);}
+.nail-filters .chip-row {margin-block:0 .35rem;}
+.nail-collection {padding-block:.6rem 1.4rem;}
+.nail-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.8rem;}
+.nail-card {min-width:0;border-radius:1.05rem;background:var(--color-surface);border:1px solid var(--color-line);overflow:hidden;box-shadow:var(--shadow-1);}
+.nail-card__open {display:block;width:100%;text-align:start;min-width:0;}
+.nail-card__picture {position:relative;display:grid;place-items:center;width:100%;aspect-ratio:4/4.35;overflow:hidden;background:linear-gradient(145deg,#f0e8e0,#e9d5d5);border-radius:1rem 1rem .25rem .25rem;}
+.nail-card:nth-child(3n+2) .nail-card__picture{background:linear-gradient(146deg,#e9dedb,#d9d1dc);}
+.nail-card:nth-child(3n+3) .nail-card__picture{background:linear-gradient(130deg,#ede4d6,#e2d4c3);}
+:root[data-theme="dark"] .nail-card__picture{background:linear-gradient(150deg,#51454b,#352b36);}
+.nail-card__art {width:110%;height:100%;max-height:260px;filter:drop-shadow(0 8px 9px #39202c1c);transition:transform .35s ease;}
+.nail-card__open:hover .nail-card__art,.nail-card__open:focus-visible .nail-card__art{transform:scale(1.045);}
+.nail-card__info {display:grid;gap:.25rem;padding:.8rem .85rem .55rem;min-height:7.2rem;align-content:start;}
+.nail-card__info small {direction:ltr;text-align:end;unicode-bidi:isolate;font:.57rem/1.5 var(--font-serif);letter-spacing:.04em;color:var(--color-gold-ink);}
+.nail-card__info strong {font-size:.91rem;font-weight:650;line-height:1.5;}
+.nail-card__info>span {font-size:.7rem;line-height:1.85;color:var(--color-ink-2);display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;}
+.nail-card__footer {padding:.35rem .75rem .5rem;display:flex;align-items:center;justify-content:space-between;min-width:0;gap:.2rem;}
+.nail-card__footer>span {font-size:.61rem;color:var(--color-ink-3);line-height:1.5;}
+.nail-card__favorite {flex:none;display:grid;place-items:center;min-width:44px;min-height:44px;border:1px solid var(--color-line);background:var(--color-surface);color:var(--color-rose);border-radius:99px;}
+.nail-card__favorite[aria-pressed="true"]{background:var(--color-rose-soft);}
+.nail-empty {display:grid;justify-items:center;gap:.6rem;padding:3rem .7rem;text-align:center;background:var(--color-sunken);border-radius:1rem;}
+.nail-empty h3{font-size:1rem;font-weight:600;}
+.nail-empty p{font-size:.76rem;line-height:1.8;color:var(--color-ink-2);}
+.nail-services {margin-block:1rem;}
+.nail-services__inner {background:var(--color-sunken);border:1px solid var(--color-line);border-radius:1.25rem;padding:1.35rem;}
+.nail-services__inner>span {direction:ltr;display:block;text-align:end;font:.6rem/1.5 var(--font-serif);letter-spacing:.16em;color:var(--color-gold-ink);}
+.nail-services h2{font-size:1.45rem;line-height:1.7;font-weight:560;margin:.5rem 0;}
+.nail-services p{font-size:.81rem;line-height:1.9;color:var(--color-ink-2);max-width:28rem;}
+.nail-services__inner>div {display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1rem;}
+.nail-disclaimer {margin-block:1.25rem;color:var(--color-ink-2);font-size:.7rem;line-height:1.9;}
+.nail-detail {display:grid;gap:1rem;padding-block:.5rem 1.5rem;}
+.nail-detail__visual {background:linear-gradient(135deg,#f0e6df,#e6d6d7);border-radius:1rem;overflow:hidden;}
+.nail-detail__visual svg {display:block;width:100%;height:auto;max-height:19rem;}
+.nail-detail__en {font:.66rem/1.6 var(--font-serif);letter-spacing:.16em;color:var(--color-gold-ink);direction:ltr;text-align:end;}
+.nail-detail h3 {font-size:1.35rem;font-weight:600;line-height:1.7;}
+.nail-detail>p {color:var(--color-ink-2);font-size:.81rem;line-height:1.9;}
+.nail-detail__tags {display:flex;gap:.45rem;flex-wrap:wrap;}
+.nail-detail__tags span {border:1px solid var(--color-line);background:var(--color-sunken);border-radius:99px;padding:.35rem .65rem;font-size:.72rem;}
+.nail-detail__actions {display:grid;grid-template-columns:1fr auto;gap:.6rem;}
+.nail-detail__note {color:var(--color-ink-2);font-size:.7rem;line-height:1.8;}
+@media (min-width:640px) {
+  .nail-grid {grid-template-columns:repeat(3,minmax(0,1fr));gap:1.05rem;}
+  .nail-hero__card {min-height:22rem;padding:2rem;}
+  .nail-hero__copy strong{font-size:2.05rem;}
+  .nail-hero__art{width:55%;inset-inline-start:50%;}
+}
+@media (max-width:360px) {
+  .nail-hero__copy strong{font-size:1.38rem;}
+  .nail-hero__art{transform:scale(1.13);}
+  .nail-card__info{padding:.7rem .6rem .45rem;}
+  .nail-grid{gap:.55rem;}
+}
+@media (prefers-reduced-motion:reduce){
+  .nail-card__art{transition:none;}
+}
