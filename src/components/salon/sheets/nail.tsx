@@ -1,4 +1,3 @@
-import { persian } from "@/data/catalog";
 import type { NailStyle } from "@/data/nail-styles";
 import { NAIL_FINISHES, NAIL_SHAPES } from "@/data/nail-styles";
 import { serviceById, formatMinutes } from "@/data/salon";
@@ -43,7 +42,7 @@ export function NailSheet({ open, style, onClose }: { open: boolean; style: Nail
           </button>
         </div>
         {service ? <p className="nail-detail__note">خدمت پیشنهادی: {service.title} · مدت تقریبی {formatMinutes(service.minutes)} · قیمت پس از مشاوره</p> : null}
-        <span className="nail-detail__en" lang="en">HANANEH BEAUTY · {persian(1)} / {persian(1)}</span>
+        <span className="nail-detail__en" lang="en">HANANEH BEAUTY / NAIL ATELIER</span>
       </article>
     </Sheet>
   );
