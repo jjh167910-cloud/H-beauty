@@ -23,6 +23,7 @@ test("native share passes an actual local photo-reference PNG with honest title"
       (window as Window&{__hbeautyShare?:unknown}).__hbeautyShare={
         name:file.name,type:file.type,size:file.size,
         title:data.title,text:data.text,
+        activationAtShare:navigator.userActivation?.isActive??null,
         header:Array.from(new Uint8Array(await file.slice(0,8).arrayBuffer()))
       };
     }});
@@ -32,13 +33,15 @@ test("native share passes an actual local photo-reference PNG with honest title"
   await detail.getByRole("button",{name:"اشتراک تصویر طرح شیری ابریشمی"}).click();
   await expect(detail.getByRole("status").filter({hasText:"تصویر طرح به برنامهٔ انتخابی تحویل داده شد."})).toBeVisible();
   const share=await page.evaluate(()=>(window as Window&{__hbeautyShare?:unknown}).__hbeautyShare) as {
-    name:string;type:string;size:number;title:string;text:string;header:number[]
+    name:string;type:string;size:number;title:string;text:string;header:number[];activationAtShare:boolean|null
   };
   expect(share.name).toBe("H-Beauty-nail-milky-silk.png");
   expect(share.type).toBe("image/png");
   expect(share.size).toBeGreaterThan(20_000);
   expect(share.header).toEqual([137,80,78,71,13,10,26,10]);
   expect(share.text).toContain("عکس اجرای واقعی سالن");
+  // A real phone's Web Share API requires activation from this exact tap.
+  expect(share.activationAtShare).toBe(true);
   await expect(detail.getByRole("button",{name:"درخواست اجرای همین طرح"})).toBeVisible();
 });
 
@@ -77,4 +80,27 @@ test("cancelling a native mobile share does not download an unexpected image",as
   await expect(detail.getByText("اشتراک مستقیم در دسترس نبود؛ دانلود تصویر آغاز شد.")).toHaveCount(0);
   await expect(detail.getByText("تصویر طرح به برنامهٔ انتخابی تحویل داده شد.")).toHaveCount(0);
   expect(downloads).toBe(0);
+});
+
+
+test("share does not encode PNG after click and therefore preserves user activation",async({page})=>{
+  await page.addInitScript(()=>{
+    Object.defineProperty(navigator,"canShare",{configurable:true,value:(data:ShareData)=>Boolean(data.files?.length)});
+    Object.defineProperty(navigator,"share",{configurable:true,value:async(data:ShareData)=>{
+      if(!data.files?.[0])throw Error("Missing prebuilt PNG");
+      (window as Window&{__shareActivation?:boolean}).__shareActivation=
+        navigator.userActivation.isActive;
+    }});
+  });
+  const detail=await openStyle(page,"شیری ابریشمی","شیری ابریشمی");
+  const button=detail.getByRole("button",{name:"اشتراک تصویر طرح شیری ابریشمی"});
+  await expect(button).toBeEnabled();
+  // The card is ready BEFORE the user gesture. Any toBlob during the click
+  // would require an async step which can lose transient activation.
+  await page.evaluate(()=>{
+    HTMLCanvasElement.prototype.toBlob=()=>{throw Error("Canvas encoded after share tap");};
+  });
+  await button.click();
+  await expect(detail.getByText("تصویر طرح به برنامهٔ انتخابی تحویل داده شد.")).toBeVisible();
+  expect(await page.evaluate(()=>(window as Window&{__shareActivation?:boolean}).__shareActivation)).toBe(true);
 });
