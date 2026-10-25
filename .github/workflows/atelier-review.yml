@@ -31,6 +31,8 @@ jobs:
         # Unlike RIFF header checks, this decodes every V4 WebP in Chromium
         # and checks sharpness, opacity and intrinsic dimensions.
         run: npm run review:nail-photo-pixels -- --baseline
+      - name: Reject falsely high-resolution WebP with undecodable pixels
+        run: node --test tests-integration/nail-photo-chromium-decoder.test.mjs
       - name: Verify Cloudflare Worker packaging without deploying
         # Reproduce Wrangler's configuration-driven build on a clean CI
         # checkout. No Cloudflare token or production mutation is required.
