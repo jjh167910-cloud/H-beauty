@@ -47,17 +47,41 @@ test("pedicure section truthfully reports zero approved photos and keeps all 78 
   await expect(page.locator(".nail-card").first().locator(".nail-card__media-type--illustration")).toBeVisible();
 });
 
-test("blocked or missing approved photograph never claims its fallback is a photo",async({page})=>{
+test("failed photo disappears only from photo filter, not from catalog or booking",async({page})=>{
   await page.route("**/nails/photos/nail-milky-silk.webp",route=>route.fulfill({
     status:404,contentType:"text/plain",body:"not found"
   }));
   await ready(page,390);
-  await page.getByRole("button",{name:"فقط طرح‌های دارای عکس الهام‌بخش"}).click();
+  const filter=page.getByRole("button",{name:"فقط طرح‌های دارای عکس الهام‌بخش"});
+  const sourceCount=await page.getByRole("group",{name:"نوع پیش‌نمایش ناخن"})
+    .locator(".nail-photo-refine__description span").innerText();
+  const initialCount=sourceCount.startsWith("۹")?9:4;
+  await filter.click();
   const card=page.locator(".nail-card").filter({has:page.getByRole("button",{name:"مشاهده طرح شیری ابریشمی"})});
+  await expect(card).toHaveCount(0);
+  await expect(page.locator(".nail-card")).toHaveCount(initialCount-1);
+  // Switching to the complete 298-design catalog must restore the style.
+  await filter.click();
+  await expect(card).toHaveCount(1);
   await expect(card.locator('.nail-visual[data-media-source="vector"]')).toBeVisible();
   await expect(card.locator(".nail-card__media-type--illustration")).toBeVisible();
   await expect(card.locator(".nail-card__media-type--photo")).toBeHidden();
   await expect(card.locator(".nail-visual__fallback svg")).toBeVisible();
+  await card.getByRole("button",{name:"مشاهده طرح شیری ابریشمی"}).click();
+  await expect(page.getByRole("dialog",{name:"شیری ابریشمی"})).toBeVisible();
+});
+
+test("entire photo pack failing offline still allows returning to the full gallery",async({page})=>{
+  await page.route("**/nails/photos/*.webp",route=>route.abort());
+  await ready(page,390);
+  const filter=page.getByRole("button",{name:"فقط طرح‌های دارای عکس الهام‌بخش"});
+  await filter.click();
+  await expect(page.locator(".nail-card")).toHaveCount(0);
+  await expect(filter).toBeEnabled();
+  await expect(page.getByText("عکس‌های تأییدشده در این دستگاه بارگذاری نشدند؛ پیش‌نمایش برداری در دسترس است.")).toBeVisible();
+  await filter.click();
+  await expect(page.locator(".nail-card")).toHaveCount(24);
+  await expect(page.locator(".nail-card").first().locator(".nail-visual__fallback svg")).toBeVisible();
 });
 
 test("photo filter and favorites can be combined without losing design references",async({page})=>{
