@@ -49,7 +49,7 @@ function approvedReferences() {
   const entries=readFileSync(expectedLock,"utf8").trim().split(/\r?\n/);
   if(entries.length!==9)throw Error("Approved V4 reference list must contain nine sources");
   return entries.map(line=>{
-    const m=line.match(/^([a-f0-9]{64})\s+(public\/nails\/photos\/(nail|pedi)-[a-z0-9-]+\.webp)$/);
+    const m=line.match(/^([a-f0-9]{64})\s+(public\/nails\/photos\/((?:nail|pedi)-[a-z0-9-]+)\.webp)$/);
     if(!m)throw Error("Invalid V4 photo lock entry");
     const path=resolve(ROOT,m[2]);
     if(!existsSync(path))
