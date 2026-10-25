@@ -59,10 +59,21 @@ export function NailSheet({ open, style, onClose }: { open: boolean; style: Nail
     const imageChanged=()=>{requestAnimationFrame(prepare);};
     root.addEventListener("load",imageChanged,true);
     root.addEventListener("error",imageChanged,true);
+    // React applies data-ready *after* img.onload. A single animation frame
+    // can still see the not-ready DOM, then never retry. Observe the actual
+    // committed image state (also handles an offline fallback removing <img>).
+    const observer=new MutationObserver(imageChanged);
+    observer.observe(root,{
+      attributes:true,
+      attributeFilter:["data-ready","data-media-source","src"],
+      childList:true,
+      subtree:true,
+    });
     const animation=requestAnimationFrame(prepare);
     return ()=>{
       disposed=true;generation++;
       cancelAnimationFrame(animation);
+      observer.disconnect();
       root.removeEventListener("load",imageChanged,true);
       root.removeEventListener("error",imageChanged,true);
     };
