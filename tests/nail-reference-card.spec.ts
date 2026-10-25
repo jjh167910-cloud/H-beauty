@@ -54,6 +54,12 @@ test("vector-only nail exports a real PNG without external photos or a network A
 
 test("reference card always names the requested design after switching colorways",async({page})=>{
   const detail=await nailSheet(page,"ژلی شفاف عاجی","ژلی شفاف عاجی");
+  const [firstDownload]=await Promise.all([
+    page.waitForEvent("download"),
+    detail.getByRole("button",{name:"ذخیره تصویر طرح ژلی شفاف عاجی"}).click()
+  ]);
+  expect(firstDownload.suggestedFilename()).toContain("nail-atlas-jelly-ivory");
+  await expect(detail.getByText("دانلود کارت تصویر این طرح آغاز شد.")).toBeVisible();
   await detail.getByRole("button",{name:"انتخاب رنگ ژلی شفاف یاقوتی"}).click();
   const changed=page.getByRole("dialog",{name:"ژلی شفاف یاقوتی"});
   await expect(changed).toBeVisible();
