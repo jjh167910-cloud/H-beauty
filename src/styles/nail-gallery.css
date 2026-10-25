@@ -208,3 +208,30 @@
   border-color:var(--color-ink);
 }
 .nail-kind-control button:focus-visible {outline:2px solid var(--color-gold-ink);outline-offset:2px;}
+
+
+/* Grand Nail Atlas: 298 distinct references without loading every preview at once. */
+.nail-collection__toolbar {
+  display:flex;align-items:center;justify-content:space-between;gap:.85rem;
+  min-height:3.25rem;margin-bottom:.65rem;flex-wrap:wrap;
+  font-size:.73rem;color:var(--color-ink-2);
+}
+.nail-collection__toolbar label{display:flex;align-items:center;gap:.45rem;font-size:.71rem;}
+.nail-collection__toolbar select{
+  color:var(--color-ink);background:var(--color-surface);
+  border:1px solid var(--color-line-2);border-radius:.65rem;
+  min-height:44px;max-width:160px;padding:0 .5rem;font:inherit;
+}
+.nail-collection__toolbar select:focus-visible{outline:2px solid var(--color-gold-ink);outline-offset:2px;}
+.nail-more{display:grid;justify-items:center;gap:.75rem;padding:1.5rem 0 .6rem;}
+.nail-more__track{width:min(240px,80%);height:3px;border-radius:99px;background:var(--color-line);}
+.nail-more__track span{display:block;height:100%;border-radius:inherit;background:var(--color-gold-ink);transition:width .25s ease;}
+.nail-more p{color:var(--color-ink-2);font-size:.74rem;}
+.nail-more button{
+  display:inline-flex;align-items:center;justify-content:center;gap:.6rem;
+  min-height:48px;min-width:170px;padding:.6rem 1.4rem;
+  border:1px solid var(--color-line-2);border-radius:99px;
+  background:var(--color-surface);color:var(--color-ink);font-size:.84rem;font-weight:600;
+}
+.nail-more button:focus-visible{outline:2px solid var(--color-gold-ink);outline-offset:2px;}
+@media(prefers-reduced-motion:reduce){.nail-more__track span{transition:none;}}
