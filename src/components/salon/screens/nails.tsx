@@ -224,7 +224,7 @@ export function NailsScreen() {
                   <button type="button" className="nail-card__open" onClick={() => openSheet({ kind: "nail", id: style.id })}
                     aria-label={`مشاهده طرح ${style.title}`}>
                     <span className="nail-card__picture">
-                      <NailVisual style={style} className="nail-card__art" onPhotoUnavailable={markPhotoUnavailable}/>
+                      <NailVisual style={style} className="nail-card__art" priority={photoOnly} onPhotoUnavailable={markPhotoUnavailable}/>
                     </span>
                     <span className="nail-card__info">
                       <small lang="en">{String(index + 1).padStart(2,"0")} / {style.en}</small>
