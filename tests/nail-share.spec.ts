@@ -12,7 +12,7 @@ async function setup(page:Page,width=390){
 test("direct shared link opens exact manicure without losing the nail route",async({page})=>{
   await setup(page,390);
   await page.goto("/#/nails?style=nail-atlas-velvet-merlot");
-  await expect(page.getByRole("heading",{name:/هنر ناخن/})).toBeVisible();
+  await expect(page).toHaveURL(/#\/nails\?style=nail-atlas-velvet-merlot$/);
   const sheet=page.getByRole("dialog",{name:"مخمل مات زرشکی"});
   await expect(sheet).toBeVisible();
   await sheet.getByRole("button",{name:"درخواست اجرای همین طرح"}).click();
@@ -27,7 +27,7 @@ test("direct shared pedicure link works on 320px and remains mobile safe",async(
   await setup(page,320);
   await page.goto("/#/nails?style=pedi-atlas-marble-ruby");
   await expect(page.getByRole("dialog",{name:"پدیکور مرمری یاقوتی"})).toBeVisible();
-  await expect(page.getByRole("heading",{name:/هنر ناخن/})).toBeVisible();
+  await expect(page).toHaveURL(/#\/nails\?style=pedi-atlas-marble-ruby$/);
   const delta=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
   expect(delta).toBeLessThanOrEqual(1);
 });
