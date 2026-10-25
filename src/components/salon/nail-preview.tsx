@@ -1,5 +1,6 @@
 import { useId } from "react";
 import type { NailStyle, NailShape } from "@/data/nail-styles";
+import { NailOrnament } from "./nail-ornament";
 
 /**
  * Offline vector reference swatches: intentionally NOT photoreal salon results.
@@ -27,6 +28,7 @@ export function NailPreview({ style, className = "" }: { style: NailStyle; class
   const french = style.finish === "french";
   const ombre = style.finish === "ombre";
   const sparkle = style.finish === "glitter";
+  const matte = style.finish === "matte";
   const art = style.finish === "art";
 
   return (
@@ -50,14 +52,22 @@ export function NailPreview({ style, className = "" }: { style: NailStyle; class
         <g key={i} transform={`translate(${nail.x} ${nail.y}) rotate(${nail.r}) scale(${nail.scale * (style.length === "long" ? 1.16 : style.length === "short" ? 0.92 : 1)})`}>
           <path d={SHAPES[style.shape]} transform="translate(1 5)" fill="#352224" opacity=".10" />
           <path d={SHAPES[style.shape]} fill={`url(#${grad})`} stroke={style.accent} strokeOpacity=".40" strokeWidth="0.8" />
-          {french ? (
+          {style.motif ? (
+            <>
+              <clipPath id={`${grad}-clip-${i}`}><path d={SHAPES[style.shape]}/></clipPath>
+              <g clipPath={`url(#${grad}-clip-${i})`}>
+                <NailOrnament motif={style.motif} accent={style.accent} base={style.base} index={i}/>
+              </g>
+            </>
+          ) : null}
+          {french && style.motif !== "double-french" ? (
             <path d="M -13 -22 Q 0 -33 13 -22 L 12 -29 Q 0 -41 -12 -29 Z" fill={style.accent} opacity=".97" />
           ) : null}
-          {sparkle ? Array.from({ length: 8 }, (_,dot) => (
+          {!style.motif && sparkle ? Array.from({ length: 8 }, (_,dot) => (
             <circle key={dot} cx={((dot*11+i*7)%26)-13} cy={((dot*19+i*11)%55)-24}
               r={dot%3===0?1.8:0.85} fill={style.accent} opacity=".75" />
           )) : null}
-          {art ? (
+          {!style.motif && art ? (
             <>
               <path d="M -8 21 Q 4 10 -6 -2 T 8 -29" stroke={style.accent} strokeWidth="2.1" fill="none" strokeLinecap="round" opacity=".9" />
               {i%2===0 ? <circle cx="8" cy="-18" r="3.8" fill={style.accent} opacity=".7" /> : null}
@@ -65,7 +75,7 @@ export function NailPreview({ style, className = "" }: { style: NailStyle; class
             </>
           ) : null}
           {chrome ? <path d="M -9 26 C -15 6 -13 -18 -6 -31" stroke="#FFFFFF" strokeOpacity=".67" strokeWidth="3" fill="none" strokeLinecap="round" /> : null}
-          <path d="M -11 25 C -13 8 -12 -12 -7 -22" stroke="#FFFFFF" strokeOpacity={chrome?".36":".42"} strokeWidth="2.3" fill="none" strokeLinecap="round" />
+          {!matte ? <path d="M -11 25 C -13 8 -12 -12 -7 -22" stroke="#FFFFFF" strokeOpacity={chrome?".36":".42"} strokeWidth="2.3" fill="none" strokeLinecap="round" /> : null}
           <path d="M -9 38 Q 0 40 9 38" stroke="#7F655A" strokeOpacity=".17" strokeWidth=".7" fill="none" />
         </g>
       ))}
