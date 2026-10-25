@@ -15,15 +15,16 @@ export function NailSheet({ open, style, onClose }: { open: boolean; style: Nail
   const [shareStatus, setShareStatus] = useState<"copied"|"manual"|null>(null);
   const [manualLink,setManualLink] = useState("");
   const imageRoot=useRef<HTMLDivElement>(null);
-  const [imageSave,setImageSave]=useState<"idle"|"saving"|"saved"|"error">("idle");
+  const [imageSave,setImageSave]=useState<{id:string;status:"idle"|"saving"|"saved"|"error"}>({id:style.id,status:"idle"});
+  const saveStatus=imageSave.id===style.id?imageSave.status:"idle";
   const saveImage=async()=>{
     if(!imageRoot.current)return;
-    setImageSave("saving");
+    setImageSave({id:style.id,status:"saving"});
     try{
       await saveNailReferenceCard(style,imageRoot.current);
-      setImageSave("saved");
+      setImageSave({id:style.id,status:"saved"});
     }catch{
-      setImageSave("error");
+      setImageSave({id:style.id,status:"error"});
     }
   };
   // The inspector is local to the currently selected design; changing
@@ -153,13 +154,13 @@ export function NailSheet({ open, style, onClose }: { open: boolean; style: Nail
         </div>
         <div className="nail-detail__share">
           <button type="button" className="nail-detail__share-button"
-            onClick={saveImage} disabled={imageSave==="saving"}
+            onClick={saveImage} disabled={saveStatus==="saving"}
             aria-label={`ذخیره تصویر طرح ${style.title}`}>
             <Icon name="download" size={19}/>
-            <span>{imageSave==="saving" ? "در حال آماده‌سازی تصویر…" : "ذخیره تصویر طرح برای مشاوره"}</span>
+            <span>{saveStatus==="saving" ? "در حال آماده‌سازی تصویر…" : "ذخیره تصویر طرح برای مشاوره"}</span>
           </button>
-          {imageSave==="saved" ? <p role="status">کارت تصویر طرح آماده و ذخیره شد.</p> : null}
-          {imageSave==="error" ? <p role="alert">ذخیره تصویر ممکن نشد؛ همچنان می‌توانید لینک طرح را به اشتراک بگذارید.</p> : null}
+          {saveStatus==="saved" ? <p role="status">دانلود کارت تصویر این طرح آغاز شد.</p> : null}
+          {saveStatus==="error" ? <p role="alert">ذخیره تصویر ممکن نشد؛ همچنان می‌توانید لینک طرح را به اشتراک بگذارید.</p> : null}
           <button type="button" className="nail-detail__share-button" onClick={share}
             aria-label={`کپی لینک طرح ${style.title}`}>
             <Icon name="share" size={19} />
