@@ -40,18 +40,21 @@ export function finalizeServiceWorker(distDir = 'dist') {
       }
     }
   }
-  // V2: all 34 manicure/pedicure inspirations must be present, unmodified,
-  // and packed in the offline cache. Unlike v1, this is a full editorial edition.
+  // 34-asset photo edition, V3 corrected or legacy V2. No image can be
+  // packaged unverified; the V3 release additionally forbids exact duplicates.
   if (process.env.VITE_NAIL_EDITORIAL_V2 === 'true') {
-    const lock=resolve('assets/hbeauty-nail-editorial-v2.sha256');
-    if (!existsSync(lock)) throw new Error('V2 nail photo checksum lock missing');
+    const photoVersion=process.env.NAIL_EDITORIAL_LOCK_VERSION === "3" ? 3 : 2;
+    const lock=resolve(`assets/hbeauty-nail-editorial-v${photoVersion}.sha256`);
+    if (!existsSync(lock)) throw new Error('Nail photo checksum lock missing');
     const entries=readFileSync(lock,'utf8').trim().split(/\r?\n/).map(line=>{
       const match=line.match(/^([a-f\d]{64})\s+(public\/nails\/photos\/[^\s]+\.webp)$/i);
       if (!match) throw new Error('Invalid V2 nail image lock entry: '+line);
       return {hash:match[1],path:match[2]};
     });
     if(entries.length !== 34 || new Set(entries.map(entry=>entry.path)).size!==34)
-      throw new Error('V2 nail pack must contain 34 unique design references');
+      throw new Error('Nail pack must contain 34 unique design references');
+    if(photoVersion===3 && new Set(entries.map(entry=>entry.hash)).size!==34)
+      throw new Error('Nail v3 images contain duplicate SHA256 checksums');
     for(const entry of entries){
       const image=join(root,entry.path.slice('public/'.length));
       if(!existsSync(image))throw new Error('Missing V2 nail photo '+entry.path);
