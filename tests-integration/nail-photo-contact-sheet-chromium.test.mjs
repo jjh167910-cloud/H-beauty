@@ -6,7 +6,7 @@ import {join} from "node:path";
 import {chromium} from "playwright";
 import {auditNailPixels} from "../scripts/review-nail-photo-pixels.mjs";
 
-test("a large sharp multi-panel WebP cannot enter the approved photo queue",async()=>{
+test("a large sharp multi-panel WebP cannot enter the approved photo queue",{timeout:120000},async()=>{
   const folder=mkdtempSync(join(tmpdir(),"hbeauty-contact-sheet-"));
   const browser=await chromium.launch({headless:true,...(process.env.CI?{channel:"chrome"}:{})});
   try{
@@ -52,4 +52,4 @@ test("a large sharp multi-panel WebP cannot enter the approved photo queue",asyn
     await browser.close();
     rmSync(folder,{recursive:true,force:true});
   }
-},{timeout:120000});
+});
