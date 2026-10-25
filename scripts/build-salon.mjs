@@ -55,7 +55,7 @@ function build() {
     if(expected===actual) photoVersion=3;
   }
   const env = { ...process.env, VITE_SALON_MUSIC: enabled,
-    VITE_NAIL_EDITORIAL_V2:nailEdition, NAIL_EDITORIAL_LOCK_VERSION:String(photoVersion) };
+    VITE_NAIL_EDITORIAL_V2:nailEdition, VITE_NAIL_EDITORIAL_V3:nailEdition==="true" && photoVersion===3 ? "true" : "false", NAIL_EDITORIAL_LOCK_VERSION:String(photoVersion) };
   console.log(`Nail editorial photos: ${nailEdition==="true"?"34 photos, integrity gated v"+photoVersion:"offline vector previews active"}`);
   console.log(`Salon music: ${enabled === "true" ? "ENABLED (asset found)" : "disabled (asset missing or explicit opt-out)"}`);
   if (enabled === "true") {
