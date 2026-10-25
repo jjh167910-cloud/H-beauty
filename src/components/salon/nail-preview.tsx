@@ -45,11 +45,32 @@ export function NailPreview({ style, className = "" }: { style: NailStyle; class
           <stop offset="0%" stopColor={style.accent} stopOpacity="0.32" />
           <stop offset="100%" stopColor={style.accent} stopOpacity="0" />
         </radialGradient>
+        <linearGradient id={`${grad}-skin`} x1="0" x2="1" y1="0" y2=".18">
+          <stop offset="0%" stopColor="#B77E71" />
+          <stop offset="19%" stopColor="#DBA38F" />
+          <stop offset="47%" stopColor="#F3C6AF" />
+          <stop offset="76%" stopColor="#E6B09D" />
+          <stop offset="100%" stopColor="#B98177" />
+        </linearGradient>
+        <linearGradient id={`${grad}-handshade`} x1=".2" x2=".8" y1="0" y2="1">
+          <stop offset="0%" stopColor="#EDC0AB"/>
+          <stop offset="100%" stopColor="#C38E81"/>
+        </linearGradient>
       </defs>
       <ellipse cx="145" cy="132" rx="137" ry="106" fill={`url(#${grad}-glow)`} />
-      <ellipse cx="145" cy="206" rx="94" ry="11" fill="#372124" opacity="0.065" />
+      <ellipse cx="145" cy="215" rx="113" ry="17" fill="#372124" opacity=".07" />
+      <path data-nail-hand="true"
+        d="M 18 255 C 23 232 42 217 70 210 C 86 202 96 194 111 200 C 123 191 155 195 168 204 C 184 194 206 204 214 218 C 238 213 260 231 274 255 Z"
+        fill={`url(#${grad}-handshade)`} opacity=".83" />
       {NAILS.map((nail,i) => (
         <g key={i} transform={`translate(${nail.x} ${nail.y}) rotate(${nail.r}) scale(${nail.scale * (style.length === "long" ? 1.16 : style.length === "short" ? 0.92 : 1)})`}>
+          <path data-nail-finger="true"
+            d="M -19 -24 C -24 -13 -22 17 -24 42 C -25 66 -27 98 -26 125 L 25 125 C 27 95 25 65 24 39 C 22 11 23 -11 19 -24 C 12 -38 -11 -39 -19 -24 Z"
+            fill={`url(#${grad}-skin)`} stroke="#AB7C73" strokeWidth=".7" strokeOpacity=".6" />
+          <path d="M -18 -13 C -20 13 -17 55 -20 93" stroke="#FFF0DD"
+            strokeWidth="2.7" strokeOpacity=".26" strokeLinecap="round" fill="none" />
+          <path d="M 17 -11 C 19 19 19 48 19 70" stroke="#A96968"
+            strokeWidth="1.2" strokeOpacity=".18" strokeLinecap="round" fill="none" />
           <path d={SHAPES[style.shape]} transform="translate(1 5)" fill="#352224" opacity=".10" />
           <path d={SHAPES[style.shape]} fill={`url(#${grad})`} stroke={style.accent} strokeOpacity=".40" strokeWidth="0.8" />
           {style.motif ? (
@@ -76,7 +97,8 @@ export function NailPreview({ style, className = "" }: { style: NailStyle; class
           ) : null}
           {chrome ? <path d="M -9 26 C -15 6 -13 -18 -6 -31" stroke="#FFFFFF" strokeOpacity=".67" strokeWidth="3" fill="none" strokeLinecap="round" /> : null}
           {!matte ? <path d="M -11 25 C -13 8 -12 -12 -7 -22" stroke="#FFFFFF" strokeOpacity={chrome?".36":".42"} strokeWidth="2.3" fill="none" strokeLinecap="round" /> : null}
-          <path d="M -9 38 Q 0 40 9 38" stroke="#7F655A" strokeOpacity=".17" strokeWidth=".7" fill="none" />
+          <path d="M -14 35 Q 0 46 14 35" stroke="#A36B66" strokeOpacity=".38" strokeWidth="1.35" fill="none" />
+          <path d="M -9 38 Q 0 40 9 38" stroke="#FFF5E8" strokeOpacity=".28" strokeWidth=".7" fill="none" />
         </g>
       ))}
       <path d="M 54 239 H 236" stroke={style.accent} opacity=".28" strokeWidth=".75"/>
