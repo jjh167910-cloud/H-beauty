@@ -116,9 +116,8 @@ export async function createNailReferenceCard(style:NailStyle,visual:HTMLElement
   return {blob,source};
 }
 
-export async function saveNailReferenceCard(style:NailStyle,visual:HTMLElement):
-  Promise<SavedSource> {
-  const {blob,source}=await createNailReferenceCard(style,visual);
+/** Start an actual browser download; this cannot prove file storage succeeded. */
+function downloadReferenceBlob(style:NailStyle,blob:Blob):void {
   const url=URL.createObjectURL(blob);
   const link=document.createElement("a");
   link.href=url;
@@ -131,5 +130,47 @@ export async function saveNailReferenceCard(style:NailStyle,visual:HTMLElement):
     // Avoid revoking before mobile browsers have processed the download.
     setTimeout(()=>URL.revokeObjectURL(url),30_000);
   }
+}
+
+export async function saveNailReferenceCard(style:NailStyle,visual:HTMLElement):
+  Promise<SavedSource> {
+  const {blob,source}=await createNailReferenceCard(style,visual);
+  downloadReferenceBlob(style,blob);
   return source;
+}
+
+/**
+ * Mobile Web Share: send an already-created local PNG to a chosen installed app.
+ * When file sharing is unavailable/denied, initiate the existing PNG download.
+ * A user-cancelled share must not unexpectedly create a local download.
+ * Neither path posts a customer image to an H-Beauty server.
+ */
+export async function shareNailReferenceCard(style:NailStyle,visual:HTMLElement):
+  Promise<{status:"shared"|"downloaded"|"cancelled";source:SavedSource}> {
+  const {blob,source}=await createNailReferenceCard(style,visual);
+  const filename="H-Beauty-"+style.id+".png";
+  if(typeof File!=="undefined" &&
+     typeof navigator.share==="function" &&
+     typeof navigator.canShare==="function") {
+    const file=new File([blob],filename,{type:"image/png"});
+    let eligible=false;
+    try{eligible=navigator.canShare({files:[file]});}catch{eligible=false;}
+    if(eligible) {
+      try{
+        await navigator.share({
+          files:[file],
+          title:"Hananeh Beauty — "+style.en,
+          text:"مرجع طرح ناخن "+style.title+" — تصویر الهام‌بخش، نه عکس اجرای واقعی سالن",
+        });
+        return {status:"shared",source};
+      }catch(error){
+        if(error instanceof DOMException && error.name==="AbortError")
+          return {status:"cancelled",source};
+        // A platform may deny file sharing despite canShare() returning true.
+        // Fall back to a local download, never to server-side uploading.
+      }
+    }
+  }
+  downloadReferenceBlob(style,blob);
+  return {status:"downloaded",source};
 }
