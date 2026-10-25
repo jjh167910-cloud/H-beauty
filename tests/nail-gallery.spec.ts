@@ -92,21 +92,19 @@ test("submitted booking persists exact selected nail style ID",async({page})=>{
   })).toBe("nail-classic-french");
 });
 
-test("optional photo failure leaves vector artwork and accessible details intact",async({page})=>{
+test("failed photo requests preserve accurate vector artwork and detail",async({page})=>{
+  await page.route("**/nails/photos/nail-milky-silk.webp",route=>route.abort("failed"));
   await ready(page,390);
   const card=page.locator(".nail-card").filter({hasText:"شیری ابریشمی"});
   await expect(card).toBeVisible();
   await expect(card.locator(".nail-visual__fallback svg")).toBeVisible();
-  // The optional WebP isn't in the public repository until explicitly uploaded.
-  // A missing image must never leave a broken IMG element on the card.
+  // Simulate a failed connection: never leave a broken image overlay.
   await expect(card.locator("img.nail-visual__photo")).toHaveCount(0);
   await card.getByRole("button",{name:"مشاهده طرح شیری ابریشمی"}).click();
   await expect(page.getByRole("dialog",{name:"شیری ابریشمی"})).toBeVisible();
 });
 
-test("installed editorial nail images show photo without hiding alt fallback",async({page})=>{
-  await page.route("**/nails/photos/nail-milky-silk.webp",route=>
-    route.fulfill({path:"public/makeup/looks/no-makeup.webp",contentType:"image/webp"}));
+test("shipped WebP displays in gallery without hiding alt fallback",async({page})=>{
   await ready(page,390);
   const card=page.locator(".nail-card").filter({hasText:"شیری ابریشمی"});
   await expect(card.locator(".nail-visual__photo[data-ready]")).toBeVisible();
@@ -155,4 +153,17 @@ test("pedicure featured art and appointment buttons stay in pedicure category", 
   const cart=await page.evaluate(()=>JSON.parse(localStorage.getItem("hananeh-atelier-v1")||"{}").cart||[]);
   expect(cart).toContain("classic-pedicure");
   expect(cart).not.toContain("luxe-manicure");
+});
+
+test("approved image bytes are delivered by the app at original WebP paths",async({page})=>{
+  await ready(page,390);
+  const photo=page.locator(".nail-card").filter({hasText:"شیری ابریشمی"}).locator(".nail-visual__photo");
+  await expect(photo).toBeVisible();
+  const response=await page.request.get("/nails/photos/nail-milky-silk.webp");
+  expect(response.status()).toBe(200);
+  expect(response.headers()["content-type"]).toMatch(/image\/webp/);
+  const bytes=await response.body();
+  expect(bytes.length).toBeGreaterThan(10000);
+  expect(bytes.subarray(0,4).toString()).toBe("RIFF");
+  expect(bytes.subarray(8,12).toString()).toBe("WEBP");
 });
