@@ -14,7 +14,7 @@ export function PedicurePreview({ style }: { style: NailStyle }) {
     {x:253,y:154,rx:17,ry:29,w:16,h:16},
   ];
   return (
-    <svg viewBox="0 0 312 262" role="img" aria-label={`شبیه‌سازی رنگ پدیکور ${style.title}`} width="100%" height="100%">
+    <svg viewBox="0 0 312 262" role="img" data-nail-finish={style.finish} data-nail-motif={style.motif ?? "legacy"} aria-label={`شبیه‌سازی رنگ پدیکور ${style.title}`} width="100%" height="100%">
       <defs>
         <linearGradient id={`pedi-skin-${id}`} x1="0" x2="1" y1="0" y2="1">
           <stop offset="0" stopColor="#F2CEBB"/><stop offset=".5" stopColor="#DCA990"/><stop offset="1" stopColor="#B77967"/>
