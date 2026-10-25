@@ -3,8 +3,10 @@
   "compatibility_date": "2026-10-21",
   // Build the SPA as part of every `wrangler deploy` / `versions upload`, so
   // deploys from a clean checkout (e.g. Cloudflare Workers Builds) have ./dist.
+  // The 80-makeup-photo edition is explicitly opt-in: its SHA256-pinned archive
+  // is not in Git. A clean Worker build must not require it by default.
   "build": {
-    "command": "test -d node_modules || npm ci --no-audit --no-fund; export VITE_MAKEUP_CURATED_80=${VITE_MAKEUP_CURATED_80:-true}; if [ \"$VITE_MAKEUP_CURATED_80\" = \"true\" ]; then npm run prepare:makeup-curated-80 && npm run verify:makeup-curated-80 && npm run build; else npm run build; fi"
+    "command": "test -d node_modules || npm ci --no-audit --no-fund; export VITE_MAKEUP_CURATED_80=${VITE_MAKEUP_CURATED_80:-false}; if [ \"$VITE_MAKEUP_CURATED_80\" = \"true\" ]; then npm run prepare:makeup-curated-80 && npm run verify:makeup-curated-80 && npm run build; else npm run build; fi"
   },
   "assets": {
     "directory": "./dist",
