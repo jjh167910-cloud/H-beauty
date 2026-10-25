@@ -130,3 +130,28 @@
 @media (prefers-reduced-motion:reduce){
   .nail-card__art{transition:none;}
 }
+
+/* Home and services integration: preserve the clean image-first salon language. */
+.nail-home-banner {
+  display:flex;position:relative;isolation:isolate;align-items:center;overflow:hidden;
+  width:100%;min-height:11.2rem;text-align:start;
+  background:linear-gradient(125deg,#ede1da 0%,#e9d7d4 55%,#dfcdd6 100%);
+  border-radius:1.2rem;color:#4b3442;box-shadow:var(--shadow-1);
+}
+.nail-home-banner__copy{display:grid;justify-items:start;gap:.5rem;position:relative;z-index:1;width:61%;padding:1.2rem;}
+.nail-home-banner__copy small{font:.6rem/1.4 var(--font-serif);letter-spacing:.12em;}
+.nail-home-banner__copy strong{font-size:1.24rem;font-weight:600;line-height:1.5;}
+.nail-home-banner__copy>span{font-size:.73rem;line-height:1.85;max-width:21ch;}
+.nail-home-banner__copy b{font-size:.76rem;display:flex;gap:.3rem;align-items:center;border-bottom:1px solid #836878;min-height:36px;}
+.nail-home-banner__art{position:absolute;width:52%;height:120%;inset-inline-start:51%;inset-block:-10%;opacity:.94;pointer-events:none;}
+.nail-service-entry {
+  width:100%;display:flex;align-items:center;gap:.8rem;
+  padding:1rem;border-radius:1rem;margin-block-end:1rem;
+  border:1px solid var(--color-line-2);background:var(--color-sunken);text-align:start;
+}
+.nail-service-entry__icon{display:grid;place-items:center;width:3.3rem;height:3.3rem;flex-shrink:0;border-radius:.85rem;background:var(--color-surface);color:var(--color-gold-ink);}
+.nail-service-entry>span:nth-child(2){display:grid;gap:.3rem;flex:1;min-width:0;}
+.nail-service-entry strong{font-size:.88rem;font-weight:650;}
+.nail-service-entry small{font-size:.71rem;color:var(--color-ink-2);line-height:1.7;}
+.nail-service-entry>:last-child{flex-shrink:0;}
+@media (max-width:355px){.nail-home-banner__copy{width:64%;padding:1rem;}.nail-home-banner__copy strong{font-size:1.06rem;}.nail-home-banner__art{width:50%;}}
