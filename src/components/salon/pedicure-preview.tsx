@@ -1,6 +1,7 @@
 import { useId } from "react";
 import type { NailStyle } from "@/data/nail-styles";
 import { NailOrnament } from "./nail-ornament";
+import { NailMaterialGradient } from "./nail-material";
 
 /** Offline pedicure color-and-shape illustration: never mistaken for a customer photo. */
 export function PedicurePreview({ style }: { style: NailStyle }) {
@@ -18,11 +19,7 @@ export function PedicurePreview({ style }: { style: NailStyle }) {
         <linearGradient id={`pedi-skin-${id}`} x1="0" x2="1" y1="0" y2="1">
           <stop offset="0" stopColor="#F2CEBB"/><stop offset=".5" stopColor="#DCA990"/><stop offset="1" stopColor="#B77967"/>
         </linearGradient>
-        <linearGradient id={`pedi-nail-${id}`} x1="0" x2=".7" y1="0" y2="1">
-          <stop offset="0" stopColor={style.accent}/>
-          <stop offset=".5" stopColor={style.base}/>
-          <stop offset="1" stopColor={style.base}/>
-        </linearGradient>
+        <NailMaterialGradient id={`pedi-nail-${id}`} style={style}/>
       </defs>
       <ellipse cx="156" cy="236" rx="125" ry="18" fill="#3E2830" opacity=".09"/>
       <path d="M 22 260 C 17 220 31 153 42 111 C 48 90 72 70 89 95 C 103 117 129 132 149 145 C 179 164 249 186 277 218 L 296 260 Z"
@@ -48,7 +45,7 @@ export function PedicurePreview({ style }: { style: NailStyle }) {
           ) : null}
           {style.finish==="french" && style.motif!=="double-french"?<path d={`M ${t.x-t.w*.37} ${t.y-t.ry+18} Q ${t.x} ${t.y-t.ry+10} ${t.x+t.w*.37} ${t.y-t.ry+18}`} stroke="#FFFDF8" strokeWidth={i?3:4} fill="none" strokeLinecap="round"/>:null}
           {style.finish==="glitter"?<circle cx={t.x-3} cy={t.y-t.ry+18} r={i===0?3:1.8} fill="white" opacity=".85"/>:null}
-          <path d={`M ${t.x-t.w*.23} ${t.y-t.ry+16} L ${t.x-t.w*.23} ${t.y-t.ry+t.h*.72}`} stroke="#FFFFFF" strokeWidth="2" opacity=".43" strokeLinecap="round"/>
+          {style.finish!=="matte" ? <path d={`M ${t.x-t.w*.23} ${t.y-t.ry+16} L ${t.x-t.w*.23} ${t.y-t.ry+t.h*.72}`} stroke="#FFFFFF" strokeWidth="2" opacity={style.finish==="jelly"?".16":style.finish==="chrome"?".7":".43"} strokeLinecap="round"/> : null}
         </g>
       ))}
     </svg>

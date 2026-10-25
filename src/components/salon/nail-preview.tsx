@@ -1,6 +1,7 @@
 import { useId } from "react";
 import type { NailStyle, NailShape } from "@/data/nail-styles";
 import { NailOrnament } from "./nail-ornament";
+import { NailMaterialGradient } from "./nail-material";
 
 /**
  * Offline vector reference swatches: intentionally NOT photoreal salon results.
@@ -26,7 +27,6 @@ export function NailPreview({ style, className = "" }: { style: NailStyle; class
   const grad = `nail-${style.id}-${uid}`;
   const chrome = style.finish === "chrome";
   const french = style.finish === "french";
-  const ombre = style.finish === "ombre";
   const sparkle = style.finish === "glitter";
   const matte = style.finish === "matte";
   const art = style.finish === "art";
@@ -35,12 +35,7 @@ export function NailPreview({ style, className = "" }: { style: NailStyle; class
     <svg viewBox="0 0 290 255" className={className} role="img" data-nail-finish={style.finish}
       aria-label={`پیش‌نمایش تصویری طرح ${style.title}، نمونهٔ شماتیک رنگ و فرم ناخن`}>
       <defs>
-        <linearGradient id={grad} x1="0" y1="0" x2={chrome ? "1" : "0.52"} y2="1">
-          <stop offset="0%" stopColor={ombre ? style.accent : style.base} />
-          <stop offset="47%" stopColor={chrome ? style.accent : ombre ? style.base : style.base} />
-          <stop offset="73%" stopColor={chrome ? style.base : style.base} />
-          <stop offset="100%" stopColor={chrome ? style.accent : style.base} />
-        </linearGradient>
+        <NailMaterialGradient id={grad} style={style}/>
         <radialGradient id={`${grad}-glow`}>
           <stop offset="0%" stopColor={style.accent} stopOpacity="0.32" />
           <stop offset="100%" stopColor={style.accent} stopOpacity="0" />

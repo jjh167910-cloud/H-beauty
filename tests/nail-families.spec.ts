@@ -32,8 +32,9 @@ test("color swatches switch selected design and use its exact booking ID",async(
   await expect(page.locator(".nail-card")).toHaveCount(12);
   await page.getByRole("button",{name:"مشاهده طرح مخمل مات عاجی"}).click();
   const first=page.getByRole("dialog",{name:"مخمل مات عاجی"});
-  await expect(first.getByRole("group",{name:"انتخاب رنگ‌بندی"}).getByRole("button")).toHaveCount(12);
-  await first.getByRole("button",{name:"انتخاب رنگ مخمل مات زرشکی"}).click();
+  await expect(first.getByRole("group",{name:"انتخاب رنگ‌بندی"}).getByRole("button")).toHaveCount(1);
+  await expect(first.getByRole("group",{name:"انتخاب مدل با فرم یا طول متفاوت"}).getByRole("button")).toHaveCount(11);
+  await first.getByRole("button",{name:/انتخاب مدل مخمل مات زرشکی با فرم/}).click();
   const second=page.getByRole("dialog",{name:"مخمل مات زرشکی"});
   await expect(second).toBeVisible();
   await second.getByRole("button",{name:"درخواست اجرای همین طرح"}).click();

@@ -61,7 +61,7 @@ test("switching colorway stores the updated selected style in history",async({pa
   await page.getByRole("searchbox",{name:"جست‌وجو در گالری ناخن"}).fill("مخمل مات عاجی");
   await page.getByRole("button",{name:"مشاهده طرح مخمل مات عاجی"}).click();
   const old=page.getByRole("dialog",{name:"مخمل مات عاجی"});
-  await old.getByRole("button",{name:"انتخاب رنگ مخمل مات زرشکی"}).click();
+  await old.getByRole("button",{name:/انتخاب مدل مخمل مات زرشکی با فرم/}).click();
   await expect(page.getByRole("dialog",{name:"مخمل مات زرشکی"})).toBeVisible();
   await page.goBack();
   await expect(page.getByRole("dialog",{name:"مخمل مات زرشکی"})).toHaveCount(0);
