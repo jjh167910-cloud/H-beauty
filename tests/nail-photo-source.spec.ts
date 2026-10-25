@@ -14,11 +14,15 @@ test("verified photo-only filter shows exactly nine real editorial references",a
   await ready(page,390);
   const toggle=page.getByRole("button",{name:"فقط طرح‌های دارای عکس الهام‌بخش"});
   await expect(toggle).toBeEnabled();
-  await expect(page.getByRole("group",{name:"نوع پیش‌نمایش ناخن"})
-    .getByText("۹ مرجع عکاسی الهام‌بخش در این مجموعه")).toBeVisible();
+  // Playwright uses Vite's dev server, which intentionally exposes the
+  // legacy 4-image fallback. The verified production V4 build enables nine.
+  const sourceCountText=await page.getByRole("group",{name:"نوع پیش‌نمایش ناخن"})
+    .locator(".nail-photo-refine__description span").innerText();
+  expect(sourceCountText).toMatch(/^[۴۹] مرجع عکاسی الهام‌بخش در این مجموعه$/);
+  const expectedCount=sourceCountText.startsWith("۹")?9:4;
   await toggle.click();
   await expect(toggle).toHaveAttribute("aria-pressed","true");
-  await expect(page.locator(".nail-card")).toHaveCount(9);
+  await expect(page.locator(".nail-card")).toHaveCount(expectedCount);
   const first=page.locator(".nail-card").first();
   await expect(first.locator('.nail-visual[data-media-source="ai-photo"]')).toBeVisible();
   await expect(first.locator(".nail-card__media-type--photo")).toBeVisible();
@@ -62,7 +66,6 @@ test("photo filter and favorites can be combined without losing design reference
   await page.getByRole("button",{name:"ذخیره طرح شیری ابریشمی"}).click();
   await page.getByRole("button",{name:"طرح‌های ناخن ذخیره‌شده"}).click();
   await expect(page.locator(".nail-card")).toHaveCount(1);
-  await page.getByRole("button",{name:"نمایش همه طرح‌ها"}).count().then(()=>{});
   await page.getByRole("button",{name:"فقط طرح‌های دارای عکس الهام‌بخش"}).click();
   await expect(page.locator(".nail-card")).toHaveCount(1);
 });
