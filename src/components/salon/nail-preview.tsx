@@ -1,3 +1,4 @@
+import { useId } from "react";
 import type { NailStyle, NailShape } from "@/data/nail-styles";
 
 /**
@@ -20,7 +21,8 @@ const NAILS = [
 ];
 
 export function NailPreview({ style, className = "" }: { style: NailStyle; className?: string }) {
-  const grad = `nail-${style.id}`;
+  const uid = useId().replace(/:/g, "");
+  const grad = `nail-${style.id}-${uid}`;
   const chrome = style.finish === "chrome";
   const french = style.finish === "french";
   const ombre = style.finish === "ombre";
