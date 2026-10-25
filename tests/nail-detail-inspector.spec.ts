@@ -44,8 +44,8 @@ test("inspector resets when selecting a different colorway with the same nail ge
   const detail=await openNail(page,390,"ژلی شفاف عاجی","ژلی شفاف عاجی");
   await detail.getByRole("button",{name:"نمایش تمام تصویر بدون برش"}).click();
   await expect(detail.locator("#nail-detail-image")).toHaveAttribute("data-inspection-level","1");
-  await detail.getByRole("button",{name:"انتخاب رنگ ژلی شفاف رز لطیف"}).click();
-  const changed=page.getByRole("dialog",{name:"ژلی شفاف رز لطیف"});
+  await detail.getByRole("button",{name:"انتخاب رنگ ژلی شفاف یاقوتی"}).click();
+  const changed=page.getByRole("dialog",{name:"ژلی شفاف یاقوتی"});
   await expect(changed).toBeVisible();
   await expect(changed.locator("#nail-detail-image")).toHaveAttribute("data-inspection-level","0");
   await expect(changed.getByRole("button",{name:"درخواست اجرای همین طرح"})).toBeVisible();
