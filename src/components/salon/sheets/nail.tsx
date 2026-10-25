@@ -13,6 +13,17 @@ export function NailSheet({ open, style, onClose }: { open: boolean; style: Nail
   const { openBooking, openSheet } = useSalonActions();
   const [shareStatus, setShareStatus] = useState<"copied"|"manual"|null>(null);
   const [manualLink,setManualLink] = useState("");
+  // The inspector is local to the currently selected design; changing
+  // variants cannot inherit a stale crop/zoom position from another style.
+  const [inspection,setInspection] = useState<{id:string;level:0|1|2}>({id:style.id,level:0});
+  const inspectLevel=inspection.id===style.id ? inspection.level : 0;
+  const nextInspection=()=>{
+    haptic();
+    setInspection({id:style.id,level:inspectLevel===2?0:(inspectLevel+1) as 0|1|2});
+  };
+  const inspectionLabel=inspectLevel===0 ? "نمایش تمام تصویر بدون برش"
+    : inspectLevel===1 ? "بزرگ‌نمایی ۲ برابر و جابه‌جایی تصویر"
+    : "بازگشت به پیش‌نمایش معمول";
   const share = async () => {
     const url = nailStyleShareUrl(style.id, window.location.href);
     try {
@@ -49,8 +60,17 @@ export function NailSheet({ open, style, onClose }: { open: boolean; style: Nail
   return (
     <Sheet open={open} onClose={onClose} title={style.title}>
       <article className="nail-detail">
-        <div className="nail-detail__visual">
-          <NailVisual style={style} />
+        <div id="nail-detail-image" className={`nail-detail__visual${inspectLevel>0 ? " nail-detail__visual--full" : ""}${inspectLevel===2 ? " nail-detail__visual--zoom" : ""}`}
+          data-inspection-level={inspectLevel}>
+          <NailVisual style={style} priority />
+        </div>
+        <div className="nail-detail__inspect-actions">
+          <button type="button" className="nail-detail__inspect-button"
+            aria-controls="nail-detail-image" aria-label={inspectionLabel}
+            onClick={nextInspection}>{inspectionLabel}</button>
+          <span role="status" aria-live="polite">{inspectLevel===2
+            ? "برای دیدن جزئیات، تصویر را با لمس یا اسکرول جابه‌جا کنید."
+            : inspectLevel===1 ? "نمایش کامل طرح، بدون بریدن لبه‌های تصویر." : "نمایش پیش‌نمایش طرح"}</span>
         </div>
         <div className="nail-detail__source" aria-live="polite">
           <span className="nail-detail__source--photo">مرجع عکاسی الهام‌بخش؛ ساخته‌شده با هوش مصنوعی</span>
