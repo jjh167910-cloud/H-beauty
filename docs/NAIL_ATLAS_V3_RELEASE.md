@@ -16,7 +16,7 @@ The build automatically prefers V3, extracts only locked files, checks each befo
 
 ## What is verified and what is not
 
-- Verify the exact source ZIP byte size/hash before publication. ZIP SHA256: `a7903fcba5c6e1ae457ff4ddfe5bbf8cb383bcc8d3507f289b269182ad7fa1e3`.
+- Verify the exact source ZIP byte size/hash before publication. ZIP SHA256: `08557abc655b00598f211c8fa8b2882857af086032423e9ff7d7b3772046b57b`.
 - The generated references are **AI-generated inspirations**, not real salon work.
 - There are 34 optimized image files. Most came from small editorial contact-sheet cells. A 640×640 export is not the same as a 640×640 source capture.
 - The app only shows photographically appropriate styles, keeping SVG fallbacks where image/finish fidelity is inadequate.
