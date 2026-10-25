@@ -4,11 +4,8 @@ import { NailPreview } from "./nail-preview";
 import { PedicurePreview } from "./pedicure-preview";
 
 /**
- * Four licensed-to-project, AI-generated editorial references, delivered as
- * separate WebP assets. Missing files must never break the offline gallery:
- * the original vector swatch stays visible behind the optional photo.
- *
- * Upload assets into public/nails/photos/ from Hananeh_Nail_Photo_Pack_v1.zip.
+ * An optional, quality-reviewed editorial WebP collection; missing assets
+ * fall back to local vectors and never break offline navigation.
  */
 // Editorial images are illustrative concepts, not customer results. The 34-look
 // asset set has 24 visually matched photo references. For the ten references whose
@@ -26,7 +23,7 @@ export const V2_APPROVED_PHOTOS = [
 ] as const;
 export const NAIL_EDITORIAL_PHOTOS: Readonly<Record<string,string>> =
   import.meta.env.VITE_NAIL_EDITORIAL_V2 === "true"
-  ? Object.fromEntries(V2_APPROVED_PHOTOS.map(id=>[id,`/nails/photos/${id}.webp`]))
+  ? Object.fromEntries([...V2_APPROVED_PHOTOS, ...(import.meta.env.VITE_NAIL_EDITORIAL_V3 === "true" ? ["nail-marble"] : [])].map(id=>[id,`/nails/photos/${id}.webp`]))
   : {
     "nail-milky-silk": "/nails/photos/nail-milky-silk.webp",
     "nail-classic-french": "/nails/photos/nail-classic-french.webp",
