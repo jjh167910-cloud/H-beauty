@@ -68,6 +68,11 @@ test("zip importer and deployment build are opt-in and integrity-pinned",()=>{
  const workflow=source(".github/workflows/deploy.yml");
  const pkg=JSON.parse(source("package.json"));
  assert.match(wrangler,/VITE_MAKEUP_CURATED_80/);
+ // An unpublished optional photo archive must not make every clean
+ // Cloudflare checkout fail. Explicit true remains a hard quality gate.
+ assert.match(wrangler,/VITE_MAKEUP_CURATED_80:-false/);
+ assert.doesNotMatch(wrangler,/VITE_MAKEUP_CURATED_80:-true/);
+ assert.match(wrangler,/npm run verify:makeup-curated-80/);
  assert.match(workflow,/HBEAUTY_CURATED_80/);
  assert.match(workflow,/Verify optional eighty-makeup edition/);
  assert.equal(pkg.scripts["prepare:makeup-curated-80"],"node scripts/import-makeup80-archive.mjs --if-present");
