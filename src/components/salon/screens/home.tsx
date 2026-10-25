@@ -2,6 +2,8 @@ import { useMemo, useState } from "react";
 import { byRep, lookSrc, lookThumb, persian } from "@/data/catalog";
 import { photoObjectPosition } from "@/data/photo-focal";
 import { MAKEUP_STYLES } from "@/data/makeup-styles";
+import { NAIL_STYLES } from "@/data/nail-styles";
+import { NailPreview } from "../nail-preview";
 import { MAKEUP_PHOTOS, lookPhoto, MAKEUP_CURATED_80 } from "@/data/makeup-photos";
 import { SERVICES, dayOf, formatPrice, greeting, isPast, longDate, monthOf, summarize, timeLabel } from "@/data/salon";
 import { useSalon } from "@/lib/salon-store";
@@ -144,6 +146,19 @@ export function HomeScreen() {
               <span>از نچرال روزانه تا گلم شب، عروس و سبک‌های رترو؛ همه روی یک مدل.</span>
               <span className="mk-entry__cta">مشاهده سبک‌ها<Icon name="chevron" size={14} /></span>
             </span>
+          </button>
+        </div>
+      </section>
+
+      <section className="salon24-section" aria-labelledby="nail-home-title">
+        <div className="salon24-section__head px-gutter">
+          <div><span className="salon24-eyebrow">NAIL ATELIER</span><h2 id="nail-home-title">آرایش دست و پا، هنر جزئیات</h2></div>
+          <TextLink onClick={() => go("nails")}>گالری ناخن</TextLink>
+        </div>
+        <div className="px-gutter">
+          <button type="button" className="nail-home-banner" onClick={() => go("nails")} aria-label="دیدن گالری ۲۸ طرح ناخن">
+            <span className="nail-home-banner__copy"><small lang="en">NAIL EDIT / 2026</small><strong>از مانیکور تا پدیکور</strong><span>۲۸ ایده رنگ و طراحی برای انتخاب استایل شما</span><b>مشاهده طرح‌ها <Icon name="chevron" size={15}/></b></span>
+            <NailPreview style={NAIL_STYLES[12]} className="nail-home-banner__art" />
           </button>
         </div>
       </section>
