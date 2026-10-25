@@ -37,6 +37,13 @@ export const NAIL_SHAPES: ReadonlyArray<{ key: NailShape | "all"; title: string 
   { key: "coffin", title: "تابوتی" },
 ];
 
+export const NAIL_LENGTHS: ReadonlyArray<{ key: NailLength | "all"; title: string }> = [
+  { key: "all", title: "همه طول‌ها" },
+  { key: "short", title: "کوتاه" },
+  { key: "medium", title: "متوسط" },
+  { key: "long", title: "بلند" },
+];
+
 export const NAIL_COLORS: ReadonlyArray<{ key: NailColor | "all"; title: string }> = [
   { key: "all", title: "همه رنگ‌ها" },
   { key: "nude", title: "نود" },
