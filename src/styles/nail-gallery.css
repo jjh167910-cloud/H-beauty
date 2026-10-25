@@ -274,4 +274,4 @@
 }
 .nail-detail__swatch[aria-pressed="true"] {border-color:var(--color-gold-ink);}
 .nail-detail__swatch:focus-visible {outline:2px solid var(--color-gold-ink);outline-offset:2px;}
-@media(max-width:360px) {.nail-detail__swatches{gap:.25rem;}}
+@media(max-width:499px) {.nail-detail__swatches{grid-template-columns:repeat(4,minmax(0,1fr));gap:.35rem;}}
