@@ -10,6 +10,7 @@ export type SheetState =
   | { kind: "discover"; id: number }
   | { kind: "service"; id: string }
   | { kind: "makeup"; id: string }
+  | { kind: "nail"; id: string }
   | { kind: "booking" }
   | { kind: "compare" }
   | { kind: "consult" }
@@ -17,7 +18,7 @@ export type SheetState =
   | null;
 
 /** `services` replaces the cart (rebooking); `service` adds one service to it. */
-export type BookingIntent = { service?: string; services?: string[]; stylist?: string; lookId?: number; makeupId?: string; note?: string };
+export type BookingIntent = { service?: string; services?: string[]; stylist?: string; lookId?: number; makeupId?: string; nailStyleId?: string; note?: string };
 
 export type SalonActions = {
   go: (tab: Tab) => void;

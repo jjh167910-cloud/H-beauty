@@ -79,6 +79,13 @@ export function ServicesScreen() {
                   <Icon name="chevron" size={16} />
                 </button>
               ) : null}
+              {category.key === "nails" ? (
+                <button type="button" className="nail-service-entry" onClick={() => go("nails")} aria-label="ورود به گالری طراحی ناخن">
+                  <span className="nail-service-entry__icon"><Icon name="nails" size={25} weight="duotone" /></span>
+                  <span><strong>گالری طراحی ناخن</strong><small>رنگ، فرم، فرنچ و ۲۸ ایده برای انتخاب طرح دلخواه</small></span>
+                  <Icon name="chevron" size={17} />
+                </button>
+              ) : null}
               <div className="studio-service-list">
                 {services.map((service, index) => {
                   const selected = cart.includes(service.id);
