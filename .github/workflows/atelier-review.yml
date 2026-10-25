@@ -31,6 +31,22 @@ jobs:
         # Reproduce Wrangler's configuration-driven build on a clean CI
         # checkout. No Cloudflare token or production mutation is required.
         run: npx --yes wrangler@4 deploy --dry-run --outdir /tmp/hbeauty-worker-preview
+      - name: Verify optional 80-portrait release in Wrangler dry-run
+        env:
+          VITE_MAKEUP_CURATED_80: "true"
+        run: |
+          npm run prepare:makeup-curated-80
+          npm run verify:makeup-curated-80
+          npx --yes wrangler@4 deploy --dry-run --outdir /tmp/hbeauty-worker-curated80
+      - name: Check GitHub publishing fallback readiness
+        env:
+          HAS_DEPLOY_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN != '' }}
+        run: |
+          if [ "$HAS_DEPLOY_TOKEN" = "true" ]; then
+            echo "::notice::Direct deployment via GitHub Actions has a Cloudflare API token configured."
+          else
+            echo "::notice::GitHub direct deployment is unavailable without a Cloudflare API token secret."
+          fi
       - name: Verify runner Chrome
         run: google-chrome --version
       - name: Mobile RTL and booking regression
