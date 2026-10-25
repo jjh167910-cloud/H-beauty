@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Toaster } from "sonner";
 import { TABS, useSalon, type Tab } from "@/lib/salon-store";
-import { nailStyleFromHash } from "@/data/nail-links";
+import { nailStyleFromHash, nailKindFromHash } from "@/data/nail-links";
 import { withTransition } from "@/lib/transition";
 import { Docks, TabBar, TopBar } from "./chrome";
 import { HomeScreen } from "./screens/home";
@@ -86,10 +86,19 @@ export function SalonApp() {
     sheetRef.current = sheet;
   }, [sheet]);
 
-  // Browser/hardware back closes the open sheet first, then follows tab hashes.
+  // Sheet entries include a validated reference, so Back closes the dialog
+  // and Forward can reopen the exact same design. No extra network required.
   useEffect(() => {
     const onPop = () => {
-      if (sheetRef.current && !(window.history.state as { sheet?: boolean } | null)?.sheet) setSheet(null);
+      const state = window.history.state as { sheet?: boolean; sheetState?: SheetState } | null;
+      let target: SheetState = null;
+      if (state?.sheet) {
+        const linkedId = nailStyleFromHash(window.location.hash);
+        if (state.sheetState) target = state.sheetState;
+        else if (linkedId) target = { kind: "nail", id: linkedId };
+      }
+      sheetRef.current = target;
+      setSheet(target);
       const next = tabFromHash();
       if (next !== useSalon.getState().tab) {
         const current = useSalon.getState().tab;
@@ -106,18 +115,26 @@ export function SalonApp() {
   }, [tab]);
 
   const openSheet = useCallback((next: Exclude<SheetState, null>) => {
-    if (!sheetRef.current) window.history.pushState({ sheet: true }, "");
+    if (!sheetRef.current) window.history.pushState({ sheet: true, sheetState: next }, "");
+    else if ((window.history.state as { sheet?: boolean } | null)?.sheet)
+      window.history.replaceState({ sheet: true, sheetState: next }, "");
     sheetRef.current = next;
     setSheet(next);
   }, []);
 
-  // Opening a shared link starts at its exact salon reference instead of the
-  // general catalogue. This is intentionally only an initial-navigation
-  // effect, never a repeated opener when a visitor closes the sheet.
+  // An external nail deep link needs a local gallery history entry. Without
+  // this, closing a directly linked sheet can navigate out of the salon.
+  // Keep the shared hash in the forward entry, so Forward restores the style.
   useEffect(() => {
     const id = nailStyleFromHash(window.location.hash);
-    if (id) openSheet({ kind: "nail", id });
-  }, [openSheet]);
+    if (!id) return;
+    const linkedUrl = window.location.href;
+    window.history.replaceState(null, "", nailKindFromHash(window.location.hash)==="pedicure" ? "#/nails?kind=pedicure" : "#/nails");
+    const next: Exclude<SheetState, null> = { kind: "nail", id };
+    window.history.pushState({ sheet: true, sheetState: next }, "", linkedUrl);
+    sheetRef.current = next;
+    setSheet(next);
+  }, []);
 
   const closeSheet = useCallback(() => {
     if (!sheetRef.current) return;
