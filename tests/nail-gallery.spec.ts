@@ -3,8 +3,10 @@ import { test, expect, type Page } from "playwright/test";
 async function ready(page: Page, width: number) {
   await page.setViewportSize({width, height:850});
   await page.addInitScript(() => {
-    localStorage.setItem("hananeh-atelier-v1",
-      JSON.stringify({ welcomed: true, theme:"light", bookings: [], favNails: [] }));
+    if (!localStorage.getItem("hananeh-atelier-v1")) {
+      localStorage.setItem("hananeh-atelier-v1",
+        JSON.stringify({ welcomed: true, theme:"light", bookings: [], favNails: [] }));
+    }
   });
   await page.goto("/#/nails");
   await expect(page.getByRole("heading",{name:/هنر ناخن/})).toBeVisible();
