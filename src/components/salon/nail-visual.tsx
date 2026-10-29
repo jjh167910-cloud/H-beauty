@@ -93,6 +93,15 @@ const BATCH50_D_MANICURE_EDITORIAL_PHOTOS: Readonly<Record<string,string>> =
         .map(id=>[id,`/nails/photos/${id}.webp`]))
     : {};
 
+/** Newly approved manuscript-based batches; the production build injects only
+ * ID values whose individual original bytes and all-offline packaging pass. */
+const FUTURE_MANICURE_EDITORIAL_PHOTOS: Readonly<Record<string,string>> =
+  Object.fromEntries(
+    String(import.meta.env.VITE_MANICURE_DYNAMIC_IDS || "")
+      .split(",").filter(id=>/^nail-[a-z0-9-]+$/.test(id))
+      .map(id=>[id,`/nails/photos/${id}.webp`])
+  );
+
 /** Only the complete, SHA-locked 78-image release may enable these URLs.
  * Missing/mismatched files keep the vector artwork in place.
  */
@@ -112,6 +121,7 @@ export const NAIL_EDITORIAL_PHOTOS: Readonly<Record<string,string>> = {
   ...BATCH50_C_MANICURE_EDITORIAL_PHOTOS,
   ...BATCH50_D_MANICURE_EDITORIAL_PHOTOS,
   ...BATCH8_MANICURE_EDITORIAL_PHOTOS,
+  ...FUTURE_MANICURE_EDITORIAL_PHOTOS,
   ...PEDICURE_EDITORIAL_PHOTOS
 };
 
