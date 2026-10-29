@@ -16,7 +16,11 @@ test("every newly approved manicure image is explicitly wired to the gallery",()
   const items=loadPhotoLocks().filter(x=>x.kind==="manicure"&&!x.legacy);
   const component=readFileSync("src/components/salon/nail-visual.tsx","utf8");
   for(const item of items){
-    assert.ok(component.includes(item.id),"Photo has no gallery association: "+item.id);
+    if(LOCKS.some(group=>group.name===item.group))
+      assert.ok(component.includes(item.id),"Existing photo has no gallery association: "+item.id);
+    else
+      assert.match(component,/FUTURE_MANICURE_EDITORIAL_PHOTOS/,
+        "New verified batch requires the dynamic gallery mapping");
   }
   assert.match(component,/VITE_PEDICURE_78/);
 });

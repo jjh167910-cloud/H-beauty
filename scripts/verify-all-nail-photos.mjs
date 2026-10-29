@@ -38,9 +38,11 @@ export function releaseLocks(root="."){
   const names=readdirSync(resolve(root,"assets"))
     .filter(n=>/^hbeauty-manicure-batch(?:[0-9]+[a-z]?)(?:-[0-9]{8})?\.sha256$/.test(n))
     .map(n=>n.slice(0,-".sha256".length)).filter(n=>!known.has(n)).sort();
-  return [...LOCKS,...names.map(name=>({
-    name,kind:"manicure",count:readFileSync(resolve(root,"assets",name+".sha256"),"utf8").trim().split(/\r?\n/).length
-  }))];
+  return [...LOCKS,...names.map(name=>{
+    const count=readFileSync(resolve(root,"assets",name+".sha256"),"utf8").trim().split(/\r?\n/).length;
+    if(count<1||count>50)throw Error("New manicure batch must contain 1 to 50 photos: "+name);
+    return {name,kind:"manicure",count};
+  })];
 }
 
 export function loadPhotoLocks(root="."){
