@@ -14,6 +14,8 @@ import { installNailPack } from "./install-nail-photo-pack.mjs";
 import { installPedicure78 } from "./install-pedicure-78-pack.mjs";
 import { restorePedicureParts } from "./restore-pedicure-parts.mjs";
 import { reconstructNailArchive } from "./restore-embedded-nail-v4.mjs";
+import { LOCKS, loadPhotoLocks } from "./verify-all-nail-photos.mjs";
+import { webpDimensions } from "./audit-nail-photo-candidates.mjs";
 
 export const MUSIC_PATH = "public/audio/hananeh-salon-ambience.mp3";
 
@@ -215,6 +217,28 @@ function build() {
       throw Error("Batch50D image checksum mismatch "+id);
   }
   if(dNames.size!==2)throw Error("Incomplete Batch50D manicure release");
+  // Future manicure batches: one QA-approved SHA256 lock plus up to 50 original
+  // high-resolution WebPs. No hard-coded per-batch UI/service-worker edits.
+  // All published historical releases remain subject to loadPhotoLocks().
+  const dynamicApproved=loadPhotoLocks()
+    .filter(item=>!LOCKS.some(group=>group.name===item.group));
+  if(dynamicApproved.length>162)
+    throw Error("Dynamic manicure photo count exceeds catalog's remaining styles");
+  const newNames=new Set(),newHashes=new Set();
+  for(const item of dynamicApproved){
+    if(item.kind!=="manicure"||newNames.has(item.id)||newHashes.has(item.hash))
+      throw Error("Dynamic manicure duplicate or wrong category "+item.id);
+    newNames.add(item.id);newHashes.add(item.hash);
+    const photo=readFileSync(resolve(item.path));
+    const d=webpDimensions(photo);
+    if(photo.length<25_000||photo.length>2_200_000||
+       photo.toString("ascii",0,4)!=="RIFF"||
+       photo.toString("ascii",8,12)!=="WEBP"||
+       d.width<1200||d.height<1200||d.width!==d.height||
+       createHash("sha256").update(photo).digest("hex")!==item.hash)
+      throw Error("Dynamic manicure native-quality release gate rejected "+item.id);
+  }
+  console.log("Future manicure release: "+dynamicApproved.length+" individually locked new photos");
   const file = resolve(MUSIC_PATH);
   const installed = existsSync(file) && statSync(file).isFile();
   const configured = process.env.VITE_SALON_MUSIC;
@@ -252,6 +276,7 @@ function build() {
     VITE_MANICURE_BATCH50_A:"true",
     VITE_MANICURE_BATCH50_B:"true",
     VITE_MANICURE_BATCH50_C:"true",
+    VITE_MANICURE_DYNAMIC_IDS:dynamicApproved.map(item=>item.id).join(","),
     VITE_MANICURE_BATCH50_D:"true",
     VITE_MANICURE_FOUR: "true",
     VITE_MANICURE_BATCH7: "true",
