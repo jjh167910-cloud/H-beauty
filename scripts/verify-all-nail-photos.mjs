@@ -9,7 +9,7 @@
  * node scripts/verify-all-nail-photos.mjs --local
  * node scripts/verify-all-nail-photos.mjs --live
  */
-import {readFileSync, existsSync} from "node:fs";
+import {readFileSync, existsSync, readdirSync} from "node:fs";
 import {createHash} from "node:crypto";
 import {resolve, join} from "node:path";
 import {webpDimensions, knownNailIds} from "./audit-nail-photo-candidates.mjs";
@@ -27,10 +27,26 @@ export const LOCKS = Object.freeze([
   {name:"hbeauty-pedicure-78",count:78,kind:"pedicure"}
 ]);
 
+/**
+ * Discover future batch lockfiles automatically instead of requiring the
+ * 58-photo coverage constant to be edited on every safe release.
+ * Only strict batch-name patterns are accepted; archival rejection lists
+ * and historical V1-V3 locks are never accidentally considered releases.
+ */
+export function releaseLocks(root="."){
+  const known=new Set(LOCKS.map(x=>x.name));
+  const names=readdirSync(resolve(root,"assets"))
+    .filter(n=>/^hbeauty-manicure-batch(?:[0-9]+[a-z]?)(?:-[0-9]{8})?\\.sha256$/.test(n))
+    .map(n=>n.slice(0,-".sha256".length)).filter(n=>!known.has(n)).sort();
+  return [...LOCKS,...names.map(name=>({
+    name,kind:"manicure",count:readFileSync(resolve(root,"assets",name+".sha256"),"utf8").trim().split(/\\r?\\n/).length
+  }))];
+}
+
 export function loadPhotoLocks(root="."){
   const names=new Set(), hashes=new Set(), result=[];
   const known=knownNailIds();
-  for(const group of LOCKS){
+  for(const group of releaseLocks(root)){
     const filename=resolve(root,"assets",group.name+".sha256");
     if(!existsSync(filename))throw Error("Missing photo lock "+filename);
     const lines=readFileSync(filename,"utf8").trim().split(/\r?\n/);
@@ -50,7 +66,7 @@ export function loadPhotoLocks(root="."){
   }
   const manicure=result.filter(x=>x.kind==="manicure").length;
   const pedicure=result.filter(x=>x.kind==="pedicure").length;
-  if(manicure!==58||pedicure!==78||result.length!==136)
+  if(manicure<58||manicure>220||pedicure!==78||result.length!==manicure+pedicure)
     throw Error("Unexpected released nail photo coverage "+manicure+"/"+pedicure);
   return result;
 }
