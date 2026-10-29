@@ -3,6 +3,7 @@
 import { createHash } from 'node:crypto';
 import { readFileSync, readdirSync, statSync, writeFileSync, existsSync } from 'node:fs';
 import { join, relative, resolve, sep } from 'node:path';
+import { LOCKS, loadPhotoLocks } from './verify-all-nail-photos.mjs';
 
 const CACHE_TOKEN = "const CACHE='h-beauty-v5-unbuilt';";
 const ASSET_TOKEN = 'const BUILD_ASSETS=[]; /* __H_BEAUTY_PRECACHE__ */';
@@ -268,6 +269,24 @@ export function finalizeServiceWorker(distDir = 'dist') {
       files.push(file);
     }
     if(found.size!==required.size)throw Error("Incomplete Batch50D offline cache");
+  }
+  // All future, explicitly SHA-locked manicure editions use the same safe
+  // offline packaging path. Never cache partial or mismatched new releases.
+  const dynamicIds=(process.env.VITE_MANICURE_DYNAMIC_IDS||"").split(",").filter(Boolean);
+  const dynamicLocked=loadPhotoLocks().filter(item=>!LOCKS.some(g=>g.name===item.group));
+  if(dynamicIds.length!==dynamicLocked.length ||
+     dynamicIds.some((id,index)=>id!==dynamicLocked[index].id))
+    throw Error("Dynamic manicure offline list differs from approved release locks");
+  for(const item of dynamicLocked){
+    const file=join(root,item.path.slice("public/".length));
+    if(!existsSync(file))throw Error("Dynamic manicure photo absent from build "+item.id);
+    const bytes=readFileSync(file);
+    if(bytes.length<25_000||bytes.length>2_200_000||
+      bytes.toString("ascii",0,4)!=="RIFF"||
+      bytes.toString("ascii",8,12)!=="WEBP"||
+      createHash("sha256").update(bytes).digest("hex")!==item.hash)
+      throw Error("Dynamic manicure offline asset corruption "+item.id);
+    files.push(file);
   }
   // Offline-first pedicure edition: validate 78 immutable image bytes before
   // adding them to the service-worker cache. Partial releases cannot publish.
