@@ -7,7 +7,7 @@ import { join, relative, resolve, sep } from 'node:path';
 const CACHE_TOKEN = "const CACHE='h-beauty-v5-unbuilt';";
 const ASSET_TOKEN = 'const BUILD_ASSETS=[]; /* __H_BEAUTY_PRECACHE__ */';
 const ALLOWED = /\.(?:js|css|woff2?|ttf|otf|svg|png|jpe?g|webp|avif)$/i;
-const LIMIT = 35 * 1024 * 1024;
+const LIMIT = process.env.VITE_PEDICURE_78 === 'true' ? 100 * 1024 * 1024 : 35 * 1024 * 1024;
 
 export function finalizeServiceWorker(distDir = 'dist') {
   const root=resolve(distDir);
@@ -92,6 +92,26 @@ export function finalizeServiceWorker(distDir = 'dist') {
           throw new Error('Nail photo checksum mismatch: '+relativePath);
         files.push(image);
       }
+    }
+  }
+  // Offline-first pedicure edition: validate 78 immutable image bytes before
+  // adding them to the service-worker cache. Partial releases cannot publish.
+  if (process.env.VITE_PEDICURE_78 === 'true') {
+    const lock = readFileSync(resolve('assets/hbeauty-pedicure-78.sha256'),'utf8').trim().split(/\r?\n/);
+    const seen = new Set(), hashes = new Set();
+    if(lock.length !== 78)throw Error('Pedicure release must contain exactly 78 images');
+    for(const line of lock) {
+      const m=line.match(/^([a-f0-9]{64})\s+(public\/nails\/photos\/pedi-[a-z0-9-]+\.webp)$/);
+      if(!m || seen.has(m[2]) || hashes.has(m[1]))throw Error('Invalid or duplicate pedicure lock entry');
+      seen.add(m[2]); hashes.add(m[1]);
+      const path=join(root,m[2].slice('public/'.length));
+      if(!existsSync(path))throw Error('Missing pedicure photo '+m[2]);
+      const bytes=readFileSync(path);
+      if(bytes.length<25000 || bytes.length>2200000 || bytes.toString('ascii',0,4)!=='RIFF'
+        ||bytes.toString('ascii',8,12)!=='WEBP'
+        ||createHash('sha256').update(bytes).digest('hex')!==m[1])
+        throw Error('Pedicure photo SHA256/content mismatch: '+m[2]);
+      files.push(path);
     }
   }
     // Opt-in soundtrack: the exact audio bytes enter the offline PWA cache.
