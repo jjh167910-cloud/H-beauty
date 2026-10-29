@@ -11,6 +11,8 @@ import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createHash } from "node:crypto";
 import { installNailPack } from "./install-nail-photo-pack.mjs";
+import { installPedicure78 } from "./install-pedicure-78-pack.mjs";
+import { restorePedicureParts } from "./restore-pedicure-parts.mjs";
 import { reconstructNailArchive } from "./restore-embedded-nail-v4.mjs";
 
 export const MUSIC_PATH = "public/audio/hananeh-salon-ambience.mp3";
@@ -33,6 +35,9 @@ function build() {
   const verifiedEmbeddedArchive = reconstructNailArchive();
   console.log(`Verified bundled salon photos: ${verifiedEmbeddedArchive.bytes} bytes, sha256 ${verifiedEmbeddedArchive.sha256}`);
   const installedPhotoPack = installNailPack();
+  // Fail closed on partial/wrong pedicure photo uploads; preserve existing vector gallery otherwise.
+  restorePedicureParts();
+  const installedPedicure = installPedicure78();
   const file = resolve(MUSIC_PATH);
   const installed = existsSync(file) && statSync(file).isFile();
   const configured = process.env.VITE_SALON_MUSIC;
@@ -66,10 +71,12 @@ function build() {
   const nailEdition=count===expected?"true":"false";
   const env={...process.env,
     VITE_SALON_MUSIC:enabled,
+    VITE_PEDICURE_78:installedPedicure.installed ? "true" : "false",
     VITE_NAIL_EDITORIAL_V2:nailEdition,
     VITE_NAIL_EDITORIAL_V3:nailEdition==="true" && photoVersion>=3?"true":"false",
     NAIL_EDITORIAL_LOCK_VERSION:String(photoVersion)};
   console.log(`Nail photographic edition: ${nailEdition==="true"?`v${photoVersion} (${expected} files)`:"vector-only / legacy optional 4-photo"}`);
+  console.log(`Pedicure gallery: ${installedPedicure.installed ? "78 verified photos" : "vector fallback until full approved pack is installed"}`);
   console.log(`Salon music: ${enabled === "true" ? "ENABLED (asset found)" : "disabled (asset missing or explicit opt-out)"}`);
   if (enabled === "true") {
     console.log("Salon music checksum is verified during service-worker packaging.");
