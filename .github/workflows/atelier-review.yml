@@ -27,6 +27,8 @@ jobs:
         run: npm run typecheck
       - name: Build Vite
         run: npm run build
+      - name: Verify all 136 published nail photos and offline caching
+        run: node scripts/verify-all-nail-photos.mjs --local
       - name: Validate real native photographic pixels against published baseline
         # Unlike RIFF header checks, this decodes every V4 WebP in Chromium
         # and checks sharpness, opacity and intrinsic dimensions.
