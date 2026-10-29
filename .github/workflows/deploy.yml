@@ -139,6 +139,9 @@ jobs:
       - name: Verify public Batch50D manicure images byte-for-byte
         run: node scripts/verify-live-manicure-batch50d.mjs
 
+      - name: Verify all 136 public manicure and pedicure photos against original SHA-256 locks
+        run: node scripts/verify-all-nail-photos.mjs --live
+
       - name: Deployment result
         if: ${{ always() }}
         shell: bash
