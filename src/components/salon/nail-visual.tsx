@@ -21,7 +21,7 @@ import { PedicurePreview } from "./pedicure-preview";
  */
 const quality: Record<string, { native: number; photo: boolean; reason?: string }> = photoQuality.styles;
 
-const MANICURE_EDITORIAL_PHOTOS: Readonly<Record<string, string>> =
+const BASE_MANICURE_EDITORIAL_PHOTOS: Readonly<Record<string, string>> =
   import.meta.env.VITE_NAIL_EDITORIAL_V2 === "true"
     ? Object.fromEntries(Object.entries(quality)
         .filter(([id, q]) =>
@@ -34,6 +34,14 @@ const MANICURE_EDITORIAL_PHOTOS: Readonly<Record<string, string>> =
       "nail-ruby-red": "/nails/photos/nail-ruby-red.webp",
       "nail-pearl-chrome": "/nails/photos/nail-pearl-chrome.webp",
     };
+
+// Independent one-photo release; never expands or alters the V4 nine-photo whitelist.
+const MANICURE_EDITORIAL_PHOTOS: Readonly<Record<string,string>> = {
+  ...BASE_MANICURE_EDITORIAL_PHOTOS,
+  ...(import.meta.env.VITE_MANICURE_MIDNIGHT_GLITTER === "true"
+    ? { "nail-midnight-glitter": "/nails/photos/nail-midnight-glitter.webp" }
+    : {})
+};
 
 /** Only the complete, SHA-locked 78-image release may enable these URLs.
  * Missing/mismatched files keep the vector artwork in place.
