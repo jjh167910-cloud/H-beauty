@@ -143,6 +143,29 @@ function build() {
       createHash("sha256").update(b).digest("hex")!==m[1])throw Error("Batch50-A image integrity check failed "+id);
   }
   if(b50Names.size!==BATCH50_A_IDS.size)throw Error("Incomplete Batch50-A photo set");
+  // Batch50B: nine native-resolution editorial photos promoted after exact-style QA.
+  // A missing, duplicate, or altered image aborts the build before any deployment.
+  const BATCH50B_IDS=new Set(["nail-atlas-modern-french-espresso","nail-atlas-foil-cobalt","nail-atlas-modern-french-merlot","nail-atlas-modern-french-sage","nail-atlas-modern-french-lavender","nail-rose-french","nail-atlas-magnetic-midnight","nail-atlas-magnetic-coral","nail-atlas-magnetic-pearl"]);
+  const BATCH50B_LOCK=resolve("assets/hbeauty-manicure-batch50b.sha256");
+  if(!existsSync(BATCH50B_LOCK))throw Error("Manicure Batch50B release lock missing");
+  const batch50BLines=readFileSync(BATCH50B_LOCK,"utf8").trim().split(/\r?\n/);
+  if(batch50BLines.length!==9)throw Error("Manicure Batch50B must contain nine images");
+  const b50BNames=new Set(),b50BHashes=new Set();
+  for(const line of batch50BLines){
+    const m=line.match(/^([a-f0-9]{64})  (public\/nails\/photos\/nail-[a-z0-9-]+\.webp)$/);
+    if(!m)throw Error("Malformed Batch50B manifest");
+    const id=m[2].slice("public/nails/photos/".length,-".webp".length);
+    if(!BATCH50B_IDS.has(id)||b50BNames.has(id)||b50BHashes.has(m[1]))
+      throw Error("Batch50B duplicate or unknown style ID");
+    b50BNames.add(id);b50BHashes.add(m[1]);
+    const file=resolve(m[2]);
+    if(!existsSync(file))throw Error("Missing Batch50B manicure photo "+id);
+    const b=readFileSync(file);
+    if(b.length<25_000||b.length>2_200_000||b.toString("ascii",0,4)!=="RIFF"||
+      b.toString("ascii",8,12)!=="WEBP"||createHash("sha256").update(b).digest("hex")!==m[1])
+      throw Error("Manicure Batch50B integrity failure "+id);
+  }
+  if(b50BNames.size!==BATCH50B_IDS.size)throw Error("Incomplete Batch50B manicure release");
   const file = resolve(MUSIC_PATH);
   const installed = existsSync(file) && statSync(file).isFile();
   const configured = process.env.VITE_SALON_MUSIC;
@@ -178,6 +201,7 @@ function build() {
     VITE_SALON_MUSIC:enabled,
     VITE_PEDICURE_78:installedPedicure.installed ? "true" : "false",
     VITE_MANICURE_BATCH50_A:"true",
+    VITE_MANICURE_BATCH50_B:"true",
     VITE_MANICURE_FOUR: "true",
     VITE_MANICURE_BATCH7: "true",
     VITE_MANICURE_BATCH8:"true",
