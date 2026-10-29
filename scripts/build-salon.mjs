@@ -191,6 +191,30 @@ function build() {
       throw Error("Batch50C photo checksum mismatch "+id);
   }
   if(batch50CSeen.size!==BATCH50C_IDS.size)throw Error("Incomplete Batch50C image release");
+
+  // Two individually reviewed native-resolution originals, distinct from the
+  // preexisting 56-manicure collection; fail closed before compiling the UI.
+  const BATCH50D_IDS=new Set(["nail-berry-ombre","nail-atlas-velvet-ivory"]);
+  const BATCH50D_LOCK=resolve("assets/hbeauty-manicure-batch50d.sha256");
+  if(!existsSync(BATCH50D_LOCK))throw Error("Batch50D manicure lock missing");
+  const batch50DLines=readFileSync(BATCH50D_LOCK,"utf8").trim().split(/\r?\n/);
+  if(batch50DLines.length!==2)throw Error("Batch50D requires exactly two images");
+  const dNames=new Set(),dHashes=new Set();
+  for(const line of batch50DLines){
+    const m=line.match(/^([a-f0-9]{64})  (public\/nails\/photos\/nail-[a-z0-9-]+\.webp)$/);
+    if(!m)throw Error("Malformed Batch50D checksum entry");
+    const id=m[2].slice("public/nails/photos/".length,-".webp".length);
+    if(!BATCH50D_IDS.has(id)||dNames.has(id)||dHashes.has(m[1]))
+      throw Error("Unexpected or duplicated Batch50D image");
+    dNames.add(id);dHashes.add(m[1]);
+    if(!existsSync(resolve(m[2])))throw Error("Missing Batch50D manicure photo "+id);
+    const b=readFileSync(resolve(m[2]));
+    if(b.length<25000||b.length>2200000||b.toString("ascii",0,4)!=="RIFF"||
+       b.toString("ascii",8,12)!=="WEBP"||
+       createHash("sha256").update(b).digest("hex")!==m[1])
+      throw Error("Batch50D image checksum mismatch "+id);
+  }
+  if(dNames.size!==2)throw Error("Incomplete Batch50D manicure release");
   const file = resolve(MUSIC_PATH);
   const installed = existsSync(file) && statSync(file).isFile();
   const configured = process.env.VITE_SALON_MUSIC;
@@ -228,6 +252,7 @@ function build() {
     VITE_MANICURE_BATCH50_A:"true",
     VITE_MANICURE_BATCH50_B:"true",
     VITE_MANICURE_BATCH50_C:"true",
+    VITE_MANICURE_BATCH50_D:"true",
     VITE_MANICURE_FOUR: "true",
     VITE_MANICURE_BATCH7: "true",
     VITE_MANICURE_BATCH8:"true",
