@@ -12,6 +12,7 @@ import { fileURLToPath } from "node:url";
 import { createHash } from "node:crypto";
 import { installNailPack } from "./install-nail-photo-pack.mjs";
 import { installPedicure78 } from "./install-pedicure-78-pack.mjs";
+import { restorePedicureParts } from "./restore-pedicure-parts.mjs";
 import { reconstructNailArchive } from "./restore-embedded-nail-v4.mjs";
 
 export const MUSIC_PATH = "public/audio/hananeh-salon-ambience.mp3";
@@ -35,6 +36,7 @@ function build() {
   console.log(`Verified bundled salon photos: ${verifiedEmbeddedArchive.bytes} bytes, sha256 ${verifiedEmbeddedArchive.sha256}`);
   const installedPhotoPack = installNailPack();
   // Fail closed on partial/wrong pedicure photo uploads; preserve existing vector gallery otherwise.
+  restorePedicureParts();
   const installedPedicure = installPedicure78();
   const file = resolve(MUSIC_PATH);
   const installed = existsSync(file) && statSync(file).isFile();
