@@ -152,6 +152,29 @@ export function finalizeServiceWorker(distDir = 'dist') {
       files.push(file);
     }
   }
+  // Batch 8 follows the same fail-closed, byte-exact rule as prior batches.
+  if (process.env.VITE_MANICURE_BATCH8 === "true") {
+    const required=new Set(["nail-atlas-geometry-champagne","nail-atlas-botanical-pearl","nail-gold-french","nail-champagne","nail-rose-glitter","nail-modern-lines","nail-atlas-velvet-ruby","nail-atlas-velvet-champagne"]);
+    const lines=readFileSync(resolve("assets/hbeauty-manicure-batch8.sha256"),"utf8").trim().split(/\r?\n/);
+    if(lines.length!==required.size)throw Error("Manicure batch8 precache must list eight files");
+    const seen=new Set(),hashes=new Set();
+    for(const line of lines){
+      const m=line.match(/^([a-f0-9]{64})  (public\/nails\/photos\/nail-[a-z0-9-]+\.webp)$/);
+      if(!m)throw Error("Invalid batch8 precache manifest");
+      const id=m[2].slice("public/nails/photos/".length,-".webp".length);
+      if(!required.has(id)||seen.has(id)||hashes.has(m[1]))throw Error("Unknown/duplicate batch8 precache asset");
+      seen.add(id);hashes.add(m[1]);
+      const file=join(root,m[2].slice("public/".length));
+      if(!existsSync(file))throw Error("Missing batch8 offline photo "+id);
+      const bytes=readFileSync(file);
+      if(bytes.length<25_000||bytes.length>2_200_000||
+        bytes.toString("ascii",0,4)!=="RIFF"||bytes.toString("ascii",8,12)!=="WEBP"||
+        createHash("sha256").update(bytes).digest("hex")!==m[1])
+        throw Error("Batch8 offline photo mismatch "+id);
+      files.push(file);
+    }
+    if(seen.size!==required.size)throw Error("Incomplete batch8 offline precache");
+  }
   // Offline-first pedicure edition: validate 78 immutable image bytes before
   // adding them to the service-worker cache. Partial releases cannot publish.
   if (process.env.VITE_PEDICURE_78 === 'true') {

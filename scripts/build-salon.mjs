@@ -98,6 +98,30 @@ function build() {
       throw Error("Manicure batch7 photo content mismatch "+id);
   }
   if(batch7Found.size!==7)throw Error("Incomplete manicure batch7 photo set");
+
+  // Eight native 1600px photos, locked independently from the prior 21 manicures.
+  const BATCH8_IDS = new Set(["nail-atlas-geometry-champagne","nail-atlas-botanical-pearl","nail-gold-french","nail-champagne","nail-rose-glitter","nail-modern-lines","nail-atlas-velvet-ruby","nail-atlas-velvet-champagne"]);
+  const BATCH8_LOCK=resolve("assets/hbeauty-manicure-batch8.sha256");
+  if(!existsSync(BATCH8_LOCK))throw Error("Manicure batch8 photo lock missing");
+  const batch8Lines=readFileSync(BATCH8_LOCK,"utf8").trim().split(/\r?\n/);
+  if(batch8Lines.length!==8)throw Error("Manicure batch8 must contain eight assets");
+  const batch8Seen=new Set(),batch8Hashes=new Set();
+  for(const line of batch8Lines){
+    const m=line.match(/^([a-f0-9]{64})  (public\/nails\/photos\/nail-[a-z0-9-]+\.webp)$/);
+    if(!m)throw Error("Malformed manicure batch8 SHA-256 entry");
+    const id=m[2].slice("public/nails/photos/".length,-".webp".length);
+    if(!BATCH8_IDS.has(id)||batch8Seen.has(id)||batch8Hashes.has(m[1]))
+      throw Error("Duplicate or unknown manicure batch8 image ID");
+    batch8Seen.add(id);batch8Hashes.add(m[1]);
+    const target=resolve(m[2]);
+    if(!existsSync(target))throw Error("Missing manicure batch8 photograph "+id);
+    const bytes=readFileSync(target);
+    if(bytes.length<25_000||bytes.length>2_200_000||
+       bytes.toString("ascii",0,4)!=="RIFF"||bytes.toString("ascii",8,12)!=="WEBP"||
+       createHash("sha256").update(bytes).digest("hex")!==m[1])
+      throw Error("Manicure batch8 photograph checksum mismatch: "+id);
+  }
+  if(batch8Seen.size!==8)throw Error("Incomplete manicure batch8 photographic release");
   const file = resolve(MUSIC_PATH);
   const installed = existsSync(file) && statSync(file).isFile();
   const configured = process.env.VITE_SALON_MUSIC;
@@ -134,6 +158,7 @@ function build() {
     VITE_PEDICURE_78:installedPedicure.installed ? "true" : "false",
     VITE_MANICURE_FOUR: "true",
     VITE_MANICURE_BATCH7: "true",
+    VITE_MANICURE_BATCH8:"true",
     VITE_MANICURE_MIDNIGHT_GLITTER:midnightEnabled ? "true" : "false",
     VITE_NAIL_EDITORIAL_V2:nailEdition,
     VITE_NAIL_EDITORIAL_V3:nailEdition==="true" && photoVersion>=3?"true":"false",

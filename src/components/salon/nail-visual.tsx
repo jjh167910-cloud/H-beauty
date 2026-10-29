@@ -58,6 +58,13 @@ const BATCH7_MANICURE_EDITORIAL_PHOTOS: Readonly<Record<string,string>> =
         .map(id=>[id,`/nails/photos/${id}.webp`]))
     : {};
 
+/** Eight verified originals. Shown only when the whole batch8 build passed. */
+const BATCH8_MANICURE_EDITORIAL_PHOTOS: Readonly<Record<string,string>> =
+  import.meta.env.VITE_MANICURE_BATCH8 === "true"
+    ? Object.fromEntries(["nail-atlas-geometry-champagne","nail-atlas-botanical-pearl","nail-gold-french","nail-champagne","nail-rose-glitter","nail-modern-lines","nail-atlas-velvet-ruby","nail-atlas-velvet-champagne"]
+        .map(id=>[id,`/nails/photos/${id}.webp`]))
+    : {};
+
 /** Only the complete, SHA-locked 78-image release may enable these URLs.
  * Missing/mismatched files keep the vector artwork in place.
  */
@@ -72,6 +79,7 @@ export const NAIL_EDITORIAL_PHOTOS: Readonly<Record<string,string>> = {
   ...MANICURE_EDITORIAL_PHOTOS,
   ...FOUR_MANICURE_EDITORIAL_PHOTOS,
   ...BATCH7_MANICURE_EDITORIAL_PHOTOS,
+  ...BATCH8_MANICURE_EDITORIAL_PHOTOS,
   ...PEDICURE_EDITORIAL_PHOTOS
 };
 
