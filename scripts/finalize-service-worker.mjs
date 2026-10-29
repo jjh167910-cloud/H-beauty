@@ -175,6 +175,29 @@ export function finalizeServiceWorker(distDir = 'dist') {
     }
     if(seen.size!==required.size)throw Error("Incomplete batch8 offline precache");
   }
+  // Source-verified 50-candidate Batch A: only ten images passed exact-style QA.
+  // All ten originals enter the offline cache atomically.
+  if(process.env.VITE_MANICURE_BATCH50_A==="true") {
+    const lines=readFileSync(resolve("assets/hbeauty-manicure-batch50-a.sha256"),"utf8").trim().split(/\r?\n/);
+    const selected=new Set(["nail-atlas-gradient-merlot","nail-atlas-prism-blush","nail-atlas-prism-champagne","nail-atlas-prism-coral","nail-atlas-prism-midnight","nail-atlas-prism-pearl","nail-atlas-prism-sage","nail-atlas-velvet-blush","nail-atlas-velvet-coral","nail-atlas-velvet-midnight"]);
+    const ids=new Set(),hashes=new Set();
+    if(lines.length!==10)throw Error("Batch50-A wrong image count");
+    for(const line of lines){
+      const m=line.match(/^([a-f0-9]{64})  (public\/nails\/photos\/nail-[a-z0-9-]+\.webp)$/);
+      if(!m)throw Error("Malformed Batch50-A manifest");
+      const id=m[2].slice("public/nails/photos/".length,-".webp".length);
+      if(!selected.has(id)||ids.has(id)||hashes.has(m[1]))throw Error("Duplicate or unknown Batch50-A image");
+      ids.add(id);hashes.add(m[1]);
+      const file=join(root,m[2].slice("public/".length));
+      if(!existsSync(file))throw Error("Batch50-A image not published "+id);
+      const bytes=readFileSync(file);
+      if(bytes.length<25_000||bytes.length>2_200_000||bytes.toString("ascii",0,4)!=="RIFF"||
+        bytes.toString("ascii",8,12)!=="WEBP"||createHash("sha256").update(bytes).digest("hex")!==m[1])
+        throw Error("Batch50-A cache asset integrity failure "+id);
+      files.push(file);
+    }
+    if(ids.size!==10)throw Error("Incomplete Batch50-A offline photo collection");
+  }
   // Offline-first pedicure edition: validate 78 immutable image bytes before
   // adding them to the service-worker cache. Partial releases cannot publish.
   if (process.env.VITE_PEDICURE_78 === 'true') {
