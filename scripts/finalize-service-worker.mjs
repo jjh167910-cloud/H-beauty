@@ -245,6 +245,30 @@ export function finalizeServiceWorker(distDir = 'dist') {
     }
     if(found.size!==required.size)throw Error("Incomplete Batch50C offline image set");
   }
+
+  // Verify the new two-image manicure batch before precaching for offline use.
+  if(process.env.VITE_MANICURE_BATCH50_D==="true"){
+    const required=new Set(["nail-berry-ombre","nail-atlas-velvet-ivory"]);
+    const lines=readFileSync(resolve("assets/hbeauty-manicure-batch50d.sha256"),"utf8").trim().split(/\r?\n/);
+    if(lines.length!==required.size)throw Error("Batch50D offline precache count mismatch");
+    const found=new Set(),hashes=new Set();
+    for(const line of lines){
+      const m=line.match(/^([a-f0-9]{64})  (public\/nails\/photos\/nail-[a-z0-9-]+\.webp)$/);
+      if(!m)throw Error("Invalid Batch50D offline lock");
+      const id=m[2].slice("public/nails/photos/".length,-".webp".length);
+      if(!required.has(id)||found.has(id)||hashes.has(m[1]))throw Error("Batch50D offline ID/hash duplicate");
+      found.add(id);hashes.add(m[1]);
+      const file=join(root,m[2].slice("public/".length));
+      if(!existsSync(file))throw Error("Missing offline Batch50D photo "+id);
+      const b=readFileSync(file);
+      if(b.length<25000||b.length>2200000||b.toString("ascii",0,4)!=="RIFF"||
+         b.toString("ascii",8,12)!=="WEBP"||
+         createHash("sha256").update(b).digest("hex")!==m[1])
+         throw Error("Batch50D offline photo checksum mismatch "+id);
+      files.push(file);
+    }
+    if(found.size!==required.size)throw Error("Incomplete Batch50D offline cache");
+  }
   // Offline-first pedicure edition: validate 78 immutable image bytes before
   // adding them to the service-worker cache. Partial releases cannot publish.
   if (process.env.VITE_PEDICURE_78 === 'true') {

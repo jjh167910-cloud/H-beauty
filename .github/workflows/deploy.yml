@@ -134,6 +134,9 @@ jobs:
       - name: Verify public Batch50C manicure images byte-for-byte
         run: node scripts/verify-live-manicure-batch50c.mjs
 
+      - name: Verify public Batch50D manicure images byte-for-byte
+        run: node scripts/verify-live-manicure-batch50d.mjs
+
       - name: Deployment result
         if: ${{ always() }}
         shell: bash
