@@ -38,6 +38,18 @@ function build() {
   // Fail closed on partial/wrong pedicure photo uploads; preserve existing vector gallery otherwise.
   restorePedicureParts();
   const installedPedicure = installPedicure78();
+  // Single independently reviewed manicure addition; preserve the nine-photo V4 lock.
+  const midnightPath=resolve("public/nails/photos/nail-midnight-glitter.webp");
+  const midnightLock=resolve("assets/hbeauty-manicure-midnight-glitter.sha256");
+  const hasMidnightPhoto=existsSync(midnightPath), hasMidnightLock=existsSync(midnightLock);
+  if(hasMidnightPhoto!==hasMidnightLock)throw new Error("Incomplete midnight-glitter photo release");
+  const midnightEnabled=hasMidnightPhoto && hasMidnightLock;
+  if(midnightEnabled) {
+    const expected=readFileSync(midnightLock,"utf8").trim();
+    const actual=createHash("sha256").update(readFileSync(midnightPath)).digest("hex");
+    if(expected!==`${actual}  public/nails/photos/nail-midnight-glitter.webp`)
+      throw new Error("Midnight-glitter manicure photo release checksum mismatch");
+  }
   const file = resolve(MUSIC_PATH);
   const installed = existsSync(file) && statSync(file).isFile();
   const configured = process.env.VITE_SALON_MUSIC;
@@ -72,6 +84,7 @@ function build() {
   const env={...process.env,
     VITE_SALON_MUSIC:enabled,
     VITE_PEDICURE_78:installedPedicure.installed ? "true" : "false",
+    VITE_MANICURE_MIDNIGHT_GLITTER:midnightEnabled ? "true" : "false",
     VITE_NAIL_EDITORIAL_V2:nailEdition,
     VITE_NAIL_EDITORIAL_V3:nailEdition==="true" && photoVersion>=3?"true":"false",
     NAIL_EDITORIAL_LOCK_VERSION:String(photoVersion)};

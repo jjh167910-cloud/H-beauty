@@ -94,6 +94,22 @@ export function finalizeServiceWorker(distDir = 'dist') {
       }
     }
   }
+  // New manicure photograph: SHA-locked separately from existing 9-photo V4 pack.
+  // Always precache this image when enabled so the gallery works fully offline.
+  if (process.env.VITE_MANICURE_MIDNIGHT_GLITTER === 'true') {
+    const expected='3ab3970a802027953b13ae56f8272c2cf992a93580c46737b9722d1f6dfac530  public/nails/photos/nail-midnight-glitter.webp';
+    const lock=readFileSync(resolve('assets/hbeauty-manicure-midnight-glitter.sha256'),'utf8').trim();
+    const file=join(root,'nails','photos','nail-midnight-glitter.webp');
+    if(lock!==expected || !existsSync(file))
+      throw Error('Midnight-glitter photo missing or release lock invalid');
+    const bytes=readFileSync(file);
+    if(bytes.length<25000 || bytes.length>2200000 ||
+        bytes.toString('ascii',0,4)!=='RIFF' ||
+        bytes.toString('ascii',8,12)!=='WEBP' ||
+        createHash('sha256').update(bytes).digest('hex')!=='3ab3970a802027953b13ae56f8272c2cf992a93580c46737b9722d1f6dfac530')
+      throw Error('Midnight-glitter photo bytes do not match approved SHA256');
+    files.push(file);
+  }
   // Offline-first pedicure edition: validate 78 immutable image bytes before
   // adding them to the service-worker cache. Partial releases cannot publish.
   if (process.env.VITE_PEDICURE_78 === 'true') {
