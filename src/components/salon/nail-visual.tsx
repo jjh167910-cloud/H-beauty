@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { NailStyle } from "@/data/nail-styles";
+import { NAIL_STYLES, type NailStyle } from "@/data/nail-styles";
 import photoQuality from "@/data/nail-photo-quality.json";
 import { NailPreview } from "./nail-preview";
 import { PedicurePreview } from "./pedicure-preview";
@@ -21,7 +21,7 @@ import { PedicurePreview } from "./pedicure-preview";
  */
 const quality: Record<string, { native: number; photo: boolean; reason?: string }> = photoQuality.styles;
 
-export const NAIL_EDITORIAL_PHOTOS: Readonly<Record<string, string>> =
+const MANICURE_EDITORIAL_PHOTOS: Readonly<Record<string, string>> =
   import.meta.env.VITE_NAIL_EDITORIAL_V2 === "true"
     ? Object.fromEntries(Object.entries(quality)
         .filter(([id, q]) =>
@@ -34,6 +34,21 @@ export const NAIL_EDITORIAL_PHOTOS: Readonly<Record<string, string>> =
       "nail-ruby-red": "/nails/photos/nail-ruby-red.webp",
       "nail-pearl-chrome": "/nails/photos/nail-pearl-chrome.webp",
     };
+
+/** Only the complete, SHA-locked 78-image release may enable these URLs.
+ * Missing/mismatched files keep the vector artwork in place.
+ */
+const PEDICURE_EDITORIAL_PHOTOS: Record<string,string> =
+  import.meta.env.VITE_PEDICURE_78 === "true"
+    ? Object.fromEntries(NAIL_STYLES
+        .filter(style => style.kind === "pedicure")
+        .map(style => [style.id, `/nails/photos/${style.id}.webp`]))
+    : {};
+
+export const NAIL_EDITORIAL_PHOTOS: Readonly<Record<string,string>> = {
+  ...MANICURE_EDITORIAL_PHOTOS,
+  ...PEDICURE_EDITORIAL_PHOTOS
+};
 
 export function NailVisual({
   style,
