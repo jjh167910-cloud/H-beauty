@@ -74,6 +74,30 @@ function build() {
       throw Error("Manicure four-photo integrity failure: "+id);
   }
   if(fourNames.size!==FOUR_IDS.length)throw Error("Incomplete four-photo manicure release");
+
+  // Seven full-resolution source photographs; strict all-or-nothing release.
+  const BATCH7_LOCK=resolve("assets/hbeauty-manicure-batch7.sha256");
+  const BATCH7_IDS=new Set(["nail-micro-french","nail-black-french","nail-cherry-french","nail-pink-ombre","nail-peach-ombre","nail-atlas-geometry-ivory","nail-atlas-foil-ivory"]);
+  if(!existsSync(BATCH7_LOCK))throw Error("Manicure batch7 release lock missing");
+  const batch7Lines=readFileSync(BATCH7_LOCK,"utf8").trim().split(/\r?\n/);
+  if(batch7Lines.length!==7)throw Error("Manicure batch7 must contain exactly seven images");
+  const batch7Found=new Set(),batch7Hashes=new Set();
+  for(const line of batch7Lines){
+    const match=line.match(/^([a-f0-9]{64})  (public\/nails\/photos\/nail-[a-z0-9-]+\.webp)$/);
+    if(!match)throw Error("Malformed manicure batch7 lock entry");
+    const id=match[2].slice("public/nails/photos/".length,-".webp".length);
+    if(!BATCH7_IDS.has(id)||batch7Found.has(id)||batch7Hashes.has(match[1]))
+      throw Error("Manicure batch7 contains unknown or duplicated designs");
+    batch7Found.add(id);batch7Hashes.add(match[1]);
+    const filePath=resolve(match[2]);
+    if(!existsSync(filePath))throw Error("Missing manicure batch7 photo "+id);
+    const bytes=readFileSync(filePath);
+    if(bytes.length<25_000||bytes.length>2_200_000||
+      bytes.toString("ascii",0,4)!=="RIFF"||bytes.toString("ascii",8,12)!=="WEBP"||
+      createHash("sha256").update(bytes).digest("hex")!==match[1])
+      throw Error("Manicure batch7 photo content mismatch "+id);
+  }
+  if(batch7Found.size!==7)throw Error("Incomplete manicure batch7 photo set");
   const file = resolve(MUSIC_PATH);
   const installed = existsSync(file) && statSync(file).isFile();
   const configured = process.env.VITE_SALON_MUSIC;
@@ -109,6 +133,7 @@ function build() {
     VITE_SALON_MUSIC:enabled,
     VITE_PEDICURE_78:installedPedicure.installed ? "true" : "false",
     VITE_MANICURE_FOUR: "true",
+    VITE_MANICURE_BATCH7: "true",
     VITE_MANICURE_MIDNIGHT_GLITTER:midnightEnabled ? "true" : "false",
     VITE_NAIL_EDITORIAL_V2:nailEdition,
     VITE_NAIL_EDITORIAL_V3:nailEdition==="true" && photoVersion>=3?"true":"false",

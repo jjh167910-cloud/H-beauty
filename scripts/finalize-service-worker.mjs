@@ -129,6 +129,29 @@ export function finalizeServiceWorker(distDir = 'dist') {
       files.push(file);
     }
   }
+
+  // Batch7 manicure release: SHA-256 locked seven image offline precache.
+  if(process.env.VITE_MANICURE_BATCH7==="true"){
+    const lockPath=resolve("assets/hbeauty-manicure-batch7.sha256");
+    if(!existsSync(lockPath))throw Error("Offline batch7 manicure manifest missing");
+    const lines=readFileSync(lockPath,"utf8").trim().split(/\r?\n/);
+    if(lines.length!==7)throw Error("Incomplete offline manicure batch7 manifest");
+    const ids=new Set(),hashes=new Set();
+    for(const line of lines){
+      const match=line.match(/^([a-f0-9]{64})  (public\/nails\/photos\/nail-[a-z0-9-]+\.webp)$/);
+      if(!match||ids.has(match[2])||hashes.has(match[1]))
+        throw Error("Invalid or duplicated manicure batch7 offline photo");
+      ids.add(match[2]);hashes.add(match[1]);
+      const file=join(root,match[2].slice("public/".length));
+      if(!existsSync(file))throw Error("Missing offline batch7 photo "+match[2]);
+      const bytes=readFileSync(file);
+      if(bytes.length<25_000||bytes.length>2_200_000||
+        bytes.toString("ascii",0,4)!=="RIFF"||bytes.toString("ascii",8,12)!=="WEBP"||
+        createHash("sha256").update(bytes).digest("hex")!==match[1])
+        throw Error("Checksum failure for offline manicure batch7 photo "+match[2]);
+      files.push(file);
+    }
+  }
   // Offline-first pedicure edition: validate 78 immutable image bytes before
   // adding them to the service-worker cache. Partial releases cannot publish.
   if (process.env.VITE_PEDICURE_78 === 'true') {
