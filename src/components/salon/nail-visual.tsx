@@ -78,6 +78,14 @@ const BATCH50_B_MANICURE_EDITORIAL_PHOTOS: Readonly<Record<string,string>> =
         .map(id=>[id,`/nails/photos/${id}.webp`]))
     : {};
 
+
+/** Batch50C: only five exact-shape, five-finger ivory-silk originals approved. */
+const BATCH50_C_MANICURE_EDITORIAL_PHOTOS: Readonly<Record<string,string>> =
+  import.meta.env.VITE_MANICURE_BATCH50_C === "true"
+    ? Object.fromEntries(["nail-atlas-magnetic-espresso","nail-atlas-magnetic-sage","nail-atlas-prism-ivory","nail-atlas-gradient-pearl","nail-atlas-gradient-lavender"]
+        .map(id=>[id,`/nails/photos/${id}.webp`]))
+    : {};
+
 /** Only the complete, SHA-locked 78-image release may enable these URLs.
  * Missing/mismatched files keep the vector artwork in place.
  */
@@ -94,6 +102,7 @@ export const NAIL_EDITORIAL_PHOTOS: Readonly<Record<string,string>> = {
   ...BATCH7_MANICURE_EDITORIAL_PHOTOS,
   ...BATCH50_A_MANICURE_EDITORIAL_PHOTOS,
   ...BATCH50_B_MANICURE_EDITORIAL_PHOTOS,
+  ...BATCH50_C_MANICURE_EDITORIAL_PHOTOS,
   ...BATCH8_MANICURE_EDITORIAL_PHOTOS,
   ...PEDICURE_EDITORIAL_PHOTOS
 };

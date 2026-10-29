@@ -10,6 +10,7 @@ import { existsSync, statSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createHash } from "node:crypto";
+import { webpDimensions } from "./audit-nail-photo-candidates.mjs";
 import { installNailPack } from "./install-nail-photo-pack.mjs";
 import { installPedicure78 } from "./install-pedicure-78-pack.mjs";
 import { restorePedicureParts } from "./restore-pedicure-parts.mjs";
@@ -166,6 +167,36 @@ function build() {
       throw Error("Manicure Batch50B integrity failure "+id);
   }
   if(b50BNames.size!==BATCH50B_IDS.size)throw Error("Incomplete Batch50B manicure release");
+
+  // Batch50C: five of eight candidates passed exact-shape and finish review.
+  // The three mismatched designs remain vectors, never forced into production.
+  const BATCH50C_IDS=new Set(["nail-atlas-magnetic-espresso","nail-atlas-magnetic-sage","nail-atlas-prism-ivory","nail-atlas-gradient-pearl","nail-atlas-gradient-lavender"]);
+  const BATCH50C_LOCK=resolve("assets/hbeauty-manicure-batch50c.sha256");
+  if(!existsSync(BATCH50C_LOCK))throw Error("Manicure Batch50C release lock missing");
+  const b50cLines=readFileSync(BATCH50C_LOCK,"utf8").trim().split(/\r?\n/);
+  if(b50cLines.length!==BATCH50C_IDS.size)throw Error("Batch50C must contain exactly five photographs");
+  const b50cSeen=new Set(),b50cHashes=new Set();
+  const earlierLocks=["hbeauty-nail-editorial-v4.sha256","hbeauty-manicure-batch7.sha256","hbeauty-manicure-batch8.sha256","hbeauty-manicure-batch50-a.sha256","hbeauty-manicure-batch50b.sha256","hbeauty-manicure-four-20261029.sha256","hbeauty-manicure-midnight-glitter.sha256","hbeauty-pedicure-78.sha256"];
+  const earlierContents=earlierLocks.map(name=>readFileSync(resolve("assets",name),"utf8"));
+  for(const line of b50cLines){
+    const m=line.match(/^([a-f0-9]{64})  (public\/nails\/photos\/(nail-[a-z0-9-]+)\.webp)$/);
+    if(!m)throw Error("Invalid Batch50C SHA-256 manifest");
+    const [_,hash,path,id]=m;
+    if(!BATCH50C_IDS.has(id)||b50cSeen.has(id)||b50cHashes.has(hash))throw Error("Unknown or duplicate Batch50C photo");
+    if(earlierContents.some(content=>content.includes(hash)||content.includes(path)))
+      throw Error("Batch50C reuses an already published image or style");
+    b50cSeen.add(id);b50cHashes.add(hash);
+    const image=resolve(path);
+    if(!existsSync(image))throw Error("Missing Batch50C original "+id);
+    const bytes=readFileSync(image);
+    if(bytes.length<25_000||bytes.length>2_200_000||
+       bytes.toString("ascii",0,4)!=="RIFF"||bytes.toString("ascii",8,12)!=="WEBP"||
+       createHash("sha256").update(bytes).digest("hex")!==hash)
+       throw Error("Batch50C SHA-256 or format mismatch "+id);
+    const {width,height}=webpDimensions(bytes);
+    if(width!==1600||height!==1600)throw Error("Batch50C native resolution mismatch "+id);
+  }
+  if(b50cSeen.size!==5)throw Error("Incomplete Batch50C release");
   const file = resolve(MUSIC_PATH);
   const installed = existsSync(file) && statSync(file).isFile();
   const configured = process.env.VITE_SALON_MUSIC;
@@ -202,6 +233,7 @@ function build() {
     VITE_PEDICURE_78:installedPedicure.installed ? "true" : "false",
     VITE_MANICURE_BATCH50_A:"true",
     VITE_MANICURE_BATCH50_B:"true",
+    VITE_MANICURE_BATCH50_C:"true",
     VITE_MANICURE_FOUR: "true",
     VITE_MANICURE_BATCH7: "true",
     VITE_MANICURE_BATCH8:"true",

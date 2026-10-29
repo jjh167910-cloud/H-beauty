@@ -1,6 +1,7 @@
 /** Post-Vite build: package the offline React shell but NOT the hairstyle collection.
  * Run: node scripts/finalize-service-worker.mjs [--dist /path/to/dist]. */
 import { createHash } from 'node:crypto';
+import { webpDimensions } from './audit-nail-photo-candidates.mjs';
 import { readFileSync, readdirSync, statSync, writeFileSync, existsSync } from 'node:fs';
 import { join, relative, resolve, sep } from 'node:path';
 
@@ -219,6 +220,31 @@ export function finalizeServiceWorker(distDir = 'dist') {
       files.push(file);
     }
     if(names.size!==9)throw Error("Incomplete Batch50B offline photo collection");
+  }
+
+  // Batch50C: five approved originals enter the offline cache atomically.
+  if(process.env.VITE_MANICURE_BATCH50_C==="true"){
+    const required=new Set(["nail-atlas-magnetic-espresso","nail-atlas-magnetic-sage","nail-atlas-prism-ivory","nail-atlas-gradient-pearl","nail-atlas-gradient-lavender"]);
+    const lines=readFileSync(resolve("assets/hbeauty-manicure-batch50c.sha256"),"utf8").trim().split(/\r?\n/);
+    if(lines.length!==required.size)throw Error("Batch50C offline lock incomplete");
+    const seen=new Set(),hashes=new Set();
+    for(const line of lines){
+      const m=line.match(/^([a-f0-9]{64})  (public\/nails\/photos\/(nail-[a-z0-9-]+)\.webp)$/);
+      if(!m||!required.has(m[3])||seen.has(m[3])||hashes.has(m[1]))
+        throw Error("Batch50C unknown or duplicate offline asset");
+      seen.add(m[3]);hashes.add(m[1]);
+      const file=join(root,m[2].slice("public/".length));
+      if(!existsSync(file))throw Error("Batch50C offline photo missing "+m[3]);
+      const bytes=readFileSync(file);
+      if(bytes.length<25_000||bytes.length>2_200_000||
+         bytes.toString("ascii",0,4)!=="RIFF"||bytes.toString("ascii",8,12)!=="WEBP"||
+         createHash("sha256").update(bytes).digest("hex")!==m[1])
+        throw Error("Batch50C offline integrity failure "+m[3]);
+      const {width,height}=webpDimensions(bytes);
+      if(width!==1600||height!==1600)throw Error("Batch50C offline dimensions mismatch "+m[3]);
+      files.push(file);
+    }
+    if(seen.size!==5)throw Error("Incomplete Batch50C offline cache");
   }
   // Offline-first pedicure edition: validate 78 immutable image bytes before
   // adding them to the service-worker cache. Partial releases cannot publish.
