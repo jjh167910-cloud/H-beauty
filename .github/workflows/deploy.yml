@@ -74,6 +74,8 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Verify all 136 locked nail photos in the built offline app
+        run: node scripts/verify-all-nail-photos.mjs --local
       - name: Verify runner Chrome
         run: google-chrome --version
 
