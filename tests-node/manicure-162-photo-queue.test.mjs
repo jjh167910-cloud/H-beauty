@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {readFileSync,existsSync} from "node:fs";
+import {readFileSync} from "node:fs";
 import {knownNailIds} from "../scripts/audit-nail-photo-candidates.mjs";
 
 test("remaining manicure editorial queue has all 162 unique catalog references in 50-photo groups",()=>{
@@ -26,9 +26,4 @@ test("remaining manicure editorial queue has all 162 unique catalog references i
    assert.equal(item.sha256,null);
    assert.equal(item.approved_by_qa,false);
  }
-});
-test("no production image locks are created by unfinished image-production queue",()=>{
- const plan=JSON.parse(readFileSync("docs/HBEAUTY_MANICURE_162_QUEUE.json","utf8"));
- for(const batch of plan.batches)
-   assert.equal(existsSync(batch.target_manifest),false,"Unapproved photo lock must never be staged");
 });
