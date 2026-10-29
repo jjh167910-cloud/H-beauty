@@ -32,4 +32,11 @@ test("remaining manicure editorial queue has all 162 unique catalog references i
      assert.equal(item.approved_by_qa,true);
    }
  }
+ const staged=loadPhotoLocks().filter(photo=>!LOCKS.some(group=>group.name===photo.group));
+ const approved=items.filter(item=>item.qa_status==="APPROVED");
+ assert.equal(approved.length,staged.length,"QA queue must cover every dynamically released photo");
+ for(const photo of staged){
+   const row=approved.find(x=>x.id===photo.id);
+   assert.ok(row&&row.sha256===photo.hash,"QA release identity differs from manifest "+photo.id);
+ }
 });
