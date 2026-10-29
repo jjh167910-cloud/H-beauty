@@ -131,6 +131,9 @@ jobs:
           fi
           echo "Verified the live H-Beauty SPA and exact service worker artifact."
 
+      - name: Verify public Batch50C manicure images byte-for-byte
+        run: node scripts/verify-live-manicure-batch50c.mjs
+
       - name: Deployment result
         if: ${{ always() }}
         shell: bash

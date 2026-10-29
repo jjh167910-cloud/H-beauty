@@ -220,6 +220,31 @@ export function finalizeServiceWorker(distDir = 'dist') {
     }
     if(names.size!==9)throw Error("Incomplete Batch50B offline photo collection");
   }
+
+  // Batch50C is included in offline precache only after all eight originals
+  // passed the pre-build manifest lock. Recheck the immutable release bytes.
+  if(process.env.VITE_MANICURE_BATCH50_C==="true"){
+    const required=new Set(["nail-atlas-magnetic-espresso","nail-atlas-magnetic-sage","nail-atlas-geometry-blush","nail-atlas-prism-ivory","nail-atlas-gradient-pearl","nail-atlas-gradient-lavender","nail-atlas-gradient-ruby","nail-atlas-gradient-cobalt"]);
+    const lines=readFileSync(resolve("assets/hbeauty-manicure-batch50c.sha256"),"utf8").trim().split(/\r?\n/);
+    if(lines.length!==required.size)throw Error("Batch50C precache count mismatch");
+    const found=new Set(),hashes=new Set();
+    for(const line of lines){
+      const m=line.match(/^([a-f0-9]{64})  (public\/nails\/photos\/nail-[a-z0-9-]+\.webp)$/);
+      if(!m)throw Error("Invalid Batch50C precache lock");
+      const id=m[2].slice("public/nails/photos/".length,-".webp".length);
+      if(!required.has(id)||found.has(id)||hashes.has(m[1]))throw Error("Batch50C invalid photo ID or duplicate");
+      found.add(id);hashes.add(m[1]);
+      const file=join(root,m[2].slice("public/".length));
+      if(!existsSync(file))throw Error("Missing Batch50C offline photo "+id);
+      const image=readFileSync(file);
+      if(image.length<25000||image.length>2200000||image.toString("ascii",0,4)!=="RIFF"||
+         image.toString("ascii",8,12)!=="WEBP"||
+         createHash("sha256").update(image).digest("hex")!==m[1])
+        throw Error("Batch50C offline image checksum mismatch "+id);
+      files.push(file);
+    }
+    if(found.size!==required.size)throw Error("Incomplete Batch50C offline image set");
+  }
   // Offline-first pedicure edition: validate 78 immutable image bytes before
   // adding them to the service-worker cache. Partial releases cannot publish.
   if (process.env.VITE_PEDICURE_78 === 'true') {
