@@ -198,6 +198,28 @@ export function finalizeServiceWorker(distDir = 'dist') {
     }
     if(ids.size!==10)throw Error("Incomplete Batch50-A offline photo collection");
   }
+  // Nine new standalone manicure photographs, precached only after SHA-256 validation.
+  if(process.env.VITE_MANICURE_BATCH50_B==="true") {
+    const lines=readFileSync(resolve("assets/hbeauty-manicure-batch50b.sha256"),"utf8").trim().split(/\r?\n/);
+    const selected=new Set(["nail-atlas-modern-french-espresso","nail-atlas-foil-cobalt","nail-atlas-modern-french-merlot","nail-atlas-modern-french-sage","nail-atlas-modern-french-lavender","nail-rose-french","nail-atlas-magnetic-midnight","nail-atlas-magnetic-coral","nail-atlas-magnetic-pearl"]);
+    if(lines.length!==9)throw Error("Batch50B must contain exactly nine photos");
+    const names=new Set(),hashes=new Set();
+    for(const line of lines) {
+      const m=line.match(/^([a-f0-9]{64})  (public\/nails\/photos\/nail-[a-z0-9-]+\.webp)$/);
+      if(!m)throw Error("Malformed Batch50B photo lock");
+      const id=m[2].slice("public/nails/photos/".length,-".webp".length);
+      if(!selected.has(id)||names.has(id)||hashes.has(m[1]))throw Error("Duplicate or unknown Batch50B photo");
+      names.add(id);hashes.add(m[1]);
+      const file=join(root,m[2].slice("public/".length));
+      if(!existsSync(file))throw Error("Batch50B image missing from build "+id);
+      const b=readFileSync(file);
+      if(b.length<25_000||b.length>2_200_000||b.toString("ascii",0,4)!=="RIFF"||
+        b.toString("ascii",8,12)!=="WEBP"||createHash("sha256").update(b).digest("hex")!==m[1])
+        throw Error("Batch50B photo failed offline integrity gate "+id);
+      files.push(file);
+    }
+    if(names.size!==9)throw Error("Incomplete Batch50B offline photo collection");
+  }
   // Offline-first pedicure edition: validate 78 immutable image bytes before
   // adding them to the service-worker cache. Partial releases cannot publish.
   if (process.env.VITE_PEDICURE_78 === 'true') {
