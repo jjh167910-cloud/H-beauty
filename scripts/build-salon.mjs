@@ -15,6 +15,7 @@ import { installPedicure78 } from "./install-pedicure-78-pack.mjs";
 import { restorePedicureParts } from "./restore-pedicure-parts.mjs";
 import { reconstructNailArchive } from "./restore-embedded-nail-v4.mjs";
 import { LOCKS, loadPhotoLocks } from "./verify-all-nail-photos.mjs";
+import {verifyManicureEditorialApprovals} from "./verify-manicure-editorial-approvals.mjs";
 import { webpDimensions } from "./audit-nail-photo-candidates.mjs";
 
 export const MUSIC_PATH = "public/audio/hananeh-salon-ambience.mp3";
@@ -238,7 +239,9 @@ function build() {
        createHash("sha256").update(photo).digest("hex")!==item.hash)
       throw Error("Dynamic manicure native-quality release gate rejected "+item.id);
   }
-  console.log("Future manicure release: "+dynamicApproved.length+" individually locked new photos");
+  // Technical integrity never substitutes for a recorded per-image full-res QA decision.
+  const editorial=verifyManicureEditorialApprovals(dynamicApproved);
+  console.log("Future manicure release: "+editorial.approved+" QA-approved, SHA-locked new photos");
   const file = resolve(MUSIC_PATH);
   const installed = existsSync(file) && statSync(file).isFile();
   const configured = process.env.VITE_SALON_MUSIC;
