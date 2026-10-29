@@ -39,6 +39,6 @@ test("unapproved dynamic manicure photo cannot enter production",()=>{
     row.sha256=hash;approval.decision="REJECTED";save();
     assert.throws(()=>verifyManicureEditorialApprovals([image],{root:dir}),/approval incomplete/);
     approval.decision="APPROVED_FOR_PUBLICATION";save();
-    assert.throws(()=>verifyManicureEditorialApprovals([{...image,hash:"b".repeat(64)}],{root:dir}),/identity mismatch/);
+    assert.throws(()=>verifyManicureEditorialApprovals([{...image,hash:"b".repeat(64)}],{root:dir}),/queue has not authorized/);
   }finally{rmSync(dir,{recursive:true,force:true});}
 });
