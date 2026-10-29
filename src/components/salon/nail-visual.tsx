@@ -43,6 +43,13 @@ const MANICURE_EDITORIAL_PHOTOS: Readonly<Record<string,string>> = {
     : {})
 };
 
+// Added only after all four original WebPs pass the build's SHA-256 release gate.
+const FOUR_MANICURE_EDITORIAL_PHOTOS: Readonly<Record<string,string>> =
+  import.meta.env.VITE_MANICURE_FOUR === "true"
+    ? Object.fromEntries(["nail-atlas-botanical-ruby","nail-atlas-botanical-espresso","nail-lavender-chrome","nail-silver-chrome"]
+        .map(id=>[id,`/nails/photos/${id}.webp`]))
+    : {};
+
 /** Only the complete, SHA-locked 78-image release may enable these URLs.
  * Missing/mismatched files keep the vector artwork in place.
  */
@@ -55,6 +62,7 @@ const PEDICURE_EDITORIAL_PHOTOS: Record<string,string> =
 
 export const NAIL_EDITORIAL_PHOTOS: Readonly<Record<string,string>> = {
   ...MANICURE_EDITORIAL_PHOTOS,
+  ...FOUR_MANICURE_EDITORIAL_PHOTOS,
   ...PEDICURE_EDITORIAL_PHOTOS
 };
 

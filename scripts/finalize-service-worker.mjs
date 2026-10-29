@@ -110,6 +110,25 @@ export function finalizeServiceWorker(distDir = 'dist') {
       throw Error('Midnight-glitter photo bytes do not match approved SHA256');
     files.push(file);
   }
+  // Four separately approved manicure photos are versioned in the offline shell.
+  if(process.env.VITE_MANICURE_FOUR==="true"){
+    const entries=readFileSync(resolve("assets/hbeauty-manicure-four-20261029.sha256"),"utf8").trim().split(/\r?\n/);
+    const ids=new Set(),hashes=new Set();
+    if(entries.length!==4)throw Error("Four-photo manicure offline lock incomplete");
+    for(const line of entries){
+      const match=line.match(/^([a-f0-9]{64})  (public\/nails\/photos\/nail-[a-z0-9-]+\.webp)$/);
+      if(!match||ids.has(match[2])||hashes.has(match[1]))throw Error("Invalid four-photo manicure offline lock");
+      ids.add(match[2]);hashes.add(match[1]);
+      const file=join(root,match[2].slice("public/".length));
+      if(!existsSync(file))throw Error("Missing four-photo manicure asset "+match[2]);
+      const bytes=readFileSync(file);
+      if(bytes.length<25_000||bytes.length>2_200_000||bytes.toString("ascii",0,4)!=="RIFF"||
+        bytes.toString("ascii",8,12)!=="WEBP"||
+        createHash("sha256").update(bytes).digest("hex")!==match[1])
+        throw Error("Corrupt four-photo manicure asset "+match[2]);
+      files.push(file);
+    }
+  }
   // Offline-first pedicure edition: validate 78 immutable image bytes before
   // adding them to the service-worker cache. Partial releases cannot publish.
   if (process.env.VITE_PEDICURE_78 === 'true') {
