@@ -40,6 +40,11 @@ export function verifyManicureEditorialApprovals(photos,{root="."}={}){
        typeof data.reviewed_at!=="string"||!/^\d{4}-\d\d-\d\dT\d\d:\d\d:/.test(data.reviewed_at)||
        !Number.isFinite(Date.parse(data.reviewed_at)))
       throw Error("Editorial QA batch approval incomplete for "+group);
+    for(const image of images){
+      const queued=expected.get(image.id);
+      if(queued.qa_status!=="APPROVED"||queued.approved_by_qa!==true||queued.sha256!==image.hash)
+        throw Error("Editorial QA queue has not authorized "+image.id);
+    }
     const rows=new Map();
     for(const row of data.images){
       if(!row || !ID.test(row.id)||rows.has(row.id))
