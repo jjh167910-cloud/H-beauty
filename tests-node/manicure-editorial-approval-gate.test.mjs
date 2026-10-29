@@ -11,7 +11,7 @@ test("unapproved dynamic manicure photo cannot enter production",()=>{
     mkdirSync(join(dir,"docs"));mkdirSync(join(dir,"assets"));
     const id="nail-rose-chrome",hash="a".repeat(64),group="hbeauty-manicure-batch61";
     const image={id,hash,group,path:"public/nails/photos/"+id+".webp"};
-    const style={id,finish:"chrome",shape:"coffin",length:"long",base:"#BB849B",accent:"#F6C4D5"};
+    const style={id,finish:"chrome",shape:"coffin",length:"long",base:"#BB849B",accent:"#F6C4D5",qa_status:"APPROVED",approved_by_qa:true,sha256:hash};
     writeFileSync(join(dir,"docs","HBEAUTY_MANICURE_162_QUEUE.json"),
       JSON.stringify({batches:[{styles:[style]}]}));
     assert.deepEqual(verifyManicureEditorialApprovals([],{root:dir}),{approved:0,batches:0});
