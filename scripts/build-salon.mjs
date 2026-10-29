@@ -50,6 +50,30 @@ function build() {
     if(expected!==`${actual}  public/nails/photos/nail-midnight-glitter.webp`)
       throw new Error("Midnight-glitter manicure photo release checksum mismatch");
   }
+  // Four native 1600px manicure photos, exact-ID mapped and independently SHA-locked.
+  // Fail closed before Vite if any piece is missing or modified.
+  const FOUR_LOCK=resolve("assets/hbeauty-manicure-four-20261029.sha256");
+  const FOUR_IDS=["nail-atlas-botanical-ruby","nail-atlas-botanical-espresso","nail-lavender-chrome","nail-silver-chrome"];
+  if(!existsSync(FOUR_LOCK))throw Error("Manicure four-photo release manifest missing");
+  const fourLines=readFileSync(FOUR_LOCK,"utf8").trim().split(/\r?\n/);
+  if(fourLines.length!==FOUR_IDS.length)throw Error("Manicure release manifest must contain exactly four photos");
+  const fourHashes=new Set(),fourNames=new Set();
+  for(const line of fourLines){
+    const match=line.match(/^([a-f0-9]{64})  (public\/nails\/photos\/nail-[a-z0-9-]+\.webp)$/);
+    if(!match)throw Error("Invalid manicure four-photo manifest entry");
+    const id=match[2].slice("public/nails/photos/".length,-".webp".length);
+    if(!FOUR_IDS.includes(id)||fourHashes.has(match[1])||fourNames.has(id))
+      throw Error("Duplicate or unknown manicure four-photo ID");
+    fourHashes.add(match[1]);fourNames.add(id);
+    const asset=resolve(match[2]);
+    if(!existsSync(asset))throw Error("Required manicure photo is missing: "+asset);
+    const bytes=readFileSync(asset);
+    if(bytes.length<25_000||bytes.length>2_200_000||
+       bytes.toString("ascii",0,4)!=="RIFF"||bytes.toString("ascii",8,12)!=="WEBP"||
+       createHash("sha256").update(bytes).digest("hex")!==match[1])
+      throw Error("Manicure four-photo integrity failure: "+id);
+  }
+  if(fourNames.size!==FOUR_IDS.length)throw Error("Incomplete four-photo manicure release");
   const file = resolve(MUSIC_PATH);
   const installed = existsSync(file) && statSync(file).isFile();
   const configured = process.env.VITE_SALON_MUSIC;
@@ -84,6 +108,7 @@ function build() {
   const env={...process.env,
     VITE_SALON_MUSIC:enabled,
     VITE_PEDICURE_78:installedPedicure.installed ? "true" : "false",
+    VITE_MANICURE_FOUR: "true",
     VITE_MANICURE_MIDNIGHT_GLITTER:midnightEnabled ? "true" : "false",
     VITE_NAIL_EDITORIAL_V2:nailEdition,
     VITE_NAIL_EDITORIAL_V3:nailEdition==="true" && photoVersion>=3?"true":"false",
