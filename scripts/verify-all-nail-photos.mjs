@@ -36,10 +36,10 @@ export const LOCKS = Object.freeze([
 export function releaseLocks(root="."){
   const known=new Set(LOCKS.map(x=>x.name));
   const names=readdirSync(resolve(root,"assets"))
-    .filter(n=>/^hbeauty-manicure-batch(?:[0-9]+[a-z]?)(?:-[0-9]{8})?\\.sha256$/.test(n))
+    .filter(n=>/^hbeauty-manicure-batch(?:[0-9]+[a-z]?)(?:-[0-9]{8})?\.sha256$/.test(n))
     .map(n=>n.slice(0,-".sha256".length)).filter(n=>!known.has(n)).sort();
   return [...LOCKS,...names.map(name=>({
-    name,kind:"manicure",count:readFileSync(resolve(root,"assets",name+".sha256"),"utf8").trim().split(/\\r?\\n/).length
+    name,kind:"manicure",count:readFileSync(resolve(root,"assets",name+".sha256"),"utf8").trim().split(/\r?\n/).length
   }))];
 }
 
