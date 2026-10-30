@@ -15,7 +15,7 @@
   "batches": [
     {
       "batch": "B61",
-      "status": "5 of 50 approved and release-staged; 45 not generated / not approved",
+      "status": "9 of 50 approved and release-staged; 41 not generated / not approved",
       "target_manifest": "assets/hbeauty-manicure-batch61.sha256",
       "styles": [
         {
@@ -224,10 +224,11 @@
           "accent": "#F3A7B2",
           "color": "red",
           "collection": "prism",
-          "qa_status": "NOT_GENERATED",
+          "qa_status": "APPROVED",
           "file_path": "public/nails/photos/nail-atlas-prism-ruby.webp",
-          "sha256": null,
-          "approved_by_qa": false
+          "sha256": "cb969b252738b61a414e2707d79a16b181d0a48fbfde355dd57ca0a3bd692559",
+          "approved_by_qa": true,
+          "provenance": "HBeauty_19_Standalone_Chrome_French_Candidates_NOT_APPROVED.zip / ruby_chrome_manicure_on_ivory_satin.png"
         },
         {
           "id": "nail-atlas-prism-merlot",
@@ -280,10 +281,11 @@
           "accent": "#E9DDFB",
           "color": "color",
           "collection": "prism",
-          "qa_status": "NOT_GENERATED",
+          "qa_status": "APPROVED",
           "file_path": "public/nails/photos/nail-atlas-prism-lavender.webp",
-          "sha256": null,
-          "approved_by_qa": false
+          "sha256": "3fd74304149a2a1bdaafe9973bc0377b836ccae3ced73f0046fa3d2311312579",
+          "approved_by_qa": true,
+          "provenance": "HBeauty_19_Standalone_Chrome_French_Candidates_NOT_APPROVED.zip / lavender_chrome_nails_on_ivory_silk.png"
         },
         {
           "id": "nail-atlas-prism-cobalt",
@@ -480,10 +482,11 @@
           "accent": "#F9E3BD",
           "color": "nude",
           "collection": "modern-french",
-          "qa_status": "NOT_GENERATED",
+          "qa_status": "APPROVED",
           "file_path": "public/nails/photos/nail-atlas-modern-french-champagne.webp",
-          "sha256": null,
-          "approved_by_qa": false
+          "sha256": "46db1bd56ea1bdae2c508fd44c87ba6b1b12d42c5cca60c12d20736c6068b9ef",
+          "approved_by_qa": true,
+          "provenance": "HBeauty_19_Standalone_Chrome_French_Candidates_NOT_APPROVED.zip / champagne_double_line_french_manicure.png"
         },
         {
           "id": "nail-atlas-modern-french-ruby",
@@ -516,10 +519,11 @@
           "accent": "#BED7FF",
           "color": "color",
           "collection": "modern-french",
-          "qa_status": "NOT_GENERATED",
+          "qa_status": "APPROVED",
           "file_path": "public/nails/photos/nail-atlas-modern-french-cobalt.webp",
-          "sha256": null,
-          "approved_by_qa": false
+          "sha256": "4b72e683e09868ea88a45ca8da3a168a74fa9b7913aff3bb4f82c49deca1b19d",
+          "approved_by_qa": true,
+          "provenance": "HBeauty_19_Standalone_Chrome_French_Candidates_NOT_APPROVED.zip / cobalt_double_line_french_manicure.png"
         },
         {
           "id": "nail-atlas-modern-french-midnight",
