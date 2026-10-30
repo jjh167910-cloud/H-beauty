@@ -42,7 +42,8 @@ self.addEventListener('fetch', event => {
       }catch(error){
         // Offline review may use saved metadata. The page reconciles legacy
         // manifests with the exact-ID catalog title map before displaying.
-        const stored=(await current.match(req)) || (await caches.match(req));
+        const stored=(await current.match(req)) || (await current.match(path)) ||
+          (await caches.match(req)) || (await caches.match(path));
         if(stored)return stored;
         throw error;
       }
@@ -57,6 +58,10 @@ self.addEventListener('fetch', event => {
         // its compiled JS/CSS manifest belongs to the cache fingerprint.
         return response;
       } catch (error) {
+        if(path==='/review/manicure-intake.html' || path==='/review/editorial-workspace.html'){
+          const reviewPage=(await (await caches.open(CACHE)).match(path)) || (await caches.match(path));
+          if(reviewPage)return reviewPage;
+        }
         const shell=await (await caches.open(CACHE)).match('/index.html');
         if (shell) return shell;
         throw error;
