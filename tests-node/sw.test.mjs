@@ -130,3 +130,67 @@ test('production finalizer fails closed without build placeholders',()=>fixture(
   put('sw.js','const CACHE="not-a-real-template"');
   assert.throws(()=>finalizeServiceWorker(folder),/placeholders/);
 }));
+
+
+test('review JSON ignores stale cached pre-Persian metadata while online',async()=>{
+  const fresh={ok:true,type:'basic',body:'{"files":[{"title":"باغ زیتونی"}]}',
+    clone(){return this;}};
+  const app=simulate(TEMPLATE,async(request,options)=>{
+    assert.equal(options.cache,'no-store');
+    assert.ok(request.url.includes('/review/manifest-146.json'));
+    return fresh;
+  });
+  await app.trigger('install');
+  app.stores.get(app.CACHE).set('/review/manifest-146.json',{ok:true,body:'{"files":[{"id":"old"}]}'});
+  const result=await app.trigger('fetch',{
+    method:'GET',url:'https://salon.test/review/manifest-146.json',mode:'cors'
+  });
+  assert.equal(result.body,fresh.body);
+  assert.equal(app.stores.get(app.CACHE).get('/review/manifest-146.json').body,fresh.body);
+});
+
+test('review JSON returns cached metadata if offline, without discarding local work',async()=>{
+  const app=simulate(TEMPLATE,async()=>{throw Error('offline');});
+  await app.trigger('install');
+  const previous={ok:true,body:'{"files":[{"id":"nail-example"}]}'};
+  app.stores.get(app.CACHE).set('/review/manifest-146.json',previous);
+  const result=await app.trigger('fetch',{
+    method:'GET',url:'https://salon.test/review/manifest-146.json',mode:'cors'
+  });
+  assert.equal(result.body,previous.body);
+});
+
+test('review title changes must rotate PWA cache without altering photo assets',()=>{
+  fixture(({folder,put})=>{
+    const suggestions=JSON.parse(readFileSync(join(ROOT,
+      'public/review/manicure-146-preliminary-suggestions.json'),'utf8'));
+    assert.equal(suggestions.images.length,146);
+    mkdirSync(join(folder,'review'));
+    const manifest={schema:2,count:146,approval:'NOT_GRANTED',
+      files:suggestions.images.map(item=>({
+        id:item.id,title:item.catalog.title,en:item.catalog.en,
+        sha:'a'.repeat(64)
+      }))};
+    put('review/manifest-146.json',JSON.stringify(manifest));
+    put('review/manicure-146-preliminary-suggestions.json',JSON.stringify(suggestions));
+    put('review/manicure-intake.html','<html lang="fa">review</html>');
+    put('review/editorial-workspace.html','<html lang="fa">editorial</html>');
+    const old=finalizeServiceWorker(folder);
+    for(const path of ['/review/manifest-146.json',
+      '/review/manicure-146-preliminary-suggestions.json',
+      '/review/manicure-intake.html','/review/editorial-workspace.html'])
+      assert.ok(old.urls.includes(path),'not precached: '+path);
+    manifest.files[0].title='عنوان آزمایشی جدید';
+    suggestions.images[0].catalog.title='عنوان آزمایشی جدید';
+    put('review/manifest-146.json',JSON.stringify(manifest));
+    put('review/manicure-146-preliminary-suggestions.json',JSON.stringify(suggestions));
+    put('sw.js',TEMPLATE);
+    const next=finalizeServiceWorker(folder);
+    assert.notEqual(next.version,old.version,
+      'Persian title changed but cached review metadata version did not rotate');
+    put('sw.js',TEMPLATE);
+    manifest.files[0].title='عنوان اشتباه';
+    put('review/manifest-146.json',JSON.stringify(manifest));
+    assert.throws(()=>finalizeServiceWorker(folder),/Persian photo names differ/);
+  });
+});
