@@ -330,6 +330,40 @@ export function finalizeServiceWorker(distDir = 'dist') {
       throw new Error('Salon music checksum mismatch; publication blocked');
     files.push(audio);
   }
+  // The review manifest is independent of the main Vite bundle. Include its
+  // content and the two review pages in the version hash, and precache their
+  // small metadata documents. Do NOT precache 146 unapproved 1600px images.
+  // This guarantees the new service worker cannot reuse a prior release's
+  // cached title-less manifest when only the review content has changed.
+  const reviewNames=[
+    'review/manifest-146.json',
+    'review/manicure-146-preliminary-suggestions.json',
+    'review/manicure-intake.html',
+    'review/editorial-workspace.html'
+  ];
+  const reviewFiles=reviewNames.map(name=>join(root,name));
+  const present=reviewFiles.filter(existsSync);
+  if(present.length && present.length!==reviewFiles.length)
+    throw Error('Review-only metadata and pages must be published atomically');
+  if(present.length){
+    const review=JSON.parse(readFileSync(join(root,reviewNames[0]),'utf8'));
+    if(review.schema!==2||review.count!==146||review.approval!=='NOT_GRANTED'
+       ||review.files?.length!==146||
+       new Set(review.files.map(item=>item.id)).size!==146||
+       review.files.some(item=>typeof item.title!=='string'
+         ||!/[\u0600-\u06ff]/u.test(item.title)
+         ||typeof item.en!=='string'||!item.en.trim()
+         ||!/^nail-[a-z0-9-]+$/.test(item.id)
+         ||!(/^[a-f0-9]{64}$/.test(item.sha))))
+      throw Error('Review-only metadata missing 146 exact Persian titles');
+    const suggestions=JSON.parse(readFileSync(join(root,reviewNames[1]),'utf8'));
+    if(suggestions.schema!==1||suggestions.images?.length!==146)
+      throw Error('Review-only suggestions missing 146 catalog references');
+    const titles=new Map(suggestions.images.map(item=>[item.id,item.catalog?.title]));
+    if(titles.size!==146 || review.files.some(item=>titles.get(item.id)!==item.title))
+      throw Error('Persian photo names differ from the approved catalog mapping');
+    files.push(...reviewFiles);
+  }
   files.sort();
   if (!files.some(file => file.endsWith('.js')) || !files.some(file => file.endsWith('.css')))
     throw new Error('Built app must contain JavaScript and CSS in dist/assets');

@@ -40,3 +40,19 @@ test("local review draft cannot publish to the customer catalog",async({page})=>
  await page.reload();
  await expect(page.locator("#completed")).toHaveText("1");
 });
+
+
+test("detailed reviewer recovers Persian labels from legacy cached metadata",async({page})=>{
+ await page.route("**/review/manifest-146.json*",async route=>{
+   const response=await route.fetch();
+   const manifest=await response.json();
+   for(const item of manifest.files){delete item.title;delete item.en;}
+   await route.fulfill({contentType:"application/json",body:JSON.stringify(manifest)});
+ });
+ await page.goto("/review/editorial-workspace.html");
+ await expect(page.locator(".tile")).toHaveCount(146);
+ await expect(page.locator(".title-fa")).toHaveCount(146);
+ await page.locator("#q").fill("باغ زیتونی");
+ await expect(page.locator(".tile")).toHaveCount(1);
+ await expect(page.locator(".tile .title-fa")).toHaveText("باغ زیتونی");
+});

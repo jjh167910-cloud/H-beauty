@@ -144,6 +144,11 @@ jobs:
       - name: Verify all 136 public manicure and pedicure photos against original SHA-256 locks
         run: node scripts/verify-all-nail-photos.mjs --live
 
+      - name: Verify current Persian names and four live review metadata/page artifacts
+        # This catches the exact incident where service-worker or CDN
+        # caching returned the old title-less manifest after a release.
+        run: node scripts/verify-live-review-manifest.mjs
+
       - name: Deployment result
         if: ${{ always() }}
         shell: bash

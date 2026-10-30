@@ -148,15 +148,31 @@ function exportDrafts(){
 }
 async function init(){
  restore();
- const [m,s]=await Promise.all([fetch(MANIFEST,{cache:"no-cache"}),fetch(SUGGESTIONS,{cache:"no-cache"})]);
+ const rev="?release=persian-146-cachefix-20261030";
+ const [m,s]=await Promise.all([
+   fetch(MANIFEST+rev,{cache:"no-store"}),
+   fetch(SUGGESTIONS+rev,{cache:"no-store"})
+ ]);
  if(!m.ok||!s.ok)throw Error("Review data endpoint unavailable");
  const md=await m.json(),sd=await s.json();
  if(md.schema!==2||md.count!==146||md.approval!=="NOT_GRANTED"||md.files?.length!==146||
     sd.schema!==1||sd.images?.length!==146||sd.final_approved!==0)
   throw Error("Review manifest inconsistent or approval already changed");
- manifest=md.files;suggestions=sd.images;map=new Map(suggestions.map(x=>[x.id,x]));
- if(map.size!==146||manifest.some(x=>!safeId(x.id)||!map.has(x.id)||!(/^[a-f0-9]{64}$/.test(x.sha))||x.title!==map.get(x.id)?.catalog?.title||!/[\u0600-\u06ff]/u.test(x.title)))
-  throw Error("Bad or duplicate style identifiers or source SHA-256");
+ suggestions=sd.images;map=new Map(suggestions.map(x=>[x.id,x]));
+ if(map.size!==146)throw Error("Expected 146 unique catalog titles");
+ // Restore titles for browsers whose old service worker cached the
+ // pre-Persian manifest. Match by exact source ID and historical photo hash.
+ manifest=md.files.map(row=>{
+   const entry=map.get(row.id);
+   if(!entry||!safeId(row.id)||!(/^[a-f0-9]{64}$/.test(row.sha))||
+      (entry.original_sha256&&entry.original_sha256!==row.sha)||
+      (row.title&&row.title!==entry.catalog?.title)||
+      !/[\u0600-\u06ff]/u.test(entry.catalog?.title||""))
+     throw Error("Bad or conflicting source photo ID, hash or Persian title: "+row.id);
+   return {...row,title:entry.catalog.title,en:entry.catalog.en};
+ });
+ if(new Set(manifest.map(x=>x.id)).size!==146)
+   throw Error("Duplicate style IDs in saved review manifest");
  const old=manifest.filter(x=>x.status!=="NEEDS_EDITORIAL_REVIEW");
  if(old.length!==60)throw Error("Original 60 nonapproved statuses changed");
  showStats();tiles();say("۱۴۶ عکس اصلی و پیشنهاد بررسی بارگذاری شد. تصمیم‌ها فقط روی دستگاه شما ذخیره می‌شوند.",true);

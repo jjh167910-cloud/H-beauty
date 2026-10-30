@@ -71,7 +71,7 @@ test("real WebP user-file import rejects false SHA and accepts matching original
   await expect(page.locator("#loaded")).toHaveText("0");
   await expect(page.locator("#alert")).toContainText("SHA-256");
   const hash=createHash("sha256").update(raw).digest("hex");
-  await page.route("**/review/manifest-146.json",async route=>{
+  await page.route("**/review/manifest-146.json*",async route=>{
     const response=await route.fetch();
     const source=await response.text();
     expect(source).toContain(original);
@@ -89,7 +89,7 @@ test("real deflated ZIP archive imports on device without publishing unapproved 
   await page.goto(PAGE);
   const raw=await createFixtureWebP(page);
   const hash=createHash("sha256").update(raw).digest("hex");
-  await page.route("**/review/manifest-146.json",async route=>{
+  await page.route("**/review/manifest-146.json*",async route=>{
     const response=await route.fetch();
     await route.fulfill({contentType:"application/json",body:(await response.text()).replace(original,hash)});
   });
@@ -169,4 +169,44 @@ test("all 146 review photos use their exact Persian names from the source catalo
   await page.locator(".tile .inspect").click();
   await expect(page.locator("#modalFaName")).toHaveText("باغ زیتونی");
   await expect(page.locator("#modalId")).toHaveText("nail-sage-garden");
+});
+
+
+test("stale title-less cached manifest restores all 146 Persian names without erasing flags",async({page})=>{
+  await page.route("**/review/manifest-146.json*",async route=>{
+    const original=await route.fetch();
+    const old=await original.json();
+    expect(old.files).toHaveLength(146);
+    for(const item of old.files){delete item.title;delete item.en;}
+    await route.fulfill({contentType:"application/json",body:JSON.stringify(old)});
+  });
+  await page.goto(PAGE);
+  await expect(page.locator(".tile")).toHaveCount(146);
+  await expect(page.locator(".style-title-fa")).toHaveCount(146);
+  await page.locator(".search").fill("باغ زیتونی");
+  await expect(page.locator(".tile")).toHaveCount(1);
+  await expect(page.locator(".tile .style-title-fa")).toHaveText("باغ زیتونی");
+  await page.locator(".tile .review-btn.hold").click();
+  await expect(page.locator("#flaggedTop")).toHaveText("1");
+  await page.reload();
+  await expect(page.locator(".style-title-fa")).toHaveCount(146);
+  await expect(page.locator("#flaggedTop")).toHaveText("1");
+  await page.locator('[data-filter="__flags__"]').click();
+  await expect(page.locator(".tile")).toHaveCount(1);
+});
+
+test("legacy manifest fallback rejects mismatched source hash instead of attaching a wrong name",async({page})=>{
+  let changed=false;
+  await page.route("**/review/manifest-146.json*",async route=>{
+    const original=await route.fetch();
+    const old=await original.json();
+    for(const item of old.files){delete item.title;delete item.en;}
+    old.files[0].sha="b".repeat(64);
+    changed=true;
+    await route.fulfill({contentType:"application/json",body:JSON.stringify(old)});
+  });
+  await page.goto(PAGE);
+  await expect.poll(()=>changed).toBe(true);
+  await expect(page.locator("#alert")).toContainText("Photo-to-title mapping");
+  await expect(page.locator(".tile")).toHaveCount(0);
 });
