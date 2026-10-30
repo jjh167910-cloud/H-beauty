@@ -13,6 +13,7 @@ import {readFileSync, existsSync, readdirSync} from "node:fs";
 import {createHash} from "node:crypto";
 import {resolve, join} from "node:path";
 import {webpDimensions, knownNailIds} from "./audit-nail-photo-candidates.mjs";
+import {records as reviewIntakeRecords} from "./install-manicure-intake-review.mjs";
 
 export const LOCKS = Object.freeze([
   {name:"hbeauty-nail-editorial-v4",count:9,kind:"manicure",legacy:true},
@@ -141,9 +142,24 @@ if(process.argv[1] && process.argv[1].endsWith("verify-all-nail-photos.mjs")){
   const items=loadPhotoLocks();
   const counts={manicure:items.filter(x=>x.kind==="manicure").length,pedicure:items.filter(x=>x.kind==="pedicure").length};
   console.log("Validated "+items.length+" unique locked nail photo references",counts);
+  // Separate intake namespace: files are intentionally UNAPPROVED and must
+  // never count as customer-facing manicure photos or appear in nail release locks.
+  const reviewItems=reviewIntakeRecords().map(x=>({
+    id:x.id,path:"public/review/photos/"+x.id+".webp",hash:x.sha
+  }));
   if(mode==="local"){
     console.log("Verified local decoded images and offline precache",verifyLocalPhotos(items));
+    for(const item of reviewItems){
+      const rel=item.path.slice("public/".length),b=readFileSync(resolve("dist",rel));
+      if(createHash("sha256").update(b).digest("hex")!==item.hash)
+        throw Error("Review-only original photo corrupted in built app: "+item.id);
+      const d=webpDimensions(b);
+      if(d.width!==1600||d.height!==1600)throw Error("Review-only original not 1600px "+item.id);
+    }
+    console.log("Verified 60 original review-only photos at 1600px (0 editorial approvals)");
   }else if(mode==="live"){
     console.log("Verified public SHA-256 image bytes",await verifyLivePhotos(items));
+    console.log("Verified public original review-only SHA-256 image bytes",
+      await verifyLivePhotos(reviewItems));
   }
 }
