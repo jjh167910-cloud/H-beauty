@@ -12,7 +12,7 @@ const TEMPLATE = readFileSync(join(ROOT, 'public/sw.js'), 'utf8');
 
 function simulate(source = TEMPLATE, fetcher = async () => { throw new Error('offline'); }) {
   const handlers = new Map(), stores = new Map(), deleted = [];
-  const normalize=req => new URL(typeof req==='string'?req:req.url,'https://salon.test').pathname;
+  const normalize=req => {const url=new URL(typeof req==='string'?req:req.url,'https://salon.test');return url.pathname+url.search;};
   const CACHE = source.match(/const CACHE='([^']+)'/)?.[1];
   const caches = {
     open: async name => {
@@ -193,4 +193,32 @@ test('review title changes must rotate PWA cache without altering photo assets',
     put('review/manifest-146.json',JSON.stringify(manifest));
     assert.throws(()=>finalizeServiceWorker(folder),/Persian photo names differ/);
   });
+});
+
+test('versioned review metadata uses precached unversioned copy when offline',async()=>{
+  const app=simulate(TEMPLATE,async()=>{throw Error('offline');});
+  await app.trigger('install');
+  const saved={ok:true,body:'146 pre-cached records'};
+  app.stores.get(app.CACHE).set('/review/manifest-146.json',saved);
+  const response=await app.trigger('fetch',{
+    method:'GET',url:'https://salon.test/review/manifest-146.json?release=persian-146-cachefix-20261030',
+    mode:'cors'
+  });
+  assert.equal(response.body,saved.body);
+});
+
+test('offline reviewer navigations use the precached reviewer HTML, not the SPA shell',async()=>{
+  const app=simulate(TEMPLATE,async()=>{throw Error('offline');});
+  await app.trigger('install');
+  for(const path of ['/review/manicure-intake.html','/review/editorial-workspace.html']){
+    app.stores.get(app.CACHE).set(path,{ok:true,body:'review page: '+path});
+    const response=await app.trigger('fetch',{
+      method:'GET',url:'https://salon.test'+path,mode:'navigate'
+    });
+    assert.equal(response.body,'review page: '+path);
+  }
+  const spa=await app.trigger('fetch',{
+    method:'GET',url:'https://salon.test/#/looks',mode:'navigate'
+  });
+  assert.equal(spa.body,'/index.html');
 });
