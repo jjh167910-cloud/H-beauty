@@ -1,6 +1,6 @@
 # H-Beauty B64 — single-exposure photography prompts v3
 
-**12 image prompts pending / 0 released in original 12-style cohort.** Exact status derives from docs/HBEAUTY_MANICURE_162_QUEUE.json. Do not regenerate already-published designs.
+**11 image prompts pending / 1 released in original 12-style cohort.** Exact status derives from docs/HBEAUTY_MANICURE_162_QUEUE.json. Do not regenerate already-published designs.
 
 ## REQUIRED generator configuration (set in the model API, NOT merely inside the prompt)
 
@@ -10,25 +10,9 @@ Provider ElevenLabs creative image-generation node; model FLUX 3 Image; aspect_r
 
 ## Already published in this cohort (do not regenerate)
 
-- None
+- nail-atlas-sculpture-ivory — Ivory Sculpted Wave (approved hash a60cc27c58f1e2ae27b0e134275e652abe9746608d7998392627d1291c78e15a)
 
 ## Pending — individual ready-to-generate prompts
-
-### 151 — Ivory Sculpted Wave | موج سه‌بعدی عاجی
-
-Catalog ID: nail-atlas-sculpture-ivory · Original photo output: public/nails/photos/nail-atlas-sculpture-ivory.webp · STATUS: NOT GENERATED / NOT APPROVED
-
-~~~text
-A single high-end beauty photograph: one uninterrupted close-up camera exposure of one elegant adult woman's hand resting naturally, palm-down, on continuous ivory silk satin. Only this one hand and the fabric are in the photograph. The scene fills the entire image edge to edge.
-
-The hand has five anatomically natural, separate fingers, including the thumb, positioned in a relaxed fan so that every complete fingernail, cuticle and tip is visible. Realistic finger proportions, skin pores, fine creases, nail beds and naturally attached cuticles. The entire hand shares one consistent perspective and natural lighting.
-
-Each of the five nails has the same symmetrically tapered sidewalls ending in a softly rounded almond tip; long proportional nail extension extending about 8–12 mm beyond the fingertip. The main lacquer matches the color reference #E9D7C6 with restrained accents matching #FFF8E9. Keep the intended 3d finish on the actual nail plates. The manicure design is: SCULPTED GEL WAVES: low-relief flowing raised gel ribbons physically built on the surface of two or three nails, delicate relief shadows along the ridges; the motif is on NAILS only, never molded onto skin, and not flat printed swirls.
-
-The entire ground and backdrop are a single uninterrupted expanse of softly folded pure ivory satin silk. The hand touches the silk along its full visible underside, and silk is visible beneath every fingertip, through every finger gap and out to all four corners. The fabric has smooth flowing weave and luminous soft folds.
-
-Professional macro editorial photography, a single 70-degree overhead three-quarter view, natural diagonal hand pose, hand occupying about three-quarters of the square image. Neutral studio daylight, diffuse softbox, gentle realistic contact shadows, precise salon-grade application, sharp detail across all five nails and natural satin highlights. An authentic-looking unmarked photograph with only the hand and ivory silk visible.
-~~~
 
 ### 152 — Blush Sculpted Wave | موج سه‌بعدی رز لطیف
 

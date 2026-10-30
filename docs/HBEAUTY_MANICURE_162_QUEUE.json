@@ -2742,7 +2742,7 @@
     },
     {
       "batch": "B64",
-      "status": "0 of 12 approved and release-staged; 12 not generated / not approved",
+      "status": "1 of 12 approved and release-staged; 11 remaining",
       "target_manifest": "assets/hbeauty-manicure-batch64.sha256",
       "styles": [
         {
@@ -2758,10 +2758,10 @@
           "accent": "#FFF8E9",
           "color": "nude",
           "collection": "sculpture",
-          "qa_status": "NOT_GENERATED",
+          "qa_status": "APPROVED",
           "file_path": "public/nails/photos/nail-atlas-sculpture-ivory.webp",
-          "sha256": null,
-          "approved_by_qa": false
+          "sha256": "a60cc27c58f1e2ae27b0e134275e652abe9746608d7998392627d1291c78e15a",
+          "approved_by_qa": true
         },
         {
           "id": "nail-atlas-sculpture-blush",
