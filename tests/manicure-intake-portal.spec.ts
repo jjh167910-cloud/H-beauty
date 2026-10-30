@@ -101,7 +101,9 @@ test("real deflated ZIP archive imports on device without publishing unapproved 
 
 test("keyboard-only reviewer can open the local ZIP picker", async({page})=>{
   await page.goto(PAGE);
+  await expect(page.locator(".tile")).toHaveCount(146);
   const choose=page.getByRole("button",{name:/انتخاب سه فایل ZIP/});
+  await expect(choose).toBeEnabled();
   await choose.focus();
   await expect(choose).toBeFocused();
   const [picker]=await Promise.all([page.waitForEvent("filechooser"),page.keyboard.press("Enter")]);
