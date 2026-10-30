@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { NAIL_STYLES, type NailStyle } from "@/data/nail-styles";
+import photoReview from "@/data/nail-photo-review.json";
+import { filterReviewedPhotos } from "@/data/filter-reviewed-photos.js";
 import photoQuality from "@/data/nail-photo-quality.json";
 import { NailPreview } from "./nail-preview";
 import { PedicurePreview } from "./pedicure-preview";
@@ -112,7 +114,7 @@ const PEDICURE_EDITORIAL_PHOTOS: Record<string,string> =
         .map(style => [style.id, `/nails/photos/${style.id}.webp`]))
     : {};
 
-export const NAIL_EDITORIAL_PHOTOS: Readonly<Record<string,string>> = {
+export const NAIL_EDITORIAL_PHOTOS: Readonly<Record<string,string>> = filterReviewedPhotos({
   ...MANICURE_EDITORIAL_PHOTOS,
   ...FOUR_MANICURE_EDITORIAL_PHOTOS,
   ...BATCH7_MANICURE_EDITORIAL_PHOTOS,
@@ -123,7 +125,7 @@ export const NAIL_EDITORIAL_PHOTOS: Readonly<Record<string,string>> = {
   ...BATCH8_MANICURE_EDITORIAL_PHOTOS,
   ...FUTURE_MANICURE_EDITORIAL_PHOTOS,
   ...PEDICURE_EDITORIAL_PHOTOS
-};
+}, photoReview.quarantined);
 
 export function NailVisual({
   style,
