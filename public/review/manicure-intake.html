@@ -35,7 +35,8 @@ h1{font-size:clamp(28px,4.6vw,44px);line-height:1.4;letter-spacing:-.035em;margi
 .flag{position:absolute;top:10px;right:10px;padding:4px 9px;border-radius:99px;background:#fffefaed;color:#5c3a52;font-size:10px;font-weight:700;box-shadow:0 1px 6px #3331}
 .flag.hold{color:#875f17;background:#fff8e9ed}.flag.reject{color:#982e45;background:#fff0f2ed}
 .cardbody{padding:13px 14px 15px;flex:1;display:flex;flex-direction:column;gap:6px}
-.cardbody strong{font-size:12.5px;line-height:1.35;direction:ltr;text-align:left;overflow-wrap:anywhere;color:#3d303a}
+.style-title-fa{font-size:16px;font-weight:750;line-height:1.55;color:#3b2934;direction:rtl;text-align:right;overflow-wrap:anywhere}
+.cardbody strong{font-size:11px;font-weight:560;line-height:1.4;direction:ltr;text-align:left;overflow-wrap:anywhere;color:#81747c}
 .info{color:#8d7d85;font-size:11px}.hash{font-family:ui-monospace,monospace;color:#a291a0;font-size:10px;letter-spacing:.02em;direction:ltr;text-align:left}
 .inspect{margin-top:auto;padding:8px 0 0;border:0;background:transparent;color:#744561;text-align:right;font-weight:700;font-size:12px}
 .review-help{margin:16px 0 10px;padding:15px 17px;border:1px solid #e7d5df;border-radius:15px;background:#fffefc;color:#5a4250;font-size:13px}
@@ -58,7 +59,9 @@ h1{font-size:clamp(28px,4.6vw,44px);line-height:1.4;letter-spacing:-.035em;margi
 @media(max-width:680px){.review-btn{min-height:43px;font-size:10px}.review-help{padding:13px 12px}}.inspect:disabled{opacity:.35;cursor:not-allowed}
 footer{margin-top:38px;color:#81747b;text-align:center;font-size:12px}
 dialog{border:0;padding:0;box-shadow:0 22px 80px #22122255;border-radius:18px;max-width:min(95vw,850px);max-height:93dvh;overflow:auto;background:#fff;color:var(--ink)}
-dialog::backdrop{background:#1c141bcc}.modal-body{padding:18px}.modal-head{display:flex;justify-content:space-between;gap:20px;align-items:start}
+dialog::backdrop{background:#1c141bcc}.modal-title-fa{font-size:19px;font-weight:750;line-height:1.5;color:#3b2934;direction:rtl;text-align:right}
+.modal-title-wrap{display:flex;flex-direction:column;gap:2px;min-width:0;overflow-wrap:anywhere}
+.modal-title-wrap strong{font-size:11px;font-weight:520;direction:ltr;text-align:left;color:#80737a}.modal-body{padding:18px}.modal-head{display:flex;justify-content:space-between;gap:20px;align-items:start}
 .modal-head strong{direction:ltr;display:block;text-align:left;overflow-wrap:anywhere}
 .modal-image{width:100%;height:auto;max-height:65dvh;object-fit:contain;margin:10px auto;display:block;background:#f4eff0}
 .close{border:0;background:#eee6ea;border-radius:50%;width:38px;height:38px;font-size:22px}
@@ -72,14 +75,14 @@ dialog::backdrop{background:#1c141bcc}.modal-body{padding:18px}.modal-head{displ
 <div class="actions"><details class="local-import"><summary>ورود فایل محلی (اختیاری)</summary><input id="files" type="file" multiple accept=".zip,.webp,image/webp,application/zip" aria-label="انتخاب فایل ZIP یا عکس محلی"></details><button class="secondary" id="export" type="button">گزارش صحت‌سنجی</button><button class="secondary review-export" id="downloadFlags" type="button">دریافت تصمیم‌ها (<span id="flaggedTop">۰</span>)</button><a class="secondary" href="/review/editorial-workspace.html">بررسی پیشرفته</a><span class="note">می‌توانید فایل‌ها را اینجا رها کنید. عکس‌های ردشده همچنان ردشده باقی می‌مانند.</span></div></section>
 <section class="statgrid" aria-label="آمار"><div class="stat"><strong>۱۴۶</strong><span>عکس اصلی در فهرست</span></div><div class="stat"><strong>۲۸</strong><span>نامزد بازبینی</span></div><div class="stat"><strong>۱۶</strong><span>نیازمند بازبینی بیشتر</span></div><div class="stat"><strong>۱۶</strong><span>نیازمند اصلاح</span></div><div class="stat"><strong>۸۶</strong><span>در انتظار بازبینی</span></div></section>
 <div class="review-help"><strong>✅ مناسب اولیه · ⏸ نیازمند بررسی · ✕ رد عکس</strong>زیر هر عکس یکی از سه گزینه را لمس کنید. انتخاب شما روی همین دستگاه ذخیره می‌شود؛ برای انتقال یا ارسال نتیجه، «دریافت تصمیم‌ها» را بزنید. این علامت‌ها مجوز انتشار در کاتالوگ مشتریان نیستند.</div><div id="alert" class="alert" role="status">عکس‌های این فهرست هنوز برای انتشار عمومی تأیید نشده‌اند. ۱۴۶ تصویر اصل از بخش بازبینی در دسترس است. انتخاب ZIP فقط برای بررسی فایل‌های محلی است؛ هیچ فایلی به سرور ارسال نمی‌شود.</div>
-<section aria-label="تصاویر"><div class="toolbar"><input class="search" id="search" type="search" aria-label="جستجو در طرح‌ها" placeholder="جستجو بر اساس شناسه، فرم یا سبک…"><div class="filters" role="group" aria-label="فیلتر کیفیت"><button class="filter" data-filter="all" aria-pressed="true">همه</button><button class="filter" data-filter="VISUAL_CANDIDATE_NOT_APPROVED" aria-pressed="false">نامزد</button><button class="filter" data-filter="HOLD_EXACT_STYLE_REVIEW" aria-pressed="false">بازبینی</button><button class="filter" data-filter="REJECT_REGENERATE" aria-pressed="false">اصلاح</button><button class="filter" data-filter="NEEDS_EDITORIAL_REVIEW" aria-pressed="false">جدید · ۸۶</button><button class="filter" data-filter="__flags__" aria-pressed="false">علامت‌گذاری‌شده‌ها (<span id="flaggedFilter">۰</span>)</button></div><div class="note">نمایش <span id="visible">۱۴۶</span> · فایل محلی تأییدشده <span id="loaded">۰</span> / ۱۴۶</div></div><div class="grid" id="grid"></div></section>
+<section aria-label="تصاویر"><div class="toolbar"><input class="search" id="search" type="search" aria-label="جستجو در طرح‌ها" placeholder="جستجوی نام فارسی، شناسه یا سبک…"><div class="filters" role="group" aria-label="فیلتر کیفیت"><button class="filter" data-filter="all" aria-pressed="true">همه</button><button class="filter" data-filter="VISUAL_CANDIDATE_NOT_APPROVED" aria-pressed="false">نامزد</button><button class="filter" data-filter="HOLD_EXACT_STYLE_REVIEW" aria-pressed="false">بازبینی</button><button class="filter" data-filter="REJECT_REGENERATE" aria-pressed="false">اصلاح</button><button class="filter" data-filter="NEEDS_EDITORIAL_REVIEW" aria-pressed="false">جدید · ۸۶</button><button class="filter" data-filter="__flags__" aria-pressed="false">علامت‌گذاری‌شده‌ها (<span id="flaggedFilter">۰</span>)</button></div><div class="note">نمایش <span id="visible">۱۴۶</span> · فایل محلی تأییدشده <span id="loaded">۰</span> / ۱۴۶</div></div><div class="grid" id="grid"></div></section>
 <footer>حنانه بیوتی · ابزار کنترل کیفیت عکس‌ها — تنها برای بازبینی داخلی · هیچ تصویر یا تصویب‌نامه‌ای منتشر نمی‌شود.</footer></main>
-<dialog id="modal"><div class="modal-body"><div class="modal-head"><strong id="modalId"></strong><button class="close" id="close" type="button" aria-label="بستن">×</button></div><img id="modalImage" class="modal-image" alt="تصویر اصلی برای بازبینی"><div class="meta" id="modalMeta"></div><div class="review-actions" id="modalReviewActions"><button type="button" class="review-btn yes" data-modal-decision="CANDIDATE">✓ مناسب اولیه</button><button type="button" class="review-btn hold" data-modal-decision="HOLD">⏸ بررسی بیشتر</button><button type="button" class="review-btn reject" data-modal-decision="REJECT">✕ رد عکس</button></div><div class="actionline"><a id="modalAdvanced" href="/review/editorial-workspace.html">باز کردن بررسی پیشرفته و ثبت دلایل</a></div><p class="savedtext">تصمیم صرفاً روی این مرورگر ذخیره می‌شود، نه روی سرور یا کاتالوگ مشتری.</p></div></dialog>
+<dialog id="modal"><div class="modal-body"><div class="modal-head"><div class="modal-title-wrap"><div class="modal-title-fa" id="modalFaName"></div><strong id="modalId"></strong></div><button class="close" id="close" type="button" aria-label="بستن">×</button></div><img id="modalImage" class="modal-image" alt="تصویر اصلی برای بازبینی"><div class="meta" id="modalMeta"></div><div class="review-actions" id="modalReviewActions"><button type="button" class="review-btn yes" data-modal-decision="CANDIDATE">✓ مناسب اولیه</button><button type="button" class="review-btn hold" data-modal-decision="HOLD">⏸ بررسی بیشتر</button><button type="button" class="review-btn reject" data-modal-decision="REJECT">✕ رد عکس</button></div><div class="actionline"><a id="modalAdvanced" href="/review/editorial-workspace.html">باز کردن بررسی پیشرفته و ثبت دلایل</a></div><p class="savedtext">تصمیم صرفاً روی این مرورگر ذخیره می‌شود، نه روی سرور یا کاتالوگ مشتری.</p></div></dialog>
 <script>fetch("/review/manifest-146.json",{cache:"no-cache"}).then(async r=>{
   if(!r.ok)throw Error("Review photo manifest unavailable "+r.status);
   return r.json();
 }).then(data=>{
-  if(data?.schema!==2||data?.count!==146||data?.approval!=="NOT_GRANTED"||!Array.isArray(data.files)||data.files.length!==146)
+  if(data?.schema!==2||data?.count!==146||data?.approval!=="NOT_GRANTED"||!Array.isArray(data.files)||data.files.length!==146||data.files.some(s=>typeof s.title!=="string"||!/[\u0600-\u06ff]/u.test(s.title)))
     throw Error("Malformed review photo manifest");
   window.HBEAUTY_MANIFEST=data.files;
 (function app(){
@@ -106,7 +109,7 @@ function flagCount(){return manifest.filter(s=>existingDecision(s)).length}
 function updateFlagCounters(){const n=flagCount();document.getElementById("flaggedTop").textContent=String(n);document.getElementById("flaggedFilter").textContent=String(n)}
 function updateModalChoices(s){for(const b of document.querySelectorAll("[data-modal-decision]"))b.setAttribute("aria-pressed",String(existingDecision(s)?.decision===b.dataset.modalDecision))}
 function exportFlags(){
- const rows=manifest.filter(s=>existingDecision(s)).map(s=>({...existingDecision(s),publication_approved:false}));
+ const rows=manifest.filter(s=>existingDecision(s)).map(s=>({...existingDecision(s),title:s.title,en:s.en,publication_approved:false}));
  const data={schema:1,type:"HBEAUTY_MANICURE_REVIEW_DRAFTS",approval_status:"NOT_FINAL",saved_only_in_this_browser:true,exported_at:new Date().toISOString(),total_gallery:146,decisions:rows};
  const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:"application/json"}));
  const a=document.createElement("a");a.href=url;a.download="HBeauty_146_Review_Flags.json";a.click();setTimeout(()=>URL.revokeObjectURL(url),2500);
@@ -122,15 +125,15 @@ function text(el,s){el.textContent=s;return el;}
 function make(tag,cls,s){const e=document.createElement(tag);if(cls)e.className=cls;if(s!==undefined)e.textContent=s;return e;}
 function updateAlert(msg,isOk=false){text(alert,msg);alert.classList.toggle("ok",isOk);alert.setAttribute("role","status")}
 function show(){const q=search.value.trim().toLowerCase();grid.replaceChildren();let shown=0;
-for(const s of manifest){if(selected==="__flags__"&&!existingDecision(s))continue;if(selected!=="all"&&selected!=="__flags__"&&s.status!==selected)continue;if(q&&!s.id.includes(q)&&!s.finish.includes(q)&&!s.shape.includes(q))continue;shown++;
+for(const s of manifest){if(selected==="__flags__"&&!existingDecision(s))continue;if(selected!=="all"&&selected!=="__flags__"&&s.status!==selected)continue;if(q&&!s.id.includes(q)&&!s.title.includes(q)&&!(s.en||"").toLowerCase().includes(q)&&!s.finish.includes(q)&&!s.shape.includes(q))continue;shown++;
 const c=make("article","tile"),photo=make("div","preview");
 const a=assets.get(s.id);const hosted="/review/photos/"+s.id+".webp";
-const img=make("img");img.src=a?a.url:hosted;img.loading="lazy";img.alt="تصویر منبع "+s.id;
+const img=make("img");img.src=a?a.url:hosted;img.loading="lazy";img.alt="عکس مانیکور "+s.title+"؛ شناسه "+s.id;
 img.onerror=()=>{img.remove();const empty=make("div","empty");empty.append(make("div","symbol","H"),make("span",null,"عکس در این نسخه موجود نیست؛ ZIP منبع را انتخاب کنید"));photo.prepend(empty)};
 photo.append(img)
 const flag=make("span","flag "+classes[s.status],names[s.status]);photo.append(flag);
 const saved=existingDecision(s);if(saved)photo.append(make("span","user-mark","⚑ "+decisionText[saved.decision]));
-const body=make("div","cardbody");body.append(make("strong",null,s.id),make("div","info",s.shape+" · "+s.length+" · "+s.finish),make("div","hash",s.sha.slice(0,15)+"…"));
+const body=make("div","cardbody");body.append(make("div","style-title-fa",s.title),make("strong",null,s.id),make("div","info",s.shape+" · "+s.length+" · "+s.finish),make("div","hash",s.sha.slice(0,15)+"…"));
 const actions=make("div","review-actions");
 for(const [decision,txt,klass] of [["CANDIDATE","✓ مناسب","yes"],["HOLD","⏸ بررسی","hold"],["REJECT","✕ رد","reject"]]){
  const b=make("button","review-btn "+klass,txt);b.type="button";
@@ -143,7 +146,7 @@ const more=make("a",null,"جزئیات بررسی");more.href="/review/editorial
 line.append(btn,more);body.append(actions,line);c.append(photo,body);grid.append(c)}
 text(document.getElementById("visible"),String(shown));text(document.getElementById("loaded"),String(assets.size));updateFlagCounters();
 }
-function inspect(s){viewingId=s.id;updateModalChoices(s);document.getElementById("modalAdvanced").href="/review/editorial-workspace.html?id="+encodeURIComponent(s.id);const a=assets.get(s.id);modalImage.src=a?a.url:"/review/photos/"+s.id+".webp";document.getElementById("modalId").textContent=s.id;document.getElementById("modalMeta").textContent=s.shape+" / "+s.length+" / "+s.finish+" • SHA-256 "+s.sha+" • 1600×1600 • "+names[s.status]+" • NOT APPROVED";modal.showModal();}
+function inspect(s){viewingId=s.id;updateModalChoices(s);document.getElementById("modalAdvanced").href="/review/editorial-workspace.html?id="+encodeURIComponent(s.id);const a=assets.get(s.id);modalImage.src=a?a.url:"/review/photos/"+s.id+".webp";document.getElementById("modalFaName").textContent=s.title;document.getElementById("modalId").textContent=s.id;document.getElementById("modalMeta").textContent=s.shape+" / "+s.length+" / "+s.finish+" • SHA-256 "+s.sha+" • 1600×1600 • "+names[s.status]+" • NOT APPROVED";modal.showModal();}
 async function digest(buf){const raw=await crypto.subtle.digest("SHA-256",buf);return Array.from(new Uint8Array(raw),x=>x.toString(16).padStart(2,"0")).join("")}
 async function verify(name,buf){const id=name.split("/").pop().replace(/\.webp$/i,"");const s=specs.get(id);if(!s)return "شناسه نامعتبر: "+name;const hash=await digest(buf);if(hash!==s.sha)return "SHA-256 مطابقت ندارد: "+name;let bitmap;try{bitmap=await createImageBitmap(new Blob([buf],{type:"image/webp"}))}catch{return "تصویر قابل خواندن نیست: "+name}
 const wh=[bitmap.width,bitmap.height];bitmap.close();if(wh[0]!==1600||wh[1]!==1600)return "ابعاد اشتباه: "+name;

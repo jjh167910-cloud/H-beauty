@@ -1,6 +1,7 @@
 import { test, expect } from "playwright/test";
 import { createHash } from "node:crypto";
 import { deflateRawSync } from "node:zlib";
+import { readFileSync } from "node:fs";
 
 const PAGE="/review/manicure-intake.html";
 const MANIFEST="/review/manifest-146.json";
@@ -134,4 +135,38 @@ test("all 146 SHA-locked hosted originals are distinct and explicitly not approv
  await expect(page.locator(".tile")).toHaveCount(146);
  await page.locator('[data-filter="NEEDS_EDITORIAL_REVIEW"]').click();
  await expect(page.locator(".tile")).toHaveCount(86);
+});
+
+
+test("all 146 review photos use their exact Persian names from the source catalog",async({page,request})=>{
+  const response=await request.get(MANIFEST);
+  expect(response.ok()).toBeTruthy();
+  const manifest=await response.json();
+  const queue=JSON.parse(readFileSync("docs/HBEAUTY_MANICURE_162_QUEUE.json","utf8"));
+  const pending=queue.batches.flatMap((b:{styles:any[]})=>b.styles)
+    .filter((s:{qa_status:string})=>s.qa_status==="NOT_GENERATED");
+  expect(pending).toHaveLength(146);
+  const names=new Map(pending.map((s:{id:string,title:string,en:string})=>[s.id,s]));
+  expect(names.size).toBe(146);
+  expect(manifest.files).toHaveLength(146);
+  const titles=new Set<string>();
+  for(const file of manifest.files){
+    const original=names.get(file.id) as {title:string,en:string}|undefined;
+    expect(original,"unknown style "+file.id).toBeDefined();
+    expect(file.title,"wrong Persian name for "+file.id).toBe(original!.title);
+    expect(file.en,"wrong English name for "+file.id).toBe(original!.en);
+    expect(file.title).toMatch(/[\u0600-\u06FF]/u);
+    titles.add(file.title);
+  }
+  expect(titles.size).toBe(146);
+  await page.setViewportSize({width:390,height:844});
+  await page.goto(PAGE);
+  await expect(page.locator(".style-title-fa")).toHaveCount(146);
+  await page.locator(".search").fill("باغ زیتونی");
+  await expect(page.locator(".tile")).toHaveCount(1);
+  await expect(page.locator(".tile .style-title-fa")).toHaveText("باغ زیتونی");
+  await expect(page.locator(".tile .cardbody strong")).toHaveText("nail-sage-garden");
+  await page.locator(".tile .inspect").click();
+  await expect(page.locator("#modalFaName")).toHaveText("باغ زیتونی");
+  await expect(page.locator("#modalId")).toHaveText("nail-sage-garden");
 });

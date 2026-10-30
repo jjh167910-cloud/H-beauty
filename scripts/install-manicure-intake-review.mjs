@@ -128,14 +128,31 @@ export function lockedNewSources(root="."){
 export async function install({root=".",verify=false,fetcher=fetch}={}){
   const old=records(root),added=expectedNewRows(root),byId=new Map([...old,...added].map(x=>[x.id,x]));
   strict(byId.size===146,"duplicate ID across original photo batches");
+  // Keep the visible Persian/English names tied to the same authoritative
+  // catalog entry as the immutable image ID and SHA-256. Never derive titles
+  // from filenames or ask a reviewer to manually relabel a photo.
+  const catalog=JSON.parse(readFileSync(resolve(root,QUEUE),"utf8")).batches.flatMap(x=>x.styles);
+  const entries=catalog.filter(s=>s.qa_status==="NOT_GENERATED");
+  const names=new Map(entries.map(s=>[s.id,{title:s.title,en:s.en}]));
+  strict(entries.length===146&&names.size===146,"exact 146 catalog style titles are required");
+  for(const [id,label] of names){
+    strict(byId.has(id),"unknown source photo title: "+id);
+    strict(typeof label.title==="string"&&label.title.trim().length>=3&&/[\u0600-\u06ff]/u.test(label.title),
+      "missing Persian title for "+id);
+    strict(typeof label.en==="string"&&label.en.trim().length>=3,
+      "missing English fallback name for "+id);
+  }
   const sources=[...SOURCES.map(x=>({...x,count:20,sha256:null})),...lockedNewSources(root)];
   const all=new Map(),generated=new Map();
   if(verify){
     const manifest=JSON.parse(readFileSync(resolve(root,FULL_MANIFEST),"utf8"));
-    strict(manifest.schema===2&&manifest.count===146&&manifest.approval==="NOT_GRANTED","invalid local review manifest");
+    strict(manifest.schema===2&&manifest.count===146&&manifest.approval==="NOT_GRANTED"&&
+      manifest.files?.length===146,"invalid local review manifest");
     for(const x of manifest.files){
       const row=byId.get(x.id),bytes=readFileSync(resolve(root,OUT,x.id+".webp"));
       strict(row&&(!row.sha||row.sha===x.sha),"local metadata does not match locked intake "+x.id);
+      strict(x.title===names.get(x.id)?.title&&x.en===names.get(x.id)?.en,
+        "review photo Persian/English name mismatch "+x.id);
       strict(hash(bytes)===x.sha,"review source bytes changed: "+x.id);
       const d=webpDimensions(bytes);
       strict(d.width===1600&&d.height===1600,"review source not native-sized: "+x.id);
@@ -180,7 +197,9 @@ export async function install({root=".",verify=false,fetcher=fetch}={}){
       scope:"PUBLIC REVIEW ONLY; NOT APPROVED FOR CUSTOMER GALLERY",
       native_generation_provenance:"UNVERIFIED",
       status_counts:{VISUAL_CANDIDATE_NOT_APPROVED:28,HOLD_EXACT_STYLE_REVIEW:16,REJECT_REGENERATE:16,NEEDS_EDITORIAL_REVIEW:86},
-      files:[...generated.values()]};
+      files:[...generated.values()].map(row=>({
+        ...row,title:names.get(row.id).title,en:names.get(row.id).en
+      }))};
     writeFileSync(resolve(root,FULL_MANIFEST),JSON.stringify(manifest,null,2)+"\n");
   }
   const folder=resolve(root,OUT),found=readdirSync(folder).filter(x=>x.endsWith(".webp")).sort();

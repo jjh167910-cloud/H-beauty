@@ -11,6 +11,11 @@ test("146 manicure proposals are review-only and mobile RTL",async({page,request
  await page.goto("/review/editorial-workspace.html");
  await expect(page.locator("html")).toHaveAttribute("dir","rtl");
  await expect(page.locator(".tile")).toHaveCount(146);
+ await expect(page.locator(".title-fa")).toHaveCount(146);
+ await page.locator("#q").fill("باغ زیتونی");
+ await expect(page.locator(".tile")).toHaveCount(1);
+ await expect(page.locator(".tile .title-fa")).toHaveText("باغ زیتونی");
+ await page.locator("#q").fill("");
  await page.locator("#filter").selectOption("regenerate");
  await expect(page.locator(".tile")).toHaveCount(17);
  await page.locator("#filter").selectOption("hold");
