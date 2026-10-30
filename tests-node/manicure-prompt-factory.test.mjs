@@ -37,6 +37,18 @@ test("each motif family has a meaningful specific instruction",()=>{
   assert.match(c,/Soft translucent WATERCOLOR CLOUDS/);
   assert.ok(!a.includes("Render the characteristic motif"));
 });
+test("square nail geometry is independent of medium or long catalog length",()=>{
+  const square=pending.filter(s=>s.shape==="square");
+  assert.ok(square.some(s=>s.length==="medium"));
+  assert.ok(square.some(s=>s.length==="long"));
+  for(const s of square){
+    const prompt=makePrompt(s);
+    assert.match(prompt,/rectangular silhouette, straight parallel sidewalls and a flat free edge/);
+    assert.doesNotMatch(prompt,/short rectangular silhouette/);
+    const lengthPhrase={short:"short free edge",medium:"medium free edge",long:"long proportional nail extension"}[s.length];
+    assert.ok(prompt.includes(lengthPhrase),"Missing correct "+s.length+" length for "+s.id);
+  }
+});
 test("settings require explicit native square 2K, not text-only guess",()=>{
   assert.equal(GENERATOR_SETTINGS.model_parameters.aspect_ratio,"1:1");
   assert.equal(GENERATOR_SETTINGS.model_parameters.resolution,"2K");
