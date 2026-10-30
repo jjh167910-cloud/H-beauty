@@ -37,7 +37,25 @@ h1{font-size:clamp(28px,4.6vw,44px);line-height:1.4;letter-spacing:-.035em;margi
 .cardbody{padding:13px 14px 15px;flex:1;display:flex;flex-direction:column;gap:6px}
 .cardbody strong{font-size:12.5px;line-height:1.35;direction:ltr;text-align:left;overflow-wrap:anywhere;color:#3d303a}
 .info{color:#8d7d85;font-size:11px}.hash{font-family:ui-monospace,monospace;color:#a291a0;font-size:10px;letter-spacing:.02em;direction:ltr;text-align:left}
-.inspect{margin-top:auto;padding:8px 0 0;border:0;background:transparent;color:#744561;text-align:right;font-weight:700;font-size:12px}.inspect:disabled{opacity:.35;cursor:not-allowed}
+.inspect{margin-top:auto;padding:8px 0 0;border:0;background:transparent;color:#744561;text-align:right;font-weight:700;font-size:12px}
+.review-help{margin:16px 0 10px;padding:15px 17px;border:1px solid #e7d5df;border-radius:15px;background:#fffefc;color:#5a4250;font-size:13px}
+.review-help strong{display:block;font-size:15px;margin-bottom:3px}
+.review-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin-top:8px}
+.review-btn{border:1px solid #e5d8de;background:#fff;padding:7px 3px;border-radius:9px;font-size:11px;font-weight:700;color:#655460;line-height:1.45;min-height:39px}
+.review-btn.yes{color:#356452}.review-btn.hold{color:#896327}.review-btn.reject{color:#a13f57}
+.review-btn[aria-pressed=true]{background:#efe4eb;border-color:#b99eaf;box-shadow:inset 0 0 0 1px #b99eaf}
+.user-mark{position:absolute;top:41px;right:10px;background:#fff;color:#5e4155;border:1px solid #dec9d4;border-radius:8px;font-size:10px;padding:3px 7px;font-weight:700}
+.savedtext{font-size:11px;color:#785366}
+.actionline{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:3px}
+.actionline .inspect{margin:0}
+.actionline a{font-size:11px;color:#744561;font-weight:700}
+.review-export{background:#714661;color:white;border-color:#714661}
+.local-import{border:1px solid #d9cbd3;border-radius:12px;padding:7px 10px;background:#fff;max-width:100%}
+.local-import summary{cursor:pointer;color:#6d4860;font-weight:700;font-size:12px}
+.local-import input{display:block;max-width:100%;font-size:12px;margin-top:9px;color:#6d4860}
+.local-import input::file-selector-button{border:1px solid #d5c5ce;border-radius:8px;padding:5px 9px;background:#f7eef2;color:#674359;cursor:pointer}
+.review-export:disabled{opacity:.65}
+@media(max-width:680px){.review-btn{min-height:43px;font-size:10px}.review-help{padding:13px 12px}}.inspect:disabled{opacity:.35;cursor:not-allowed}
 footer{margin-top:38px;color:#81747b;text-align:center;font-size:12px}
 dialog{border:0;padding:0;box-shadow:0 22px 80px #22122255;border-radius:18px;max-width:min(95vw,850px);max-height:93dvh;overflow:auto;background:#fff;color:var(--ink)}
 dialog::backdrop{background:#1c141bcc}.modal-body{padding:18px}.modal-head{display:flex;justify-content:space-between;gap:20px;align-items:start}
@@ -50,13 +68,13 @@ dialog::backdrop{background:#1c141bcc}.modal-body{padding:18px}.modal-head{displ
 @media(max-width:355px){.grid{grid-template-columns:1fr}.statgrid{grid-template-columns:repeat(2,1fr)}}</style></head><body>
 <main class="shell">
 <header class="top"><div class="brand"><div class="monogram" aria-hidden="true">H</div><div><strong>حنانه بیوتی</strong><small>H-BEAUTY · EDITORIAL ATELIER</small></div></div><div class="private">بازبینی داخلی · انتشار نشده</div></header>
-<section class="hero" id="uploadZone"><div class="kicker">Manicure Photo Intake / Quality Review</div><h1>بازبینی حرفه‌ای ۱۴۶ طرح مانیکور</h1><p>یک پیش‌نمایش واقعی از عکس‌های اصلی شما، بدون تغییر گالری مشتریان. عکس‌ها روی همین نسخه بارگذاری شده‌اند. برای بررسی فایل‌های محلی نیز می‌توانید سه ZIP را انتخاب کنید. هر تصویر با شناسه، SHA-256 و ابعاد اصلی ۱۶۰۰ × ۱۶۰۰ بررسی می‌شود. هیچ فایلی از دستگاه شما بارگذاری یا روی سرور ذخیره نمی‌شود.</p>
-<div class="actions"><button class="primary" id="chooseFiles" type="button" disabled>انتخاب سه فایل ZIP یا عکس‌ها</button><input id="files" type="file" multiple accept=".zip,.webp,image/webp,application/zip" hidden><button class="secondary" id="export" type="button">دریافت گزارش صحت‌سنجی</button><span class="note">می‌توانید فایل‌ها را اینجا رها کنید. عکس‌های ردشده همچنان ردشده باقی می‌مانند.</span></div></section>
+<section class="hero" id="uploadZone"><div class="kicker">Manicure Photo Intake / Quality Review</div><h1>بازبینی حرفه‌ای ۱۴۶ طرح مانیکور</h1><p>یک پیش‌نمایش واقعی از عکس‌های اصلی شما، بدون تغییر گالری مشتریان. عکس‌ها روی همین نسخه بارگذاری شده‌اند. برای بازبینی نیازی به ZIP ندارید. فقط اگر می‌خواهید فایل‌ها را با نسخه‌های محلی مقایسه کنید، از «ورود فایل محلی» استفاده کنید. هر تصویر با شناسه، SHA-256 و ابعاد اصلی ۱۶۰۰ × ۱۶۰۰ بررسی می‌شود. هیچ فایلی از دستگاه شما بارگذاری یا روی سرور ذخیره نمی‌شود.</p>
+<div class="actions"><details class="local-import"><summary>ورود فایل محلی (اختیاری)</summary><input id="files" type="file" multiple accept=".zip,.webp,image/webp,application/zip" aria-label="انتخاب فایل ZIP یا عکس محلی"></details><button class="secondary" id="export" type="button">گزارش صحت‌سنجی</button><button class="secondary review-export" id="downloadFlags" type="button">دریافت تصمیم‌ها (<span id="flaggedTop">۰</span>)</button><a class="secondary" href="/review/editorial-workspace.html">بررسی پیشرفته</a><span class="note">می‌توانید فایل‌ها را اینجا رها کنید. عکس‌های ردشده همچنان ردشده باقی می‌مانند.</span></div></section>
 <section class="statgrid" aria-label="آمار"><div class="stat"><strong>۱۴۶</strong><span>عکس اصلی در فهرست</span></div><div class="stat"><strong>۲۸</strong><span>نامزد بازبینی</span></div><div class="stat"><strong>۱۶</strong><span>نیازمند بازبینی بیشتر</span></div><div class="stat"><strong>۱۶</strong><span>نیازمند اصلاح</span></div><div class="stat"><strong>۸۶</strong><span>در انتظار بازبینی</span></div></section>
-<div id="alert" class="alert" role="status">عکس‌های این فهرست هنوز برای انتشار عمومی تأیید نشده‌اند. ۱۴۶ تصویر اصل از بخش بازبینی در دسترس است. انتخاب ZIP فقط برای بررسی فایل‌های محلی است؛ هیچ فایلی به سرور ارسال نمی‌شود.</div>
-<section aria-label="تصاویر"><div class="toolbar"><input class="search" id="search" type="search" aria-label="جستجو در طرح‌ها" placeholder="جستجو بر اساس شناسه، فرم یا سبک…"><div class="filters" role="group" aria-label="فیلتر کیفیت"><button class="filter" data-filter="all" aria-pressed="true">همه</button><button class="filter" data-filter="VISUAL_CANDIDATE_NOT_APPROVED" aria-pressed="false">نامزد</button><button class="filter" data-filter="HOLD_EXACT_STYLE_REVIEW" aria-pressed="false">بازبینی</button><button class="filter" data-filter="REJECT_REGENERATE" aria-pressed="false">اصلاح</button><button class="filter" data-filter="NEEDS_EDITORIAL_REVIEW" aria-pressed="false">جدید · ۸۶</button></div><div class="note">نمایش <span id="visible">۱۴۶</span> · فایل محلی تأییدشده <span id="loaded">۰</span> / ۱۴۶</div></div><div class="grid" id="grid"></div></section>
+<div class="review-help"><strong>✅ مناسب اولیه · ⏸ نیازمند بررسی · ✕ رد عکس</strong>زیر هر عکس یکی از سه گزینه را لمس کنید. انتخاب شما روی همین دستگاه ذخیره می‌شود؛ برای انتقال یا ارسال نتیجه، «دریافت تصمیم‌ها» را بزنید. این علامت‌ها مجوز انتشار در کاتالوگ مشتریان نیستند.</div><div id="alert" class="alert" role="status">عکس‌های این فهرست هنوز برای انتشار عمومی تأیید نشده‌اند. ۱۴۶ تصویر اصل از بخش بازبینی در دسترس است. انتخاب ZIP فقط برای بررسی فایل‌های محلی است؛ هیچ فایلی به سرور ارسال نمی‌شود.</div>
+<section aria-label="تصاویر"><div class="toolbar"><input class="search" id="search" type="search" aria-label="جستجو در طرح‌ها" placeholder="جستجو بر اساس شناسه، فرم یا سبک…"><div class="filters" role="group" aria-label="فیلتر کیفیت"><button class="filter" data-filter="all" aria-pressed="true">همه</button><button class="filter" data-filter="VISUAL_CANDIDATE_NOT_APPROVED" aria-pressed="false">نامزد</button><button class="filter" data-filter="HOLD_EXACT_STYLE_REVIEW" aria-pressed="false">بازبینی</button><button class="filter" data-filter="REJECT_REGENERATE" aria-pressed="false">اصلاح</button><button class="filter" data-filter="NEEDS_EDITORIAL_REVIEW" aria-pressed="false">جدید · ۸۶</button><button class="filter" data-filter="__flags__" aria-pressed="false">علامت‌گذاری‌شده‌ها (<span id="flaggedFilter">۰</span>)</button></div><div class="note">نمایش <span id="visible">۱۴۶</span> · فایل محلی تأییدشده <span id="loaded">۰</span> / ۱۴۶</div></div><div class="grid" id="grid"></div></section>
 <footer>حنانه بیوتی · ابزار کنترل کیفیت عکس‌ها — تنها برای بازبینی داخلی · هیچ تصویر یا تصویب‌نامه‌ای منتشر نمی‌شود.</footer></main>
-<dialog id="modal"><div class="modal-body"><div class="modal-head"><strong id="modalId"></strong><button class="close" id="close" type="button" aria-label="بستن">×</button></div><img id="modalImage" class="modal-image" alt="تصویر اصلی برای بازبینی"><div class="meta" id="modalMeta"></div></div></dialog>
+<dialog id="modal"><div class="modal-body"><div class="modal-head"><strong id="modalId"></strong><button class="close" id="close" type="button" aria-label="بستن">×</button></div><img id="modalImage" class="modal-image" alt="تصویر اصلی برای بازبینی"><div class="meta" id="modalMeta"></div><div class="review-actions" id="modalReviewActions"><button type="button" class="review-btn yes" data-modal-decision="CANDIDATE">✓ مناسب اولیه</button><button type="button" class="review-btn hold" data-modal-decision="HOLD">⏸ بررسی بیشتر</button><button type="button" class="review-btn reject" data-modal-decision="REJECT">✕ رد عکس</button></div><div class="actionline"><a id="modalAdvanced" href="/review/editorial-workspace.html">باز کردن بررسی پیشرفته و ثبت دلایل</a></div><p class="savedtext">تصمیم صرفاً روی این مرورگر ذخیره می‌شود، نه روی سرور یا کاتالوگ مشتری.</p></div></dialog>
 <script>fetch("/review/manifest-146.json",{cache:"no-cache"}).then(async r=>{
   if(!r.ok)throw Error("Review photo manifest unavailable "+r.status);
   return r.json();
@@ -69,6 +87,31 @@ dialog::backdrop{background:#1c141bcc}.modal-body{padding:18px}.modal-head{displ
 const manifest=window.HBEAUTY_MANIFEST;
 const specs=new Map(manifest.map(x=>[x.id,x]));
 const assets=new Map(), errors=[];
+const DRAFT_KEY="hbeauty:manicure-146:review-drafts:v1";
+const decisionsAllowed=new Set(["CANDIDATE","HOLD","REJECT","DRAFT_APPROVE"]);
+const decisionText={CANDIDATE:"مناسب اولیه",DRAFT_APPROVE:"پیش‌نویس پذیرش",HOLD:"بررسی بیشتر",REJECT:"رد عکس"};
+let reviewDrafts={},viewingId=null;
+try{const stored=JSON.parse(localStorage.getItem(DRAFT_KEY)||"{}");if(stored&&typeof stored==="object"&&!Array.isArray(stored))reviewDrafts=stored}catch{}
+function existingDecision(s){const d=reviewDrafts[s.id];return d&&d.sha256===s.sha&&decisionsAllowed.has(d.decision)?d:null}
+function writeFlag(s,decision){
+  const prior=existingDecision(s);
+  if(prior?.decision===decision)delete reviewDrafts[s.id];
+  else reviewDrafts[s.id]={id:s.id,sha256:s.sha,decision,reviewer:prior?.reviewer||"",notes:prior?.notes||"",source_evidence:prior?.source_evidence||"",checks:prior?.checks||{},updated_at:new Date().toISOString(),review_tier:"LOCAL_DRAFT_NOT_PUBLICATION",publication_approved:false};
+  try{localStorage.setItem(DRAFT_KEY,JSON.stringify(reviewDrafts))}
+  catch{updateAlert("امکان ذخیره در مرورگر وجود ندارد؛ لطفاً حافظه محلی را فعال کنید.");return}
+  show();
+  if(viewingId===s.id&&modal.open)updateModalChoices(s);
+}
+function flagCount(){return manifest.filter(s=>existingDecision(s)).length}
+function updateFlagCounters(){const n=flagCount();document.getElementById("flaggedTop").textContent=String(n);document.getElementById("flaggedFilter").textContent=String(n)}
+function updateModalChoices(s){for(const b of document.querySelectorAll("[data-modal-decision]"))b.setAttribute("aria-pressed",String(existingDecision(s)?.decision===b.dataset.modalDecision))}
+function exportFlags(){
+ const rows=manifest.filter(s=>existingDecision(s)).map(s=>({...existingDecision(s),publication_approved:false}));
+ const data={schema:1,type:"HBEAUTY_MANICURE_REVIEW_DRAFTS",approval_status:"NOT_FINAL",saved_only_in_this_browser:true,exported_at:new Date().toISOString(),total_gallery:146,decisions:rows};
+ const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:"application/json"}));
+ const a=document.createElement("a");a.href=url;a.download="HBeauty_146_Review_Flags.json";a.click();setTimeout(()=>URL.revokeObjectURL(url),2500);
+}
+
 const names={VISUAL_CANDIDATE_NOT_APPROVED:"نامزد بررسی",HOLD_EXACT_STYLE_REVIEW:"نیازمند بازبینی",REJECT_REGENERATE:"نیازمند اصلاح",NEEDS_EDITORIAL_REVIEW:"در انتظار بررسی حرفه‌ای"};
 const classes={VISUAL_CANDIDATE_NOT_APPROVED:"candidate",HOLD_EXACT_STYLE_REVIEW:"hold",REJECT_REGENERATE:"reject",NEEDS_EDITORIAL_REVIEW:"hold"};
 const filterButtons=Array.from(document.querySelectorAll("[data-filter]"));const grid=document.getElementById("grid");
@@ -79,19 +122,28 @@ function text(el,s){el.textContent=s;return el;}
 function make(tag,cls,s){const e=document.createElement(tag);if(cls)e.className=cls;if(s!==undefined)e.textContent=s;return e;}
 function updateAlert(msg,isOk=false){text(alert,msg);alert.classList.toggle("ok",isOk);alert.setAttribute("role","status")}
 function show(){const q=search.value.trim().toLowerCase();grid.replaceChildren();let shown=0;
-for(const s of manifest){if(selected!=="all"&&s.status!==selected)continue;if(q&&!s.id.includes(q)&&!s.finish.includes(q)&&!s.shape.includes(q))continue;shown++;
+for(const s of manifest){if(selected==="__flags__"&&!existingDecision(s))continue;if(selected!=="all"&&selected!=="__flags__"&&s.status!==selected)continue;if(q&&!s.id.includes(q)&&!s.finish.includes(q)&&!s.shape.includes(q))continue;shown++;
 const c=make("article","tile"),photo=make("div","preview");
 const a=assets.get(s.id);const hosted="/review/photos/"+s.id+".webp";
 const img=make("img");img.src=a?a.url:hosted;img.loading="lazy";img.alt="تصویر منبع "+s.id;
 img.onerror=()=>{img.remove();const empty=make("div","empty");empty.append(make("div","symbol","H"),make("span",null,"عکس در این نسخه موجود نیست؛ ZIP منبع را انتخاب کنید"));photo.prepend(empty)};
 photo.append(img)
 const flag=make("span","flag "+classes[s.status],names[s.status]);photo.append(flag);
+const saved=existingDecision(s);if(saved)photo.append(make("span","user-mark","⚑ "+decisionText[saved.decision]));
 const body=make("div","cardbody");body.append(make("strong",null,s.id),make("div","info",s.shape+" · "+s.length+" · "+s.finish),make("div","hash",s.sha.slice(0,15)+"…"));
-const btn=make("button","inspect","بازبینی تصویر اصلی ↗");btn.type="button";btn.onclick=()=>inspect(s);
-body.append(btn);c.append(photo,body);grid.append(c)}
-text(document.getElementById("visible"),String(shown));text(document.getElementById("loaded"),String(assets.size));
+const actions=make("div","review-actions");
+for(const [decision,txt,klass] of [["CANDIDATE","✓ مناسب","yes"],["HOLD","⏸ بررسی","hold"],["REJECT","✕ رد","reject"]]){
+ const b=make("button","review-btn "+klass,txt);b.type="button";
+ b.setAttribute("aria-label",txt+" "+s.id);b.setAttribute("aria-pressed",String(saved?.decision===decision));
+ b.onclick=()=>writeFlag(s,decision);actions.append(b);
 }
-function inspect(s){const a=assets.get(s.id);modalImage.src=a?a.url:"/review/photos/"+s.id+".webp";document.getElementById("modalId").textContent=s.id;document.getElementById("modalMeta").textContent=s.shape+" / "+s.length+" / "+s.finish+" • SHA-256 "+s.sha+" • 1600×1600 • "+names[s.status]+" • NOT APPROVED";modal.showModal();}
+const line=make("div","actionline");
+const btn=make("button","inspect","نمایش در اندازه اصلی");btn.type="button";btn.onclick=()=>inspect(s);
+const more=make("a",null,"جزئیات بررسی");more.href="/review/editorial-workspace.html?id="+encodeURIComponent(s.id);
+line.append(btn,more);body.append(actions,line);c.append(photo,body);grid.append(c)}
+text(document.getElementById("visible"),String(shown));text(document.getElementById("loaded"),String(assets.size));updateFlagCounters();
+}
+function inspect(s){viewingId=s.id;updateModalChoices(s);document.getElementById("modalAdvanced").href="/review/editorial-workspace.html?id="+encodeURIComponent(s.id);const a=assets.get(s.id);modalImage.src=a?a.url:"/review/photos/"+s.id+".webp";document.getElementById("modalId").textContent=s.id;document.getElementById("modalMeta").textContent=s.shape+" / "+s.length+" / "+s.finish+" • SHA-256 "+s.sha+" • 1600×1600 • "+names[s.status]+" • NOT APPROVED";modal.showModal();}
 async function digest(buf){const raw=await crypto.subtle.digest("SHA-256",buf);return Array.from(new Uint8Array(raw),x=>x.toString(16).padStart(2,"0")).join("")}
 async function verify(name,buf){const id=name.split("/").pop().replace(/\.webp$/i,"");const s=specs.get(id);if(!s)return "شناسه نامعتبر: "+name;const hash=await digest(buf);if(hash!==s.sha)return "SHA-256 مطابقت ندارد: "+name;let bitmap;try{bitmap=await createImageBitmap(new Blob([buf],{type:"image/webp"}))}catch{return "تصویر قابل خواندن نیست: "+name}
 const wh=[bitmap.width,bitmap.height];bitmap.close();if(wh[0]!==1600||wh[1]!==1600)return "ابعاد اشتباه: "+name;
@@ -127,13 +179,15 @@ for(const f of files){try{if(/\.zip$/i.test(f.name))count+=await unzip(f);else i
 show();const m=assets.size+" تصویر از ۱۴۶ تصویر با SHA-256 و ابعاد صحیح باز شد. "+(errors.length?errors.length+" خطا: "+errors.slice(0,3).join(" | "):"هیچ خطای انتقالی یافت نشد.");
 updateAlert(m,errors.length===0&&assets.size===146);input.value="";
 }
-document.getElementById("chooseFiles").addEventListener("click",()=>input.click());
 input.addEventListener("change",e=>load(Array.from(e.target.files||[])));
 const zone=document.getElementById("uploadZone");zone.addEventListener("dragover",e=>{e.preventDefault();zone.style.opacity=".8"});zone.addEventListener("dragleave",()=>zone.style.opacity="1");zone.addEventListener("drop",e=>{e.preventDefault();zone.style.opacity="1";load(Array.from(e.dataTransfer.files||[]))});
 filterButtons.forEach(b=>b.onclick=()=>{selected=b.dataset.filter;filterButtons.forEach(x=>x.setAttribute("aria-pressed",String(x===b)));show()});
 search.addEventListener("input",show);
 document.getElementById("close").onclick=()=>modal.close();
+document.querySelectorAll("[data-modal-decision]").forEach(b=>b.onclick=()=>{const s=specs.get(viewingId);if(s)writeFlag(s,b.dataset.modalDecision)});
+document.getElementById("downloadFlags").onclick=exportFlags;
+window.addEventListener("storage",e=>{if(e.key===DRAFT_KEY){try{reviewDrafts=JSON.parse(e.newValue||"{}")}catch{reviewDrafts={}}show()}});
+
 document.getElementById("export").onclick=()=>{const data=JSON.stringify({schema:1,type:"intake_integrity_only",not_approved:true,date:new Date().toISOString(),verified_ids:[...assets.keys()],errors,manifest:manifest.map(x=>({id:x.id,sha256:x.sha,status:x.status}))},null,2);const url=URL.createObjectURL(new Blob([data],{type:"application/json"}));const a=document.createElement("a");a.href=url;a.download="HBeauty-146-local-transfer-integrity.json";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};
-document.getElementById("chooseFiles").disabled=false;
 show();
 })();}).catch(e=>{document.getElementById("alert").textContent="فهرست بازبینی عکس‌ها بارگذاری نشد: "+String(e.message||e)});</script></body></html>
