@@ -1,6 +1,6 @@
 # H-Beauty B61 — single-exposure photography prompts v3
 
-**39 image prompts pending / 11 released in original 50-style cohort.** Exact status derives from docs/HBEAUTY_MANICURE_162_QUEUE.json. Do not regenerate already-published designs.
+**38 image prompts pending / 12 released in original 50-style cohort.** Exact status derives from docs/HBEAUTY_MANICURE_162_QUEUE.json. Do not regenerate already-published designs.
 
 ## REQUIRED generator configuration (set in the model API, NOT merely inside the prompt)
 
@@ -11,6 +11,7 @@ Provider ElevenLabs creative image-generation node; model FLUX 3 Image; aspect_r
 ## Already published in this cohort (do not regenerate)
 
 - nail-rose-chrome — Rose Chrome (approved hash a88aa00d04c688a8a6bd169b60f85007eb7c836456fc0e8de64899761c3c8d66)
+- nail-botanical — Botanical Line (approved hash 23d8717a31526c9e7f4f9d5a3c72bcf3ab85dec29479a4b33e471c3d6d1f5837)
 - nail-atlas-velvet-pearl — Pearl Velvet Matte (approved hash f42daf9eb81cd009e1f0166535bab2e5a654b53b0ba7a011e468acd57fe63339)
 - nail-atlas-prism-ruby — Ruby Prism Chrome (approved hash cb969b252738b61a414e2707d79a16b181d0a48fbfde355dd57ca0a3bd692559)
 - nail-atlas-prism-merlot — Merlot Prism Chrome (approved hash 3146eafcc442af61ff66ff98c6be63afac60a8fe91fd420cdffc0de0f12d1aef)
@@ -23,22 +24,6 @@ Provider ElevenLabs creative image-generation node; model FLUX 3 Image; aspect_r
 - nail-atlas-foil-merlot — Merlot Gold Leaf (approved hash 64a9d73ccd7dc60a7f4e7f840f0d49513010de8ab01620f01f6a3e004d91e884)
 
 ## Pending — individual ready-to-generate prompts
-
-### 002 — Botanical Line | گل‌های مینیمال
-
-Catalog ID: nail-botanical · Original photo output: public/nails/photos/nail-botanical.webp · STATUS: NOT GENERATED / NOT APPROVED
-
-~~~text
-A single high-end beauty photograph: one uninterrupted close-up camera exposure of one elegant adult woman's hand resting naturally, palm-down, on continuous ivory silk satin. Only this one hand and the fabric are in the photograph. The scene fills the entire image edge to edge.
-
-The hand has five anatomically natural, separate fingers, including the thumb, positioned in a relaxed fan so that every complete fingernail, cuticle and tip is visible. Realistic finger proportions, skin pores, fine creases, nail beds and naturally attached cuticles. The entire hand shares one consistent perspective and natural lighting.
-
-Each of the five nails has the same softly curved elliptical tip with smooth rounded sidewalls; medium free edge extending about 4–6 mm beyond the fingertip. The main lacquer matches the color reference #ECDACB with restrained accents matching #879379. Keep the intended art finish on the actual nail plates. The manicure design is: CREAM BOTANICAL LINE: a warm cream base on all nails and slender muted sage line-art leafy stems on exactly two accent nails; the other nails remain clean cream. Clearly visible fine botanical lines.
-
-The entire ground and backdrop are a single uninterrupted expanse of softly folded pure ivory satin silk. The hand touches the silk along its full visible underside, and silk is visible beneath every fingertip, through every finger gap and out to all four corners. The fabric has smooth flowing weave and luminous soft folds.
-
-Professional macro editorial photography, a single 70-degree overhead three-quarter view, natural diagonal hand pose, hand occupying about three-quarters of the square image. Neutral studio daylight, diffuse softbox, gentle realistic contact shadows, precise salon-grade application, sharp detail across all five nails and natural satin highlights. An authentic-looking unmarked photograph with only the hand and ivory silk visible.
-~~~
 
 ### 003 — Sage Garden | باغ زیتونی
 

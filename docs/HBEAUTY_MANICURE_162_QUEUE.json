@@ -15,7 +15,7 @@
   "batches": [
     {
       "batch": "B61",
-      "status": "11 of 50 approved and release-staged; 39 remaining",
+      "status": "12 of 50 approved and release-staged; 38 remaining",
       "target_manifest": "assets/hbeauty-manicure-batch61.sha256",
       "styles": [
         {
@@ -47,10 +47,10 @@
           "length": "medium",
           "base": "#ECDACB",
           "accent": "#879379",
-          "qa_status": "NOT_GENERATED",
+          "qa_status": "APPROVED",
           "file_path": "public/nails/photos/nail-botanical.webp",
-          "sha256": null,
-          "approved_by_qa": false
+          "sha256": "23d8717a31526c9e7f4f9d5a3c72bcf3ab85dec29479a4b33e471c3d6d1f5837",
+          "approved_by_qa": true
         },
         {
           "id": "nail-sage-garden",
@@ -926,7 +926,7 @@
     },
     {
       "batch": "B62",
-      "status": "1 of 50 approved and release-staged; 49 not generated / not approved",
+      "status": "1 of 50 approved and release-staged; 49 remaining",
       "target_manifest": "assets/hbeauty-manicure-batch62.sha256",
       "styles": [
         {
@@ -1834,7 +1834,7 @@
     },
     {
       "batch": "B63",
-      "status": "1 of 50 approved and release-staged; 49 not generated / not approved",
+      "status": "1 of 50 approved and release-staged; 49 remaining",
       "target_manifest": "assets/hbeauty-manicure-batch63.sha256",
       "styles": [
         {
