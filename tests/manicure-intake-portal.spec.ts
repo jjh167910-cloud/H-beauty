@@ -1,9 +1,9 @@
 import { test, expect } from "playwright/test";
 import { createHash } from "node:crypto";
-import { readFileSync } from "node:fs";
 import { deflateRawSync } from "node:zlib";
 
 const PAGE="/review/manicure-intake.html";
+const MANIFEST="/review/manifest-146.json";
 const ID="nail-atlas-aura-blush";
 const original="fff72c6cd80dede315a2172657f0f7ab70d9dfe4f2f33092e1ca43ad1b879ddb";
 
@@ -46,9 +46,9 @@ test("manicure QA portal displays all hosted original sources, RTL, and separate
   await page.setViewportSize({width:390,height:844});
   await page.goto(PAGE);
   await expect(page.locator("html")).toHaveAttribute("dir","rtl");
-  await expect(page.locator(".tile")).toHaveCount(60);
+  await expect(page.locator(".tile")).toHaveCount(146);
   await expect(page.locator("#loaded")).toHaveText("0");
-  await expect(page.locator(".preview img")).toHaveCount(60);
+  await expect(page.locator(".preview img")).toHaveCount(146);
   await expect.poll(()=>page.locator(".tile").first().locator("img").evaluate(e=>(e as HTMLImageElement).naturalWidth)).toBe(1600);
   expect(outside).toEqual([]);
   await page.locator('[data-filter="REJECT_REGENERATE"]').click();
@@ -57,6 +57,8 @@ test("manicure QA portal displays all hosted original sources, RTL, and separate
   await expect(page.locator(".tile")).toHaveCount(16);
   await page.locator('[data-filter="VISUAL_CANDIDATE_NOT_APPROVED"]').click();
   await expect(page.locator(".tile")).toHaveCount(28);
+  await page.locator('[data-filter="NEEDS_EDITORIAL_REVIEW"]').click();
+  await expect(page.locator(".tile")).toHaveCount(86);
   const size=await page.evaluate(()=>({doc:document.documentElement.scrollWidth,viewport:document.documentElement.clientWidth}));
   expect(size.doc).toBeLessThanOrEqual(size.viewport+1);
 });
@@ -68,11 +70,13 @@ test("real WebP user-file import rejects false SHA and accepts matching original
   await expect(page.locator("#loaded")).toHaveText("0");
   await expect(page.locator("#alert")).toContainText("SHA-256");
   const hash=createHash("sha256").update(raw).digest("hex");
-  const source=readFileSync("public/review/manicure-intake.html","utf8");
-  expect(source).toContain(original);
-  await page.route("**/review/manicure-intake.html",route=>
-    route.fulfill({contentType:"text/html",body:source.replace(original,hash)}));
-  await page.goto(PAGE);
+  await page.route("**/review/manifest-146.json",async route=>{
+    const response=await route.fetch();
+    const source=await response.text();
+    expect(source).toContain(original);
+    await route.fulfill({contentType:"application/json",body:source.replace(original,hash)});
+  });
+  await page.reload();
   await page.locator("#files").setInputFiles({name:ID+".webp",mimeType:"image/webp",buffer:raw});
   await expect(page.locator("#loaded")).toHaveText("1");
   await page.locator(".tile").first().getByRole("button",{name:/بازبینی تصویر/}).click();
@@ -84,10 +88,11 @@ test("real deflated ZIP archive imports on device without publishing unapproved 
   await page.goto(PAGE);
   const raw=await createFixtureWebP(page);
   const hash=createHash("sha256").update(raw).digest("hex");
-  const source=readFileSync("public/review/manicure-intake.html","utf8");
-  await page.route("**/review/manicure-intake.html",route=>
-    route.fulfill({contentType:"text/html",body:source.replace(original,hash)}));
-  await page.goto(PAGE);
+  await page.route("**/review/manifest-146.json",async route=>{
+    const response=await route.fetch();
+    await route.fulfill({contentType:"application/json",body:(await response.text()).replace(original,hash)});
+  });
+  await page.reload();
   const zipped=zipOneWebP(ID+".webp",raw);
   await page.locator("#files").setInputFiles({name:"manicure-test.zip",mimeType:"application/zip",buffer:zipped});
   await expect(page.locator("#loaded")).toHaveText("1");
@@ -96,9 +101,32 @@ test("real deflated ZIP archive imports on device without publishing unapproved 
 
 test("keyboard-only reviewer can open the local ZIP picker", async({page})=>{
   await page.goto(PAGE);
+  await expect(page.locator(".tile")).toHaveCount(146);
   const choose=page.getByRole("button",{name:/انتخاب سه فایل ZIP/});
+  await expect(choose).toBeEnabled();
   await choose.focus();
   await expect(choose).toBeFocused();
   const [picker]=await Promise.all([page.waitForEvent("filechooser"),page.keyboard.press("Enter")]);
   expect(picker.isMultiple()).toBe(true);
+});
+
+
+test("all 146 SHA-locked hosted originals are distinct and explicitly not approved",async({page,request})=>{
+ const response=await request.get(MANIFEST);
+ expect(response.ok()).toBeTruthy();
+ const manifest=await response.json();
+ expect(manifest.schema).toBe(2);
+ expect(manifest.count).toBe(146);
+ expect(manifest.approval).toBe("NOT_GRANTED");
+ expect(manifest.files).toHaveLength(146);
+ const ids=manifest.files.map((x:{id:string})=>x.id);
+ const hashes=manifest.files.map((x:{sha:string})=>x.sha);
+ expect(new Set(ids).size).toBe(146);
+ expect(new Set(hashes).size).toBe(146);
+ expect(manifest.files.filter((x:{status:string})=>x.status==="NEEDS_EDITORIAL_REVIEW")).toHaveLength(86);
+ expect(manifest.files.filter((x:{status:string})=>x.status==="REJECT_REGENERATE")).toHaveLength(16);
+ await page.goto(PAGE);
+ await expect(page.locator(".tile")).toHaveCount(146);
+ await page.locator('[data-filter="NEEDS_EDITORIAL_REVIEW"]').click();
+ await expect(page.locator(".tile")).toHaveCount(86);
 });

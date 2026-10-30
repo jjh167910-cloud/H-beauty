@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 /**
- * Install all 60 user-provided original manicure WebPs in a SEPARATE review-only
+ * Install all 146 user-provided original manicure WebPs in a SEPARATE review-only
  * public namespace. This does NOT approve images or enable customer catalog
- * photographs. Every extracted source is independently SHA-locked to the
- * immutable NOT_APPROVED intake ledger.
+ * photographs. Original 60 are independently SHA-locked by the existing ledger;
+ * five new archives are locked at archive level and yield a per-image manifest.
  *
  * Source archives: user's original three 20-photo ZIP attachments, mirrored to
  * permanent Higgsfield media URLs on 2026-10-30 after explicit deploy request.
@@ -25,6 +25,9 @@ export const SOURCES=Object.freeze([
 ]);
 const LEDGER="docs/MANICURE_UPLOADED_60_ORIGINAL_SHA256_NOT_APPROVED_20261030.csv";
 const OUT="public/review/photos";
+const FULL_MANIFEST="public/review/manifest-146.json";
+const NEW_ARCHIVE_LOCK="docs/HBEAUTY_NEW_86_SOURCE_ARCHIVE_LOCKS_20261030.json";
+const QUEUE="docs/HBEAUTY_MANICURE_162_QUEUE.json";
 const SHA=/^[a-f0-9]{64}$/;
 const NAME=/^nail-[a-z0-9-]+\.webp$/;
 const hash=x=>createHash("sha256").update(x).digest("hex");
@@ -52,7 +55,7 @@ export function records(root="."){
 }
 
 /** Strict central-directory parser. File name and SHA are individually checked. */
-export function extractZip(buf){
+export function extractZip(buf,{expectedCount=20}={}){
   strict(Buffer.isBuffer(buf)&&buf.length>22&&buf.length<20_000_000,"invalid source ZIP size");
   let end=-1;
   for(let p=buf.length-22;p>=Math.max(0,buf.length-65557);p--){
@@ -60,7 +63,7 @@ export function extractZip(buf){
   }
   strict(end>=0,"missing ZIP central directory");
   const count=u16(buf,end+10),size=u32(buf,end+12),start=u32(buf,end+16);
-  strict(count===20&&start+size<=buf.length&&start>=0,"unexpected ZIP archive inventory");
+  strict(count===expectedCount&&start+size<=buf.length&&start>=0,"unexpected ZIP archive inventory");
   let pos=start;
   const out=new Map();
   for(let i=0;i<count;i++){
@@ -81,25 +84,65 @@ export function extractZip(buf){
     strict(bytes.length===usize,"ZIP uncompressed size mismatch "+name);
     out.set(name,bytes);
   }
-  strict(pos===start+size&&out.size===20,"ZIP central directory mismatch");
+  strict(pos===start+size&&out.size===expectedCount,"ZIP central directory mismatch");
   return out;
 }
 
+/**
+ * Expected 86 pending exact IDs are inferred from the original 162-entry queue.
+ * No source can be matched to a different user-facing design by filename rename.
+ */
+export function expectedNewRows(root="."){
+  const old=records(root);
+  const oldIds=new Set(old.map(x=>x.id));
+  const queue=JSON.parse(readFileSync(resolve(root,QUEUE),"utf8")).batches.flatMap(x=>x.styles);
+  strict(queue.length===162,"catalog queue changed unexpectedly");
+  const pending=queue.filter(x=>x.qa_status==="NOT_GENERATED");
+  strict(pending.length===146,"queue must contain 146 source-pending IDs");
+  const missing=old.filter(x=>!pending.find(q=>q.id===x.id));
+  strict(missing.length===0,"historical 60 ledger no longer matches pending queue");
+  const remaining=pending.filter(x=>!oldIds.has(x.id));
+  strict(remaining.length===86,"new archive intake must account for precisely 86 other style IDs");
+  return remaining.map(x=>({
+    id:x.id,shape:x.shape,length:x.length,finish:x.finish,
+    status:"NEEDS_EDITORIAL_REVIEW",sha:null
+  }));
+}
+
+export function lockedNewSources(root="."){
+  const doc=JSON.parse(readFileSync(resolve(root,NEW_ARCHIVE_LOCK),"utf8"));
+  strict(doc.schema===1&&doc.total_new===86&&doc.editorial_approval==="NOT_GRANTED","nonapproval archive lock schema invalid");
+  strict(doc.sources?.length===5&&
+    doc.sources.reduce((n,x)=>n+x.count,0)===86,"wrong archive count");
+  strict(new Set(doc.sources.map(x=>x.batch)).size===5,"duplicate archive batch");
+  const ids=["02-of-08","03-of-08","06-of-08","07-of-08","08-of-08"];
+  for(let i=0;i<doc.sources.length;i++){
+    const x=doc.sources[i];
+    strict(x.batch===ids[i]&&x.count===(i===4?6:20),"archive expected count or order mismatch");
+    strict(SHA.test(x.sha256),"missing source archive SHA-256");
+    strict(x.url?.startsWith("https://d2ol7oe51mr4n9.cloudfront.net/"),"unexpected archive origin");
+  }
+  return doc.sources;
+}
+
 export async function install({root=".",verify=false,fetcher=fetch}={}){
-  const expected=records(root),byId=new Map(expected.map(x=>[x.id,x]));
-  const all=new Map();
+  const old=records(root),added=expectedNewRows(root),byId=new Map([...old,...added].map(x=>[x.id,x]));
+  strict(byId.size===146,"duplicate ID across original photo batches");
+  const sources=[...SOURCES.map(x=>({...x,count:20,sha256:null})),...lockedNewSources(root)];
+  const all=new Map(),generated=new Map();
   if(verify){
-    const folder=resolve(root,OUT);
-    strict(existsSync(folder),"review-only originals directory missing");
-    for(const x of expected){
-      const name=x.id+".webp",bytes=readFileSync(join(folder,name));
-      strict(hash(bytes)===x.sha,"review asset changed "+x.id);
+    const manifest=JSON.parse(readFileSync(resolve(root,FULL_MANIFEST),"utf8"));
+    strict(manifest.schema===2&&manifest.count===146&&manifest.approval==="NOT_GRANTED","invalid local review manifest");
+    for(const x of manifest.files){
+      const row=byId.get(x.id),bytes=readFileSync(resolve(root,OUT,x.id+".webp"));
+      strict(row&&(!row.sha||row.sha===x.sha),"local metadata does not match locked intake "+x.id);
+      strict(hash(bytes)===x.sha,"review source bytes changed: "+x.id);
       const d=webpDimensions(bytes);
-      strict(d.width===1600&&d.height===1600,"wrong review photo dimensions "+x.id);
-      all.set(name,bytes);
+      strict(d.width===1600&&d.height===1600,"review source not native-sized: "+x.id);
+      all.set(x.id+".webp",bytes);generated.set(x.id,x);
     }
   }else{
-    for(const source of SOURCES){
+    for(const source of sources){
       let response;
       for(let attempt=1;attempt<=3;attempt++){
         try{
@@ -111,30 +154,43 @@ export async function install({root=".",verify=false,fetcher=fetch}={}){
           await new Promise(ok=>setTimeout(ok,attempt*2000));
         }
       }
-      const buf=Buffer.from(await response.arrayBuffer());
-      const extracted=extractZip(buf);
-      strict(extracted.size===20,"wrong count in batch "+source.batch);
+      const zipped=Buffer.from(await response.arrayBuffer());
+      if(source.sha256)strict(hash(zipped)===source.sha256,
+        "original archive SHA-256 mismatch for batch "+source.batch);
+      const extracted=extractZip(zipped,{expectedCount:source.count});
       for(const [name,bytes] of extracted){
         const id=name.slice(0,-5),row=byId.get(id);
-        strict(row&&!all.has(name),"duplicate/unrecognized uploaded style "+name);
-        strict(hash(bytes)===row.sha,"source SHA-256 differs from approved-ledger intake "+name);
+        strict(row&&!all.has(name),"duplicate/unrecognized uploaded ID "+name);
+        const imageHash=hash(bytes);
+        if(row.sha)strict(imageHash===row.sha,
+          "original individual photo SHA-256 mismatch "+name);
         const d=webpDimensions(bytes);
-        strict(d.width===1600&&d.height===1600,"source does not decode at 1600px "+name);
+        strict(d.width===1600&&d.height===1600,"wrong original dimensions "+name);
         all.set(name,bytes);
+        generated.set(id,{id,sha:imageHash,status:row.status,shape:row.shape,length:row.length,finish:row.finish});
       }
     }
-    strict(all.size===60,"all 60 original assets are required, no partial publish");
+    strict(all.size===146&&generated.size===146,"must import all 146 originals atomically");
+    strict(new Set([...generated.values()].map(x=>x.sha)).size===146,
+      "byte-identical original photographs cannot enter review collection");
     const dir=resolve(root,OUT);
     mkdirSync(dir,{recursive:true});
     for(const [name,bytes] of all)writeFileSync(join(dir,name),bytes);
+    const manifest={schema:2,count:146,approval:"NOT_GRANTED",
+      scope:"PUBLIC REVIEW ONLY; NOT APPROVED FOR CUSTOMER GALLERY",
+      native_generation_provenance:"UNVERIFIED",
+      status_counts:{VISUAL_CANDIDATE_NOT_APPROVED:28,HOLD_EXACT_STYLE_REVIEW:16,REJECT_REGENERATE:16,NEEDS_EDITORIAL_REVIEW:86},
+      files:[...generated.values()]};
+    writeFileSync(resolve(root,FULL_MANIFEST),JSON.stringify(manifest,null,2)+"\n");
   }
-  const dir=resolve(root,OUT);
-  const found=readdirSync(dir).filter(f=>f.endsWith(".webp")).sort();
-  strict(found.length===60&&found.every(x=>all.has(x)),"unexpected or missing review-only images");
-  const sum=[...all.values()].reduce((a,b)=>a+b.length,0);
-  console.log("Review-only manicure archive installed, SHA verified:",{files:all.size,bytes:sum,approved:0,rejected:16,customerGalleryChanges:0});
+  const folder=resolve(root,OUT),found=readdirSync(folder).filter(x=>x.endsWith(".webp")).sort();
+  strict(found.length===146&&found.every(x=>all.has(x)),"review directory includes missing/extra originals");
+  const sum=[...all.values()].reduce((total,b)=>total+b.length,0);
+  console.log("146 original images published in REVIEW ONLY namespace; approved=0",
+    {files:all.size,bytes:sum,previouslyRejected:16,newPendingReview:86,customerGalleryChanges:0});
   return {files:all.size,bytes:sum};
 }
+
 if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url)){
   await install({verify:process.argv.includes("--verify")});
 }
