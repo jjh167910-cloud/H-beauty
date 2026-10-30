@@ -15,7 +15,7 @@
   "batches": [
     {
       "batch": "B61",
-      "status": "9 of 50 approved and release-staged; 41 not generated / not approved",
+      "status": "10 of 50 approved and release-staged; 40 not generated / not approved",
       "target_manifest": "assets/hbeauty-manicure-batch61.sha256",
       "styles": [
         {
@@ -30,10 +30,10 @@
           "length": "long",
           "base": "#BB849B",
           "accent": "#F6C4D5",
-          "qa_status": "NOT_GENERATED",
+          "qa_status": "APPROVED",
           "file_path": "public/nails/photos/nail-rose-chrome.webp",
-          "sha256": null,
-          "approved_by_qa": false
+          "sha256": "a88aa00d04c688a8a6bd169b60f85007eb7c836456fc0e8de64899761c3c8d66",
+          "approved_by_qa": true
         },
         {
           "id": "nail-botanical",
