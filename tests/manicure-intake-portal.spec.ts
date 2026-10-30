@@ -74,7 +74,7 @@ test("real WebP user-file import rejects false SHA and accepts matching original
   await page.goto(PAGE);
   await page.locator("#files").setInputFiles({name:ID+".webp",mimeType:"image/webp",buffer:raw});
   await expect(page.locator("#loaded")).toHaveText("1");
-  await page.locator(".tile").first.getByRole("button",{name:/بازبینی تصویر/}).click();
+  await page.locator(".tile").first().getByRole("button",{name:/بازبینی تصویر/}).click();
   await expect(page.locator("dialog")).toHaveJSProperty("open",true);
   await expect(page.locator("#modalMeta")).toContainText("NOT APPROVED");
 });
