@@ -49,7 +49,7 @@ export function validateQueue(queue){
   if(styles.length!==162||queue.missing_photo_count!==162||new Set(styles.map(s=>s.id)).size!==162)
     throw Error("Catalog queue must contain 162 unique historical style IDs");
   for(const s of styles){
-    if(!s.id?.startsWith("nail-")||!s.en||!s.description||!s.file_path||!/^#[0-9a-fA-F]{6}$/.test(s.base)||!/^#[0-9a-fA-F]{6}$/.test(s.accent)||!SHAPE[s.shape]||!LENGTH[s.length]||!(MOTIF[s.motif]||ORIGINAL[s.id]))
+    if(!s.id?.startsWith("nail-")||!s.en||!s.description||!s.file_path||!/^#[0-9a-fA-F]{6}$/.test(s.base)||!/^#[0-9a-fA-F]{6}$/.test(s.accent)||!SHAPE[s.shape]||!LENGTH[s.length]||(s.qa_status!=="APPROVED"&&!(MOTIF[s.motif]||ORIGINAL[s.id])))
       throw Error("Invalid catalog image specification: "+s.id);
     const approved=s.qa_status==="APPROVED";
     if(approved){
@@ -104,7 +104,7 @@ export function renderBatch(queue,batch,index){
     ""
   ];
   for(const s of pending){
-    result.push("### "+String(index++).padStart(3,"0")+" — "+s.en+" | "+s.title);
+    result.push("### "+String(index+batch.styles.indexOf(s)).padStart(3,"0")+" — "+s.en+" | "+s.title);
     result.push("");
     result.push("Catalog ID: "+s.id+" · Original photo output: "+s.file_path+" · STATUS: NOT GENERATED / NOT APPROVED");
     result.push("");
