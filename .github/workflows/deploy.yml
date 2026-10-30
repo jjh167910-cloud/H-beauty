@@ -51,6 +51,8 @@ jobs:
           node-version: "22"
           cache: npm
 
+      - name: Verify standalone manicure prompts are current
+        run: node scripts/generate-manicure-prompts.mjs --check
       - name: Verify catalog images and PWA assets
         run: node scripts/verify-images.mjs
       - name: Verify offline app shell
