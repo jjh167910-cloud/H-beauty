@@ -1,6 +1,6 @@
 # H-Beauty B61 — single-exposure photography prompts v3
 
-**40 image prompts pending / 10 released in original 50-style cohort.** Exact status derives from docs/HBEAUTY_MANICURE_162_QUEUE.json. Do not regenerate already-published designs.
+**39 image prompts pending / 11 released in original 50-style cohort.** Exact status derives from docs/HBEAUTY_MANICURE_162_QUEUE.json. Do not regenerate already-published designs.
 
 ## REQUIRED generator configuration (set in the model API, NOT merely inside the prompt)
 
@@ -11,6 +11,7 @@ Provider ElevenLabs creative image-generation node; model FLUX 3 Image; aspect_r
 ## Already published in this cohort (do not regenerate)
 
 - nail-rose-chrome — Rose Chrome (approved hash a88aa00d04c688a8a6bd169b60f85007eb7c836456fc0e8de64899761c3c8d66)
+- nail-atlas-velvet-pearl — Pearl Velvet Matte (approved hash f42daf9eb81cd009e1f0166535bab2e5a654b53b0ba7a011e468acd57fe63339)
 - nail-atlas-prism-ruby — Ruby Prism Chrome (approved hash cb969b252738b61a414e2707d79a16b181d0a48fbfde355dd57ca0a3bd692559)
 - nail-atlas-prism-merlot — Merlot Prism Chrome (approved hash 3146eafcc442af61ff66ff98c6be63afac60a8fe91fd420cdffc0de0f12d1aef)
 - nail-atlas-prism-espresso — Espresso Prism Chrome (approved hash c510c0b68f2d93cef71d16cdc835ce7f33fbd0679fbd3d56069d427cf8b4a014)
@@ -161,22 +162,6 @@ A single high-end beauty photograph: one uninterrupted close-up camera exposure 
 The hand has five anatomically natural, separate fingers, including the thumb, positioned in a relaxed fan so that every complete fingernail, cuticle and tip is visible. Realistic finger proportions, skin pores, fine creases, nail beds and naturally attached cuticles. The entire hand shares one consistent perspective and natural lighting.
 
 Each of the five nails has the same symmetrically tapered sidewalls ending in a softly rounded almond tip; long proportional nail extension extending about 8–12 mm beyond the fingertip. The main lacquer matches the color reference #385DA8 with restrained accents matching #BED7FF. Keep the intended matte finish on the actual nail plates. The manicure design is: All five nails have even, opaque velvety MATTE lacquer: diffuse powdery finish with no mirror highlights, no gloss, no glitter, no metallic sheen, no tips or decorative stripes. Keep the base color visually dominant.
-
-The entire ground and backdrop are a single uninterrupted expanse of softly folded pure ivory satin silk. The hand touches the silk along its full visible underside, and silk is visible beneath every fingertip, through every finger gap and out to all four corners. The fabric has smooth flowing weave and luminous soft folds.
-
-Professional macro editorial photography, a single 70-degree overhead three-quarter view, natural diagonal hand pose, hand occupying about three-quarters of the square image. Neutral studio daylight, diffuse softbox, gentle realistic contact shadows, precise salon-grade application, sharp detail across all five nails and natural satin highlights. An authentic-looking unmarked photograph with only the hand and ivory silk visible.
-~~~
-
-### 011 — Pearl Velvet Matte | مخمل مات مرواریدی
-
-Catalog ID: nail-atlas-velvet-pearl · Original photo output: public/nails/photos/nail-atlas-velvet-pearl.webp · STATUS: NOT GENERATED / NOT APPROVED
-
-~~~text
-A single high-end beauty photograph: one uninterrupted close-up camera exposure of one elegant adult woman's hand resting naturally, palm-down, on continuous ivory silk satin. Only this one hand and the fabric are in the photograph. The scene fills the entire image edge to edge.
-
-The hand has five anatomically natural, separate fingers, including the thumb, positioned in a relaxed fan so that every complete fingernail, cuticle and tip is visible. Realistic finger proportions, skin pores, fine creases, nail beds and naturally attached cuticles. The entire hand shares one consistent perspective and natural lighting.
-
-Each of the five nails has the same tapered ballerina sidewalls ending in a narrow, perfectly flat tip; long proportional nail extension extending about 8–12 mm beyond the fingertip. The main lacquer matches the color reference #D1CCD0 with restrained accents matching #FCF8FA. Keep the intended matte finish on the actual nail plates. The manicure design is: All five nails have even, opaque velvety MATTE lacquer: diffuse powdery finish with no mirror highlights, no gloss, no glitter, no metallic sheen, no tips or decorative stripes. Keep the base color visually dominant.
 
 The entire ground and backdrop are a single uninterrupted expanse of softly folded pure ivory satin silk. The hand touches the silk along its full visible underside, and silk is visible beneath every fingertip, through every finger gap and out to all four corners. The fabric has smooth flowing weave and luminous soft folds.
 
