@@ -37,3 +37,11 @@ test("fail on stale or incompatible catalog queue counts",()=>{
   const {queue,locks}=sample();queue.missing_photo_count=3;
   assert.throws(()=>summarizeNailRelease(locks,queue),/cohort does not reconcile/);
 });
+
+test("real repository SHA locks reconcile to the manicure queue", async()=>{
+  const {readNailReleaseProgress}=await import("../scripts/nail-release-progress.mjs");
+  const status=await readNailReleaseProgress();
+  assert.equal(status.manicurePublished+status.manicureRemaining,status.manicureTotal);
+  assert.equal(status.originalQueueApproved,status.manicurePublished-58);
+  assert.equal(status.pedicurePublished,78);
+});
