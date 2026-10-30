@@ -46,7 +46,7 @@ const counts=(rows,key)=>rows.reduce((a,x)=>(a[x[key]]=(a[x[key]]||0)+1,a),{});
 function restore(){try{const d=JSON.parse(localStorage.getItem(STORE)||"{}");if(d&&typeof d==="object"&&!Array.isArray(d))drafts=d}catch{drafts={}}}
 function persist(){localStorage.setItem(STORE,JSON.stringify(drafts))}
 function statusLabel(v){return {VISUAL_CANDIDATE:"نامزد بررسی بیشتر",HOLD:"نیازمند بررسی دقیق",REGENERATE:"پیشنهاد بازتولید"}[v]||"در انتظار بررسی"}
-function draftLabel(v){return {DRAFT_APPROVE:"پیش‌نویس پذیرش",HOLD:"نگه‌داری برای بررسی",REJECT:"رد برای بازتولید"}[v]||"بدون تصمیم"}
+function draftLabel(v){return {CANDIDATE:"مناسب اولیه (نشان‌گذاری سریع)",DRAFT_APPROVE:"پیش‌نویس پذیرش",HOLD:"نگه‌داری برای بررسی",REJECT:"رد برای بازتولید"}[v]||"بدون تصمیم"}
 function pillStatus(v){return v==="REGENERATE"?"r":v==="HOLD"?"h":"v"}
 function say(s,good=false){$("status").textContent=s;$("status").classList.toggle("good",good)}
 function auditDraft(key,hash){
@@ -159,6 +159,8 @@ async function init(){
  const old=manifest.filter(x=>x.status!=="NEEDS_EDITORIAL_REVIEW");
  if(old.length!==60)throw Error("Original 60 nonapproved statuses changed");
  showStats();tiles();say("۱۴۶ عکس اصلی و پیشنهاد بررسی بارگذاری شد. تصمیم‌ها فقط روی دستگاه شما ذخیره می‌شوند.",true);
+ const requested=new URLSearchParams(location.search).get("id");
+ if(requested&&map.has(requested))openItem(requested);
 }
 $("q").oninput=tiles;$("filter").onchange=tiles;
 $("modalClose").onclick=()=>$("modal").close();
