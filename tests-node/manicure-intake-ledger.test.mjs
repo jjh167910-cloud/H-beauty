@@ -7,7 +7,8 @@
  */
 import test from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync, statSync } from "node:fs";
+import { createHash } from "node:crypto";
 import { fileURLToPath } from "node:url";
 import { resolve, dirname } from "node:path";
 
@@ -55,4 +56,31 @@ test("60-source historical intake remains exact-ID, SHA-unique and never self-ap
     HOLD_EXACT_STYLE_REVIEW:16,
     REJECT_REGENERATE:16
   });
+});
+
+test("16 visually rejected source byte hashes can never be republished unchanged",()=>{
+  const lines=readFileSync(resolve(root,filename),"utf8").trimEnd().split(/\r?\n/).slice(1);
+  const rejected=new Map(lines.map(line=>line.split(","))
+    .filter(row=>row[2]==="REJECT_REGENERATE").map(row=>[row[1],row[0]]));
+  assert.equal(rejected.size,16);
+  const photos=resolve(root,"public/nails/photos");
+  for(const entry of readdirSync(photos,{withFileTypes:true})){
+    if(!entry.isFile()||!entry.name.endsWith(".webp"))continue;
+    const bytes=readFileSync(resolve(photos,entry.name));
+    const sha=createHash("sha256").update(bytes).digest("hex");
+    assert.ok(!rejected.has(sha),
+      "Previously rejected original has been published as "+entry.name+
+      " (source catalog "+rejected.get(sha)+")");
+  }
+  const assets=resolve(root,"assets");
+  for(const name of readdirSync(assets)){
+    if(!name.endsWith(".sha256")||name.includes("rejected-"))continue;
+    const path=resolve(assets,name);
+    if(!statSync(path).isFile())continue;
+    const text=readFileSync(path,"utf8");
+    for(const [sha,id] of rejected){
+      assert.ok(!text.includes(sha),
+        "Previously rejected original "+id+" appears in release lock "+name);
+    }
+  }
 });
