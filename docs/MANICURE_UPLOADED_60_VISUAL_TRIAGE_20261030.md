@@ -89,3 +89,9 @@ High-priority fails: solid-looking `gradient-ivory`/`gradient-blush` lack clear 
 5. Preserve currently approved manicure photos, the six legacy quarantined originals and all 78 pedicure photographs.
 
 This triage alone changes **no application code, queue status, public images or Cloudflare service**.
+
+## Immutable source-identity ledger (added after initial triage)
+
+The per-original SHA-256 hashes, exact catalog IDs, catalog shape/length/finish, and rejection/hold/candidate dispositions are now recorded in [MANICURE_UPLOADED_60_ORIGINAL_SHA256_NOT_APPROVED_20261030.csv](MANICURE_UPLOADED_60_ORIGINAL_SHA256_NOT_APPROVED_20261030.csv). Every source remains explicitly `UNVERIFIED` for generation provenance, `NOT_GRANTED` for editorial approval, and `DENIED` for release permission. The historical source ledger is immutable evidence, not an approval manifest or published hash lock.
+
+`tests-node/manicure-intake-ledger.test.mjs` validates all 60 ledger IDs and hashes are unique, catalog shape/length/finish match the actual queue, exactly 28/16/16 dispositions are present, and no row can be misread as approved. Existing production photo records and all 78 pedicure originals remain untouched. Future genuine approved replacements use separate generation evidence and the existing editorial release records; do not mutate this historic baseline to create fake approvals.
