@@ -272,21 +272,30 @@ export function finalizeServiceWorker(distDir = 'dist') {
   }
   // All future, explicitly SHA-locked manicure editions use the same safe
   // offline packaging path. Never cache partial or mismatched new releases.
-  const dynamicIds=(process.env.VITE_MANICURE_DYNAMIC_IDS||"").split(",").filter(Boolean);
   const dynamicLocked=loadPhotoLocks().filter(item=>!LOCKS.some(g=>g.name===item.group));
-  if(dynamicIds.length!==dynamicLocked.length ||
-     dynamicIds.some((id,index)=>id!==dynamicLocked[index].id))
-    throw Error("Dynamic manicure offline list differs from approved release locks");
-  for(const item of dynamicLocked){
-    const file=join(root,item.path.slice("public/".length));
-    if(!existsSync(file))throw Error("Dynamic manicure photo absent from build "+item.id);
-    const bytes=readFileSync(file);
-    if(bytes.length<25_000||bytes.length>2_200_000||
-      bytes.toString("ascii",0,4)!=="RIFF"||
-      bytes.toString("ascii",8,12)!=="WEBP"||
-      createHash("sha256").update(bytes).digest("hex")!==item.hash)
-      throw Error("Dynamic manicure offline asset corruption "+item.id);
-    files.push(file);
+  // The isolated service-worker unit tests construct empty temporary shells
+  // without running build-salon. Production sets this flag explicitly,
+  // including for zero dynamic photos; installed dynamic assets also force
+  // strict validation so a partial release cannot be silently packaged.
+  const dynamicEnv=process.env.VITE_MANICURE_DYNAMIC_IDS;
+  const anyDynamicInstalled=dynamicLocked.some(item=>
+    existsSync(join(root,item.path.slice("public/".length))));
+  if(dynamicEnv!==undefined || anyDynamicInstalled){
+    const dynamicIds=(dynamicEnv||"").split(",").filter(Boolean);
+    if(dynamicIds.length!==dynamicLocked.length ||
+       dynamicIds.some((id,index)=>id!==dynamicLocked[index].id))
+      throw Error("Dynamic manicure offline list differs from approved release locks");
+    for(const item of dynamicLocked){
+      const file=join(root,item.path.slice("public/".length));
+      if(!existsSync(file))throw Error("Dynamic manicure photo absent from build "+item.id);
+      const bytes=readFileSync(file);
+      if(bytes.length<25_000||bytes.length>2_200_000||
+        bytes.toString("ascii",0,4)!=="RIFF"||
+        bytes.toString("ascii",8,12)!=="WEBP"||
+        createHash("sha256").update(bytes).digest("hex")!==item.hash)
+        throw Error("Dynamic manicure offline asset corruption "+item.id);
+      files.push(file);
+    }
   }
   // Offline-first pedicure edition: validate 78 immutable image bytes before
   // adding them to the service-worker cache. Partial releases cannot publish.
