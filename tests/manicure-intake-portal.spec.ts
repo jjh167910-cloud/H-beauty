@@ -99,15 +99,20 @@ test("real deflated ZIP archive imports on device without publishing unapproved 
   await expect(page.locator("#alert")).toContainText("هیچ خطای انتقالی یافت نشد");
 });
 
-test("keyboard-only reviewer can open the local ZIP picker", async({page})=>{
+test("keyboard-only reviewer can access the optional native ZIP picker", async({page})=>{
   await page.goto(PAGE);
   await expect(page.locator(".tile")).toHaveCount(146);
-  const choose=page.getByRole("button",{name:/انتخاب سه فایل ZIP/});
-  await expect(choose).toBeEnabled();
-  await choose.focus();
-  await expect(choose).toBeFocused();
-  const [picker]=await Promise.all([page.waitForEvent("filechooser"),page.keyboard.press("Enter")]);
-  expect(picker.isMultiple()).toBe(true);
+  const details=page.locator(".local-import");
+  const summary=details.locator("summary");
+  await summary.focus();
+  await expect(summary).toBeFocused();
+  await page.keyboard.press("Enter");
+  await expect(details).toHaveAttribute("open","");
+  const input=page.locator("#files");
+  await expect(input).toBeVisible();
+  await input.focus();
+  await expect(input).toBeFocused();
+  await expect(input).toHaveAttribute("multiple","");
 });
 
 
