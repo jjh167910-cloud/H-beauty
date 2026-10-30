@@ -6,6 +6,7 @@
  * automatically in Vite and in the service-worker packaging step.
  */
 import { spawnSync } from "node:child_process";
+import { install as installReviewIntake } from "./install-manicure-intake-review.mjs";
 import { existsSync, statSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -34,7 +35,10 @@ export function resolveMusicFlag({ installed, configured } = {}) {
   return installed ? "true" : "false";
 }
 
-function build() {
+async function build() {
+  // Original 60 source photos are release-denied and live ONLY in the review namespace.
+  // The import fails closed on missing or altered external archives before Vite builds.
+  await installReviewIntake();
   const verifiedEmbeddedArchive = reconstructNailArchive();
   console.log(`Verified bundled salon photos: ${verifiedEmbeddedArchive.bytes} bytes, sha256 ${verifiedEmbeddedArchive.sha256}`);
   const installedPhotoPack = installNailPack();
@@ -307,5 +311,5 @@ function build() {
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  build();
+  build().catch(error=>{console.error(error);process.exitCode=1;});
 }
