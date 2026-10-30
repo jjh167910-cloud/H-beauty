@@ -15,7 +15,7 @@
   "batches": [
     {
       "batch": "B61",
-      "status": "10 of 50 approved and release-staged; 40 not generated / not approved",
+      "status": "11 of 50 approved and release-staged; 39 remaining",
       "target_manifest": "assets/hbeauty-manicure-batch61.sha256",
       "styles": [
         {
@@ -206,10 +206,10 @@
           "accent": "#FCF8FA",
           "color": "nude",
           "collection": "velvet",
-          "qa_status": "NOT_GENERATED",
+          "qa_status": "APPROVED",
           "file_path": "public/nails/photos/nail-atlas-velvet-pearl.webp",
-          "sha256": null,
-          "approved_by_qa": false
+          "sha256": "f42daf9eb81cd009e1f0166535bab2e5a654b53b0ba7a011e468acd57fe63339",
+          "approved_by_qa": true
         },
         {
           "id": "nail-atlas-prism-ruby",
@@ -2742,7 +2742,7 @@
     },
     {
       "batch": "B64",
-      "status": "0 of 12 approved and release-staged; 12 not generated / not approved",
+      "status": "2 of 12 approved and release-staged; 10 remaining",
       "target_manifest": "assets/hbeauty-manicure-batch64.sha256",
       "styles": [
         {
@@ -2758,10 +2758,10 @@
           "accent": "#FFF8E9",
           "color": "nude",
           "collection": "sculpture",
-          "qa_status": "NOT_GENERATED",
+          "qa_status": "APPROVED",
           "file_path": "public/nails/photos/nail-atlas-sculpture-ivory.webp",
-          "sha256": null,
-          "approved_by_qa": false
+          "sha256": "a60cc27c58f1e2ae27b0e134275e652abe9746608d7998392627d1291c78e15a",
+          "approved_by_qa": true
         },
         {
           "id": "nail-atlas-sculpture-blush",
@@ -2776,10 +2776,10 @@
           "accent": "#FFE3E7",
           "color": "pink",
           "collection": "sculpture",
-          "qa_status": "NOT_GENERATED",
+          "qa_status": "APPROVED",
           "file_path": "public/nails/photos/nail-atlas-sculpture-blush.webp",
-          "sha256": null,
-          "approved_by_qa": false
+          "sha256": "c8f13eb81ce18494083c69b413ac4245ea7baa66f3cfa327ba803e6433b4b586",
+          "approved_by_qa": true
         },
         {
           "id": "nail-atlas-sculpture-champagne",
