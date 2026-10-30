@@ -59,19 +59,32 @@ export function validateQueue(queue){
   }
   return styles;
 }
+export function renderPhotoBrief(style, art){
+  const shapes={
+    square:"short rectangular silhouette, straight parallel sidewalls and a flat free edge with gently softened corners",
+    oval:"softly curved elliptical tip with smooth rounded sidewalls",
+    almond:"symmetrically tapered sidewalls ending in a softly rounded almond tip",
+    coffin:"tapered ballerina sidewalls ending in a narrow, perfectly flat tip"
+  };
+  const lengths={
+    short:"short free edge extending about 1–2 mm beyond the fingertip",
+    medium:"medium free edge extending about 4–6 mm beyond the fingertip",
+    long:"long proportional nail extension extending about 8–12 mm beyond the fingertip"
+  };
+  if(!shapes[style.shape]||!lengths[style.length]||!art)throw Error("Unresolved photographic specification");
+  return [
+    "A single high-end beauty photograph: one uninterrupted close-up camera exposure of one elegant adult woman's hand resting naturally, palm-down, on continuous ivory silk satin. Only this one hand and the fabric are in the photograph. The scene fills the entire image edge to edge.",
+    "The hand has five anatomically natural, separate fingers, including the thumb, positioned in a relaxed fan so that every complete fingernail, cuticle and tip is visible. Realistic finger proportions, skin pores, fine creases, nail beds and naturally attached cuticles. The entire hand shares one consistent perspective and natural lighting.",
+    "Each of the five nails has the same "+shapes[style.shape]+"; "+lengths[style.length]+". The main lacquer matches the color reference "+style.base+" with restrained accents matching "+style.accent+". Keep the intended "+style.finish+" finish on the actual nail plates. The manicure design is: "+art,
+    "The entire ground and backdrop are a single uninterrupted expanse of softly folded pure ivory satin silk. The hand touches the silk along its full visible underside, and silk is visible beneath every fingertip, through every finger gap and out to all four corners. The fabric has smooth flowing weave and luminous soft folds.",
+    "Professional macro editorial photography, a single 70-degree overhead three-quarter view, natural diagonal hand pose, hand occupying about three-quarters of the square image. Neutral studio daylight, diffuse softbox, gentle realistic contact shadows, precise salon-grade application, sharp detail across all five nails and natural satin highlights. An authentic-looking unmarked photograph with only the hand and ivory silk visible."
+  ].join("\n\n");
+}
 export function makePrompt(style){
   if(style.qa_status==="APPROVED")throw Error("Already released: never regenerate an approved ID "+style.id);
   if(!(MOTIF[style.motif]||ORIGINAL[style.id])||!SHAPE[style.shape]||!LENGTH[style.length])throw Error("Unknown image specification: "+style.id);
   const art=style.motif==="original-brief"?ORIGINAL[style.id]:MOTIF[style.motif];
-  return [
-    "SINGLE PHOTOGRAPH ONLY — Create exactly ONE standalone, photorealistic luxury manicure editorial photograph, not a multi-panel layout, design grid, contact sheet, comparison, infographic or catalog poster. No labels, text, numbers or graphic borders.",
-    "SUBJECT AND ANATOMY — Exactly ONE young adult woman's natural hand, palm facing down, relaxed gentle fan pose; ALL FIVE distinct, anatomically correct fingers including the thumb, and ALL FIVE complete nail plates with visible free edges and cuticles, clearly seen in a single frame. Each nail belongs to its own normal finger, with no merged, duplicated, missing or additional digits. Show enough of each fingertip to judge proportions; do not crop nails or thumb. Real human skin pores, plausible knuckles and cuticles, correct nail-to-finger attachment.",
-    "STYLE ID "+style.id+" — "+style.en+". Nail SHAPE: "+SHAPE[style.shape]+" Nail LENGTH: "+LENGTH[style.length]+" Choose a believable consistent shape and length for ALL FIVE nails without changing the spec. Main lacquer shade visually close to "+style.base+" ("+style.color+" color family); detail/accent shade close to "+style.accent+". Use these as calibrated sRGB COLOR TARGETS, not text to be printed. Preserve the main-versus-accent hierarchy; do not make up additional colors or motifs. Catalog meaning: "+style.description+".",
-    "REQUIRED NAIL ART — "+art+" The nail finish category is "+style.finish+". The motif must be legible at normal catalog thumbnail size and technically plausible as a real salon manicure, with precise painting, no inconsistent patterns between fingers.",
-    "SURFACE AND COMPOSITION — The entire surface directly beneath and surrounding the hand is continuous PREMIUM PURE IVORY SILK SATIN, gently folded; satin touches fingertips and palm. No breaks, windows or gaps exposing any table. Absolutely NO stone, travertine, limestone, marble, concrete, tile, wood or textured countertop at ANY point under the hand. No rings, jewelry, props, products, sleeves, flowers, backgrounds, logos or distracting objects. Square 1:1 photograph. One slightly elevated near-top-down three-quarter camera angle, approximately 65–75 degrees above the silk, elegant diagonal placement, hand fills 70–80% of the frame while all five nails remain visible. Neutral high-end studio daylight, natural contact shadows, smooth ivory backdrop; no overt peach tint, no stock-photo filter.",
-    "PHOTOGRAPHIC EXECUTION — 90 mm macro product-photography perspective, natural anatomical proportions, realistic smooth but not plastic skin with pores and genuine cuticle detail, diffuse controlled studio light. Focus across ALL FIVE nail plates, premium sharp detail, subtle fabric sheen. Color-accurate tones and believable manicure reflectance: MATTE looks matte, JELLY looks translucent, FRENCH has crisp parallel tips, MAGNETIC has a single light beam. No AI artifacts, floating nails, bent joints, deformed thumb, extra nail tips, cloned fingers, excessive hand airbrushing, collage crop or fake upscaling.",
-    "OUTPUT — ONE independent clean photo with NO text or watermark. Require native square generation at 2K or better (both dimensions at least 1600 source pixels); do not rescale a low-resolution output and pretend it is native. The image generator's API settings must explicitly request aspect_ratio=1:1 and resolution=2K; prompt wording alone cannot set file dimensions."
-  ].join("\n\n");
+  return renderPhotoBrief(style,art);
 }
 export function buildRecords(queue){
   const styles=validateQueue(queue);
@@ -86,7 +99,7 @@ export function renderBatch(queue,batch,index){
   const pending=batch.styles.filter(x=>x.qa_status!=="APPROVED");
   const released=batch.styles.filter(x=>x.qa_status==="APPROVED");
   const result=[
-    "# H-Beauty "+batch.batch+" — standalone image prompts v2",
+    "# H-Beauty "+batch.batch+" — single-exposure photography prompts v3",
     "",
     "**"+pending.length+" image prompts pending / "+released.length+" released in original "+batch.styles.length+"-style cohort.** Exact status derives from docs/HBEAUTY_MANICURE_162_QUEUE.json. Do not regenerate already-published designs.",
     "",
@@ -94,7 +107,7 @@ export function renderBatch(queue,batch,index){
     "",
     "Provider ElevenLabs creative image-generation node; model FLUX 3 Image; aspect_ratio **1:1**; resolution **2K**; generations_count **1**. Verify the returned original image is genuinely square and at least 1600×1600 before any approval. Do not crop contact sheets or upscale a small source. Using a different model requires setting equivalent model-specific parameters and validating native dimensions.",
     "",
-    "**Each fenced prompt is complete and independent.** Copy one entire prompt, never just the style title. A photo is an AI-generated *visual inspiration*, not documentation of work performed by the salon. Every accepted output still needs native-resolution human visual review (five nails, ivory silk with no stone, correct style and uniqueness), SHA-256 lock, CI and public Cloudflare checks.",
+    "**Use exactly ONE fenced photographic prompt per generation call.** Only send text from within that one fence, never the document heading, catalog ID, numbered style title, entire batch file, QA criteria, or a list of styles. These metadata fields are for tracking only. Each generated image is AI-created style inspiration, not salon-work proof. Require full-resolution inspection, exact-style QA, duplicate comparison, SHA-256 locks and release verification.",
     "",
     "## Already published in this cohort (do not regenerate)",
     "",

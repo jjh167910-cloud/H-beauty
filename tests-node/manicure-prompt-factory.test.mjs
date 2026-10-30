@@ -10,13 +10,22 @@ test("exactly 150 unique pending prompts and 12 published exclusions",()=>{
   assert.equal(new Set(records.map(x=>x.id)).size,150);
   assert.ok(!records.some(r=>r.id==="nail-rose-chrome"));
 });
-test("all 150 prompts are independently complete and exact-catalog scoped",()=>{
+test("each generated prompt is a single camera exposure with no multi-image or labeling cues",()=>{
   for(const s of pending){
     const p=makePrompt(s);
-    for(const marker of ["ONE standalone","FIVE","thumb","IVORY SILK","NO stone", "NO text","1:1","2K",s.id,s.en,s.base,s.accent])
-      assert.ok(p.includes(marker),"Missing "+marker+" from "+s.id);
-    assert.ok(p.includes("LENGTH:")&&p.includes("SHAPE:"),"Missing geometry: "+s.id);
-    assert.ok(p.length>1800&&p.length<6500,"Unsafe prompt length: "+s.id);
+    for(const marker of ["single high-end beauty photograph","one uninterrupted close-up camera exposure","five anatomically natural","including the thumb","pure ivory satin silk","single 70-degree overhead",s.base,s.accent])
+      assert.ok(p.includes(marker),"Missing "+marker+" for "+s.id);
+    assert.equal(p.includes(s.id),false,"Catalog ID leaked to image model: "+s.id);
+    assert.equal(p.includes(s.en),false,"Style title leaked into image model: "+s.id);
+    assert.doesNotMatch(p,/contact sheet|collage|grid|poster|infographic|catalog|watermark|label|panels|comparison|style ID|\\b(?:image one|image two)\\b/i);
+    assert.ok(p.length>=900&&p.length<=3400,"Uncontrolled prompt length for "+s.id);
+  }
+});
+test("source records keep tracking labels separate from the photographic prompt",()=>{
+  for(const r of buildRecords(queue)){
+    assert.ok(r.title&&r.title_fa&&r.id&&r.output);
+    assert.equal(r.prompt.includes(r.id),false);
+    assert.equal(r.prompt.includes(r.title),false);
   }
 });
 test("each motif family has a meaningful specific instruction",()=>{

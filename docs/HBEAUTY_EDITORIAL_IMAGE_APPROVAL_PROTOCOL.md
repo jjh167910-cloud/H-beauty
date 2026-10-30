@@ -27,3 +27,8 @@ A SHA-256 manifest proves file identity, not correct anatomy or nail style. A ne
 An approval record is an auditable assertion, not automatic photographic proof. Full-resolution inspection is still mandatory. Generated dashboards, contact sheets, mockups, filenames and misleading deployment-count graphics cannot be accepted as manicure photographs.
 
 **No image approval documents are added as part of this PR because no new original source photos have passed visual review.**
+## Single-exposure image-prompt handling (v3)
+
+- The image service must receive ONLY the `prompt` string for ONE pending catalog ID from `node scripts/generate-manicure-prompts.mjs --json --id <id>`. The `id`, `title`, `batch`, output path, catalog numbering, headings and QA text are tracking metadata and must NOT be merged into the image prompt.
+- Phrase the image request as ONE uninterrupted photographic exposure of one hand on continuous ivory silk. Do not include visual examples of other styles, multi-image galleries, layout instructions, image counts or descriptive headings in the prompt. Model negatives often still activate unwanted visual concepts; prefer one positive scene with detailed subject composition.
+- Set the generation service aspect ratio explicitly to 1:1 and resolution to native 2K. One generation call produces one candidate. Require individual approval; reject any output that visually contains multiple photographs, text, captions, numbered labels, split frames, incorrect anatomy, non-ivory surfaces or false resolution, regardless of prompt compliance.
