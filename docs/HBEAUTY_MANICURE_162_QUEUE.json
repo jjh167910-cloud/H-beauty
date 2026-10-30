@@ -15,7 +15,7 @@
   "batches": [
     {
       "batch": "B61",
-      "status": "NOT GENERATED / NOT APPROVED / NOT DEPLOYED",
+      "status": "1 of 50 approved and release-staged from user's existing photo album; 49 not generated / not approved",
       "target_manifest": "assets/hbeauty-manicure-batch61.sha256",
       "styles": [
         {
@@ -638,10 +638,11 @@
           "accent": "#E6A9BA",
           "color": "dark",
           "collection": "foil",
-          "qa_status": "NOT_GENERATED",
+          "qa_status": "APPROVED",
           "file_path": "public/nails/photos/nail-atlas-foil-merlot.webp",
-          "sha256": null,
-          "approved_by_qa": false
+          "sha256": "64a9d73ccd7dc60a7f4e7f840f0d49513010de8ab01620f01f6a3e004d91e884",
+          "approved_by_qa": true,
+          "provenance": "H-BEAUTY-98-BIBLE-COMPLETE-PURE-IVORY-SILK.zip / sculpture-blush.webp — original visually identified as Merlot Gold Leaf"
         },
         {
           "id": "nail-atlas-foil-espresso",
@@ -2952,5 +2953,6 @@
         }
       ]
     }
-  ]
+  ],
+  "released_by_sha_count": 1
 }
