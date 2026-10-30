@@ -24,6 +24,31 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   const req=event.request;
   if(req.method!=='GET'||new URL(req.url).origin!==self.location.origin) return;
+  // Review metadata changes independently of the Vite app shell.
+  // Never serve an old review manifest ahead of a newer server response:
+  // a cached pre-Persian version has the same asset IDs but lacks titles.
+  const path=new URL(req.url).pathname;
+  if(path.startsWith('/review/') && path.endsWith('.json')){
+    event.respondWith((async()=>{
+      const current=await caches.open(CACHE);
+      try{
+        const fresh=await fetch(req,{cache:'no-store'});
+        if(!fresh.ok)throw new Error('Review metadata HTTP '+fresh.status);
+        if(fresh.type==='basic'){
+          try{await current.put(req,fresh.clone());}
+          catch(error){console.warn('Unable to refresh review metadata cache',error);}
+        }
+        return fresh;
+      }catch(error){
+        // Offline review may use saved metadata. The page reconciles legacy
+        // manifests with the exact-ID catalog title map before displaying.
+        const stored=(await current.match(req)) || (await caches.match(req));
+        if(stored)return stored;
+        throw error;
+      }
+    })());
+    return;
+  }
   if(req.mode==='navigate') {
     event.respondWith((async () => {
       try {
