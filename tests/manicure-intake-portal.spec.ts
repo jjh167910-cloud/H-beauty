@@ -40,7 +40,7 @@ function zipOneWebP(name:string,source:Buffer):Buffer {
   return Buffer.concat([local,path,deflated,central,path,end]);
 }
 
-test("manicure QA portal lists every unapproved source, RTL, no network-loaded photos", async({page})=>{
+test("manicure QA portal displays all hosted original sources, RTL, and separate nonapproved statuses", async({page})=>{
   const outside:string[]=[];
   page.on("request",r=>{if(!r.url().includes("127.0.0.1:4173"))outside.push(r.url())});
   await page.setViewportSize({width:390,height:844});
@@ -48,7 +48,8 @@ test("manicure QA portal lists every unapproved source, RTL, no network-loaded p
   await expect(page.locator("html")).toHaveAttribute("dir","rtl");
   await expect(page.locator(".tile")).toHaveCount(60);
   await expect(page.locator("#loaded")).toHaveText("0");
-  await expect(page.locator(".preview img")).toHaveCount(0);
+  await expect(page.locator(".preview img")).toHaveCount(60);
+  await expect.poll(()=>page.locator(".tile").first().locator("img").evaluate(e=>(e as HTMLImageElement).naturalWidth)).toBe(1600);
   expect(outside).toEqual([]);
   await page.locator('[data-filter="REJECT_REGENERATE"]').click();
   await expect(page.locator(".tile")).toHaveCount(16);
