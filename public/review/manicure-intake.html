@@ -78,12 +78,40 @@ dialog::backdrop{background:#1c141bcc}.modal-title-fa{font-size:19px;font-weight
 <section aria-label="تصاویر"><div class="toolbar"><input class="search" id="search" type="search" aria-label="جستجو در طرح‌ها" placeholder="جستجوی نام فارسی، شناسه یا سبک…"><div class="filters" role="group" aria-label="فیلتر کیفیت"><button class="filter" data-filter="all" aria-pressed="true">همه</button><button class="filter" data-filter="VISUAL_CANDIDATE_NOT_APPROVED" aria-pressed="false">نامزد</button><button class="filter" data-filter="HOLD_EXACT_STYLE_REVIEW" aria-pressed="false">بازبینی</button><button class="filter" data-filter="REJECT_REGENERATE" aria-pressed="false">اصلاح</button><button class="filter" data-filter="NEEDS_EDITORIAL_REVIEW" aria-pressed="false">جدید · ۸۶</button><button class="filter" data-filter="__flags__" aria-pressed="false">علامت‌گذاری‌شده‌ها (<span id="flaggedFilter">۰</span>)</button></div><div class="note">نمایش <span id="visible">۱۴۶</span> · فایل محلی تأییدشده <span id="loaded">۰</span> / ۱۴۶</div></div><div class="grid" id="grid"></div></section>
 <footer>حنانه بیوتی · ابزار کنترل کیفیت عکس‌ها — تنها برای بازبینی داخلی · هیچ تصویر یا تصویب‌نامه‌ای منتشر نمی‌شود.</footer></main>
 <dialog id="modal"><div class="modal-body"><div class="modal-head"><div class="modal-title-wrap"><div class="modal-title-fa" id="modalFaName"></div><strong id="modalId"></strong></div><button class="close" id="close" type="button" aria-label="بستن">×</button></div><img id="modalImage" class="modal-image" alt="تصویر اصلی برای بازبینی"><div class="meta" id="modalMeta"></div><div class="review-actions" id="modalReviewActions"><button type="button" class="review-btn yes" data-modal-decision="CANDIDATE">✓ مناسب اولیه</button><button type="button" class="review-btn hold" data-modal-decision="HOLD">⏸ بررسی بیشتر</button><button type="button" class="review-btn reject" data-modal-decision="REJECT">✕ رد عکس</button></div><div class="actionline"><a id="modalAdvanced" href="/review/editorial-workspace.html">باز کردن بررسی پیشرفته و ثبت دلایل</a></div><p class="savedtext">تصمیم صرفاً روی این مرورگر ذخیره می‌شود، نه روی سرور یا کاتالوگ مشتری.</p></div></dialog>
-<script>fetch("/review/manifest-146.json",{cache:"no-cache"}).then(async r=>{
-  if(!r.ok)throw Error("Review photo manifest unavailable "+r.status);
-  return r.json();
-}).then(data=>{
-  if(data?.schema!==2||data?.count!==146||data?.approval!=="NOT_GRANTED"||!Array.isArray(data.files)||data.files.length!==146||data.files.some(s=>typeof s.title!=="string"||!/[\u0600-\u06ff]/u.test(s.title)))
-    throw Error("Malformed review photo manifest");
+<script>(async()=>{
+  // The former service worker cached a title-less version of this manifest.
+  // A versioned request bypasses that old URL cache; the new worker also
+  // fetches review metadata network-first. Keep an ID-checked offline fallback.
+  const revision="?release=persian-146-cachefix-20261030";
+  const response=await fetch("/review/manifest-146.json"+revision,{cache:"no-store"});
+  if(!response.ok)throw Error("Review manifest HTTP "+response.status);
+  const data=await response.json();
+  if(data?.schema!==2||data.count!==146||data.approval!=="NOT_GRANTED"
+     ||!Array.isArray(data.files)||data.files.length!==146)
+    throw Error("Review image inventory does not match 146 unpublished originals");
+  const ids=new Set(data.files.map(s=>s.id));
+  if(ids.size!==146||data.files.some(s=>!/^nail-[a-z0-9-]+$/.test(s.id)||!/^[a-f0-9]{64}$/.test(s.sha)))
+    throw Error("Review photo IDs or SHA-256 records are invalid");
+  const hasPersian=s=>typeof s.title==="string"&&/[\u0600-\u06ff]/u.test(s.title)&&
+    typeof s.en==="string"&&s.en.trim().length>0;
+  if(data.files.some(s=>!hasPersian(s))){
+    // A previously installed offline cache can hold the pre-Persian manifest.
+    // Recover ONLY exact-ID titles from the catalog-backed preliminary review.
+    const namesResponse=await fetch("/review/manicure-146-preliminary-suggestions.json"+revision,{cache:"no-store"});
+    if(!namesResponse.ok)throw Error("Persian style names unavailable "+namesResponse.status);
+    const namesData=await namesResponse.json();
+    if(namesData.schema!==1||namesData.images?.length!==146)
+      throw Error("Incorrect Persian catalog title inventory");
+    const labels=new Map(namesData.images.map(x=>[x.id,x]));
+    if(labels.size!==146||data.files.some(row=>!labels.has(row.id)||
+       (labels.get(row.id).original_sha256&&labels.get(row.id).original_sha256!==row.sha)))
+      throw Error("Photo-to-title mapping disagrees with immutable source IDs");
+    data.files=data.files.map(s=>{
+      const entry=labels.get(s.id);
+      return {...s,title:entry.catalog.title,en:entry.catalog.en};
+    });
+  }
+  if(data.files.some(s=>!hasPersian(s)))throw Error("Persian photo names incomplete");
   window.HBEAUTY_MANIFEST=data.files;
 (function app(){
 "use strict";
@@ -193,4 +221,4 @@ window.addEventListener("storage",e=>{if(e.key===DRAFT_KEY){try{reviewDrafts=JSO
 
 document.getElementById("export").onclick=()=>{const data=JSON.stringify({schema:1,type:"intake_integrity_only",not_approved:true,date:new Date().toISOString(),verified_ids:[...assets.keys()],errors,manifest:manifest.map(x=>({id:x.id,sha256:x.sha,status:x.status}))},null,2);const url=URL.createObjectURL(new Blob([data],{type:"application/json"}));const a=document.createElement("a");a.href=url;a.download="HBeauty-146-local-transfer-integrity.json";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};
 show();
-})();}).catch(e=>{document.getElementById("alert").textContent="فهرست بازبینی عکس‌ها بارگذاری نشد: "+String(e.message||e)});</script></body></html>
+})();})().catch(e=>{document.getElementById("alert").textContent="خطا در بارگذاری فهرست بازبینی: "+String(e.message||e)+" — برای دریافت تازه‌ترین نسخه اتصال اینترنت را بررسی کنید.";});</script></body></html>
