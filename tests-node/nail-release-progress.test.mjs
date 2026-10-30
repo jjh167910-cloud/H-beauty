@@ -44,4 +44,6 @@ test("real repository SHA locks reconcile to the manicure queue", async()=>{
   assert.equal(status.manicurePublished+status.manicureRemaining,status.manicureTotal);
   assert.equal(status.originalQueueApproved,status.manicurePublished-58);
   assert.equal(status.pedicurePublished,78);
+  assert.equal(status.manicureDisplayed+status.manicureQuarantined,status.manicurePublished);
+  assert.equal(status.manicureDisplayed+status.manicureNeedingPhotos,status.manicureTotal);
 });

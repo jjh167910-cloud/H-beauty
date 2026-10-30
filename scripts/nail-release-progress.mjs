@@ -55,13 +55,24 @@ export function summarizeNailRelease(locks,queue){
 export async function readNailReleaseProgress(root="."){
   const {loadPhotoLocks}=await import("./verify-all-nail-photos.mjs");
   const queue=JSON.parse(readFileSync(resolve(root,"docs/HBEAUTY_MANICURE_162_QUEUE.json"),"utf8"));
-  return summarizeNailRelease(loadPhotoLocks(root),queue);
+  const locks=loadPhotoLocks(root);
+  const progress=summarizeNailRelease(locks,queue);
+  const review=JSON.parse(readFileSync(resolve(root,"src/data/nail-photo-review.json"),"utf8"));
+  for(const entry of review.quarantined){
+    const lock=locks.find(x=>x.id===entry.id&&x.kind==="manicure");
+    if(!lock||lock.hash!==entry.sha256)throw Error("Stale visual review: "+entry.id);
+  }
+  const quarantined=new Set(review.quarantined.map(x=>x.id)).size;
+  return {...progress,manicureQuarantined:quarantined,
+    manicureDisplayed:progress.manicurePublished-quarantined,
+    manicureNeedingPhotos:progress.manicureRemaining+quarantined};
 }
 if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url)){
   const progress=await readNailReleaseProgress();
   if(process.argv.includes("--markdown")){
     console.log("# H-Beauty locked manicure release inventory\n");
     console.log("- Manicure: "+progress.manicurePublished+"/"+progress.manicureTotal+"; remaining: "+progress.manicureRemaining);
+    console.log("- Displayed manicure photos: "+progress.manicureDisplayed+"; quarantined: "+progress.manicureQuarantined+"; styles needing photos: "+progress.manicureNeedingPhotos);
     console.log("- Pedicure: "+progress.pedicurePublished+"/"+progress.pedicureTotal);
     for(const b of progress.batches)console.log("- "+b.batch+": "+b.approved+"/"+b.total+" approved within original queue");
     console.log("\nSource: SHA-locked Git repository manifests, NOT a live Cloudflare proof. Production requires successful live checks.");
