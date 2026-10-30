@@ -61,7 +61,7 @@ export function validateQueue(queue){
 }
 export function renderPhotoBrief(style, art){
   const shapes={
-    square:"short rectangular silhouette, straight parallel sidewalls and a flat free edge with gently softened corners",
+    square:"rectangular silhouette, straight parallel sidewalls and a flat free edge with gently softened corners",
     oval:"softly curved elliptical tip with smooth rounded sidewalls",
     almond:"symmetrically tapered sidewalls ending in a softly rounded almond tip",
     coffin:"tapered ballerina sidewalls ending in a narrow, perfectly flat tip"
