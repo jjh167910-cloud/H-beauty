@@ -15,7 +15,7 @@
   "batches": [
     {
       "batch": "B61",
-      "status": "1 of 50 approved and release-staged from user's existing photo album; 49 not generated / not approved",
+      "status": "5 of 50 approved and release-staged; 45 not generated / not approved",
       "target_manifest": "assets/hbeauty-manicure-batch61.sha256",
       "styles": [
         {
@@ -242,10 +242,11 @@
           "accent": "#E6A9BA",
           "color": "dark",
           "collection": "prism",
-          "qa_status": "NOT_GENERATED",
+          "qa_status": "APPROVED",
           "file_path": "public/nails/photos/nail-atlas-prism-merlot.webp",
-          "sha256": null,
-          "approved_by_qa": false
+          "sha256": "3146eafcc442af61ff66ff98c6be63afac60a8fe91fd420cdffc0de0f12d1aef",
+          "approved_by_qa": true,
+          "provenance": "YoungLady98 / prism-champagne-young-lady-hand-pure-silk.webp"
         },
         {
           "id": "nail-atlas-prism-espresso",
@@ -260,10 +261,11 @@
           "accent": "#D5AD93",
           "color": "dark",
           "collection": "prism",
-          "qa_status": "NOT_GENERATED",
+          "qa_status": "APPROVED",
           "file_path": "public/nails/photos/nail-atlas-prism-espresso.webp",
-          "sha256": null,
-          "approved_by_qa": false
+          "sha256": "c510c0b68f2d93cef71d16cdc835ce7f33fbd0679fbd3d56069d427cf8b4a014",
+          "approved_by_qa": true,
+          "provenance": "YoungLady98 / prism-ruby-young-lady-hand-pure-silk.webp"
         },
         {
           "id": "nail-atlas-prism-lavender",
@@ -296,10 +298,11 @@
           "accent": "#BED7FF",
           "color": "color",
           "collection": "prism",
-          "qa_status": "NOT_GENERATED",
+          "qa_status": "APPROVED",
           "file_path": "public/nails/photos/nail-atlas-prism-cobalt.webp",
-          "sha256": null,
-          "approved_by_qa": false
+          "sha256": "8d35f3dd81f462bc30de4771b7ace45d7db2ef5b8193e444aa4631aac0a9ddaa",
+          "approved_by_qa": true,
+          "provenance": "PureSilk98 / velvet-midnight.webp"
         },
         {
           "id": "nail-atlas-gradient-ivory",
@@ -404,10 +407,11 @@
           "accent": "#B7C1E8",
           "color": "dark",
           "collection": "gradient",
-          "qa_status": "NOT_GENERATED",
+          "qa_status": "APPROVED",
           "file_path": "public/nails/photos/nail-atlas-gradient-midnight.webp",
-          "sha256": null,
-          "approved_by_qa": false
+          "sha256": "045f19574eed07ce025052cca624a243b4462b0ae442c85ccb6faf11e91248f7",
+          "approved_by_qa": true,
+          "provenance": "YoungLady98 / gradient-midnight-young-lady-hand-pure-silk.webp"
         },
         {
           "id": "nail-atlas-gradient-coral",
@@ -918,7 +922,7 @@
     },
     {
       "batch": "B62",
-      "status": "NOT GENERATED / NOT APPROVED / NOT DEPLOYED",
+      "status": "1 of 50 approved and release-staged; 49 not generated / not approved",
       "target_manifest": "assets/hbeauty-manicure-batch62.sha256",
       "styles": [
         {
@@ -1582,10 +1586,11 @@
           "accent": "#F3A7B2",
           "color": "red",
           "collection": "magnetic",
-          "qa_status": "NOT_GENERATED",
+          "qa_status": "APPROVED",
           "file_path": "public/nails/photos/nail-atlas-magnetic-ruby.webp",
-          "sha256": null,
-          "approved_by_qa": false
+          "sha256": "90ceb50ebeaa8bc09c0359259d014ccdce622256c5667da8fe8449caac11fc2e",
+          "approved_by_qa": true,
+          "provenance": "YoungLady98 / minimal-ivory-young-lady-hand-pure-silk.webp"
         },
         {
           "id": "nail-atlas-magnetic-merlot",
@@ -1825,7 +1830,7 @@
     },
     {
       "batch": "B63",
-      "status": "NOT GENERATED / NOT APPROVED / NOT DEPLOYED",
+      "status": "1 of 50 approved and release-staged; 49 not generated / not approved",
       "target_manifest": "assets/hbeauty-manicure-batch63.sha256",
       "styles": [
         {
@@ -2651,10 +2656,11 @@
           "accent": "#E9DDFB",
           "color": "color",
           "collection": "celestial",
-          "qa_status": "NOT_GENERATED",
+          "qa_status": "APPROVED",
           "file_path": "public/nails/photos/nail-atlas-celestial-lavender.webp",
-          "sha256": null,
-          "approved_by_qa": false
+          "sha256": "aa824991583021d03c0066353772f4b1ca1190cf7383ae33eefa9357926b5cc1",
+          "approved_by_qa": true,
+          "provenance": "PureSilk98 / minimal-merlot.webp"
         },
         {
           "id": "nail-atlas-celestial-cobalt",
@@ -2732,7 +2738,7 @@
     },
     {
       "batch": "B64",
-      "status": "NOT GENERATED / NOT APPROVED / NOT DEPLOYED",
+      "status": "0 of 12 approved and release-staged; 12 not generated / not approved",
       "target_manifest": "assets/hbeauty-manicure-batch64.sha256",
       "styles": [
         {
