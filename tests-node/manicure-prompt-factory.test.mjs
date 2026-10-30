@@ -2,13 +2,16 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {GENERATOR_SETTINGS,makePrompt,renderFiles,buildRecords,validateQueue,loadQueue} from "../scripts/generate-manicure-prompts.mjs";
 const queue=loadQueue(),rows=validateQueue(queue),pending=rows.filter(x=>x.qa_status!=="APPROVED");
-test("exactly 150 unique pending prompts and 12 published exclusions",()=>{
+test("remaining prompts are derived from approved queue membership and exclude released photo IDs",()=>{
   const records=buildRecords(queue);
   assert.equal(rows.length,162);
-  assert.equal(rows.length-pending.length,12);
-  assert.equal(records.length,150);
-  assert.equal(new Set(records.map(x=>x.id)).size,150);
+  const approved=rows.filter(s=>s.qa_status==="APPROVED");
+  assert.equal(approved.length+pending.length,162);
+  assert.ok(approved.length>=12,"The original 12 published queue entries must remain approved");
+  assert.equal(records.length,pending.length);
+  assert.equal(new Set(records.map(x=>x.id)).size,pending.length);
   assert.ok(!records.some(r=>r.id==="nail-rose-chrome"));
+  for(const s of approved)assert.ok(!records.some(r=>r.id===s.id),"Approved style was accidentally scheduled: "+s.id);
 });
 test("each generated prompt is a single camera exposure with no multi-image or labeling cues",()=>{
   for(const s of pending){
