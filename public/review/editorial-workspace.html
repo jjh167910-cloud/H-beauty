@@ -43,7 +43,7 @@ const $=id=>document.getElementById(id);
 const el=(tag,cl,txt)=>{const x=document.createElement(tag);if(cl)x.className=cl;if(txt!==undefined)x.textContent=txt;return x};
 const safeId=x=>/^nail-[a-z0-9-]+$/.test(x);
 const counts=(rows,key)=>rows.reduce((a,x)=>(a[x[key]]=(a[x[key]]||0)+1,a),{});
-function restore(){try{const d=JSON.parse(localStorage.getItem(STORE)||"{}");if(d&&typeof d==="object"&&!Array.isArray(d))drafts=d}catch{drafts={}}}
+function restore(){let current={};try{const d=JSON.parse(localStorage.getItem(STORE)||"{}");if(d&&typeof d==="object"&&!Array.isArray(d))current=d}catch{}drafts=current}
 function persist(){localStorage.setItem(STORE,JSON.stringify(drafts))}
 function statusLabel(v){return {VISUAL_CANDIDATE:"نامزد بررسی بیشتر",HOLD:"نیازمند بررسی دقیق",REGENERATE:"پیشنهاد بازتولید"}[v]||"در انتظار بررسی"}
 function draftLabel(v){return {CANDIDATE:"مناسب اولیه (نشان‌گذاری سریع)",DRAFT_APPROVE:"پیش‌نویس پذیرش",HOLD:"نگه‌داری برای بررسی",REJECT:"رد برای بازتولید"}[v]||"بدون تصمیم"}
@@ -131,15 +131,16 @@ function saveDecision(decision){
   if(!/^https:\/\/[^ ]{8,}$/.test(proof)){$("saveError").textContent="برای پذیرش، پیوند HTTPS به شواهد منشأ تولید لازم است.";return;}
  }
  const draft={id:selected,sha256:item.sha,decision,reviewer,notes,source_evidence:proof,checks,updated_at:new Date().toISOString(),review_tier:"LOCAL_DRAFT_NOT_PUBLICATION",publication_approved:false};
- drafts[selected]=draft;localStorage.setItem("hbeauty:reviewer-name",reviewer);persist();$("modal").close();showStats();tiles();say("تصمیم فقط در مرورگر ذخیره شد؛ هیچ تأیید رسمی یا انتشار انجام نشده است.",true);
+ restore();drafts[selected]=draft;localStorage.setItem("hbeauty:reviewer-name",reviewer);persist();$("modal").close();showStats();tiles();say("تصمیم فقط در مرورگر ذخیره شد؛ هیچ تأیید رسمی یا انتشار انجام نشده است.",true);
 }
 function clearDecision(){
- if(!selected)return;delete drafts[selected];persist();$("modal").close();showStats();tiles();say("پیش‌نویس تصمیم برای این تصویر پاک شد.",true);
+ if(!selected)return;restore();delete drafts[selected];persist();$("modal").close();showStats();tiles();say("پیش‌نویس تصمیم برای این تصویر پاک شد.",true);
 }
 function download(name,content,mime){
  const url=URL.createObjectURL(new Blob([content],{type:mime})),a=document.createElement("a");a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),2000);
 }
 function exportDrafts(){
+ restore();
  const rows=manifest.filter(x=>auditDraft(x.id,x.sha)).map(x=>drafts[x.id]);
  const payload={schema:1,artifact:"HBEAUTY_REVIEWER_DECISION_DRAFT",approval_status:"NOT_FINAL",source_reviewer_workflow:"BROWSER_LOCAL_NO_SERVER_WRITES",exported_at:new Date().toISOString(),source_manifest_count:manifest.length,record_count:rows.length,records:rows};
  download("HBeauty_146_Editorial_Review_Drafts.json",JSON.stringify(payload,null,2),"application/json");
@@ -170,5 +171,6 @@ $("saveHold").onclick=()=>saveDecision("HOLD");
 $("saveReject").onclick=()=>saveDecision("REJECT");
 $("clear").onclick=clearDecision;
 $("export").onclick=exportDrafts;
+window.addEventListener("storage",e=>{if(e.key===STORE){restore();if(manifest.length){showStats();tiles();}}});
 init().catch(e=>say("فهرست بررسی بارگذاری نشد: "+String(e.message||e)));
 </script></body></html>
