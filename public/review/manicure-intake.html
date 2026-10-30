@@ -94,9 +94,11 @@ const DRAFT_KEY="hbeauty:manicure-146:review-drafts:v1";
 const decisionsAllowed=new Set(["CANDIDATE","HOLD","REJECT","DRAFT_APPROVE"]);
 const decisionText={CANDIDATE:"مناسب اولیه",DRAFT_APPROVE:"پیش‌نویس پذیرش",HOLD:"بررسی بیشتر",REJECT:"رد عکس"};
 let reviewDrafts={},viewingId=null;
-try{const stored=JSON.parse(localStorage.getItem(DRAFT_KEY)||"{}");if(stored&&typeof stored==="object"&&!Array.isArray(stored))reviewDrafts=stored}catch{}
+function refreshDrafts(){let current={};try{const stored=JSON.parse(localStorage.getItem(DRAFT_KEY)||"{}");if(stored&&typeof stored==="object"&&!Array.isArray(stored))current=stored}catch{}reviewDrafts=current}
+refreshDrafts();
 function existingDecision(s){const d=reviewDrafts[s.id];return d&&d.sha256===s.sha&&decisionsAllowed.has(d.decision)?d:null}
 function writeFlag(s,decision){
+  refreshDrafts(); // Preserve decisions saved in other gallery or editorial tabs.
   const prior=existingDecision(s);
   if(prior?.decision===decision)delete reviewDrafts[s.id];
   else reviewDrafts[s.id]={id:s.id,sha256:s.sha,decision,reviewer:prior?.reviewer||"",notes:prior?.notes||"",source_evidence:prior?.source_evidence||"",checks:prior?.checks||{},updated_at:new Date().toISOString(),review_tier:"LOCAL_DRAFT_NOT_PUBLICATION",publication_approved:false};
@@ -109,6 +111,7 @@ function flagCount(){return manifest.filter(s=>existingDecision(s)).length}
 function updateFlagCounters(){const n=flagCount();document.getElementById("flaggedTop").textContent=String(n);document.getElementById("flaggedFilter").textContent=String(n)}
 function updateModalChoices(s){for(const b of document.querySelectorAll("[data-modal-decision]"))b.setAttribute("aria-pressed",String(existingDecision(s)?.decision===b.dataset.modalDecision))}
 function exportFlags(){
+ refreshDrafts();
  const rows=manifest.filter(s=>existingDecision(s)).map(s=>({...existingDecision(s),title:s.title,en:s.en,publication_approved:false}));
  const data={schema:1,type:"HBEAUTY_MANICURE_REVIEW_DRAFTS",approval_status:"NOT_FINAL",saved_only_in_this_browser:true,exported_at:new Date().toISOString(),total_gallery:146,decisions:rows};
  const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:"application/json"}));
@@ -189,7 +192,7 @@ search.addEventListener("input",show);
 document.getElementById("close").onclick=()=>modal.close();
 document.querySelectorAll("[data-modal-decision]").forEach(b=>b.onclick=()=>{const s=specs.get(viewingId);if(s)writeFlag(s,b.dataset.modalDecision)});
 document.getElementById("downloadFlags").onclick=exportFlags;
-window.addEventListener("storage",e=>{if(e.key===DRAFT_KEY){try{reviewDrafts=JSON.parse(e.newValue||"{}")}catch{reviewDrafts={}}show()}});
+window.addEventListener("storage",e=>{if(e.key===DRAFT_KEY){refreshDrafts();show()}});
 
 document.getElementById("export").onclick=()=>{const data=JSON.stringify({schema:1,type:"intake_integrity_only",not_approved:true,date:new Date().toISOString(),verified_ids:[...assets.keys()],errors,manifest:manifest.map(x=>({id:x.id,sha256:x.sha,status:x.status}))},null,2);const url=URL.createObjectURL(new Blob([data],{type:"application/json"}));const a=document.createElement("a");a.href=url;a.download="HBeauty-146-local-transfer-integrity.json";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};
 show();
