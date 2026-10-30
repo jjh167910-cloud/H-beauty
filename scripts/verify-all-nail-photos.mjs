@@ -144,7 +144,28 @@ if(process.argv[1] && process.argv[1].endsWith("verify-all-nail-photos.mjs")){
   console.log("Validated "+items.length+" unique locked nail photo references",counts);
   // Separate intake namespace: files are intentionally UNAPPROVED and must
   // never count as customer-facing manicure photos or appear in nail release locks.
-  const reviewItems=reviewIntakeRecords().map(x=>({
+  // The new 86 images are locked by the ORIGINAL ZIP SHA-256 before extraction.
+  // The resulting per-image manifest is rebuilt from those exact source bytes.
+  const reviewManifest=(mode==="local"||mode==="live")
+    ?JSON.parse(readFileSync(resolve("public/review/manifest-146.json"),"utf8")):null;
+  if(reviewManifest){
+    if(reviewManifest.schema!==2||reviewManifest.count!==146||
+       reviewManifest.approval!=="NOT_GRANTED"||reviewManifest.files?.length!==146)
+      throw Error("Review-only catalog must contain exactly 146 non-approved images");
+    const old=reviewIntakeRecords(),byId=new Map(reviewManifest.files.map(x=>[x.id,x]));
+    if(byId.size!==146||old.some(x=>byId.get(x.id)?.sha!==x.sha))
+      throw Error("Historic 60 original SHA-256 files were changed");
+    const counts={};
+    for(const row of reviewManifest.files){
+      counts[row.status]=(counts[row.status]||0)+1;
+      if(!/^[0-9a-f]{64}$/.test(row.sha))throw Error("Invalid new review photo hash "+row.id);
+    }
+    const required={VISUAL_CANDIDATE_NOT_APPROVED:28,HOLD_EXACT_STYLE_REVIEW:16,
+      REJECT_REGENERATE:16,NEEDS_EDITORIAL_REVIEW:86};
+    if(Object.keys(counts).length!==4||Object.entries(required).some(([key,n])=>counts[key]!==n))
+      throw Error("Review-only original status breakdown changed");
+  }
+  const reviewItems=(reviewManifest?.files||[]).map(x=>({
     id:x.id,path:"public/review/photos/"+x.id+".webp",hash:x.sha
   }));
   if(mode==="local"){
@@ -156,7 +177,7 @@ if(process.argv[1] && process.argv[1].endsWith("verify-all-nail-photos.mjs")){
       const d=webpDimensions(b);
       if(d.width!==1600||d.height!==1600)throw Error("Review-only original not 1600px "+item.id);
     }
-    console.log("Verified 60 original review-only photos at 1600px (0 editorial approvals)");
+    console.log("Verified 146 original review-only photos at 1600px (0 editorial approvals)");
   }else if(mode==="live"){
     console.log("Verified public SHA-256 image bytes",await verifyLivePhotos(items));
     console.log("Verified public original review-only SHA-256 image bytes",
