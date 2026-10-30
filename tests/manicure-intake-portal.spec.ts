@@ -93,3 +93,12 @@ test("real deflated ZIP archive imports on device without publishing unapproved 
   await expect(page.locator("#loaded")).toHaveText("1");
   await expect(page.locator("#alert")).toContainText("هیچ خطای انتقالی یافت نشد");
 });
+
+test("keyboard-only reviewer can open the local ZIP picker", async({page})=>{
+  await page.goto(PAGE);
+  const choose=page.getByRole("button",{name:/انتخاب سه فایل ZIP/});
+  await choose.focus();
+  await expect(choose).toBeFocused();
+  const [picker]=await Promise.all([page.waitForEvent("filechooser"),page.keyboard.press("Enter")]);
+  expect(picker.isMultiple()).toBe(true);
+});
