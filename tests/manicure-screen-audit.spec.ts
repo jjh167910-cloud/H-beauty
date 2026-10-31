@@ -15,6 +15,9 @@ test("featured manicure photograph has real dimensions and is not collapsed",asy
   const image=page.locator(".nail-hero__art");
   await expect(image).toBeVisible();
   await expect(image).toHaveAttribute("data-media-source","ai-photo");
+  const fallbackVisibility=await image.locator(".nail-visual__fallback")
+    .evaluate(el=>getComputedStyle(el).visibility);
+  expect(fallbackVisibility).toBe("hidden");
   const size=await image.boundingBox();
   expect(size?.height).toBeGreaterThan(260);
   expect(size?.width).toBeGreaterThan(135);
