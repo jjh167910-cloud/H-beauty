@@ -182,6 +182,7 @@
 .nail-visual__photo[data-ready] {opacity:1;}
 .nail-card__picture .nail-visual {height:100%;}
 .nail-card__picture .nail-visual__photo {object-position:center 52%;}
+.nail-hero__art[data-media-source="ai-photo"] .nail-visual__fallback {visibility:hidden;}
 .nail-hero__art .nail-visual__photo {
   object-position:54% 45%;
   -webkit-mask-image:radial-gradient(ellipse 75% 84% at 54% 50%,#000 65%,transparent 100%);
