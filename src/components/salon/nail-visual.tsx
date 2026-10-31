@@ -104,6 +104,19 @@ const FUTURE_MANICURE_EDITORIAL_PHOTOS: Readonly<Record<string,string>> =
       .map(id=>[id,`/nails/photos/${id}.webp`])
   );
 
+/**
+ * Temporary owner-selected publication of 146 intact source originals.
+ * The build guarantees SHA-256, 1600px, exact ID mapping and the owner grant.
+ * This is not an assertion that these photographs passed the separate full
+ * professional editorial/anatomy QA gate. Preserve the immutable review ledger.
+ */
+const OWNER_SELECTED_TEMPORARY_MANICURE_PHOTOS: Readonly<Record<string,string>> =
+  Object.fromEntries(
+    String(import.meta.env.VITE_MANICURE_OWNER_VISIBLE_IDS || "")
+      .split(",").filter(id=>/^nail-[a-z0-9-]+$/.test(id))
+      .map(id=>[id,`/review/photos/${id}.webp`])
+  );
+
 /** Only the complete, SHA-locked 78-image release may enable these URLs.
  * Missing/mismatched files keep the vector artwork in place.
  */
@@ -127,6 +140,14 @@ export const NAIL_EDITORIAL_PHOTOS: Readonly<Record<string,string>> = filterRevi
   ...PEDICURE_EDITORIAL_PHOTOS
 }, photoReview.quarantined);
 
+// An independent, reversible owner-authorized display layer. This does not
+// change the professionally certified photo set or historical quarantines.
+export const NAIL_CUSTOMER_PHOTOS: Readonly<Record<string,string>> = {
+  ...NAIL_EDITORIAL_PHOTOS,
+  ...OWNER_SELECTED_TEMPORARY_MANICURE_PHOTOS
+};
+
+
 export function NailVisual({
   style,
   className = "",
@@ -142,7 +163,7 @@ export function NailVisual({
   const [failed, setFailed] = useState(false);
   const [ready, setReady] = useState(false);
   useEffect(() => { setFailed(false); setReady(false); }, [style.id]);
-  const source = NAIL_EDITORIAL_PHOTOS[style.id];
+  const source = NAIL_CUSTOMER_PHOTOS[style.id];
   const photo = Boolean(source && !failed);
 
   return (
