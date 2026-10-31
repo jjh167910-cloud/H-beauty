@@ -166,7 +166,7 @@ export function NailsScreen() {
                 placeholder="جست‌وجوی طرح، رنگ یا نام" aria-label="جست‌وجو در گالری ناخن"/>
               {query ? (
                 <button type="button" className="nail-search__clear" onClick={()=>setQuery("")}
-                  aria-label="پاک کردن متن جست‌وجو"><Icon name="close" size={16}/></button>
+                  aria-label="حذف متن جست‌وجو"><Icon name="close" size={16}/></button>
               ) : null}
             </label>
             <button type="button" className="nail-filter-workspace__open"
@@ -221,7 +221,7 @@ export function NailsScreen() {
           ) : null}
           {query.trim() && results.length===0 ? (
             <div className="nail-search-feedback" role="status">
-              <span>با این جست‌وجو و فیلترها طرحی پیدا نشد.</span>
+              <span>هیچ طرحی با این جست‌وجو و فیلترها پیدا نشد.</span>
               <button type="button" onClick={()=>setQuery("")}>پاک کردن جست‌وجو</button>
             </div>
           ) : null}
