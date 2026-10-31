@@ -29,7 +29,8 @@ export function finalizeServiceWorker(distDir = 'dist') {
   // Precache only the explicitly owner-approved HB-001 replacement; the other
   // 291 portraits retain their existing runtime caching and release behavior.
   const hb001Lock=resolve("assets/hb001-overlay.sha256");
-  if(existsSync(hb001Lock)){
+  if(process.env.VITE_HB001_PRECACHE==="true"){
+    if(!existsSync(hb001Lock))throw Error("Required HB-001 offline release lock missing");
     const lines=readFileSync(hb001Lock,"utf8").trim().split(/\r?\n/);
     if(lines.length!==2)throw Error("HB-001 offline precache requires two exact locks");
     const ids=new Set();
