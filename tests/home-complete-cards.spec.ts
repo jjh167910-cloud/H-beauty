@@ -27,6 +27,8 @@ for(const width of [320,354,390,430,768,1280]){
         imageLeft:i?.left||0,imageRight:i?.right||0,
         frameLeft:f?.left||0,frameRight:f?.right||0,
         fit:img?getComputedStyle(img).objectFit:"",
+        matte:img?.parentElement?getComputedStyle(img.parentElement).backgroundColor:"",
+        frameBorder:img?.parentElement?getComputedStyle(img.parentElement).borderTopWidth:"",
         imgWidth:img?.naturalWidth||0,imgHeight:img?.naturalHeight||0,
       };
     }));
@@ -37,8 +39,14 @@ for(const width of [320,354,390,430,768,1280]){
       expect(c.width).toBeGreaterThan(95);
       expect(c.frameWidth/c.frameHeight).toBeCloseTo(1,1);
       expect(c.fit).toBe("contain");
-      expect(c.imageLeft-c.frameLeft).toBeGreaterThan(3);
-      expect(c.frameRight-c.imageRight).toBeGreaterThan(3);
+      // Reference studio cards have no secondary picture-within-picture border:
+      // the entire verified WebP must meet its ivory rounded frame.
+      expect(Math.abs(c.imageLeft-c.frameLeft)).toBeLessThanOrEqual(2);
+      expect(Math.abs(c.frameRight-c.imageRight)).toBeLessThanOrEqual(2);
+      expect(c.matte).toBe("rgb(245, 243, 239)");
+      expect(c.frameBorder).toBe("0px");
+      expect(c.imgWidth).toBeGreaterThan(0);
+      expect(c.imgWidth/c.imgHeight).toBeCloseTo(1,1);
     }
     const pageWidth=await page.evaluate(()=>
       document.documentElement.scrollWidth-document.documentElement.clientWidth);
@@ -46,7 +54,7 @@ for(const width of [320,354,390,430,768,1280]){
   });
 }
 
-test("mobile gallery cards keep full images within their padded matte frames",async({page})=>{
+test("mobile gallery cards show the complete square photo edge-to-edge on the ivory matte",async({page})=>{
   await open(page,354);
   await page.goto("/#/looks");
   const card=page.locator(".studio-look-card .look-card__media").first();
@@ -56,11 +64,17 @@ test("mobile gallery cards keep full images within their padded matte frames",as
     const a=el.getBoundingClientRect();
     const im=el.querySelector("img") as HTMLImageElement;
     const b=im.getBoundingClientRect();
-    return {w:a.width,h:a.height,imageW:b.width,imageH:b.height,xpad:b.left-a.left,ypad:b.top-a.top,fit:getComputedStyle(im).objectFit,naturalW:im.naturalWidth};
+    return {w:a.width,h:a.height,imageW:b.width,imageH:b.height,xpad:b.left-a.left,ypad:b.top-a.top,
+      fit:getComputedStyle(im).objectFit,naturalW:im.naturalWidth,
+      matte:getComputedStyle(el).backgroundColor,border:getComputedStyle(el).borderTopWidth};
   });
   expect(measure.w/measure.h).toBeCloseTo(1,1);
-  expect(measure.xpad).toBeGreaterThan(3);
-  expect(measure.ypad).toBeGreaterThan(3);
+  expect(Math.abs(measure.xpad)).toBeLessThanOrEqual(2);
+  expect(Math.abs(measure.ypad)).toBeLessThanOrEqual(2);
+  expect(measure.imageW).toBeCloseTo(measure.w,0);
+  expect(measure.imageH).toBeCloseTo(measure.h,0);
+  expect(measure.matte).toBe("rgb(245, 243, 239)");
+  expect(measure.border).toBe("0px");
   expect(measure.fit).toBe("contain");
   expect(measure.naturalW).toBeGreaterThan(0);
 });
@@ -81,11 +95,13 @@ test("hairstyle detail sheet shows the original square photograph without cover 
   const shape=await hero.evaluate(el=>{
     const r=el.getBoundingClientRect();
     const img=el.querySelector("img") as HTMLImageElement;
-    return {ratio:r.width/r.height,fit:getComputedStyle(img).objectFit,pad:getComputedStyle(img).paddingTop};
+    return {ratio:r.width/r.height,fit:getComputedStyle(img).objectFit,
+      pad:getComputedStyle(img).paddingTop,matte:getComputedStyle(el).backgroundColor};
   });
   expect(shape.ratio).toBeCloseTo(1,1);
   expect(shape.fit).toBe("contain");
-  expect(parseFloat(shape.pad)).toBeGreaterThan(2);
+  expect(parseFloat(shape.pad)).toBe(0);
+  expect(shape.matte).toBe("rgb(245, 243, 239)");
 });
 
 test("full-screen discovery shows uncut photo in a square canvas",async({page})=>{
