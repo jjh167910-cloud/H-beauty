@@ -372,6 +372,12 @@ export function finalizeServiceWorker(distDir = 'dist') {
   const urls=files.map(file=>'/'+relative(root,file).split(sep).join('/'));
   const hash=createHash('sha256').update(readFileSync(html));
   for(let i=0;i<files.length;i++) hash.update(urls[i]).update(readFileSync(files[i]));
+  // Gallery image URLs keep their numeric filenames after portrait matting.
+  // Include the pinned 584-photo archive edition in the SW fingerprint so
+  // returning mobile PWAs receive a genuinely new cache generation.
+  const hairMatteLock=resolve("assets/hbeauty-hair-ivory-292-v1.json");
+  if(!existsSync(hairMatteLock))throw Error("Missing hairstyle matte cache-version lock");
+  hash.update(readFileSync(hairMatteLock));
   const version=`h-beauty-v5-${hash.digest('hex').slice(0,12)}`;
   const source=readFileSync(worker,'utf8');
   if(!source.includes(CACHE_TOKEN) || !source.includes(ASSET_TOKEN))
