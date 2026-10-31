@@ -7,6 +7,7 @@ async function start(page:Page,width=390){
   });
   await page.goto("/#/nails");
   await expect(page.getByRole("heading",{name:/هنر ناخن/})).toBeVisible();
+  await page.getByRole("button",{name:"فیلترها"}).click();
 }
 
 for(const width of [320,390,768]){
@@ -52,6 +53,7 @@ test("pedicure family options are independent and reset manicure-only selection"
   await expect(page.locator(".nail-card")).toHaveCount(12);
   await page.getByRole("group",{name:"انتخاب گالری دست یا پا"}).getByRole("button",{name:"پدیکور · ۷۸ طرح"}).click();
   await expect(group.getByRole("button",{name:"عروس مرواریدی",exact:true})).toHaveCount(0);
+  await page.getByRole("button",{name:"فیلترها"}).click();
   await group.getByRole("button",{name:"پدیکور مرمری",exact:true}).click();
   await expect(page.locator(".nail-card")).toHaveCount(6);
   await expect(page.locator(".nail-card").first()).toContainText("پدیکور مرمری");
