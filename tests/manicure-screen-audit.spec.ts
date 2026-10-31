@@ -62,7 +62,11 @@ test("photo-only gallery recovers after a temporary image request failure",async
   await expect(card.locator(".nail-visual[data-media-source='vector']")).toBeVisible();
   // A different successful image must remain visible throughout the retry.
   const intact=page.locator(".nail-card").filter({hasText:"صورتی باله"});
+  // Source cards are intentionally lazy-loaded; scrolling makes this a real
+  // successfully decoded neighbor before testing that reconnect preserves it.
+  await intact.scrollIntoViewIfNeeded();
   await expect(intact.locator(".nail-visual[data-media-source='ai-photo']")).toBeVisible();
+  await card.scrollIntoViewIfNeeded();
   await page.unroute("**/nails/photos/nail-milky-silk.webp");
   await page.evaluate(()=>window.dispatchEvent(new Event("online")));
   await expect(card.locator(".nail-visual[data-media-source='ai-photo']")).toBeVisible();
