@@ -61,7 +61,8 @@ test("photo-only gallery recovers after a temporary image request failure",async
   const card=page.locator(".nail-card").filter({hasText:"شیری ابریشمی"});
   await expect(card.locator(".nail-visual[data-media-source='vector']")).toBeVisible();
   // A different successful image must remain visible throughout the retry.
-  const intact=page.locator(".nail-card").filter({hasText:"صورتی باله"});
+  // Classic French is one of the actual dev-server photo-whitelisted styles.
+  const intact=page.locator(".nail-card").filter({hasText:"فرنچ کلاسیک"});
   await expect(intact.locator(".nail-visual[data-media-source='ai-photo']")).toBeVisible();
   await page.unroute("**/nails/photos/nail-milky-silk.webp");
   await page.evaluate(()=>window.dispatchEvent(new Event("online")));
