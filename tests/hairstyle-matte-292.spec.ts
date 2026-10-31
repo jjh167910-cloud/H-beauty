@@ -1,24 +1,37 @@
 import { test, expect } from "playwright/test";
+import { existsSync, readFileSync } from "node:fs";
 
 const sampleIds=[1,9,24,30,43,77,84,125,141,172,205,292];
 const matte=[245,243,239];
-// SHA-256 of twelve model-preserving corrected 560px WebP images.
+// SHA-256 of twelve V3-released 560px WebP images (new release locks).
 // This test must run after the production build installs the locked packs.
 const sampleSHA:Record<number,string>={
-  1:"d69ad18e62aa209907a69a84324b03a91f82171111c08d179135c9c828232783",
-  9:"6acf454fe307a85171d863dc20ff11b65c7d1d00cbe423db71f39b0989f4fdab",
-  24:"8bf9c2ea131dd12ffbf0c9895b7b884f62d778887a4137b8ea9227521bf8cc1c",
-  30:"d992e0fcd2a6ee3bc86ad6ad2df9df6ede84a4d10c2373e99f30cb4867462809",
-  43:"79eb3cf1324d1733f9d910811cd7d0edfe308b219153b90b5aa0fc5ada139f4d",
-  77:"4ba678ab8569943b7c3c06119cf1cc49a8b1c8e5f2c17f485eb165f719263dd7",
-  84:"d60700965eaef6ab10c0689c1183fac351ce81f8e79bc5f0273330b7e670cd70",
-  125:"5c1c1484db2853c201393312c4c2f7bd34593dcc5554211aaf8bd1e5f48ac39f",
-  141:"b1a4a79ec95bbec34563440791c6a6df874d161da6f3781d2a643d64081328ad",
-  172:"3c33d11e4679e407cb9c223f691712d753fa83b3c9d69aad10b73b1795bc7ad7",
-  205:"cd32e8f85c459ce8b4af24785fbfef67f679b4d3550c26b34a34585c711d60da",
-  292:"1103f0e429b711c1e509c865f2729a79b211f5d01ada940d8b021b3ea6fac343"
+  1:"6535c20a4e6119c73777fa1914d96b60ce60fc52712cff8253c5fb6c8d26d609",
+  9:"77d4915285ce50fe370ae755d42498ba01fe8ab711591ad7841bce66829e599f",
+  24:"9915bfd4e4a6f0d6162bef7e11b1bfb0462d904312192d516fc8d488a7b687ab",
+  30:"58d741b96c5abcd3981bfceb640ba91ab4856e76e0c139d566b1dc13266ea477",
+  43:"764eb0a5410f14e7982cc84fdbe207fe3bacb00931004afb6bbfc1a0a7440d42",
+  77:"3a4d1d4595e18282936cda06bf33565932114884e3b974100c13893d7d6c580c",
+  84:"09556d0340f5a7e2d1c676ac588cba53920f1bc22852c6cddfdf5df90e9a4760",
+  125:"f22b923204d2bf2404bd77c4e2ae7f8b36520017f026cce69b4673acb02809c0",
+  141:"3428108e9385d8169d20a7cc3168dfc175c1b7a9e53675e6d014fe14fb63e5b1",
+  172:"0b9a4cd85bf0bf6e6288e8aa1451c513b94c957ef6a6253d6fb43cc25c85ed96",
+  205:"13d6197412189f35a9bdcbd57ef57c339f1f1b1929df9bb5912fbccc1f3f450f",
+  292:"71bd7136710b1e17aae5320fba61917351fd070851ca8b385aab469ddb4bbaac"
 };
 
+// Preserve the original V3 release SHA-256 locks. The owner-selected HB-001
+// edition has a separate fixed lock, never a loosened comparison.
+const hb001OverlayLock="assets/hb001-overlay.sha256";
+const hb001OverlayThumb="19b999364c0717576da9eb7cdcec3e372b8d90df4104847711f04553dd05cf52";
+const hb001OverlayFull="f94145d96dc9c4aca28674b704b7ee61b09564015dbd118d502f060b6d3d5818";
+const hasHB001Overlay=existsSync(hb001OverlayLock);
+if(hasHB001Overlay){
+  expect(readFileSync(hb001OverlayLock,"utf8")).toBe(
+    `${hb001OverlayFull}  1.webp\n${hb001OverlayThumb}  1-thumb.webp\n`
+  );
+}
+const activeSampleSHA={...sampleSHA,1:hasHB001Overlay?hb001OverlayThumb:sampleSHA[1]};
 
 test("all sample thumbs have a completely consistent ivory background with intact subjects",async({page})=>{
   await page.goto("/#/");
@@ -80,7 +93,7 @@ for(const width of [320,354,390]){
   });
 }
 
-test("browser receives processed matting assets, not stale original thumbnails",async({page})=>{
+test("browser receives the correct edition-locked assets, not stale thumbnails",async({page})=>{
   await page.goto("/#/");
   const results=await page.evaluate(async pairs=>{
     const output=[];
@@ -93,7 +106,7 @@ test("browser receives processed matting assets, not stale original thumbnails",
       output.push({id,expected,actual});
     }
     return output;
-  },Object.entries(sampleSHA));
+  },Object.entries(activeSampleSHA));
   for(const entry of results)
-    expect(entry.actual,`style ${entry.id} must use the approved matting export`).toBe(entry.expected);
+    expect(entry.actual,`style ${entry.id} must use the exact SHA-locked active edition export`).toBe(entry.expected);
 });

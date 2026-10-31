@@ -21,6 +21,19 @@ const isWebP = bytes => bytes.length >= 20 &&
 
 export function loadHairstyleReleaseAssets({ dist = 'dist', source = 'public' } = {}) {
   const manifest = getHairIvoryConfig();
+  // The exact owner-supplied HB-001 image is a genuine 1536px source; unlike
+  // the other 291 derived 2048px presentation images it is NOT upscaled.
+  // Require its two independently locked bytes when the overlay is installed.
+  const overlayFile = resolve('assets/hb001-overlay.sha256');
+  let hb001Digests = null;
+  if (existsSync(overlayFile)) {
+    const expectedFull='f94145d96dc9c4aca28674b704b7ee61b09564015dbd118d502f060b6d3d5818';
+    const expectedThumb='19b999364c0717576da9eb7cdcec3e372b8d90df4104847711f04553dd05cf52';
+    const locked=readFileSync(overlayFile,'utf8');
+    if (locked !== expectedFull+'  1.webp\n'+expectedThumb+'  1-thumb.webp\n')
+      throw Error('Unknown HB-001 overlay release');
+    hb001Digests={full:expectedFull,thumb:expectedThumb};
+  }
   const items = [];
   for (let id = 1; id <= manifest.count; id++) {
     for (const thumb of [false, true]) {
@@ -33,10 +46,13 @@ export function loadHairstyleReleaseAssets({ dist = 'dist', source = 'public' } 
       if (bytes.length < 2000 || bytes.length > 1_800_000 || !isWebP(bytes))
         throw Error('Invalid release WebP: ' + rel);
       const dimensions = webpDimensions(bytes);
-      const expectedSize = thumb ? 560 : 2048;
+      const expectedSize = thumb ? 560 : (id === 1 && hb001Digests ? 1536 : 2048);
       if (dimensions.width !== expectedSize || dimensions.height !== expectedSize)
         throw Error('Wrong hairstyle dimensions ' + rel + ': ' + dimensions.width + 'x' + dimensions.height);
       const digest = sha256(bytes);
+      if (id === 1 && hb001Digests &&
+          digest !== (thumb ? hb001Digests.thumb : hb001Digests.full))
+        throw Error('HB-001 portrait differs from owner-selected release SHA: '+rel);
       if (sha256(readFileSync(installed)) !== digest)
         throw Error('Published image differs from installed locked asset: ' + rel);
       items.push({ id, thumb, rel, sha256: digest, length: bytes.length });
@@ -110,7 +126,7 @@ if (process.argv[1]?.endsWith('verify-live-hairstyle-ivory.mjs')) {
     process.argv.includes('--local') ? 'local' : null;
   if (!mode) throw Error('Use --local or --live');
   const items = loadHairstyleReleaseAssets();
-  console.log('Verified ' + items.length + ' built native WebPs (292 originals + 292 thumbs)');
+  console.log('Verified ' + items.length + ' delivered WebPs (292 originals + 292 thumbs; see release manifest for native source dimensions)');
   if (mode === 'live') {
     const result = await verifyLiveHairstyleAssets(items);
     console.log('Verified all public hairstyle images byte-for-byte', result);

@@ -14,6 +14,7 @@ import { fileURLToPath } from "node:url";
 import { createHash } from "node:crypto";
 import { installNailPack } from "./install-nail-photo-pack.mjs";
 import { installHairstyleIvory } from "./install-hairstyle-ivory.mjs";
+import { installHb001Overlay } from "./install-hb001-overlay.mjs";
 import { installPedicure78 } from "./install-pedicure-78-pack.mjs";
 import { restorePedicureParts } from "./restore-pedicure-parts.mjs";
 import { reconstructNailArchive } from "./restore-embedded-nail-v4.mjs";
@@ -44,6 +45,10 @@ async function build() {
   // Replace only the hairstyle backgrounds, using 584 checksum-locked assets.
   // All originals remain recoverable through the preceding Git revision.
   await installHairstyleIvory();
+  // Keep the Vite dev server, production dist, and browser SHA tests on the
+  // same exact HB-001 bytes. Vite serves /public; dist is rebuilt from it.
+  // Missing/corrupt overlay fails closed before any build or visual test.
+  if (installHb001Overlay("public")) console.log("Installed exact HB-001 portrait into Vite public asset tree");
   // User explicitly authorized all 146 originals for TEMPORARY customer
   // display. This deliberately does NOT create fabricated per-photo editorial
   // QA passes or rewrite pre-existing rejected/hold review evidence.
@@ -291,6 +296,7 @@ async function build() {
   const nailEdition=count===expected?"true":"false";
   const env={...process.env,
     VITE_SALON_MUSIC:enabled,
+    VITE_HB001_PRECACHE:existsSync(resolve("assets/hb001-overlay.sha256")) ? "true" : "false",
     VITE_PEDICURE_78:installedPedicure.installed ? "true" : "false",
     VITE_MANICURE_BATCH50_A:"true",
     VITE_MANICURE_BATCH50_B:"true",
@@ -314,6 +320,7 @@ async function build() {
 
   const stages = [
     [resolve("node_modules/vite/bin/vite.js"), "build"],
+    [resolve("scripts/apply-hb001-overlay.mjs")],
     [resolve("scripts/finalize-service-worker.mjs")],
   ];
   for (const args of stages) {
