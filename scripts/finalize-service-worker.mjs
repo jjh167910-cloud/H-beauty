@@ -26,6 +26,25 @@ export function finalizeServiceWorker(distDir = 'dist') {
     }
   }
   scan(join(root,'assets'));
+  // Precache only the explicitly owner-approved HB-001 replacement; the other
+  // 291 portraits retain their existing runtime caching and release behavior.
+  const hb001Lock=resolve("assets/hb001-overlay.sha256");
+  if(existsSync(hb001Lock)){
+    const lines=readFileSync(hb001Lock,"utf8").trim().split(/\\r?\\n/);
+    if(lines.length!==2)throw Error("HB-001 offline precache requires two exact locks");
+    const ids=new Set();
+    for(const line of lines){
+      const match=/^([a-f0-9]{64})  (1(?:-thumb)?\\.webp)$/.exec(line);
+      if(!match||ids.has(match[2]))throw Error("Malformed HB-001 offline lock");
+      ids.add(match[2]);
+      const image=join(root,"looks",...(match[2]==="1-thumb.webp"?["sm"]:[]),"1.webp");
+      if(!existsSync(image))throw Error("Missing HB-001 offline portrait: "+image);
+      const actual=createHash("sha256").update(readFileSync(image)).digest("hex");
+      if(actual!==match[1])throw Error("HB-001 offline asset integrity mismatch");
+      files.push(image);
+    }
+    if(ids.size!==2)throw Error("Incomplete HB-001 offline precache");
+  }
   // Only the selected 80-photo edition adds portrait masters + thumbnails to
   // the offline PWA. Missing files fail the build instead of showing broken cards.
   if (process.env.VITE_MAKEUP_CURATED_80 === "true") {
