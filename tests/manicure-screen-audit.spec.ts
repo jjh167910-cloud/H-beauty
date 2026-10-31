@@ -63,7 +63,10 @@ test("photo-only gallery recovers after a temporary image request failure",async
   // A different successful image must remain visible throughout the retry.
   // Classic French is one of the actual dev-server photo-whitelisted styles.
   const intact=page.locator(".nail-card").filter({hasText:"فرنچ کلاسیک"});
+  // Browser lazy loading does not request the neighbor until it is onscreen.
+  await intact.scrollIntoViewIfNeeded();
   await expect(intact.locator(".nail-visual[data-media-source='ai-photo']")).toBeVisible();
+  await card.scrollIntoViewIfNeeded();
   await page.unroute("**/nails/photos/nail-milky-silk.webp");
   await page.evaluate(()=>window.dispatchEvent(new Event("online")));
   await expect(card.locator(".nail-visual[data-media-source='ai-photo']")).toBeVisible();
