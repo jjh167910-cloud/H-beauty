@@ -78,6 +78,8 @@ jobs:
 
       - name: Verify temporary owner release of all 146 source manicure photographs
         run: node scripts/verify-owner-manicure-release.mjs
+      - name: Verify all 584 hairstyle images in the built release
+        run: node scripts/verify-live-hairstyle-ivory.mjs --local
       - name: Verify all 136 locked nail photos in the built offline app
         run: node scripts/verify-all-nail-photos.mjs --local
       - name: Verify runner Chrome
@@ -136,6 +138,9 @@ jobs:
             exit 1
           fi
           echo "Verified the live H-Beauty SPA and exact service worker artifact."
+
+      - name: Verify all 584 public hairstyle images byte-for-byte
+        run: node scripts/verify-live-hairstyle-ivory.mjs --live
 
       - name: Verify public Batch50C manicure images byte-for-byte
         run: node scripts/verify-live-manicure-batch50c.mjs
