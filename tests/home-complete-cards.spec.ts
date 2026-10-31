@@ -70,3 +70,36 @@ test("homepage cards navigate without relying on offscreen partial slides",async
   await page.locator(".salon24-style-card").last().click();
   await expect(page).toHaveURL(/#\/looks/);
 });
+
+test("hairstyle detail sheet shows the original square photograph without cover crop",async({page})=>{
+  await open(page,354);
+  await page.goto("/#/looks");
+  const card=page.locator(".studio-look-card").first();
+  await card.scrollIntoViewIfNeeded();
+  await card.getByRole("button",{name:/مشاهده|دیدن/}).first().click().catch(async()=>{await card.locator(".studio-look-card__frame").click();});
+  const hero=page.locator(".look-hero.studio-look-detail__hero");
+  await expect(hero).toBeVisible();
+  const shape=await hero.evaluate(el=>{
+    const r=el.getBoundingClientRect();
+    const img=el.querySelector("img") as HTMLImageElement;
+    return {ratio:r.width/r.height,fit:getComputedStyle(img).objectFit,pad:getComputedStyle(img).paddingTop};
+  });
+  expect(shape.ratio).toBeCloseTo(1,1);
+  expect(shape.fit).toBe("contain");
+  expect(parseFloat(shape.pad)).toBeGreaterThan(2);
+});
+
+test("full-screen discovery shows uncut photo in a square canvas",async({page})=>{
+  await open(page,354);
+  const featured=page.locator(".salon24-featured__card").first();
+  await featured.scrollIntoViewIfNeeded();
+  await featured.click();
+  const frame=page.locator(".discover__frame").first();
+  await expect(frame).toBeVisible();
+  const shape=await frame.evaluate(el=>{
+    const r=el.getBoundingClientRect(),img=el.querySelector("img") as HTMLImageElement;
+    return {ratio:r.width/r.height,fit:getComputedStyle(img).objectFit};
+  });
+  expect(shape.ratio).toBeCloseTo(1,1);
+  expect(shape.fit).toBe("contain");
+});
