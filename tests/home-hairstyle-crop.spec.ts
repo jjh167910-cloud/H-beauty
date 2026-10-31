@@ -8,7 +8,7 @@ async function home(page:Page,width:number,theme:"light"|"dark"="dark"){
     }));
   },theme);
   await page.goto("/#/");
-  await expect(page.locator(".salon24-style-card")).toHaveCount(5);
+  await expect(page.locator(".salon24-style-card")).toHaveCount(4);
 }
 
 for(const width of [320,354,390,430,768]){

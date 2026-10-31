@@ -93,7 +93,7 @@ export function HomeScreen() {
           <TextLink onClick={() => { clearAll(); go("looks"); }}>همه مدل‌ها</TextLink>
         </div>
         <div className="salon24-styles rail">
-          {STYLES.map((style) => (
+          {STYLES.slice(0,4).map((style) => (
             <button key={style.filter} type="button" className="salon24-style-card"
               aria-label={`دیدن مدل‌های ${style.label}`}
               onClick={() => { clearAll(); setFilter(style.filter); go("looks"); }}>

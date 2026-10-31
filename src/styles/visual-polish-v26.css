@@ -146,3 +146,142 @@
     object-position:center;
   }
 }
+
+/*
+ * Full-card photographic presentation, 2026-10-31:
+ * The images were square but the horizontally scrolling rails still clipped
+ * adjacent cards at the screen edge. Eliminate half-visible cards and add a
+ * small inset around the originals so hair isn't pressed against the frame.
+ * Images are neither resized on disk nor edited; source loss cannot be
+ * recovered by CSS and must be handled separately at asset-review time.
+ */
+@layer components {
+  .salon24-styles.rail,
+  .salon24-featured.rail {
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:1.15rem .8rem;
+    overflow:visible;
+    overscroll-behavior-x:auto;
+    scroll-snap-type:none;
+    padding: .25rem var(--spacing-gutter) 1rem;
+    align-items:start;
+  }
+  .salon24-styles.rail > *,
+  .salon24-featured.rail > * {
+    scroll-snap-align:none;
+    min-width:0;
+    width:100%;
+    max-width:none;
+  }
+  .salon24-styles .salon24-style-card,
+  .salon24-featured .salon24-featured__card {
+    display:grid;
+    align-content:start;
+    gap:.5rem;
+  }
+  .salon24-styles .salon24-style-card > .media,
+  .salon24-featured .salon24-featured__card > .media,
+  .studio-look-card .look-card__media,
+  .studio-profile__saved-look > .media {
+    position:relative;
+    width:100%;
+    aspect-ratio:1;
+    border-radius:1rem;
+    background:#f9f6f3;
+    overflow:hidden;
+    border:1px solid var(--color-line);
+  }
+  .salon24-styles .salon24-style-card > .media > img,
+  .salon24-featured .salon24-featured__card > .media > img,
+  .studio-look-card .look-card__media > img,
+  .studio-profile__saved-look > .media > img {
+    position:absolute;
+    inset:4%;
+    width:92%;
+    height:92%;
+    object-fit:contain;
+    object-position:center;
+    transform:none;
+  }
+  .salon24-hero__stage > .salon24-hero__photo {
+    background:#f9f6f3;
+    border:1px solid var(--color-line);
+  }
+  .salon24-hero__stage > .salon24-hero__photo > img {
+    inset:3%;
+    width:94%;
+    height:94%;
+    object-fit:contain;
+    object-position:center;
+  }
+  .salon24-featured__card > span:last-child {
+    display:block;
+    -webkit-line-clamp:unset;
+    overflow:visible;
+    min-height:2.8em;
+    line-height:1.65;
+    overflow-wrap:anywhere;
+  }
+  .salon24-style-card strong {
+    display:block;
+    overflow:visible;
+    min-height:2.8em;
+    overflow-wrap:anywhere;
+  }
+}
+@media(min-width:600px) {
+  @layer components {
+    .salon24-styles.rail,
+    .salon24-featured.rail {
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:1rem;
+    }
+  }
+}
+@media(min-width:980px) {
+  @layer components {
+    .salon24-styles.rail {grid-template-columns:repeat(4,minmax(0,1fr));}
+    .salon24-featured.rail {grid-template-columns:repeat(4,minmax(0,1fr));}
+  }
+}
+
+/* Full-size hairstyle detail and discovery use the same uncropped source:
+ * a prior late CSS rule set object-fit:cover on a 3:4 window. */
+@layer components {
+  .look-hero.studio-look-detail__hero {
+    aspect-ratio:1;
+    max-height:none;
+    width:min(100%,32rem);
+    margin-inline:auto;
+    background:#f9f6f3;
+    border-radius:1rem;
+  }
+  .look-hero.studio-look-detail__hero .carousel {
+    width:100%;
+    height:100%;
+  }
+  .look-hero.studio-look-detail__hero .carousel > img {
+    object-fit:contain;
+    object-position:center;
+    background:#f9f6f3;
+    padding:3%;
+    box-sizing:border-box;
+  }
+  .discover__stage .discover__frame {
+    width:min(86vw,26rem,50dvh);
+    height:auto;
+    aspect-ratio:1;
+    max-width:100%;
+    max-height:none;
+    border-radius:1.2rem;
+    background:#f9f6f3;
+  }
+  .discover__frame > img {
+    object-fit:contain;
+    object-position:center;
+    padding:3%;
+    box-sizing:border-box;
+  }
+  .discover__frame::after {display:none;}
+}
