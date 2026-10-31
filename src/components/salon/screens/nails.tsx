@@ -51,6 +51,7 @@ export function NailsScreen() {
     });
   },[]);
   const [query, setQuery] = useState("");
+  const [filtersOpen,setFiltersOpen] = useState(false);
   const [visibleCount,setVisibleCount] = useState(PAGE_SIZE);
   const [order,setOrder] = useState<"curated" | "alphabetical">("curated");
   const [compareIds,setCompareIds] = useState<string[]>([]);
@@ -73,6 +74,16 @@ export function NailsScreen() {
     !unavailablePhotos.has(style.id)
   ).length;
   const activeFamily = familyOptions.find(item=>item.key===family);
+  const appliedFilters = [
+    ...(family!=="all" ? [{key:"family",label:activeFamily?.title ?? family,clear:()=>setFamily("all")}] : []),
+    ...(finish!=="all" ? [{key:"finish",label:NAIL_FINISHES.find(item=>item.key===finish)?.title ?? finish,clear:()=>setFinish("all")}] : []),
+    ...(shape!=="all" ? [{key:"shape",label:NAIL_SHAPES.find(item=>item.key===shape)?.title ?? shape,clear:()=>setShape("all")}] : []),
+    ...(length!=="all" ? [{key:"length",label:NAIL_LENGTHS.find(item=>item.key===length)?.title ?? length,clear:()=>setLength("all")}] : []),
+    ...(color!=="all" ? [{key:"color",label:NAIL_COLORS.find(item=>item.key===color)?.title ?? color,clear:()=>setColor("all")}] : []),
+    ...(savedOnly ? [{key:"saved",label:"ذخیره‌شده‌ها",clear:()=>setSavedOnly(false)}] : []),
+    ...(photoOnly ? [{key:"photo",label:"فقط عکس‌ها",clear:()=>setPhotoOnly(false)}] : []),
+  ];
+  const filterCount = appliedFilters.length;
   const results = useMemo(() => {
     const q = normalize(query).toLowerCase();
     const filtered = NAIL_STYLES.filter((style) =>
@@ -93,7 +104,7 @@ export function NailsScreen() {
   const visible = results.slice(0,visibleCount);
 
   const reset = () => {
-    setFamily("all"); setFinish("all"); setShape("all"); setColor("all"); setLength("all"); setSavedOnly(false); setPhotoOnly(false); setQuery(""); setOrder("curated"); setVisibleCount(PAGE_SIZE);
+    setFamily("all"); setFinish("all"); setShape("all"); setColor("all"); setLength("all"); setSavedOnly(false); setPhotoOnly(false); setQuery(""); setOrder("curated"); setVisibleCount(PAGE_SIZE); setFiltersOpen(false);
   };
 
   return (
@@ -143,68 +154,138 @@ export function NailsScreen() {
           <button type="button" aria-pressed={kind==="manicure"} onClick={()=>{setKind("manicure");reset();}}>مانیکور · {persian(NAIL_COUNTS.manicure)} طرح</button>
           <button type="button" aria-pressed={kind==="pedicure"} onClick={()=>{setKind("pedicure");reset();}}>پدیکور · {persian(NAIL_COUNTS.pedicure)} طرح</button>
         </div>
-        <label className="nail-search mx-gutter">
-          <Icon name="search" size={18} />
-          <input type="search" value={query} onChange={(event) => setQuery(event.target.value)}
-            placeholder="جست‌وجوی رنگ، فرم یا سبک" aria-label="جست‌وجو در گالری ناخن"/>
-        </label>
-        {query.trim() && results.length===0 ? (
-          <div className="nail-search-feedback px-gutter" role="status">
-            <span>هیچ طرحی با جست‌وجو و فیلترهای فعلی پیدا نشد.</span>
-            <button type="button" onClick={()=>setQuery("")}>پاک کردن جست‌وجو</button>
+        <div className="nail-filter-workspace mx-gutter">
+          <div className="nail-filter-workspace__top">
+            <span>طرح مناسب سلیقه‌تان را پیدا کنید</span>
+            <span lang="en">CURATED NAIL EDIT</span>
           </div>
-        ) : null}
-        <div className="nail-photo-refine px-gutter" role="group" aria-label="نوع پیش‌نمایش ناخن">
-          <div className="nail-photo-refine__description">
-            <strong>نوع تصویر</strong>
-            <span>{photographicCount
-              ? `${persian(photographicCount)} مرجع عکاسی الهام‌بخش در این مجموعه`
-              : kind==="pedicure"
-                ? "در این مجموعه هنوز عکسِ تأییدشده نداریم؛ همه طرح‌ها تصویرسازی‌اند."
-                : "عکس‌های تأییدشده در این دستگاه بارگذاری نشدند؛ پیش‌نمایش برداری در دسترس است."}</span>
+          <div className="nail-filter-search-row">
+            <label className="nail-search">
+              <Icon name="search" size={19}/>
+              <input type="search" value={query} onChange={(event) => setQuery(event.target.value)}
+                placeholder="جست‌وجوی طرح، رنگ یا نام" aria-label="جست‌وجو در گالری ناخن"/>
+              {query ? (
+                <button type="button" className="nail-search__clear" onClick={()=>setQuery("")}
+                  aria-label="پاک کردن متن جست‌وجو"><Icon name="close" size={16}/></button>
+              ) : null}
+            </label>
+            <button type="button" className="nail-filter-workspace__open"
+              aria-expanded={filtersOpen} aria-controls={filtersOpen ? "nail-filter-advanced" : undefined}
+              onClick={()=>setFiltersOpen(value=>!value)}>
+              <Icon name="palette" size={19}/>
+              <span>فیلترها</span>
+              {filterCount ? <span className="nail-filter-workspace__count">{persian(filterCount)}</span> : null}
+            </button>
           </div>
-          <button type="button"
-            aria-label="فقط طرح‌های دارای عکس الهام‌بخش"
-            aria-pressed={photoOnly}
-            disabled={photographicCount===0 && !photoOnly}
-            onClick={()=>setPhotoOnly(value=>!value)}
-            className="nail-photo-refine__toggle">
-            {photoOnly ? "نمایش همه" : "فقط عکس‌ها"}
-          </button>
-        </div>
-        <div className="nail-filter-label nail-filter-label--family px-gutter">
-          <span>مجموعه‌های تخصصی</span>
-          <span className="nail-filter-label__hint">{persian(familyOptions.length)} مجموعه · {kind==="pedicure"?"۶":"۱۲"} رنگ‌بندی در هر مجموعه</span>
-        </div>
-        <div className="chip-row studio-chip-row nail-families" role="group" aria-label="فیلتر مجموعه طراحی ناخن">
-          <Chip active={family==="all"} onClick={()=>setFamily("all")}>همه مجموعه‌ها</Chip>
-          {familyOptions.map(option=>(
-            <Chip key={option.key} active={family===option.key} onClick={()=>setFamily(option.key)}>{option.title}</Chip>
-          ))}
-        </div>
-        <div className="nail-filter-label px-gutter">سبک و جلوه</div>
-        <div className="chip-row studio-chip-row" role="group" aria-label="فیلتر نوع طراحی ناخن">
-          {NAIL_FINISHES.map((option) => (
-            <Chip key={option.key} active={finish === option.key} onClick={() => setFinish(option.key)}>{option.title}</Chip>
-          ))}
-        </div>
-        <div className="nail-filter-label px-gutter">فرم ناخن</div>
-        <div className="chip-row studio-chip-row" role="group" aria-label="فیلتر فرم ناخن">
-          {NAIL_SHAPES.map((option) => (
-            <Chip key={option.key} active={shape === option.key} onClick={() => setShape(option.key)}>{option.title}</Chip>
-          ))}
-        </div>
-        <div className="nail-filter-label px-gutter">طول ناخن</div>
-        <div className="chip-row studio-chip-row" role="group" aria-label="فیلتر طول ناخن">
-          {NAIL_LENGTHS.map((option) => (
-            <Chip key={option.key} active={length === option.key} onClick={() => setLength(option.key)}>{option.title}</Chip>
-          ))}
-        </div>
-        <div className="nail-filter-label px-gutter">رنگ</div>
-        <div className="chip-row studio-chip-row" role="group" aria-label="فیلتر رنگ ناخن">
-          {NAIL_COLORS.map((option) => (
-            <Chip key={option.key} active={color === option.key} onClick={() => setColor(option.key)}>{option.title}</Chip>
-          ))}
+          <div className="nail-filter-shortcuts" role="group" aria-label="انتخاب سریع سبک ناخن">
+            {([
+              {key:"all",title:"همه طرح‌ها"},
+              {key:"french",title:"فرنچ"},
+              {key:"chrome",title:"کروم"},
+              {key:"matte",title:"مخمل مات"},
+              {key:"ombre",title:"آمبره"},
+            ] as const).map(option=>(
+              <button type="button" key={option.key} aria-pressed={finish===option.key}
+                onClick={()=>setFinish(option.key)}>{option.title}</button>
+            ))}
+          </div>
+          <div className="nail-photo-refine" role="group" aria-label="نوع پیش‌نمایش ناخن">
+            <div className="nail-photo-refine__description">
+              <strong>عکس‌های الهام‌بخش</strong>
+              <span>{photographicCount
+                ? `${persian(photographicCount)} مرجع عکاسی الهام‌بخش در این مجموعه`
+                : kind==="pedicure"
+                  ? "در این مجموعه هنوز عکسِ تأییدشده نداریم؛ همه طرح‌ها تصویرسازی‌اند."
+                  : "عکس‌های تأییدشده در این دستگاه بارگذاری نشدند؛ پیش‌نمایش برداری در دسترس است."}</span>
+            </div>
+            <button type="button"
+              aria-label="فقط طرح‌های دارای عکس الهام‌بخش"
+              aria-pressed={photoOnly}
+              disabled={photographicCount===0 && !photoOnly}
+              onClick={()=>setPhotoOnly(value=>!value)}
+              className="nail-photo-refine__toggle">
+              {photoOnly ? "نمایش همه" : "فقط عکس‌ها"}
+            </button>
+          </div>
+          {appliedFilters.length>0 ? (
+            <div className="nail-applied-filters" aria-label="فیلترهای انتخاب‌شده">
+              <span className="nail-applied-filters__label">انتخاب شما</span>
+              {appliedFilters.map(item=>(
+                <button type="button" key={item.key} onClick={item.clear}
+                  aria-label={`حذف فیلتر ${item.label}`}>
+                  {item.label}<Icon name="close" size={13}/>
+                </button>
+              ))}
+              <button type="button" className="nail-applied-filters__clear" onClick={reset}>پاک کردن همه</button>
+            </div>
+          ) : null}
+          {query.trim() && results.length===0 ? (
+            <div className="nail-search-feedback" role="status">
+              <span>با این جست‌وجو و فیلترها طرحی پیدا نشد.</span>
+              <button type="button" onClick={()=>setQuery("")}>پاک کردن جست‌وجو</button>
+            </div>
+          ) : null}
+          {filtersOpen ? (
+            <div className="nail-filter-panel" id="nail-filter-advanced">
+              <div className="nail-filter-panel__heading">
+                <div><strong>فیلترهای دقیق</strong><span>ویژگی‌های دلخواه را انتخاب کنید</span></div>
+                <button type="button" onClick={reset}>بازنشانی همه</button>
+              </div>
+              <div className="nail-filter-panel__grid">
+                <div className="nail-filter-panel__group nail-filter-panel__group--families">
+                  <div className="nail-filter-label nail-filter-label--family">
+                    <span>مجموعه طراحی</span>
+                    <span className="nail-filter-label__hint">{persian(familyOptions.length)} مجموعه تخصصی</span>
+                  </div>
+                  <div className="nail-filter-panel__chips nail-filter-panel__chips--family" role="group" aria-label="فیلتر مجموعه طراحی ناخن">
+                    <Chip active={family==="all"} onClick={()=>setFamily("all")}>همه مجموعه‌ها</Chip>
+                    {familyOptions.map(option=>(
+                      <Chip key={option.key} active={family===option.key} onClick={()=>setFamily(option.key)}>{option.title}</Chip>
+                    ))}
+                  </div>
+                </div>
+                <div className="nail-filter-panel__group">
+                  <div className="nail-filter-label">سبک و جلوه</div>
+                  <div className="nail-filter-panel__chips" role="group" aria-label="فیلتر نوع طراحی ناخن">
+                    {NAIL_FINISHES.map(option=>(
+                      <Chip key={option.key} active={finish===option.key} onClick={()=>setFinish(option.key)}>{option.title}</Chip>
+                    ))}
+                  </div>
+                </div>
+                <div className="nail-filter-panel__group">
+                  <div className="nail-filter-label">فرم ناخن</div>
+                  <div className="nail-filter-panel__chips" role="group" aria-label="فیلتر فرم ناخن">
+                    {NAIL_SHAPES.map(option=>(
+                      <Chip key={option.key} active={shape===option.key} onClick={()=>setShape(option.key)}>{option.title}</Chip>
+                    ))}
+                  </div>
+                </div>
+                <div className="nail-filter-panel__group">
+                  <div className="nail-filter-label">طول ناخن</div>
+                  <div className="nail-filter-panel__chips" role="group" aria-label="فیلتر طول ناخن">
+                    {NAIL_LENGTHS.map(option=>(
+                      <Chip key={option.key} active={length===option.key} onClick={()=>setLength(option.key)}>{option.title}</Chip>
+                    ))}
+                  </div>
+                </div>
+                <div className="nail-filter-panel__group">
+                  <div className="nail-filter-label">طیف رنگ</div>
+                  <div className="nail-filter-panel__chips" role="group" aria-label="فیلتر رنگ ناخن">
+                    {NAIL_COLORS.map(option=>(
+                      <Chip key={option.key} active={color===option.key} onClick={()=>setColor(option.key)}>{option.title}</Chip>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <div className="nail-filter-panel__footer">
+                <span>{persian(results.length)} طرح مطابق انتخاب شما</span>
+                <button type="button" onClick={()=>{
+                  setFiltersOpen(false);
+                  document.querySelector(".nail-collection")?.scrollIntoView({behavior:"smooth",block:"start"});
+                }}>نمایش {persian(results.length)} طرح <Icon name="chevron" size={16}/></button>
+              </div>
+            </div>
+          ) : null}
         </div>
       </section>
 
