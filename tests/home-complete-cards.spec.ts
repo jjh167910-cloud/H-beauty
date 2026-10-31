@@ -73,10 +73,9 @@ test("homepage cards navigate without relying on offscreen partial slides",async
 
 test("hairstyle detail sheet shows the original square photograph without cover crop",async({page})=>{
   await open(page,354);
-  await page.goto("/#/looks");
-  const card=page.locator(".studio-look-card").first();
-  await card.scrollIntoViewIfNeeded();
-  await card.getByRole("button",{name:/مشاهده|دیدن/}).first().click().catch(async()=>{await card.locator(".studio-look-card__frame").click();});
+  await page.locator(".salon24-featured__card").first().click();
+  await expect(page.locator(".discover__frame").first()).toBeVisible();
+  await page.getByRole("button",{name:"جزئیات"}).first().click();
   const hero=page.locator(".look-hero.studio-look-detail__hero");
   await expect(hero).toBeVisible();
   const shape=await hero.evaluate(el=>{
