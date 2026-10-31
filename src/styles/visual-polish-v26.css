@@ -129,3 +129,20 @@
     }
   }
 }
+
+/* Square lookbook source files should not lose sides in portrait card windows. */
+@layer components {
+  .studio-look-card .look-card__media,
+  .studio-look-card:nth-child(5n+4) .look-card__media,
+  .salon24-featured__card > .media,
+  .studio-profile__saved-look > .media {
+    aspect-ratio:1/1;
+    height:auto;
+  }
+  .studio-look-card .look-card__media > img,
+  .salon24-featured__card > .media > img,
+  .studio-profile__saved-look > .media > img {
+    object-fit:contain;
+    object-position:center;
+  }
+}
