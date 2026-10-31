@@ -177,10 +177,13 @@ export function NailVisual({
   useEffect(() => { setFailed(false); setReady(false); }, [style.id]);
   // A transient offline/network failure must be retried after reconnection.
   useEffect(() => {
+    // Preserve images already decoded: resetting their ready flag would make
+    // them invisible until an onLoad event that may never fire again.
+    if (!failed) return;
     const retry = () => { setFailed(false); setReady(false); };
     window.addEventListener("online", retry);
     return () => window.removeEventListener("online", retry);
-  }, []);
+  }, [failed]);
   const source = NAIL_CUSTOMER_PHOTOS[style.id];
   const photo = Boolean(source && !failed);
 
