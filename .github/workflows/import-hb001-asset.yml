@@ -1,0 +1,62 @@
+name: Import SHA-locked HB-001 Portrait
+on:
+  push:
+    branches:
+      - release/hbeauty-v3-hairstyles-publish-20261031
+    paths:
+      - .github/workflows/import-hb001-asset.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: hb001-owner-portrait-import
+  cancel-in-progress: false
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Pin reproducible portrait codec
+        run: python -m pip install --disable-pip-version-check Pillow==12.3.0
+      - name: Fetch exact owner-selected source portrait
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --silent --show-error --retry 3 --retry-delay 3 --max-time 90 \
+            'https://d2ol7oe51mr4n9.cloudfront.net/user_3JeOUdb9NaNBnQHWcT0xYSQ6MdR/f175cb00-321e-447b-a175-eee9c6b3d953.png' \
+            --output /tmp/hb001-owner-source.image
+          echo '24ccddb04969216d19e99cc9cd9ba32b5c46b59f1272be0a0a7a5558e5eb6051  /tmp/hb001-owner-source.image' | sha256sum --check --status
+      - name: Generate, matte-verify and SHA-lock HB-001 full and thumb
+        run: python .github/scripts/prepare-hb001.py /tmp/hb001-owner-source.image .
+      - name: Commit only the three new HB-001 asset files
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add -- release-overlays/hb001/1.webp release-overlays/hb001/1-thumb.webp assets/hb001-overlay.sha256
+          if git diff --cached --quiet; then
+            echo 'HB-001 already imported and byte-identical'
+            exit 0
+          fi
+          git diff --cached --name-only
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'Import approved native HB-001 owner portrait and exact checksum locks'
+          git push origin HEAD:release/hbeauty-v3-hairstyles-publish-20261031
+      - name: Retain verified asset copies for recovery
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hb001-verified-image-import
+          path: |
+            release-overlays/hb001/*.webp
+            assets/hb001-overlay.sha256
+          if-no-files-found: warn
+          retention-days: 14
