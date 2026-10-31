@@ -9,38 +9,38 @@
     {
       "first": 1,
       "last": 50,
-      "sha256": "aecdefbeca635d4827d24ea556e259a15c690a253df76a251eb81d81ec7fd883",
-      "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3JeOUdb9NaNBnQHWcT0xYSQ6MdR/a23e3d4a-c009-4a22-8db4-1749965916fb.zip"
+      "sha256": "561a4613124caa06f203990988134e15c79568073413f57343f202fe6d46169f",
+      "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3JeOUdb9NaNBnQHWcT0xYSQ6MdR/9c12e807-81ac-4a60-9e4f-7f0449535b53.zip"
     },
     {
       "first": 51,
       "last": 100,
-      "sha256": "d170083dcc41c0c6caa590c1adb1ceaac3f7d9d11cde80c03397771a9062136f",
-      "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3JeOUdb9NaNBnQHWcT0xYSQ6MdR/266ee7c3-8d45-49b6-9b46-ec05dc86739f.zip"
+      "sha256": "1f595e9f2f3fa617e2e9a4844798a42101611e37b681c385b5404cdaf8b53c64",
+      "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3JeOUdb9NaNBnQHWcT0xYSQ6MdR/4a0c3a83-2e28-4fed-9839-15056724b475.zip"
     },
     {
       "first": 101,
       "last": 150,
-      "sha256": "b6095475969bff615dcbac86fa545826bf29468b38a7b42455a98308ecafccc4",
-      "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3JeOUdb9NaNBnQHWcT0xYSQ6MdR/67e28777-6310-4252-9939-aa9168978c9f.zip"
+      "sha256": "69bdc41cbf155d656f6904e5f300e21da58b243626304332f19d2cbb4613d754",
+      "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3JeOUdb9NaNBnQHWcT0xYSQ6MdR/b078255a-1d34-448b-80d9-efba35d9b723.zip"
     },
     {
       "first": 151,
       "last": 200,
-      "sha256": "ee0596964db80f613a72b2b94be4445a9b6cfb71e2b95310ca70407f92a66439",
-      "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3JeOUdb9NaNBnQHWcT0xYSQ6MdR/9558ebd0-b7e1-4de8-b93f-1e34756863df.zip"
+      "sha256": "32aceeec1c2c13aa83e9b3efb23c985f4363251232896095a605b5acf66ab5a9",
+      "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3JeOUdb9NaNBnQHWcT0xYSQ6MdR/31052bde-357b-4f8b-a21b-84bcc711410c.zip"
     },
     {
       "first": 201,
       "last": 250,
-      "sha256": "2c987a607097b27bdc949e11ce5f1541759f29bb6ce21e0b0c0049c9ef8fa51a",
-      "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3JeOUdb9NaNBnQHWcT0xYSQ6MdR/f84878e1-39e5-43f5-8be7-9081e5323ead.zip"
+      "sha256": "429363bf171d377d0493e484a805f2ebe5ab834048744dbb6ab8bf9f79e41637",
+      "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3JeOUdb9NaNBnQHWcT0xYSQ6MdR/6d7fbda9-bbb1-4b95-9e22-8363bd2faa07.zip"
     },
     {
       "first": 251,
       "last": 292,
-      "sha256": "bb86cac4dd0f823708118e6d9db525d7d5d01dfd5c6ca29606b54dbc657f5763",
-      "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3JeOUdb9NaNBnQHWcT0xYSQ6MdR/5c2d22e1-43a2-488b-8649-72f65a27c084.zip"
+      "sha256": "8d6426d50e13572abd8b35e43d744fd976744dfb945ed1cc9c734682598b356c",
+      "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3JeOUdb9NaNBnQHWcT0xYSQ6MdR/85ffc56d-9f4f-4b6d-88cc-95e4de49fe6f.zip"
     }
   ],
   "nativeSourceResolutionDisclosure": "290 originals were 1024x1024 and two HB-040/HB-041 final images were cropped 887x887 portraits from a generated comparison. All delivered 2048px WebPs are resampled, not genuine native 2048px photography.",
@@ -58,5 +58,6 @@
       560
     ]
   },
-  "qualityCaveat": "Release requested by owner while native-2K source and artistic/identity verification limitations remain; automatic CI checks confirm file delivery and app regressions, not photographic excellence."
+  "qualityCaveat": "Release requested by owner while native-2K source and artistic/identity verification limitations remain; automatic CI checks confirm file delivery and app regressions, not photographic excellence.",
+  "pixelBackgroundQC": "All 292 rendered images independently tested after WebP conversion: 128x128 three-pixel edge median within 4 RGB levels of #F5F3EF."
 }
