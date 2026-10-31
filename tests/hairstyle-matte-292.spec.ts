@@ -1,4 +1,5 @@
 import { test, expect } from "playwright/test";
+import { existsSync, readFileSync } from "node:fs";
 
 const sampleIds=[1,9,24,30,43,77,84,125,141,172,205,292];
 const matte=[245,243,239];
@@ -19,6 +20,18 @@ const sampleSHA:Record<number,string>={
   292:"71bd7136710b1e17aae5320fba61917351fd070851ca8b385aab469ddb4bbaac"
 };
 
+// Preserve the original V3 release SHA-256 locks. The owner-selected HB-001
+// edition has a separate fixed lock, never a loosened comparison.
+const hb001OverlayLock="assets/hb001-overlay.sha256";
+const hb001OverlayThumb="19b999364c0717576da9eb7cdcec3e372b8d90df4104847711f04553dd05cf52";
+const hb001OverlayFull="f94145d96dc9c4aca28674b704b7ee61b09564015dbd118d502f060b6d3d5818";
+const hasHB001Overlay=existsSync(hb001OverlayLock);
+if(hasHB001Overlay){
+  expect(readFileSync(hb001OverlayLock,"utf8")).toBe(
+    `${hb001OverlayFull}  1.webp\n${hb001OverlayThumb}  1-thumb.webp\n`
+  );
+}
+const activeSampleSHA={...sampleSHA,1:hasHB001Overlay?hb001OverlayThumb:sampleSHA[1]};
 
 test("all sample thumbs have a completely consistent ivory background with intact subjects",async({page})=>{
   await page.goto("/#/");
@@ -80,7 +93,7 @@ for(const width of [320,354,390]){
   });
 }
 
-test("browser receives the new V3-locked assets, not stale previous-edition thumbnails",async({page})=>{
+test("browser receives the correct edition-locked assets, not stale thumbnails",async({page})=>{
   await page.goto("/#/");
   const results=await page.evaluate(async pairs=>{
     const output=[];
@@ -93,7 +106,7 @@ test("browser receives the new V3-locked assets, not stale previous-edition thum
       output.push({id,expected,actual});
     }
     return output;
-  },Object.entries(sampleSHA));
+  },Object.entries(activeSampleSHA));
   for(const entry of results)
-    expect(entry.actual,`style ${entry.id} must use the locked V3 release export`).toBe(entry.expected);
+    expect(entry.actual,`style ${entry.id} must use the exact SHA-locked active edition export`).toBe(entry.expected);
 });
