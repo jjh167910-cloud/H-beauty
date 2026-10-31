@@ -89,3 +89,43 @@
   .chip {min-width:2.75rem;}
   .salon25-look-detail__actions .salon25-look-card__action {min-width:2.75rem;}
 }
+
+/* Portrait framing: all approved home hairstyle sources are square. */
+@layer components {
+  .salon24-hero__stage > .salon24-hero__photo {
+    aspect-ratio:1/1;
+    width:100%;
+    min-height:0;
+    height:auto;
+    max-height:none;
+  }
+  .salon24-hero__stage > .salon24-hero__photo > img {
+    object-fit:contain;
+    object-position:center;
+  }
+  .salon24-styles .salon24-style-card > .media {
+    width:100%;
+    aspect-ratio:1/1;
+    height:auto;
+    overflow:hidden;
+    border-radius:1rem;
+  }
+  .salon24-styles .salon24-style-card > .media > img {
+    object-fit:contain;
+    object-position:center;
+  }
+  .salon24-style-card {gap:.45rem;align-content:start;min-width:0;}
+  .salon24-style-card strong {line-height:1.6;overflow-wrap:anywhere;}
+  .salon24-styles {padding-bottom:1.1rem;}
+}
+@media(max-width:599px) {
+  @layer components {
+    .salon25-hero__caption {display:block;}
+    .salon25-hero__caption > span[lang="en"] {display:none;}
+    .salon25-hero__caption h2 {
+      font-size:clamp(1.08rem,5vw,1.25rem);
+      line-height:1.65;
+      overflow-wrap:anywhere;
+    }
+  }
+}
