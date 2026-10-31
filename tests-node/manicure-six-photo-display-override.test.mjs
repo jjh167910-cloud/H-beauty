@@ -36,9 +36,9 @@ test("six owner-approved manicure photos keep original QA quarantine and exact l
 
 test("customer gallery shows six owner-authorized photos without bypassing strict editorial map",()=>{
   const source=readFileSync("src/components/salon/nail-visual.tsx","utf8");
-  assert.match(source,/photoReview\\.owner_temporary_display_override\\.ids/);
-  assert.match(source,/photoReview\\.quarantined\\.some/);
-  assert.match(source,/\\.\\.\\.OWNER_TEMPORARY_REVIEWED_MANICURE_PHOTOS/);
-  assert.match(source,/export const NAIL_CUSTOMER_PHOTOS/);
-  assert.match(source,/filterReviewedPhotos\\(/);
+  assert.ok(source.includes("photoReview.owner_temporary_display_override.ids"));
+  assert.ok(source.includes("photoReview.quarantined.some"));
+  assert.ok(source.includes("...OWNER_TEMPORARY_REVIEWED_MANICURE_PHOTOS"));
+  assert.ok(source.includes("export const NAIL_CUSTOMER_PHOTOS"));
+  assert.ok(source.includes("filterReviewedPhotos("));
 });
