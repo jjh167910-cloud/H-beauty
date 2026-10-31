@@ -314,6 +314,7 @@ async function build() {
 
   const stages = [
     [resolve("node_modules/vite/bin/vite.js"), "build"],
+    [resolve("scripts/apply-hb001-overlay.mjs")],
     [resolve("scripts/finalize-service-worker.mjs")],
   ];
   for (const args of stages) {
