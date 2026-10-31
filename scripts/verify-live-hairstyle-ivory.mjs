@@ -110,7 +110,7 @@ if (process.argv[1]?.endsWith('verify-live-hairstyle-ivory.mjs')) {
     process.argv.includes('--local') ? 'local' : null;
   if (!mode) throw Error('Use --local or --live');
   const items = loadHairstyleReleaseAssets();
-  console.log('Verified ' + items.length + ' built native WebPs (292 originals + 292 thumbs)');
+  console.log('Verified ' + items.length + ' delivered WebPs (292 originals + 292 thumbs; see release manifest for native source dimensions)');
   if (mode === 'live') {
     const result = await verifyLiveHairstyleAssets(items);
     console.log('Verified all public hairstyle images byte-for-byte', result);
