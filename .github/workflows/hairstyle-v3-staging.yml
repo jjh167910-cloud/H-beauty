@@ -1,0 +1,46 @@
+name: H-Beauty V3 hairstyle staging — no production deploy
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "assets/hbeauty-hairstyles-v3-staging.json"
+      - "scripts/stage-hairstyles-v3.py"
+      - ".github/workflows/hairstyle-v3-staging.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  source-staging:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install pinned image decoder
+        run: python -m pip install --disable-pip-version-check Pillow==12.0.0
+      - name: Verify all user-provided archives and stage 292 images
+        run: python scripts/stage-hairstyles-v3.py --output staging/hairstyles-v3
+      - name: Confirm deployment gate remains closed
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          data=json.loads(Path('staging/hairstyles-v3/stage_manifest.json').read_text())
+          assert data['count']==292
+          assert data['approved_count']==0
+          assert data['native_2048_count']<292
+          assert data['preliminary_ids']==[40,41]
+          assert data['status']=='BLOCKED_NOT_FOR_PRODUCTION'
+          print('292-photo archive assembled for review; Cloudflare production unchanged.')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hbeauty-hairstyles-v3-unapproved-review
+          path: staging/hairstyles-v3/
+          retention-days: 14
+          compression-level: 1
