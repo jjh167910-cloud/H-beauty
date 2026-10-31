@@ -7,6 +7,7 @@
  */
 import { spawnSync } from "node:child_process";
 import { install as installReviewIntake } from "./install-manicure-intake-review.mjs";
+import {ownerSelectedManicureIds} from "./owner-manicure-display.mjs";
 import { existsSync, statSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -39,6 +40,13 @@ async function build() {
   // Original 60 source photos are release-denied and live ONLY in the review namespace.
   // The import fails closed on missing or altered external archives before Vite builds.
   await installReviewIntake();
+  // User explicitly authorized all 146 originals for TEMPORARY customer
+  // display. This deliberately does NOT create fabricated per-photo editorial
+  // QA passes or rewrite pre-existing rejected/hold review evidence.
+  const ownerSelectedManicure = ownerSelectedManicureIds();
+  console.log("Owner-authorized temporary manicure display:",ownerSelectedManicure.length,
+    "(not professionally editorial-certified)");
+
   const verifiedEmbeddedArchive = reconstructNailArchive();
   console.log(`Verified bundled salon photos: ${verifiedEmbeddedArchive.bytes} bytes, sha256 ${verifiedEmbeddedArchive.sha256}`);
   const installedPhotoPack = installNailPack();
@@ -284,6 +292,7 @@ async function build() {
     VITE_MANICURE_BATCH50_B:"true",
     VITE_MANICURE_BATCH50_C:"true",
     VITE_MANICURE_DYNAMIC_IDS:dynamicApproved.map(item=>item.id).join(","),
+    VITE_MANICURE_OWNER_VISIBLE_IDS:ownerSelectedManicure.join(","),
     VITE_MANICURE_BATCH50_D:"true",
     VITE_MANICURE_FOUR: "true",
     VITE_MANICURE_BATCH7: "true",
