@@ -5,7 +5,7 @@ import { NAIL_STYLES, NAIL_COUNTS, NAIL_FINISHES, NAIL_COLORS, NAIL_SHAPES, NAIL
 import { nailKindFromHash } from "@/data/nail-links";
 import { useSalon } from "@/lib/salon-store";
 import { Icon } from "../icons";
-import { NailVisual, NAIL_EDITORIAL_PHOTOS } from "../nail-visual";
+import { NailVisual, NAIL_CUSTOMER_PHOTOS } from "../nail-visual";
 import { NailCompareSheet } from "../sheets/nail-compare";
 import { Chip, Button, haptic, useSalonActions } from "../ui";
 
@@ -23,7 +23,9 @@ export function NailsScreen() {
   const [length, setLength] = useState<NailLength | "all">("all");
   const [savedOnly, setSavedOnly] = useState(false);
   const [photoOnly,setPhotoOnly] = useState(false);
-  // The photo whitelist proves source quality, not that a WebP is reachable
+  // Owner-selected temporarily displayed photos are separate from the strict
+  // professional editorial photo gates. Track failed image loads per device.
+  // A source whitelist alone cannot prove that a WebP is reachable
   // on this device. Keep a session-only record of failed asset requests.
   const [unavailablePhotos,setUnavailablePhotos] = useState<Set<string>>(()=>new Set());
   const markPhotoUnavailable=useCallback((id:string)=>{
@@ -53,7 +55,7 @@ export function NailsScreen() {
   const familyOptions = NAIL_ATLAS_FAMILIES[kind];
   const photographicCount = NAIL_STYLES.filter(style=>
     (style.kind ?? "manicure")===kind &&
-    Boolean(NAIL_EDITORIAL_PHOTOS[style.id]) &&
+    Boolean(NAIL_CUSTOMER_PHOTOS[style.id]) &&
     !unavailablePhotos.has(style.id)
   ).length;
   const activeFamily = familyOptions.find(item=>item.key===family);
@@ -67,7 +69,7 @@ export function NailsScreen() {
       (color === "all" || color === style.color) &&
       (length === "all" || length === style.length) &&
       (!savedOnly || favorites.includes(style.id)) &&
-      (!photoOnly || (Boolean(NAIL_EDITORIAL_PHOTOS[style.id]) && !unavailablePhotos.has(style.id))) &&
+      (!photoOnly || (Boolean(NAIL_CUSTOMER_PHOTOS[style.id]) && !unavailablePhotos.has(style.id))) &&
       (!q || normalize(`${style.title} ${style.en} ${style.description}`).toLowerCase().includes(q))
     );
     if(order==="alphabetical") return [...filtered].sort((a,b)=>a.title.localeCompare(b.title,"fa"));
