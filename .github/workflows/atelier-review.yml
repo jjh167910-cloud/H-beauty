@@ -29,7 +29,9 @@ jobs:
         run: npm run typecheck
       - name: Build Vite
         run: npm run build
-      - name: Verify all 584 hairstyle release images, including exact HB-001\n        run: node scripts/verify-live-hairstyle-ivory.mjs --local\n      - name: Verify full 146-photo owner-selected customer catalog mapping
+      - name: Verify all 584 hairstyle release images, including exact HB-001
+        run: node scripts/verify-live-hairstyle-ivory.mjs --local
+      - name: Verify full 146-photo owner-selected customer catalog mapping
         run: node scripts/verify-owner-manicure-release.mjs
       - name: Verify all 136 published nail photos and offline caching
         run: node scripts/verify-all-nail-photos.mjs --local
