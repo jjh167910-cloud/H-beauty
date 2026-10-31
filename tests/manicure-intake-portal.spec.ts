@@ -94,9 +94,17 @@ test("real deflated ZIP archive imports on device without publishing unapproved 
     await route.fulfill({contentType:"application/json",body:(await response.text()).replace(original,hash)});
   });
   await page.reload();
+  // The manifest bootstraps asynchronously; make sure the SHA-locked specs
+  // are initialized before delivering a synthetic ZIP in parallel CI.
+  await expect(page.locator(".tile")).toHaveCount(146);
+  await expect.poll(async () => page.evaluate((id) => {
+    const row=(window as typeof window & {HBEAUTY_MANIFEST?:Array<{id:string;sha:string}>})
+      .HBEAUTY_MANIFEST?.find(entry=>entry.id===id);
+    return row?.sha;
+  }, ID)).toBe(hash);
   const zipped=zipOneWebP(ID+".webp",raw);
   await page.locator("#files").setInputFiles({name:"manicure-test.zip",mimeType:"application/zip",buffer:zipped});
-  await expect(page.locator("#loaded")).toHaveText("1");
+  await expect(page.locator("#loaded")).toHaveText("1",{timeout:15000});
   await expect(page.locator("#alert")).toContainText("هیچ خطای انتقالی یافت نشد");
 });
 
