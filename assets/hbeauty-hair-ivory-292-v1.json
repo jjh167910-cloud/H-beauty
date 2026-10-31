@@ -1,0 +1,49 @@
+{
+  "version": 1,
+  "edition": "2026-10-31-premium-salon-ivory",
+  "background": "#F5F3EF",
+  "count": 292,
+  "assetCount": 584,
+  "model": "MODNet portrait matting",
+  "modelSource": "https://huggingface.co/Xenova/modnet",
+  "license": "Apache-2.0",
+  "modelSHA256": "25f165da9bfd30830a575f1f0490f1acd995975cb349bc02f3d79332e1fe5cf6",
+  "parts": [
+    {
+      "first": 1,
+      "last": 50,
+      "sha256": "1cc62293ee02e134220dbac171ad9dbd155600b5160ae1941728ef20616b09ff",
+      "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3JeOUdb9NaNBnQHWcT0xYSQ6MdR/6844a364-8cda-4be6-8222-a90ee4af5d59.zip"
+    },
+    {
+      "first": 51,
+      "last": 100,
+      "sha256": "00161acf4c7b95e75817849df49db7be6290309fe5b5e92e1de0b97339349e95",
+      "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3JeOUdb9NaNBnQHWcT0xYSQ6MdR/d71b8790-beee-4fdc-bb8b-15d0ce47b0f5.zip"
+    },
+    {
+      "first": 101,
+      "last": 150,
+      "sha256": "5bd352dbec5e78d17adabec2079e902ede7c894017b60e1ad7298833ce9a7cb9",
+      "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3JeOUdb9NaNBnQHWcT0xYSQ6MdR/56760d5d-f130-4007-8cb4-c291663a4132.zip"
+    },
+    {
+      "first": 151,
+      "last": 200,
+      "sha256": "9a3723f42510befa52e7902c7afcf7255b1730ace268f4443069aa819ebad255",
+      "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3JeOUdb9NaNBnQHWcT0xYSQ6MdR/5b426f69-a8f0-40e3-8053-c871d6057c32.zip"
+    },
+    {
+      "first": 201,
+      "last": 250,
+      "sha256": "535e0c0e52c510b8084168b9207e60a3e348e9056f2574e30cd53696d5cfec59",
+      "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3JeOUdb9NaNBnQHWcT0xYSQ6MdR/4f079ddf-ad5a-4550-9cb1-eed7a778387b.zip"
+    },
+    {
+      "first": 251,
+      "last": 292,
+      "sha256": "fb5d0dc7a52a7bc20ab965a4243e8f5a7a1d24e102b64b7c41894f6c98560663",
+      "url": "https://d2ol7oe51mr4n9.cloudfront.net/user_3JeOUdb9NaNBnQHWcT0xYSQ6MdR/6ae09c04-f546-4785-b1f0-d2bd0afd94bb.zip"
+    }
+  ]
+}

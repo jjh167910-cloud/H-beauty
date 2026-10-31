@@ -69,6 +69,30 @@ self.addEventListener('fetch', event => {
     })());
     return;
   }
+  // Numeric hairstyle image paths stay the same after a new matte release.
+  // Never return a stale image from the previous SW cache before checking
+  // the freshly deployed asset. Previously viewed photos remain usable offline.
+  if(/^\/looks\/(?:sm\/)?[1-9]\d*\.webp$/.test(path)) {
+    event.respondWith((async()=>{
+      const current=await caches.open(CACHE);
+      const freshInCurrent=await current.match(req);
+      if(freshInCurrent)return freshInCurrent;
+      try {
+        const response=await fetch(req,{cache:'no-store'});
+        if(!response.ok)throw new Error('Hairstyle photo HTTP '+response.status);
+        if(response.type==='basic') {
+          try{await current.put(req,response.clone());}
+          catch(error){console.warn('Unable to store hairstyle photo',error);}
+        }
+        return response;
+      } catch(error) {
+        const oldOfflineCopy=await caches.match(req);
+        if(oldOfflineCopy)return oldOfflineCopy;
+        throw error;
+      }
+    })());
+    return;
+  }
   event.respondWith((async () => {
     // Always prefer the active release; older assets are fallbacks only.
     const current=await caches.open(CACHE);
