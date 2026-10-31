@@ -60,7 +60,7 @@
 .nail-hero__copy strong {font-size:1.7rem;line-height:1.65;font-weight:450;}
 .nail-hero__copy p {font-size:.74rem;line-height:1.9;color:#e9dcd9;}
 .nail-hero__copy button {display:flex;align-items:center;gap:.35rem;border-bottom:1px solid #bea078;min-height:44px;font-size:.77rem;color:#f9d9ab;}
-.nail-hero__art {position:absolute;inset-inline-start:44%;inset-block:0;width:60%;height:100%;object-fit:contain;transform:scale(1.25);filter:drop-shadow(0 12px 13px #17101a80);pointer-events:none;}
+.nail-hero__art {position:absolute;inset-inline-start:44%;inset-block:0;width:60%;height:auto;object-fit:contain;transform:scale(1.13);filter:drop-shadow(0 12px 13px #17101a80);pointer-events:none;}
 .nail-filters {display:grid;gap:.6rem;margin-bottom:1rem;}
 .nail-filters__top {display:flex;align-items:center;justify-content:space-between;gap:.8rem;flex-wrap:wrap;margin-block-end:.35rem;}
 .nail-filters__top span {font:.55rem/1.4 var(--font-serif);letter-spacing:.19em;color:var(--color-gold-ink);}
@@ -75,10 +75,15 @@
 .nail-search:focus-within {outline:2px solid var(--color-gold);outline-offset:1px;}
 .nail-search input {border:0;background:transparent;outline:none;width:100%;min-width:0;font-size:.82rem;color:var(--color-ink);}
 .nail-search input::placeholder {color:var(--color-ink-3);}
+.nail-search-feedback {display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.55rem;font-size:.75rem;line-height:1.65;color:var(--color-ink-2);}
+.nail-search-feedback button {min-height:44px;padding:.45rem .7rem;border:1px solid var(--color-line-2);border-radius:.65rem;color:var(--color-ink);background:var(--color-surface);font-weight:600;}
+.nail-search-feedback button:focus-visible {outline:2px solid var(--color-gold-ink);outline-offset:2px;}
 .nail-filter-label {font-size:.72rem;font-weight:650;color:var(--color-ink-2);}
 .nail-filters .chip-row {margin-block:0 .35rem;}
 .nail-collection {padding-block:.6rem 1.4rem;}
 .nail-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.8rem;}
+/* A filtered single result should not sit in half of an empty row. */
+.nail-grid--single {grid-template-columns:minmax(0,1fr);width:min(100%,23rem);margin-inline:auto;}
 .nail-card {min-width:0;border-radius:1.05rem;background:var(--color-surface);border:1px solid var(--color-line);overflow:hidden;box-shadow:var(--shadow-1);}
 .nail-card__open {display:block;width:100%;text-align:start;min-width:0;}
 .nail-card__picture {position:relative;display:grid;place-items:center;width:100%;aspect-ratio:4/4.35;overflow:hidden;background:linear-gradient(145deg,#f0e8e0,#e9d5d5);border-radius:1rem 1rem .25rem .25rem;}
