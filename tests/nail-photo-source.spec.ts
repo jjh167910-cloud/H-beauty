@@ -55,14 +55,19 @@ test("failed photo disappears only from photo filter, not from catalog or bookin
   }));
   await ready(page,390);
   const filter=page.getByRole("button",{name:"فقط طرح‌های دارای عکس الهام‌بخش"});
-  const sourceCount=await page.getByRole("group",{name:"نوع پیش‌نمایش ناخن"})
-    .locator(".nail-photo-refine__description span").innerText();
-  const initialCount=Number((sourceCount.match(/^[۰-۹]+/)?.[0] || "")
-    .replace(/[۰-۹]/g,d=>String("۰۱۲۳۴۵۶۷۸۹".indexOf(d))));
+  const sourceCountLabel=page.getByRole("group",{name:"نوع پیش‌نمایش ناخن"})
+    .locator(".nail-photo-refine__description span");
   await filter.click();
   const card=page.locator(".nail-card").filter({has:page.getByRole("button",{name:"مشاهده طرح شیری ابریشمی"})});
   await expect(card).toHaveCount(0);
-  await expect(page.locator(".nail-card")).toHaveCount(initialCount-1);
+  // The route may fail before the first count is read. Compare against the
+  // gallery's current photo availability, not an assumed second subtraction.
+  await expect.poll(async()=>{
+    const label=await sourceCountLabel.innerText();
+    const count=Number((label.match(/^[۰-۹]+/)?.[0] || "")
+      .replace(/[۰-۹]/g,d=>String("۰۱۲۳۴۵۶۷۸۹".indexOf(d))));
+    return await page.locator(".nail-card").count() === count;
+  }).toBe(true);
   // Switching to the complete 298-design catalog must restore the style.
   await filter.click();
   await expect(card).toHaveCount(1);
