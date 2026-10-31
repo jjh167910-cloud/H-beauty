@@ -6,7 +6,10 @@ import { resolve, dirname } from "node:path";
 export function installHb001Overlay(root="dist") {
   const lock=resolve("assets/hb001-overlay.sha256");
   const source=resolve("release-overlays/hb001");
-  if(!existsSync(lock)) return false;
+  if(!existsSync(lock)) {
+    if(process.env.HB001_OVERLAY_REQUIRED==="true")throw Error("Required HB-001 release overlay lock missing");
+    return false;
+  }
   const entries=readFileSync(lock,"utf8").trim().split(/\r?\n/);
   const expected=new Map([["1.webp","looks/1.webp"],["1-thumb.webp","looks/sm/1.webp"]]);
   if(entries.length!==2) throw Error("HB-001 overlay requires exactly two SHA-256 entries");
