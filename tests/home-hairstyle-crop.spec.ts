@@ -85,3 +85,33 @@ test("regression detects deliberate reintroduction of portrait crop",async({page
   });
   expect(ratio).toBeLessThan(.8);
 });
+
+for(const width of [354,390,768]){
+  test(`lookbook grid and homepage featured cards show uncropped square photos at ${width}px`,async({page})=>{
+    await home(page,width);
+    const featured=page.locator(".salon24-featured__card .media").first();
+    await featured.scrollIntoViewIfNeeded();
+    await expect(featured.locator("img")).toHaveJSProperty("complete",true);
+    const square=async (selector:string)=>{
+      return page.locator(selector).first().evaluate(el=>{
+        const im=el.querySelector("img")!;
+        const r=el.getBoundingClientRect();
+        return {ratio:r.width/r.height,source:im.naturalWidth/im.naturalHeight,fit:getComputedStyle(im).objectFit,loaded:im.naturalWidth>0};
+      });
+    };
+    let a=await square(".salon24-featured__card .media");
+    expect(a.loaded).toBe(true);
+    expect(a.ratio).toBeCloseTo(1,1);
+    expect(a.source).toBeCloseTo(1,1);
+    expect(a.fit).toBe("contain");
+    await page.goto("/#/looks");
+    const catalog=page.locator(".studio-look-card .look-card__media").first();
+    await catalog.scrollIntoViewIfNeeded();
+    await expect(catalog.locator("img")).toHaveJSProperty("complete",true);
+    a=await square(".studio-look-card .look-card__media");
+    expect(a.loaded).toBe(true);
+    expect(a.ratio).toBeCloseTo(1,1);
+    expect(a.source).toBeCloseTo(1,1);
+    expect(a.fit).toBe("contain");
+  });
+}
