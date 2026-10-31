@@ -191,7 +191,7 @@ export function HomeScreen() {
               <button key={repId} type="button" className="salon24-featured__card"
                 aria-label={`مشاهده ${look.name}`}
                 onClick={(event) => openDiscover(look.id, event.currentTarget.querySelector("img"))}>
-                <Media src={lookThumb(repId)} alt={look.name} loading="lazy" />
+                <Media src={lookThumb(repId)} alt="" loading="lazy" />
                 <span>{look.name}</span>
               </button>
             );
