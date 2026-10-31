@@ -30,7 +30,7 @@ export function loadHairstyleReleaseAssets({ dist = 'dist', source = 'public' } 
     const expectedFull='f94145d96dc9c4aca28674b704b7ee61b09564015dbd118d502f060b6d3d5818';
     const expectedThumb='19b999364c0717576da9eb7cdcec3e372b8d90df4104847711f04553dd05cf52';
     const locked=readFileSync(overlayFile,'utf8');
-    if (locked !== expectedFull+'  1.webp\\n'+expectedThumb+'  1-thumb.webp\\n')
+    if (locked !== expectedFull+'  1.webp\n'+expectedThumb+'  1-thumb.webp\n')
       throw Error('Unknown HB-001 overlay release');
     hb001Digests={full:expectedFull,thumb:expectedThumb};
   }
