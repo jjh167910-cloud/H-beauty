@@ -31,5 +31,18 @@
       "sha256": "ac9b8b6c8496ae617fad7c64f5a27dcb945502294bb7d5ee49f81394bc12ed34",
       "reason": "Flat coffin tips instead of long almond tips."
     }
-  ]
+  ],
+  "owner_temporary_display_override": {
+    "date": "2026-10-31",
+    "status": "OWNER_APPROVED_FOR_TEMPORARY_DISPLAY_ONLY_NOT_EDITORIAL_QA",
+    "ids": [
+      "nail-atlas-prism-champagne",
+      "nail-atlas-prism-coral",
+      "nail-atlas-velvet-midnight",
+      "nail-atlas-modern-french-espresso",
+      "nail-atlas-gradient-ruby",
+      "nail-atlas-gradient-cobalt"
+    ],
+    "notes": "Show these six locked source photos in the customer gallery only. Keep their original quarantine findings and exclude them from NAIL_EDITORIAL_PHOTOS until image-specific editorial re-review."
+  }
 }

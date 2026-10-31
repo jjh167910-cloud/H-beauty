@@ -10,16 +10,18 @@ async function ready(page:Page,width=390){
   await expect(page.getByRole("heading",{name:/هنر ناخن/})).toBeVisible();
 }
 
-test("verified photo-only filter shows exactly nine real editorial references",async({page})=>{
+test("photo-only filter includes editorial references and temporarily owner-visible photographs",async({page})=>{
   await ready(page,390);
   const toggle=page.getByRole("button",{name:"فقط طرح‌های دارای عکس الهام‌بخش"});
   await expect(toggle).toBeEnabled();
-  // Playwright uses Vite's dev server, which intentionally exposes the
-  // legacy 4-image fallback. The verified production V4 build enables nine.
+  // Vite's dev server includes four legacy editorial photos plus the
+  // six owner-authorized customer-only photos; production can include more.
   const sourceCountText=await page.getByRole("group",{name:"نوع پیش‌نمایش ناخن"})
     .locator(".nail-photo-refine__description span").innerText();
-  expect(sourceCountText).toMatch(/^[۴۹] مرجع عکاسی الهام‌بخش در این مجموعه$/);
-  const expectedCount=sourceCountText.startsWith("۹")?9:4;
+  expect(sourceCountText).toMatch(/^[۰-۹]+ مرجع عکاسی الهام‌بخش در این مجموعه$/);
+  const expectedCount=Number((sourceCountText.match(/^[۰-۹]+/)?.[0] || "")
+    .replace(/[۰-۹]/g,d=>String("۰۱۲۳۴۵۶۷۸۹".indexOf(d))));
+  expect(expectedCount).toBeGreaterThanOrEqual(10);
   await toggle.click();
   await expect(toggle).toHaveAttribute("aria-pressed","true");
   await expect(page.locator(".nail-card")).toHaveCount(expectedCount);
@@ -55,7 +57,8 @@ test("failed photo disappears only from photo filter, not from catalog or bookin
   const filter=page.getByRole("button",{name:"فقط طرح‌های دارای عکس الهام‌بخش"});
   const sourceCount=await page.getByRole("group",{name:"نوع پیش‌نمایش ناخن"})
     .locator(".nail-photo-refine__description span").innerText();
-  const initialCount=sourceCount.startsWith("۹")?9:4;
+  const initialCount=Number((sourceCount.match(/^[۰-۹]+/)?.[0] || "")
+    .replace(/[۰-۹]/g,d=>String("۰۱۲۳۴۵۶۷۸۹".indexOf(d))));
   await filter.click();
   const card=page.locator(".nail-card").filter({has:page.getByRole("button",{name:"مشاهده طرح شیری ابریشمی"})});
   await expect(card).toHaveCount(0);

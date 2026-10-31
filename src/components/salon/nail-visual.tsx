@@ -140,11 +140,23 @@ export const NAIL_EDITORIAL_PHOTOS: Readonly<Record<string,string>> = filterRevi
   ...PEDICURE_EDITORIAL_PHOTOS
 }, photoReview.quarantined);
 
-// An independent, reversible owner-authorized display layer. This does not
-// change the professionally certified photo set or historical quarantines.
+/** The owner temporarily approved six previously quarantined sources for
+ * customer display. The editorial/photo-only QA whitelist is unchanged;
+ * original rejection reasons remain in nail-photo-review.json.
+ */
+const OWNER_TEMPORARY_REVIEWED_MANICURE_PHOTOS: Readonly<Record<string,string>> =
+  Object.fromEntries(
+    photoReview.owner_temporary_display_override.ids
+      .filter(id => /^nail-[a-z0-9-]+$/.test(id) &&
+        photoReview.quarantined.some(record => record.id === id))
+      .map(id => [id, `/nails/photos/${id}.webp`])
+  );
+
+// Owner-authorized customer-facing photos remain distinct from editorial QA.
 export const NAIL_CUSTOMER_PHOTOS: Readonly<Record<string,string>> = {
   ...NAIL_EDITORIAL_PHOTOS,
-  ...OWNER_SELECTED_TEMPORARY_MANICURE_PHOTOS
+  ...OWNER_SELECTED_TEMPORARY_MANICURE_PHOTOS,
+  ...OWNER_TEMPORARY_REVIEWED_MANICURE_PHOTOS
 };
 
 
