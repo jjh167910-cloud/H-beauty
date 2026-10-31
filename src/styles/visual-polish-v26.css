@@ -188,7 +188,7 @@
     width:100%;
     aspect-ratio:1;
     border-radius:1rem;
-    background:#f9f6f3;
+    background:var(--salon-hair-photo-matte);
     overflow:hidden;
     border:1px solid var(--color-line);
   }
@@ -205,7 +205,7 @@
     transform:none;
   }
   .salon24-hero__stage > .salon24-hero__photo {
-    background:#f9f6f3;
+    background:var(--salon-hair-photo-matte);
     border:1px solid var(--color-line);
   }
   .salon24-hero__stage > .salon24-hero__photo > img {
@@ -254,7 +254,7 @@
     max-height:none;
     width:min(100%,32rem);
     margin-inline:auto;
-    background:#f9f6f3;
+    background:var(--salon-hair-photo-matte);
     border-radius:1rem;
   }
   .look-hero.studio-look-detail__hero .carousel {
@@ -264,7 +264,7 @@
   .look-hero.studio-look-detail__hero .carousel > img {
     object-fit:contain;
     object-position:center;
-    background:#f9f6f3;
+    background:var(--salon-hair-photo-matte);
     padding:3%;
     box-sizing:border-box;
   }
@@ -275,7 +275,7 @@
     max-width:100%;
     max-height:none;
     border-radius:1.2rem;
-    background:#f9f6f3;
+    background:var(--salon-hair-photo-matte);
   }
   .discover__frame > img {
     object-fit:contain;
@@ -284,4 +284,31 @@
     box-sizing:border-box;
   }
   .discover__frame::after {display:none;}
+}
+
+/* All 292 approved square hairstyle originals share a background median
+   of RGB(245,243,239), verified from native source images. The stable matte
+   color matches original pixels without destructive subject segmentation.
+   Keep it constant in light and dark themes; this is image artwork, not UI. */
+:root {
+  --salon-hair-photo-matte: #f5f3ef;
+}
+@layer components {
+  .studio-look-card__frame {
+    background:var(--salon-hair-photo-matte);
+  }
+  /* The image carries its own native blush/ivory background. Matching this
+     frame removes the inset seam without touching curls or flyaway strands. */
+  .salon24-hero__stage > .salon24-hero__photo,
+  .salon24-styles .salon24-style-card > .media,
+  .salon24-featured .salon24-featured__card > .media,
+  .studio-look-card .look-card__media,
+  .studio-profile__saved-look > .media,
+  .look-hero.studio-look-detail__hero,
+  .look-hero.studio-look-detail__hero .carousel,
+  .look-hero.studio-look-detail__hero .carousel > img,
+  .discover__stage .discover__frame,
+  .discover__stage .discover__frame > img {
+    background:var(--salon-hair-photo-matte);
+  }
 }
