@@ -291,6 +291,7 @@ async function build() {
   const nailEdition=count===expected?"true":"false";
   const env={...process.env,
     VITE_SALON_MUSIC:enabled,
+    VITE_HB001_PRECACHE:existsSync(resolve("assets/hb001-overlay.sha256")) ? "true" : "false",
     VITE_PEDICURE_78:installedPedicure.installed ? "true" : "false",
     VITE_MANICURE_BATCH50_A:"true",
     VITE_MANICURE_BATCH50_B:"true",
