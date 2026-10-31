@@ -61,7 +61,8 @@ test("photo-only gallery recovers after a temporary image request failure",async
   const card=page.locator(".nail-card").filter({hasText:"شیری ابریشمی"});
   await expect(card.locator(".nail-visual[data-media-source='vector']")).toBeVisible();
   // A different successful image must remain visible throughout the retry.
-  const intact=page.locator(".nail-card").filter({hasText:"صورتی باله"});
+  // Classic French has an actual dev-server photo source; Ballet Pink does not.
+  const intact=page.locator(".nail-card").filter({hasText:"فرنچ کلاسیک"});
   // Source cards are intentionally lazy-loaded; scrolling makes this a real
   // successfully decoded neighbor before testing that reconnect preserves it.
   await intact.scrollIntoViewIfNeeded();
