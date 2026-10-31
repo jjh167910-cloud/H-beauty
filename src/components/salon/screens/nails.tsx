@@ -11,6 +11,14 @@ import { Chip, Button, haptic, useSalonActions } from "../ui";
 
 const PAGE_SIZE = 24;
 
+/** Stable per-category catalog numbering, independent of search, sorting and filters. */
+const CATALOG_NUMBERS = new Map<string, number>(
+  (["manicure", "pedicure"] as const).flatMap(kind =>
+    NAIL_STYLES.filter(style => (style.kind ?? "manicure") === kind)
+      .map((style, index) => [style.id, index + 1] as const)
+  )
+);
+
 export function NailsScreen() {
   const { go, openSheet, openBooking } = useSalonActions();
   const [kind,setKind] = useState<NailKind>(() => nailKindFromHash(window.location.hash));
@@ -28,6 +36,12 @@ export function NailsScreen() {
   // A source whitelist alone cannot prove that a WebP is reachable
   // on this device. Keep a session-only record of failed asset requests.
   const [unavailablePhotos,setUnavailablePhotos] = useState<Set<string>>(()=>new Set());
+  // Failed image loads may recover when the device reconnects.
+  useEffect(()=>{
+    const retry=()=>setUnavailablePhotos(new Set());
+    window.addEventListener("online",retry);
+    return ()=>window.removeEventListener("online",retry);
+  },[]);
   const markPhotoUnavailable=useCallback((id:string)=>{
     setUnavailablePhotos(previous=>{
       if(previous.has(id))return previous;
@@ -134,6 +148,12 @@ export function NailsScreen() {
           <input type="search" value={query} onChange={(event) => setQuery(event.target.value)}
             placeholder="جست‌وجوی رنگ، فرم یا سبک" aria-label="جست‌وجو در گالری ناخن"/>
         </label>
+        {query.trim() && results.length===0 ? (
+          <div className="nail-search-feedback px-gutter" role="status">
+            <span>هیچ طرحی با جست‌وجو و فیلترهای فعلی پیدا نشد.</span>
+            <button type="button" onClick={()=>setQuery("")}>پاک کردن جست‌وجو</button>
+          </div>
+        ) : null}
         <div className="nail-photo-refine px-gutter" role="group" aria-label="نوع پیش‌نمایش ناخن">
           <div className="nail-photo-refine__description">
             <strong>نوع تصویر</strong>
@@ -218,8 +238,8 @@ export function NailsScreen() {
           </label>
         </div>
         {results.length ? (
-          <div className="nail-grid">
-            {visible.map((style, index) => {
+          <div className={visible.length===1 ? "nail-grid nail-grid--single" : "nail-grid"}>
+            {visible.map((style) => {
               const saved = favorites.includes(style.id);
               return (
                 <article className="nail-card" key={style.id} data-compared={compareIds.includes(style.id) ? "" : undefined}>
@@ -229,7 +249,7 @@ export function NailsScreen() {
                       <NailVisual style={style} className="nail-card__art" priority={photoOnly} onPhotoUnavailable={markPhotoUnavailable}/>
                     </span>
                     <span className="nail-card__info">
-                      <small lang="en">{String(index + 1).padStart(2,"0")} / {style.en}</small>
+                      <small lang="en">{String(CATALOG_NUMBERS.get(style.id) ?? 0).padStart(2,"0")} / {style.en}</small>
                       <strong>{style.title}</strong>
                       <span className="nail-card__media-type">
                         <span className="nail-card__media-type--photo">عکس الهام‌بخشِ ساخته‌شده با هوش مصنوعی</span>

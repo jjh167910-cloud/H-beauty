@@ -60,7 +60,7 @@
 .nail-hero__copy strong {font-size:1.7rem;line-height:1.65;font-weight:450;}
 .nail-hero__copy p {font-size:.74rem;line-height:1.9;color:#e9dcd9;}
 .nail-hero__copy button {display:flex;align-items:center;gap:.35rem;border-bottom:1px solid #bea078;min-height:44px;font-size:.77rem;color:#f9d9ab;}
-.nail-hero__art {position:absolute;inset-inline-start:44%;inset-block:0;width:60%;height:100%;object-fit:contain;transform:scale(1.25);filter:drop-shadow(0 12px 13px #17101a80);pointer-events:none;}
+.nail-hero__card > .nail-hero__art {position:absolute;inset-inline-start:35%;inset-block-start:0;width:60%;height:18.5rem;object-fit:contain;transform:scale(1.02);filter:drop-shadow(0 12px 13px #17101a80);pointer-events:none;}
 .nail-filters {display:grid;gap:.6rem;margin-bottom:1rem;}
 .nail-filters__top {display:flex;align-items:center;justify-content:space-between;gap:.8rem;flex-wrap:wrap;margin-block-end:.35rem;}
 .nail-filters__top span {font:.55rem/1.4 var(--font-serif);letter-spacing:.19em;color:var(--color-gold-ink);}
@@ -75,10 +75,15 @@
 .nail-search:focus-within {outline:2px solid var(--color-gold);outline-offset:1px;}
 .nail-search input {border:0;background:transparent;outline:none;width:100%;min-width:0;font-size:.82rem;color:var(--color-ink);}
 .nail-search input::placeholder {color:var(--color-ink-3);}
+.nail-search-feedback {display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.55rem;font-size:.75rem;line-height:1.65;color:var(--color-ink-2);}
+.nail-search-feedback button {min-height:44px;padding:.45rem .7rem;border:1px solid var(--color-line-2);border-radius:.65rem;color:var(--color-ink);background:var(--color-surface);font-weight:600;}
+.nail-search-feedback button:focus-visible {outline:2px solid var(--color-gold-ink);outline-offset:2px;}
 .nail-filter-label {font-size:.72rem;font-weight:650;color:var(--color-ink-2);}
 .nail-filters .chip-row {margin-block:0 .35rem;}
 .nail-collection {padding-block:.6rem 1.4rem;}
 .nail-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.8rem;}
+/* A filtered single result should not sit in half of an empty row. */
+.nail-grid.nail-grid--single {grid-template-columns:minmax(0,1fr);width:min(100%,23rem);margin-inline:auto;}
 .nail-card {min-width:0;border-radius:1.05rem;background:var(--color-surface);border:1px solid var(--color-line);overflow:hidden;box-shadow:var(--shadow-1);}
 .nail-card__open {display:block;width:100%;text-align:start;min-width:0;}
 .nail-card__picture {position:relative;display:grid;place-items:center;width:100%;aspect-ratio:4/4.35;overflow:hidden;background:linear-gradient(145deg,#f0e8e0,#e9d5d5);border-radius:1rem 1rem .25rem .25rem;}
@@ -86,6 +91,7 @@
 .nail-card:nth-child(3n+3) .nail-card__picture{background:linear-gradient(130deg,#ede4d6,#e2d4c3);}
 :root[data-theme="dark"] .nail-card__picture{background:linear-gradient(150deg,#51454b,#352b36);}
 .nail-card__art {width:110%;height:100%;max-height:260px;filter:drop-shadow(0 8px 9px #39202c1c);transition:transform .35s ease;}
+.nail-grid--single .nail-card__art {width:100%;max-height:none;}
 .nail-card__open:hover .nail-card__art,.nail-card__open:focus-visible .nail-card__art{transform:scale(1.045);}
 .nail-card__info {display:grid;gap:.25rem;padding:.8rem .85rem .55rem;min-height:7.2rem;align-content:start;}
 .nail-card__info small {direction:ltr;text-align:end;unicode-bidi:isolate;font:.57rem/1.5 var(--font-serif);letter-spacing:.04em;color:var(--color-gold-ink);}
@@ -119,7 +125,7 @@
   .nail-grid {grid-template-columns:repeat(3,minmax(0,1fr));gap:1.05rem;}
   .nail-hero__card {min-height:22rem;padding:2rem;}
   .nail-hero__copy strong{font-size:2.05rem;}
-  .nail-hero__art{width:55%;inset-inline-start:50%;}
+  .nail-hero__card > .nail-hero__art{width:55%;height:22rem;inset-inline-start:40%;}
 }
 @media (max-width:360px) {
   .nail-hero__copy strong{font-size:1.38rem;}
@@ -176,6 +182,7 @@
 .nail-visual__photo[data-ready] {opacity:1;}
 .nail-card__picture .nail-visual {height:100%;}
 .nail-card__picture .nail-visual__photo {object-position:center 52%;}
+.nail-hero__art[data-media-source="ai-photo"] .nail-visual__fallback {visibility:hidden;}
 .nail-hero__art .nail-visual__photo {
   object-position:54% 45%;
   -webkit-mask-image:radial-gradient(ellipse 75% 84% at 54% 50%,#000 65%,transparent 100%);
