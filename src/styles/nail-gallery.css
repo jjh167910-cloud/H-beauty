@@ -188,6 +188,20 @@
   -webkit-mask-image:radial-gradient(ellipse 75% 84% at 54% 50%,#000 65%,transparent 100%);
   mask-image:radial-gradient(ellipse 75% 84% at 54% 50%,#000 65%,transparent 100%);
 }
+/* The shared .nail-visual rule appears after the banner artwork rule and used
+   to reset absolute positioning to relative. That made percentage height
+   resolve to 0 and moved the entire nail image outside the card.
+   Keep this declaration more specific than the shared visual component. */
+.nail-home-banner > .nail-home-banner__art {
+  position:absolute;
+  inset-inline-end:0;
+  inset-inline-start:auto;
+  inset-block:0;
+  width:52%;
+  height:100%;
+  pointer-events:none;
+  opacity:1;
+}
 .nail-home-banner__art .nail-visual__photo {
   object-position:54% 50%;
   -webkit-mask-image:linear-gradient(to right,#000 76%,transparent);
