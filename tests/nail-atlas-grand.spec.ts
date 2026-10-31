@@ -32,6 +32,7 @@ test("grand atlas pedicure collection has 78 styles with lazy paging",async({pag
   await group.getByRole("button",{name:"پدیکور · ۷۸ طرح"}).click();
   await expect(page.locator(".nail-collection__toolbar").getByText("۲۴ از ۷۸ طرح")).toBeVisible();
   await expect(page.locator(".nail-card")).toHaveCount(24);
+  await page.getByRole("button",{name:"فیلترها"}).click();
   await page.getByRole("group",{name:"فیلتر نوع طراحی ناخن"})
     .getByRole("button",{name:"هاله‌ای"}).click();
   await expect(page.locator(".nail-card")).toHaveCount(6);
@@ -40,6 +41,7 @@ test("grand atlas pedicure collection has 78 styles with lazy paging",async({pag
 
 test("new magnetic nail family has twelve distinct colors and detailed beam artwork",async({page})=>{
   await atlas(page,768);
+  await page.getByRole("button",{name:"فیلترها"}).click();
   await page.getByRole("group",{name:"فیلتر نوع طراحی ناخن"})
     .getByRole("button",{name:"چشم‌گربه‌ای"}).click();
   await expect(page.locator(".nail-card")).toHaveCount(12);
