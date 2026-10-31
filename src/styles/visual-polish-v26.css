@@ -305,9 +305,12 @@
     padding:3%;
     box-sizing:border-box;
   }
-  .discover__frame {
+  .discover__stage .discover__frame {
+    width:min(86vw,26rem,50dvh);
+    height:auto;
     aspect-ratio:1;
-    width:min(86vw,28rem,48dvh);
+    max-width:100%;
+    max-height:none;
     border-radius:1.2rem;
     background:#f9f6f3;
   }
