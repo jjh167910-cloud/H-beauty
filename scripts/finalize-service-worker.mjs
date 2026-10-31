@@ -30,11 +30,11 @@ export function finalizeServiceWorker(distDir = 'dist') {
   // 291 portraits retain their existing runtime caching and release behavior.
   const hb001Lock=resolve("assets/hb001-overlay.sha256");
   if(existsSync(hb001Lock)){
-    const lines=readFileSync(hb001Lock,"utf8").trim().split(/\\r?\\n/);
+    const lines=readFileSync(hb001Lock,"utf8").trim().split(/\r?\n/);
     if(lines.length!==2)throw Error("HB-001 offline precache requires two exact locks");
     const ids=new Set();
     for(const line of lines){
-      const match=/^([a-f0-9]{64})  (1(?:-thumb)?\\.webp)$/.exec(line);
+      const match=/^([a-f0-9]{64})  (1(?:-thumb)?\.webp)$/.exec(line);
       if(!match||ids.has(match[2]))throw Error("Malformed HB-001 offline lock");
       ids.add(match[2]);
       const image=join(root,"looks",...(match[2]==="1-thumb.webp"?["sm"]:[]),"1.webp");
