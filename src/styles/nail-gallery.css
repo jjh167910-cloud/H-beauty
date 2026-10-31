@@ -60,7 +60,7 @@
 .nail-hero__copy strong {font-size:1.7rem;line-height:1.65;font-weight:450;}
 .nail-hero__copy p {font-size:.74rem;line-height:1.9;color:#e9dcd9;}
 .nail-hero__copy button {display:flex;align-items:center;gap:.35rem;border-bottom:1px solid #bea078;min-height:44px;font-size:.77rem;color:#f9d9ab;}
-.nail-hero__art {position:absolute;inset-inline-start:35%;inset-block-start:0;width:60%;height:18.5rem;object-fit:contain;transform:scale(1.02);filter:drop-shadow(0 12px 13px #17101a80);pointer-events:none;}
+.nail-hero__card > .nail-hero__art {position:absolute;inset-inline-start:35%;inset-block-start:0;width:60%;height:18.5rem;object-fit:contain;transform:scale(1.02);filter:drop-shadow(0 12px 13px #17101a80);pointer-events:none;}
 .nail-filters {display:grid;gap:.6rem;margin-bottom:1rem;}
 .nail-filters__top {display:flex;align-items:center;justify-content:space-between;gap:.8rem;flex-wrap:wrap;margin-block-end:.35rem;}
 .nail-filters__top span {font:.55rem/1.4 var(--font-serif);letter-spacing:.19em;color:var(--color-gold-ink);}
@@ -124,7 +124,7 @@
   .nail-grid {grid-template-columns:repeat(3,minmax(0,1fr));gap:1.05rem;}
   .nail-hero__card {min-height:22rem;padding:2rem;}
   .nail-hero__copy strong{font-size:2.05rem;}
-  .nail-hero__art{width:55%;height:22rem;inset-inline-start:40%;}
+  .nail-hero__card > .nail-hero__art{width:55%;height:22rem;inset-inline-start:40%;}
 }
 @media (max-width:360px) {
   .nail-hero__copy strong{font-size:1.38rem;}
