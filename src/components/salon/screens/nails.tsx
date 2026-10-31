@@ -170,7 +170,7 @@ export function NailsScreen() {
               ) : null}
             </label>
             <button type="button" className="nail-filter-workspace__open"
-              aria-expanded={filtersOpen} aria-controls="nail-filter-advanced"
+              aria-expanded={filtersOpen} aria-controls={filtersOpen ? "nail-filter-advanced" : undefined}
               onClick={()=>setFiltersOpen(value=>!value)}>
               <Icon name="palette" size={19}/>
               <span>فیلترها</span>
