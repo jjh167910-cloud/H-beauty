@@ -19,6 +19,7 @@ for (const width of [320,390,768]) {
     await expect(cards).toHaveCount(24);
     const over=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
     expect(over).toBeLessThanOrEqual(1);
+    await page.getByRole("button",{name:"فیلترها"}).click();
     await page.getByRole("group",{name:"فیلتر نوع طراحی ناخن"}).getByRole("button",{name:"فرنچ"}).click();
     await expect(cards).toHaveCount(24);
     await page.getByRole("group",{name:"فیلتر فرم ناخن"}).getByRole("button",{name:"بادامی"}).click();
