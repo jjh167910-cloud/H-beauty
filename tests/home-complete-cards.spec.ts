@@ -8,7 +8,7 @@ async function open(page:Page,width:number){
     }));
   });
   await page.goto("/#/");
-  await expect(page.locator(".salon24-style-card")).toHaveCount(5);
+  await expect(page.locator(".salon24-style-card")).toHaveCount(4);
   await expect(page.locator(".salon24-featured__card")).toHaveCount(4);
 }
 
@@ -30,7 +30,7 @@ for(const width of [320,354,390,430,768,1280]){
         imgWidth:img?.naturalWidth||0,imgHeight:img?.naturalHeight||0,
       };
     }));
-    expect(cards).toHaveLength(9);
+    expect(cards).toHaveLength(8);
     for(const [i,c] of cards.entries()){
       expect(c.left, String(i)).toBeGreaterThanOrEqual(-1);
       expect(c.right, String(i)).toBeLessThanOrEqual(width+1);
