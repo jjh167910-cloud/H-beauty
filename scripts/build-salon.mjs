@@ -13,6 +13,7 @@ import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createHash } from "node:crypto";
 import { installNailPack } from "./install-nail-photo-pack.mjs";
+import { installHairstyleIvory } from "./install-hairstyle-ivory.mjs";
 import { installPedicure78 } from "./install-pedicure-78-pack.mjs";
 import { restorePedicureParts } from "./restore-pedicure-parts.mjs";
 import { reconstructNailArchive } from "./restore-embedded-nail-v4.mjs";
@@ -40,6 +41,9 @@ async function build() {
   // Original 60 source photos are release-denied and live ONLY in the review namespace.
   // The import fails closed on missing or altered external archives before Vite builds.
   await installReviewIntake();
+  // Replace only the hairstyle backgrounds, using 584 checksum-locked assets.
+  // All originals remain recoverable through the preceding Git revision.
+  await installHairstyleIvory();
   // User explicitly authorized all 146 originals for TEMPORARY customer
   // display. This deliberately does NOT create fabricated per-photo editorial
   // QA passes or rewrite pre-existing rejected/hold review evidence.
