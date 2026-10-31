@@ -72,7 +72,7 @@ self.addEventListener('fetch', event => {
   // Numeric hairstyle image paths stay the same after a new matte release.
   // Never return a stale image from the previous SW cache before checking
   // the freshly deployed asset. Previously viewed photos remain usable offline.
-  if(/^\\/looks\\/(?:sm\\/)?[1-9]\\d*\\.webp$/.test(path)) {
+  if(/^\/looks\/(?:sm\/)?[1-9]\d*\.webp$/.test(path)) {
     event.respondWith((async()=>{
       const current=await caches.open(CACHE);
       const freshInCurrent=await current.match(req);
