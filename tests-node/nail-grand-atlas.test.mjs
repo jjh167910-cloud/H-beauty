@@ -16,9 +16,9 @@ const shades=section("const SHADES:","];");
 const manicure=section("const MANICURE_FAMILIES:","];");
 const pedicure=section("const PEDICURE_FAMILIES:","];");
 
-const shadeEntries=[...shades.matchAll(/\{id:"([^"]+)",fa:"([^"]+)",en:"([^"]+)",base:"(#[A-Fa-f0-9]{6})",accent:"(#[A-Fa-f0-9]{6})",color:"([^"]+)"\}/g)];
-const manicureEntries=[...manicure.matchAll(/\{id:"([^"]+)",fa:"([^"]+)",en:"([^"]+)",detail:"([^"]+)",finish:"([^"]+)",motif:"([^"]+)",shape:"([^"]+)",length:"([^"]+)"\}/g)];
-const pediEntries=[...pedicure.matchAll(/\{id:"([^"]+)",fa:"([^"]+)",en:"([^"]+)",detail:"([^"]+)",finish:"([^"]+)",motif:"([^"]+)",shape:"([^"]+)",length:"([^"]+)"\}/g)];
+const shadeEntries=[...shades.matchAll(/\{id:"([^"]+)",fa:"([^"]+)"(?:,legacyFa:"[^"]+")?,en:"([^"]+)",base:"(#[A-Fa-f0-9]{6})",accent:"(#[A-Fa-f0-9]{6})",color:"([^"]+)"\}/g)];
+const manicureEntries=[...manicure.matchAll(/\{id:"([^"]+)",fa:"([^"]+)"(?:,legacyFa:"[^"]+")?,en:"([^"]+)",detail:"([^"]+)",finish:"([^"]+)",motif:"([^"]+)",shape:"([^"]+)",length:"([^"]+)"\}/g)];
+const pediEntries=[...pedicure.matchAll(/\{id:"([^"]+)",fa:"([^"]+)"(?:,legacyFa:"[^"]+")?,en:"([^"]+)",detail:"([^"]+)",finish:"([^"]+)",motif:"([^"]+)",shape:"([^"]+)",length:"([^"]+)"\}/g)];
 const originalIds=[...originals.matchAll(/\bid:"((?:nail|pedi)-[^"]+)"/g)].map(v=>v[1]);
 const newMani=manicureEntries.flatMap(f=>shadeEntries.map(s=>"nail-atlas-"+f[1]+"-"+s[1]));
 const newPedi=pediEntries.flatMap(f=>shadeEntries.filter((s,i)=>[0,1,3,6,7,9].includes(i)).map(s=>"pedi-atlas-"+f[1]+"-"+s[1]));

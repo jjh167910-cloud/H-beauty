@@ -95,7 +95,7 @@ export function NailsScreen() {
       (length === "all" || length === style.length) &&
       (!savedOnly || favorites.includes(style.id)) &&
       (!photoOnly || (Boolean(NAIL_CUSTOMER_PHOTOS[style.id]) && !unavailablePhotos.has(style.id))) &&
-      (!q || normalize(`${style.title} ${style.en} ${style.description}`).toLowerCase().includes(q))
+      (!q || normalize(`${style.title} ${style.aliases?.join(" ") ?? ""} ${style.en} ${style.description}`).toLowerCase().includes(q))
     );
     if(order==="alphabetical") return [...filtered].sort((a,b)=>a.title.localeCompare(b.title,"fa"));
     return filtered;

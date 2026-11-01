@@ -52,117 +52,120 @@ export type MakeupStyle = {
   title: string;
   en: string;
   detail: string;
+  aliases?: readonly string[];
   look: FaceLook;
   /** The look worn in the reference model photo. */
   reference?: boolean;
   promptNumber?: number;
 };
 
+const LEGACY_MAKEUP_SEARCH_ALIASES: Readonly<Record<string, string>> = {"no-makeup":"میکاپ بدون میکاپ","clean-girl":"کلین گرل","sun-kissed":"آفتاب‌خورده","cold-girl":"کولد گرل","soft-glam":"گلم نرم","latte":"لاته","strawberry":"توت‌فرنگی","full-glam":"فول گلم","hollywood":"گلم هالیوودی","arabic-glam":"گلم عربی","bronzed-goddess":"برنزه طلایی","golden-hour":"طلایی","bold-glam":"گلم جسور","cut-crease":"کات‌کریز","classic-smokey":"دودی کلاسیک","brown-smokey":"دودی قهوه‌ای","plum-smokey":"دودی آلویی","emerald-night":"شب زمردی","navy-smokey":"دودی سرمه‌ای","siren-eyes":"سایرن آیز","cat-eye":"خط چشم گربه‌ای","fox-eye":"فاکس آی","colour-liner":"خط رنگی","classic-bride":"عروس کلاسیک","persian-bride":"عروس ایرانی","romantic-bride":"عروس رمانتیک","boho-bride":"عروس بوهو","aqd":"مراسم عقد","henna-night":"شب حنابندان","sunset":"غروب","pastel":"پاستلی","monochrome":"مونوکروم بری","glitter-party":"گلیتر","rhinestone":"نگین‌دار","electric-blue":"آبی ادیتوریال","pin-up":"پین‌آپ دهه ۵۰","mod-60s":"رترو دهه ۶۰","nineties":"دهه ۹۰","twenties":"دهه ۲۰","k-beauty":"کره‌ای","douyin":"دویین"};
+
 function style(id: string, category: StyleCategory, title: string, en: string, detail: string, look: FaceLook, reference?: boolean): MakeupStyle {
-  return { id, category, title, en, detail, look, reference };
+  return { id, category, title, en, detail, look, reference, aliases: LEGACY_MAKEUP_SEARCH_ALIASES[id] ? [LEGACY_MAKEUP_SEARCH_ALIASES[id]] : [] };
 }
 
 const LEGACY_MAKEUP_STYLES: MakeupStyle[] = [
   /* ---------- Everyday ---------- */
-  style("no-makeup", "everyday", "میکاپ بدون میکاپ", "NO-MAKEUP MAKEUP", "پوست یکدست با پوشش بسیار سبک؛ فقط کمی ریمل و بالم رنگی.",
+  style("no-makeup", "everyday", "میکاپ نچرال خیلی سبک", "NO-MAKEUP MAKEUP", "پوست یکدست با پوشش بسیار سبک؛ فقط کمی ریمل و بالم رنگی.",
     { skin: "sheer", shadow: "wash", lid: ["#d9b19f", "#c39a87"], liner: "none", lashes: "natural", brow: "natural", blush: "apples", blushColor: "#e3a394", lip: "gloss", lipColor: "#c9877c" }),
-  style("clean-girl", "everyday", "کلین گرل", "CLEAN GIRL", "ابروی لیفت‌شده، پوست شبنمی و لب براق؛ مرتب و تازه.",
+  style("clean-girl", "everyday", "میکاپ کلین‌گرل", "CLEAN GIRL", "ابروی لیفت‌شده، پوست شبنمی و لب براق؛ مرتب و تازه.",
     { skin: "dewy", shadow: "none", lid: ["#d9b19f", "#c39a87"], liner: "none", lashes: "natural", brow: "lifted", blush: "high", blushColor: "#e39a8f", lip: "gloss", lipColor: "#c47e78" }),
-  style("sun-kissed", "everyday", "آفتاب‌خورده", "SUN-KISSED", "پوست برنزه، رژگونه روی بینی و کک‌مک ظریف؛ حس تابستان.",
+  style("sun-kissed", "everyday", "میکاپ برنزه آفتابی", "SUN-KISSED", "پوست برنزه، رژگونه روی بینی و کک‌مک ظریف؛ حس تابستان.",
     { skin: "bronzed", shadow: "wash", lid: ["#d39b74", "#b97c58"], liner: "none", lashes: "natural", brow: "natural", blush: "nose", blushColor: "#e3876f", lip: "gloss", lipColor: "#c27a62", accents: ["freckles"] }),
-  style("cold-girl", "everyday", "کولد گرل", "COLD GIRL", "رژگونه صورتی روی گونه و بینی؛ انگار از سرمای بیرون آمده‌اید.",
+  style("cold-girl", "everyday", "میکاپ صورتی سرد", "COLD GIRL", "رژگونه صورتی روی گونه و بینی؛ انگار از سرمای بیرون آمده‌اید.",
     { skin: "dewy", shadow: "wash", lid: ["#e9b9bf", "#d698a3"], liner: "none", lashes: "natural", brow: "natural", blush: "nose", blushColor: "#ef8e9c", lip: "gloss", lipColor: "#d47483" }),
 
   /* ---------- Soft glam ---------- */
-  style("soft-glam", "soft", "گلم نرم", "SOFT GLAM", "لوکِ تصویر مرجع: ابروی پر، سایه گرم، خط ریز و رژ موو-رز.",
+  style("soft-glam", "soft", "میکاپ سافت‌گلم", "SOFT GLAM", "لوکِ تصویر مرجع: ابروی پر، سایه گرم، خط ریز و رژ موو-رز.",
     { skin: "glow", shadow: "crease", lid: ["#c8a08a", "#8f6655"], liner: "thin", lashes: "volume", brow: "bold", blush: "apples", blushColor: "#d4958a", lip: "satin", lipColor: "#9a5257" }, true),
-  style("latte", "soft", "لاته", "LATTE MAKEUP", "سایه‌های قهوه‌ای کرم، خط محو و لب نود قهوه‌ای با خط لب.",
+  style("latte", "soft", "میکاپ لاته قهوه‌ای", "LATTE MAKEUP", "سایه‌های قهوه‌ای کرم، خط محو و لب نود قهوه‌ای با خط لب.",
     { skin: "bronzed", shadow: "crease", lid: ["#c49a7a", "#7a5440"], liner: "smudge", linerColor: "#5a3a2a", lashes: "volume", brow: "natural", blush: "high", blushColor: "#c98a6f", lip: "lined", lipColor: "#9a6450" }),
-  style("strawberry", "soft", "توت‌فرنگی", "STRAWBERRY", "رژگونه صورتی گسترده، کک‌مک و لب براق توت‌فرنگی.",
+  style("strawberry", "soft", "میکاپ صورتی توت‌فرنگی", "STRAWBERRY", "رژگونه صورتی گسترده، کک‌مک و لب براق توت‌فرنگی.",
     { skin: "dewy", shadow: "wash", lid: ["#f1a7b0", "#e08391"], liner: "none", lashes: "natural", brow: "natural", blush: "draped", blushColor: "#ee8a98", lip: "gloss", lipColor: "#e0707f", accents: ["freckles"] }),
 
   /* ---------- Full glam ---------- */
-  style("full-glam", "glam", "فول گلم", "FULL GLAM", "کانتور کامل، سایه عمیق، خط بال‌دار و مژه پرپشت.",
+  style("full-glam", "glam", "میکاپ فول‌گلم مجلسی", "FULL GLAM", "کانتور کامل، سایه عمیق، خط بال‌دار و مژه پرپشت.",
     { skin: "matte", shadow: "crease", lid: ["#d8b08a", "#5e3b2c"], liner: "wing", lashes: "dramatic", brow: "bold", blush: "high", blushColor: "#cf8d7b", lip: "lined", lipColor: "#a3685c", accents: ["contour", "shimmer"] }),
-  style("hollywood", "glam", "گلم هالیوودی", "HOLLYWOOD GLAM", "پلک شامپاینی، خط کلاسیک و رژ قرمز مات.",
+  style("hollywood", "glam", "میکاپ هالیوودی کلاسیک", "HOLLYWOOD GLAM", "پلک شامپاینی، خط کلاسیک و رژ قرمز مات.",
     { skin: "glow", shadow: "wash", lid: ["#e7cfae", "#c7a27c"], liner: "wing", lashes: "dramatic", brow: "bold", blush: "apples", blushColor: "#dc9488", lip: "matte", lipColor: "#b3242f", accents: ["shimmer"] }),
-  style("arabic-glam", "glam", "گلم عربی", "ARABIC GLAM", "ابروی پر، دودی تیره با مرکز طلایی، خط کشیده و لب نود.",
+  style("arabic-glam", "glam", "چشم دودی طلایی کشیده", "ARABIC GLAM", "ابروی پر، دودی تیره با مرکز طلایی، خط کشیده و لب نود.",
     { skin: "matte", shadow: "smoky", lid: ["#c9963f", "#2b1d17"], liner: "siren", lashes: "dramatic", brow: "bold", blush: "high", blushColor: "#c98472", lip: "lined", lipColor: "#a86a5b", accents: ["lowerLiner", "contour", "shimmer"] }),
-  style("bronzed-goddess", "glam", "برنزه طلایی", "BRONZED GODDESS", "پلک برنز متالیک، پوست برنزه و لب نود براق.",
+  style("bronzed-goddess", "glam", "میکاپ برنزه طلایی", "BRONZED GODDESS", "پلک برنز متالیک، پوست برنزه و لب نود براق.",
     { skin: "bronzed", shadow: "gradient", lid: ["#c99a52", "#7b4a2a"], liner: "thin", lashes: "volume", brow: "bold", blush: "high", blushColor: "#c4795a", lip: "gloss", lipColor: "#b06a52", accents: ["shimmer", "contour"] }),
-  style("golden-hour", "glam", "طلایی", "GOLDEN HOUR", "هالوی طلایی روی پلک با گرمای نور غروب.",
+  style("golden-hour", "glam", "میکاپ طلایی گرم", "GOLDEN HOUR", "هالوی طلایی روی پلک با گرمای نور غروب.",
     { skin: "glow", shadow: "halo", lid: ["#e2bd6a", "#8a5a33"], liner: "wing", lashes: "volume", brow: "natural", blush: "high", blushColor: "#d99172", lip: "satin", lipColor: "#b56a57", accents: ["shimmer"] }),
-  style("bold-glam", "glam", "گلم جسور", "BOLD GLAM", "دودی قهوه‌ای تیره، مژه پرپشت و لب شرابی با خط.",
+  style("bold-glam", "glam", "میکاپ بولد مجلسی", "BOLD GLAM", "دودی قهوه‌ای تیره، مژه پرپشت و لب شرابی با خط.",
     { skin: "matte", shadow: "smoky", lid: ["#7a4a3c", "#2a1814"], liner: "wing", lashes: "dramatic", brow: "bold", blush: "high", blushColor: "#b9776a", lip: "lined", lipColor: "#6d1f2c", accents: ["contour"] }),
-  style("cut-crease", "glam", "کات‌کریز", "CUT CREASE", "مرز دقیق روی چین پلک با پلک روشن؛ عمق و وضوح.",
+  style("cut-crease", "glam", "سایه کات‌کریس حرفه‌ای", "CUT CREASE", "مرز دقیق روی چین پلک با پلک روشن؛ عمق و وضوح.",
     { skin: "matte", shadow: "cutcrease", lid: ["#efd6bf", "#5a3426"], liner: "wing", lashes: "dramatic", brow: "bold", blush: "high", blushColor: "#cf8d7b", lip: "lined", lipColor: "#a3685c", accents: ["shimmer"] }),
 
   /* ---------- Smoky & evening ---------- */
-  style("classic-smokey", "smoky", "دودی کلاسیک", "CLASSIC SMOKEY", "دودی سیاه و خاکستری با لب نود؛ کلاسیکِ شب.",
+  style("classic-smokey", "smoky", "اسموکی مشکی کلاسیک", "CLASSIC SMOKEY", "دودی سیاه و خاکستری با لب نود؛ کلاسیکِ شب.",
     { skin: "matte", shadow: "smoky", lid: ["#5c5452", "#141010"], liner: "smudge", lashes: "dramatic", brow: "bold", blush: "apples", blushColor: "#cf9488", lip: "satin", lipColor: "#b67e74", accents: ["lowerLiner"] }),
-  style("brown-smokey", "smoky", "دودی قهوه‌ای", "BROWN SMOKEY", "دودی گرم قهوه‌ای؛ نرم‌تر از مشکی و مناسب پوست‌های گرم.",
+  style("brown-smokey", "smoky", "اسموکی قهوه‌ای محو", "BROWN SMOKEY", "دودی گرم قهوه‌ای؛ نرم‌تر از مشکی و مناسب پوست‌های گرم.",
     { skin: "matte", shadow: "smoky", lid: ["#9c6e55", "#3a2219"], liner: "smudge", linerColor: "#3a2219", lashes: "volume", brow: "bold", blush: "high", blushColor: "#cc8b77", lip: "satin", lipColor: "#a86a5e" }),
-  style("plum-smokey", "smoky", "دودی آلویی", "PLUM SMOKEY", "سایه آلویی دودی با لب بری؛ عمیق و زنانه.",
+  style("plum-smokey", "smoky", "اسموکی آلویی", "PLUM SMOKEY", "سایه آلویی دودی با لب بری؛ عمیق و زنانه.",
     { skin: "matte", shadow: "smoky", lid: ["#8e5a7a", "#3a1830"], liner: "smudge", linerColor: "#2a1424", lashes: "volume", brow: "bold", blush: "apples", blushColor: "#c98493", lip: "matte", lipColor: "#8a3f5a" }),
-  style("emerald-night", "smoky", "شب زمردی", "EMERALD NIGHT", "دودی سبز زمردی با نقاط طلایی؛ برای لباس‌های تیره.",
+  style("emerald-night", "smoky", "اسموکی زمردی", "EMERALD NIGHT", "دودی سبز زمردی با نقاط طلایی؛ برای لباس‌های تیره.",
     { skin: "glow", shadow: "smoky", lid: ["#3f7a5e", "#14301f"], liner: "wing", lashes: "volume", brow: "bold", blush: "high", blushColor: "#cf8d7b", lip: "satin", lipColor: "#a8645a", accents: ["glitter"] }),
-  style("navy-smokey", "smoky", "دودی سرمه‌ای", "NAVY SMOKEY", "سرمه‌ای محو به جای مشکی؛ متفاوت ولی رسمی.",
+  style("navy-smokey", "smoky", "اسموکی سرمه‌ای", "NAVY SMOKEY", "سرمه‌ای محو به جای مشکی؛ متفاوت ولی رسمی.",
     { skin: "matte", shadow: "smoky", lid: ["#3e4f7a", "#141b33"], liner: "smudge", linerColor: "#141b33", lashes: "volume", brow: "bold", blush: "apples", blushColor: "#cf9488", lip: "satin", lipColor: "#b67e74", accents: ["lowerLiner"] }),
-  style("siren-eyes", "smoky", "سایرن آیز", "SIREN EYES", "خط کشیده با گوشه داخلی تیز و سایه تیره؛ نگاه کشیده و جذاب.",
+  style("siren-eyes", "smoky", "چشم کشیده سایرن", "SIREN EYES", "خط کشیده با گوشه داخلی تیز و سایه تیره؛ نگاه کشیده و جذاب.",
     { skin: "matte", shadow: "smoky", lid: ["#8a6252", "#2b1a14"], liner: "siren", lashes: "volume", brow: "lifted", blush: "high", blushColor: "#c98472", lip: "lined", lipColor: "#9c5d55" }),
 
   /* ---------- Liner ---------- */
-  style("cat-eye", "liner", "خط چشم گربه‌ای", "CAT EYE", "خط بال‌دار کلاسیک؛ بقیه چهره ملایم می‌ماند.",
+  style("cat-eye", "liner", "خط چشم گربه‌ای کشیده", "CAT EYE", "خط بال‌دار کلاسیک؛ بقیه چهره ملایم می‌ماند.",
     { skin: "matte", shadow: "wash", lid: ["#dcbca8", "#bf9a85"], liner: "wing", lashes: "volume", brow: "natural", blush: "apples", blushColor: "#d99486", lip: "satin", lipColor: "#b8746c" }),
-  style("fox-eye", "liner", "فاکس آی", "FOX EYE", "خط و سایه کشیده رو به بالا با ابروی لیفت‌شده.",
+  style("fox-eye", "liner", "خط چشم روباهی", "FOX EYE", "خط و سایه کشیده رو به بالا با ابروی لیفت‌شده.",
     { skin: "matte", shadow: "crease", lid: ["#c9a08a", "#6e4a3a"], liner: "fox", lashes: "volume", brow: "lifted", blush: "high", blushColor: "#cf8d7b", lip: "lined", lipColor: "#a3685c", accents: ["contour"] }),
   style("graphic-liner", "liner", "لاینر گرافیکی", "GRAPHIC LINER", "خط معلق روی چین پلک؛ مینیمال و مدرن.",
     { skin: "matte", shadow: "none", lid: ["#e2c6b3", "#c6a08a"], liner: "graphic", lashes: "natural", brow: "natural", blush: "apples", blushColor: "#d99486", lip: "matte", lipColor: "#b8746c" }),
-  style("colour-liner", "liner", "خط رنگی", "COLOUR LINER", "خط بال‌دار آبی روشن روی پوست تمیز.",
+  style("colour-liner", "liner", "لاینر رنگی فانتزی", "COLOUR LINER", "خط بال‌دار آبی روشن روی پوست تمیز.",
     { skin: "dewy", shadow: "none", lid: ["#e2c6b3", "#c6a08a"], liner: "wing", linerColor: "#2f6fd6", lashes: "volume", brow: "natural", blush: "apples", blushColor: "#e09a95", lip: "gloss", lipColor: "#c97a7f" }),
 
   /* ---------- Bridal ---------- */
-  style("classic-bride", "bridal", "عروس کلاسیک", "CLASSIC BRIDE", "ماندگار و عکس‌محور؛ سایه گرم، مژه پرپشت و لب رز.",
+  style("classic-bride", "bridal", "میکاپ عروس کلاسیک", "CLASSIC BRIDE", "ماندگار و عکس‌محور؛ سایه گرم، مژه پرپشت و لب رز.",
     { skin: "glow", shadow: "crease", lid: ["#ead2bd", "#8b6352"], liner: "wing", lashes: "dramatic", brow: "bold", blush: "apples", blushColor: "#e09a95", lip: "satin", lipColor: "#c27a7b", accents: ["contour", "shimmer"] }),
-  style("persian-bride", "bridal", "عروس ایرانی", "PERSIAN BRIDE", "دودی قهوه‌ای، خط بال‌دار، ابروی پر و هایلایت درخشان.",
+  style("persian-bride", "bridal", "میکاپ عروس ایرانی", "PERSIAN BRIDE", "دودی قهوه‌ای، خط بال‌دار، ابروی پر و هایلایت درخشان.",
     { skin: "glow", shadow: "smoky", lid: ["#c79a74", "#4a2c20"], liner: "wing", lashes: "dramatic", brow: "bold", blush: "high", blushColor: "#d98f86", lip: "lined", lipColor: "#b06a6a", accents: ["contour", "shimmer", "lowerLiner"] }),
-  style("romantic-bride", "bridal", "عروس رمانتیک", "ROMANTIC PINK", "صورتی ملایم روی پلک و گونه با لب براق.",
+  style("romantic-bride", "bridal", "میکاپ عروس صورتی ملایم", "ROMANTIC PINK", "صورتی ملایم روی پلک و گونه با لب براق.",
     { skin: "dewy", shadow: "wash", lid: ["#efbcc0", "#d993a0"], liner: "thin", lashes: "volume", brow: "natural", blush: "draped", blushColor: "#ef9aa6", lip: "gloss", lipColor: "#d9788a", accents: ["shimmer"] }),
-  style("boho-bride", "bridal", "عروس بوهو", "BOHO BRIDE", "برنزه و طبیعی با کک‌مک؛ برای مراسم در فضای باز.",
+  style("boho-bride", "bridal", "میکاپ عروس بوهو", "BOHO BRIDE", "برنزه و طبیعی با کک‌مک؛ برای مراسم در فضای باز.",
     { skin: "bronzed", shadow: "wash", lid: ["#d3a273", "#a8744c"], liner: "none", lashes: "natural", brow: "natural", blush: "nose", blushColor: "#de8a70", lip: "satin", lipColor: "#b97461", accents: ["freckles", "shimmer"] }),
-  style("aqd", "bridal", "مراسم عقد", "AQD CEREMONY", "شامپاینی و درخشان؛ ظریف و روشن برای سفره عقد.",
+  style("aqd", "bridal", "میکاپ عقد نچرال", "AQD CEREMONY", "شامپاینی و درخشان؛ ظریف و روشن برای سفره عقد.",
     { skin: "glow", shadow: "wash", lid: ["#efd9c4", "#d5b39a"], liner: "thin", lashes: "volume", brow: "natural", blush: "apples", blushColor: "#e6a39b", lip: "satin", lipColor: "#c9837f", accents: ["shimmer"] }),
-  style("henna-night", "bridal", "شب حنابندان", "HENNA NIGHT", "طلایی و تیره با لب قرمز عمیق؛ گرم و جشن‌گونه.",
+  style("henna-night", "bridal", "میکاپ حنابندان", "HENNA NIGHT", "طلایی و تیره با لب قرمز عمیق؛ گرم و جشن‌گونه.",
     { skin: "glow", shadow: "halo", lid: ["#d7a54a", "#6b2f1f"], liner: "siren", lashes: "dramatic", brow: "bold", blush: "high", blushColor: "#d0846e", lip: "matte", lipColor: "#8c1f28", accents: ["glitter"] }),
 
   /* ---------- Colour & editorial ---------- */
-  style("sunset", "color", "غروب", "SUNSET EYES", "گرادیان نارنجی تا صورتی روی پلک.",
+  style("sunset", "color", "سایه چشم غروبی", "SUNSET EYES", "گرادیان نارنجی تا صورتی روی پلک.",
     { skin: "glow", shadow: "gradient", lid: ["#f4b24b", "#d8435a"], liner: "thin", lashes: "volume", brow: "natural", blush: "high", blushColor: "#ef8f7a", lip: "gloss", lipColor: "#d86a5e" }),
-  style("pastel", "color", "پاستلی", "PASTEL LILAC", "یاسی پاستلی روی پلک با گونه و لب صورتی.",
+  style("pastel", "color", "سایه یاسی پاستلی", "PASTEL LILAC", "یاسی پاستلی روی پلک با گونه و لب صورتی.",
     { skin: "dewy", shadow: "wash", lid: ["#c9b3e8", "#a58ad6"], liner: "none", lashes: "natural", brow: "natural", blush: "apples", blushColor: "#f0a5b4", lip: "gloss", lipColor: "#e08aa0" }),
-  style("monochrome", "color", "مونوکروم بری", "MONOCHROME BERRY", "یک رنگ بری روی پلک، گونه و لب؛ هماهنگ و مدرن.",
+  style("monochrome", "color", "میکاپ تمشکی تک‌رنگ", "MONOCHROME BERRY", "یک رنگ بری روی پلک، گونه و لب؛ هماهنگ و مدرن.",
     { skin: "matte", shadow: "wash", lid: ["#c0606f", "#8f3a4c"], liner: "thin", lashes: "volume", brow: "natural", blush: "high", blushColor: "#c86476", lip: "matte", lipColor: "#8f3a4c" }),
-  style("glitter-party", "color", "گلیتر", "GLITTER PARTY", "پلک پر از گلیتر برای جشن و تولد.",
+  style("glitter-party", "color", "میکاپ شاین مهمانی", "GLITTER PARTY", "پلک پر از گلیتر برای جشن و تولد.",
     { skin: "glow", shadow: "wash", lid: ["#e7c9d2", "#c9a0b0"], liner: "wing", lashes: "dramatic", brow: "natural", blush: "apples", blushColor: "#e09aa5", lip: "gloss", lipColor: "#c97a8a", accents: ["glitter", "shimmer"] }),
-  style("rhinestone", "color", "نگین‌دار", "RHINESTONE ACCENTS", "نگین‌های ریز کنار چشم؛ ادیتوریال و چشمگیر.",
+  style("rhinestone", "color", "میکاپ چشم نگین‌دار", "RHINESTONE ACCENTS", "نگین‌های ریز کنار چشم؛ ادیتوریال و چشمگیر.",
     { skin: "dewy", shadow: "wash", lid: ["#dfc0e6", "#b48bc4"], liner: "thin", lashes: "volume", brow: "natural", blush: "high", blushColor: "#e59ab0", lip: "gloss", lipColor: "#c97a96", accents: ["rhinestones", "shimmer"] }),
-  style("electric-blue", "color", "آبی ادیتوریال", "ELECTRIC BLUE", "آبی پررنگ گرادیانی با خط گرافیکی؛ برای عکاسی.",
+  style("electric-blue", "color", "سایه آبی کاربنی", "ELECTRIC BLUE", "آبی پررنگ گرادیانی با خط گرافیکی؛ برای عکاسی.",
     { skin: "matte", shadow: "gradient", lid: ["#4aa3f0", "#1d3fb8"], liner: "graphic", linerColor: "#1d3fb8", lashes: "volume", brow: "natural", blush: "none", blushColor: "#d99486", lip: "matte", lipColor: "#b57a72" }),
 
   /* ---------- Retro ---------- */
-  style("pin-up", "retro", "پین‌آپ دهه ۵۰", "50s PIN-UP", "خط بال‌دار پهن و رژ قرمز؛ کلاسیک دهه پنجاه.",
+  style("pin-up", "retro", "میکاپ رترو دهه پنجاه", "50s PIN-UP", "خط بال‌دار پهن و رژ قرمز؛ کلاسیک دهه پنجاه.",
     { skin: "matte", shadow: "wash", lid: ["#efd9c8", "#d8b9a2"], liner: "wing", lashes: "volume", brow: "bold", blush: "apples", blushColor: "#e09088", lip: "matte", lipColor: "#b31f2c" }),
-  style("mod-60s", "retro", "رترو دهه ۶۰", "60s MOD", "خط روی چین پلک و مژه‌های پایین برجسته.",
+  style("mod-60s", "retro", "میکاپ رترو دهه شصت", "60s MOD", "خط روی چین پلک و مژه‌های پایین برجسته.",
     { skin: "matte", shadow: "wash", lid: ["#eadbd0", "#d0bcae"], liner: "graphic", lashes: "dramatic", brow: "natural", blush: "apples", blushColor: "#e0a39a", lip: "satin", lipColor: "#d6a39a", accents: ["bottomLashes"] }),
-  style("nineties", "retro", "دهه ۹۰", "90s BROWN LIP", "ابروی باریک، رژ قهوه‌ای با خط تیره و پوست مات.",
+  style("nineties", "retro", "لب قهوه‌ای نودی دهه نود", "90s BROWN LIP", "ابروی باریک، رژ قهوه‌ای با خط تیره و پوست مات.",
     { skin: "matte", shadow: "wash", lid: ["#b88a72", "#8a5e4a"], liner: "thin", lashes: "natural", brow: "thin", blush: "high", blushColor: "#b97c66", lip: "lined", lipColor: "#8a5446", accents: ["contour"] }),
-  style("twenties", "retro", "دهه ۲۰", "1920s VAMP", "ابروی باریک، دودی گرد و لب شرابی تیره.",
+  style("twenties", "retro", "میکاپ وینتیج دهه بیست", "1920s VAMP", "ابروی باریک، دودی گرد و لب شرابی تیره.",
     { skin: "matte", shadow: "smoky", lid: ["#5a4a50", "#1a1218"], liner: "smudge", lashes: "volume", brow: "thin", blush: "apples", blushColor: "#d48a86", lip: "matte", lipColor: "#5e1424" }),
 
   /* ---------- K & J beauty ---------- */
-  style("k-beauty", "asian", "کره‌ای", "K-BEAUTY", "پوست شیشه‌ای، خط رو به پایین و لب گرادیانی.",
+  style("k-beauty", "asian", "میکاپ کره‌ای شفاف", "K-BEAUTY", "پوست شیشه‌ای، خط رو به پایین و لب گرادیانی.",
     { skin: "dewy", shadow: "wash", lid: ["#f0c2b6", "#e0a497"], liner: "puppy", linerColor: "#6b3f35", lashes: "natural", brow: "natural", blush: "apples", blushColor: "#f2a1a6", lip: "ombre", lipColor: "#d64b63", accents: ["aegyo"] }),
-  style("douyin", "asian", "دویین", "DOUYIN", "رژگونه زیر چشم، شاین زیر پلک و مژه‌های پایین.",
+  style("douyin", "asian", "میکاپ دوویین صورتی", "DOUYIN", "رژگونه زیر چشم، شاین زیر پلک و مژه‌های پایین.",
     { skin: "dewy", shadow: "wash", lid: ["#f2b9c0", "#e08e9d"], liner: "puppy", lashes: "volume", brow: "natural", blush: "under", blushColor: "#f29aa8", lip: "gloss", lipColor: "#d9607a", accents: ["aegyo", "bottomLashes", "glitter"] }),
 ];
 
@@ -203,7 +206,7 @@ const CURATED_80_STYLES: MakeupStyle[] = [...CURATED_MAKEUP_40, ...CURATED_MAKEU
     : item.category === "evening" ? (smoky ? "smoky" : "glam")
     : item.category === "eyes" ? (liner || graphic ? "liner" : "color")
     : "glam";
-  return {id:item.id,category,title:item.name,en:item.nameEn,detail:item.description,look,promptNumber:item.promptNumber};
+  return {id:item.id,category,title:item.name,en:item.nameEn,detail:item.description,aliases:item.aliases,look,promptNumber:item.promptNumber};
 });
 export const MAKEUP_STYLES: MakeupStyle[] = import.meta.env.VITE_MAKEUP_CURATED_80 === "true"
   ? CURATED_80_STYLES
