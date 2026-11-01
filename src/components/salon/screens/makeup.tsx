@@ -182,7 +182,7 @@ function StyleList({ view, onOpen }: { view: Extract<View, { kind: "list" }>; on
     const q = normalize(query);
     return READY.filter((item) => (filter === "all" || item.category === filter)
       && (!MAKEUP_CURATED_80 || collection === "all" || (collection === "new" ? (item.promptNumber ?? 0) >= 43 : (item.promptNumber ?? 0) < 43))
-      && (!q || normalize(`${item.title} ${item.en} ${item.promptNumber ?? ""} ${item.detail} ${categoryOf(item.category).label}`).includes(q)));
+      && (!q || normalize(`${item.title} ${item.aliases?.join(" ") ?? ""} ${item.en} ${item.promptNumber ?? ""} ${item.detail} ${categoryOf(item.category).label}`).includes(q)));
   }, [filter, query, collection]);
 
   useEffect(() => {
