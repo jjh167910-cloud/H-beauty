@@ -64,8 +64,8 @@ export function picks(repIds: number[]) {
   return repIds.map(byRep).filter((family): family is Family => Boolean(family));
 }
 
-export const HERO = byRep(30) ?? families[0];
-export const FEATURED = picks([27, 30, 26, 119, 92]);
+export const HERO = byRep(1) ?? families[0];
+export const FEATURED = picks([1, 27, 30, 119, 92]);
 export const UPDOS = picks([213, 206, 110, 203, 49]);
 export const BRAIDS = picks([77, 92, 95, 98, 221]);
 export const STAGE = picks([30, 27, 26, 119, 4, 43, 213, 77]);
