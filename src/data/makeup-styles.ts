@@ -52,6 +52,7 @@ export type MakeupStyle = {
   title: string;
   en: string;
   detail: string;
+  aliases?: readonly string[];
   look: FaceLook;
   /** The look worn in the reference model photo. */
   reference?: boolean;
@@ -203,7 +204,7 @@ const CURATED_80_STYLES: MakeupStyle[] = [...CURATED_MAKEUP_40, ...CURATED_MAKEU
     : item.category === "evening" ? (smoky ? "smoky" : "glam")
     : item.category === "eyes" ? (liner || graphic ? "liner" : "color")
     : "glam";
-  return {id:item.id,category,title:item.name,en:item.nameEn,detail:item.description,look,promptNumber:item.promptNumber};
+  return {id:item.id,category,title:item.name,en:item.nameEn,detail:item.description,aliases:item.aliases,look,promptNumber:item.promptNumber};
 });
 export const MAKEUP_STYLES: MakeupStyle[] = import.meta.env.VITE_MAKEUP_CURATED_80 === "true"
   ? CURATED_80_STYLES
