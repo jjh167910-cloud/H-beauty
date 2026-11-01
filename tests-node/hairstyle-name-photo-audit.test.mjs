@@ -28,12 +28,12 @@ test("all 292 catalog photo IDs have one unique, nonempty label",()=>{
 test("visual-review corrections remain associated with their exact IDs",()=>{
   assert.deepEqual(
     [byId.get(1).name,byId.get(1).category],
-    ["موی بلند موج‌دار شکلاتی با چتری سبک","waves"]
+    ["ویو شکلاتی بلند با چتری سبک","waves"]
   );
   for(const id of [23,291]){
     assert.equal(byId.get(id).category,"straight","Straight hairstyle "+id+" wrongly categorized");
-    assert.ok(byId.get(id).name.includes("صاف"));
+    assert.ok(/لخت|صاف/.test(byId.get(id).name));
   }
-  assert.equal(byId.get(40).name,"موی بلند موج‌دار با چتری نرم");
-  assert.equal(byId.get(41).name,"موی بلند صاف با چتری سبک");
+  assert.equal(byId.get(40).name,"ویو بلند با چتری نرم");
+  assert.equal(byId.get(41).name,"موی لخت با چتری سبک");
 });
