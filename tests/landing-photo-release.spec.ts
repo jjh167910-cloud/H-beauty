@@ -1,6 +1,6 @@
 import { test, expect } from "playwright/test";
 
-const heroName = "موی بلند موج‌دار شکلاتی با چتری سبک";
+const heroName = "ویو شکلاتی بلند با چتری سبک";
 
 test("landing and first-visit portrait show the latest owner-selected HB-001", async ({ page }) => {
   await page.setViewportSize({width:390,height:844});
