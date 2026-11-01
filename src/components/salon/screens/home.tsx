@@ -11,7 +11,7 @@ import { Icon } from "../icons";
 import { Button, Media, TextLink, useSalonActions } from "../ui";
 
 const STYLES = [
-  { repId: 30, filter: "waves", label: "موج‌های نرم", caption: "WAVES" },
+  { repId: 1, filter: "waves", label: "موج‌های نرم", caption: "WAVES" },
   { repId: 84, filter: "curly", label: "فرِ پرحجم", caption: "CURLS" },
   { repId: 77, filter: "braid", label: "بافتِ خلاق", caption: "BRAIDS" },
   { repId: 43, filter: "ponytail", label: "دم‌اسبی", caption: "PONYTAIL" },
@@ -26,7 +26,7 @@ export function HomeScreen() {
   const bookings = useSalon((state) => state.bookings);
   const clearAll = useSalon((state) => state.clearAll);
   const setFilter = useSalon((state) => state.setFilter);
-  const hero = byRep(30);
+  const hero = byRep(1);
   const [heroFailed, setHeroFailed] = useState(false);
   const next = useMemo(
     () => bookings.filter((item) => !isPast(item.date, item.time))
@@ -184,7 +184,7 @@ export function HomeScreen() {
           <TextLink onClick={() => { clearAll(); go("looks"); }}>گالری کامل</TextLink>
         </div>
         <div className="salon24-featured rail">
-          {[27, 43, 84, 125].map((repId) => {
+          {[1, 43, 84, 125].map((repId) => {
             const look = byRep(repId);
             if (!look) return null;
             return (
