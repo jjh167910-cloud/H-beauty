@@ -12,8 +12,8 @@ import { Button, Media, TextLink, useSalonActions } from "../ui";
 
 const STYLES = [
   { repId: 30, filter: "waves", label: "موج‌های نرم", caption: "WAVES" },
-  { repId: 84, filter: "curly", label: "فرِ پرحجم", caption: "CURLS" },
-  { repId: 77, filter: "braid", label: "بافتِ خلاق", caption: "BRAIDS" },
+  { repId: 26, filter: "curly", label: "فرِ پرحجم", caption: "CURLS" },
+  { repId: 92, filter: "braid", label: "بافتِ خلاق", caption: "BRAIDS" },
   { repId: 43, filter: "ponytail", label: "دم‌اسبی", caption: "PONYTAIL" },
   { repId: 125, filter: "pixie", label: "موی کوتاه", caption: "SHORT HAIR" },
 ] as const;
@@ -26,7 +26,8 @@ export function HomeScreen() {
   const bookings = useSalon((state) => state.bookings);
   const clearAll = useSalon((state) => state.clearAll);
   const setFilter = useSalon((state) => state.setFilter);
-  const hero = byRep(30);
+  // The lead photograph is the most recent owner-selected HB-001 portrait.
+  const hero = byRep(1);
   const [heroFailed, setHeroFailed] = useState(false);
   const next = useMemo(
     () => bookings.filter((item) => !isPast(item.date, item.time))
@@ -97,7 +98,7 @@ export function HomeScreen() {
             <button key={style.filter} type="button" className="salon24-style-card"
               aria-label={`دیدن مدل‌های ${style.label}`}
               onClick={() => { clearAll(); setFilter(style.filter); go("looks"); }}>
-              <Media src={lookThumb(style.repId)} alt="" loading="lazy" />
+              <Media src={lookThumb(style.repId)} alt="" loading="eager" />
               <strong>{style.label}</strong>
               <span lang="en">{style.caption}</span>
             </button>
@@ -136,7 +137,7 @@ export function HomeScreen() {
         </div>
         <div className="px-gutter">
           <button type="button" className="mk-entry" onClick={() => go("makeup")} aria-label="ورود به بخش میکاپ">
-            <Media src={lookPhoto(MAKEUP_CURATED_80 ? MAKEUP_STYLES[0].id : "soft-glam", "sm")} alt="" loading="lazy" />
+            <Media src={lookPhoto(MAKEUP_CURATED_80 ? MAKEUP_STYLES[0].id : "soft-glam", "sm")} alt="" loading="eager" />
             <span className="mk-entry__copy">
               <span className="mk-entry__dots" aria-hidden="true">{(MAKEUP_CURATED_80 ? MAKEUP_STYLES.slice(0,5).map((style)=>style.id) : ["soft-glam", "hollywood", "plum-smokey", "romantic-bride", "sunset"]).map((id) => {
                 const item = MAKEUP_STYLES.find((entry) => entry.id === id);
@@ -184,14 +185,14 @@ export function HomeScreen() {
           <TextLink onClick={() => { clearAll(); go("looks"); }}>گالری کامل</TextLink>
         </div>
         <div className="salon24-featured rail">
-          {[27, 43, 84, 125].map((repId) => {
+          {[63, 55, 213, 125].map((repId) => {
             const look = byRep(repId);
             if (!look) return null;
             return (
               <button key={repId} type="button" className="salon24-featured__card"
                 aria-label={`مشاهده ${look.name}`}
                 onClick={(event) => openDiscover(look.id, event.currentTarget.querySelector("img"))}>
-                <Media src={lookThumb(repId)} alt="" loading="lazy" />
+                <Media src={lookThumb(repId)} alt="" loading="eager" />
                 <span>{look.name}</span>
               </button>
             );

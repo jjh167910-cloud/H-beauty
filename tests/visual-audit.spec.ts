@@ -158,7 +158,7 @@ test("mobile action controls meet minimum tap dimensions", async ({ page }) => {
 
 test("offline homepage portrait failure has a readable fallback", async ({ page }) => {
   await prepare(page);
-  await page.route("**/looks/30.webp", route => route.fulfill({status:404,body:"missing"}));
+  await page.route("**/looks/1.webp", route => route.fulfill({status:404,body:"missing"}));
   await page.goto("/");
   await expect(page.locator(".salon24-hero__photo")).toHaveAttribute("data-image-error", "true");
   await expect(page.locator(".salon26-hero__missing")).toBeVisible();
@@ -167,7 +167,7 @@ test("offline homepage portrait failure has a readable fallback", async ({ page 
 test("square salon hairstyle thumbnails preserve full wide-hair compositions", async ({ page }) => {
   await prepare(page);
   await page.goto("/");
-  for (const id of [77, 84, 30]) {
+  for (const id of [92, 26, 30]) {
     const img = page.locator(`.salon24-style-card img[src="/looks/sm/${id}.webp"]`);
     await img.scrollIntoViewIfNeeded();
     await expect(img).toHaveCSS("object-fit", "contain");
