@@ -33,7 +33,7 @@ test("all 292 hairstyle IDs have contemporary, unique Persian names and searchab
 
 const parseMakeup=(path,prefix)=>{
   return file(path).split("\n").map(line=>{
-    const id=line.match(new RegExp('"id":"('+prefix+'-\\\\d+)"'))?.[1];
+    const id=line.match(/"id":"(mk(?:40|80)-\d+)"/)?.[1];
     if(!id)return null;
     const name=line.match(/"name":"([^"]+)"/)?.[1];
     const old=line.match(/"aliases":\["([^"]+)"\]/)?.[1];
