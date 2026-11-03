@@ -48,6 +48,7 @@ jobs:
           name: hbeauty-real-478-landmark-cpu-evidence
           path: |
             experiments/neural-makeup/model-validation/cpu478/cpu478_results.json
+            experiments/neural-makeup/model-validation/cpu478/face_mesh_478.onnx
             experiments/neural-makeup/model-validation/cpu478/cpu478_landmarks_preview.png
           if-no-files-found: warn
           retention-days: 7
