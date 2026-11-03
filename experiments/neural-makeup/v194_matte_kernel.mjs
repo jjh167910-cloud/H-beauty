@@ -17,6 +17,8 @@ export function relativeCosmeticLuminance(
       ![eyeOpacity,lipOpacity,cheekOpacity].every(x=>x>=0&&x<=1)){
     throw Error('Expected finite luminance and normalized cosmetic strengths');
   }
+  // Canonical no-effect path: return +0 (not negative zero).
+  if(eyeOpacity===0&&lipOpacity===0&&cheekOpacity===0)return 0;
   const rel=(referencePixelY-referenceSkinY)-
             (sourcePixelY-sourceSkinY);
   return clamp(
