@@ -35,6 +35,8 @@ jobs:
         run: pytest -q experiments/neural-makeup/tests/test_*.py
       - name: Full synthetic training smoke
         run: python experiments/neural-makeup/tests/smoke_pipeline.py
+      - name: Offline browser ONNX hash and identity regression
+        run: node --test experiments/neural-makeup/tests/test_browser_runtime.mjs
       - name: Assert no embedded weights or people photos in research tree
         run: |
           python - <<'PY'
