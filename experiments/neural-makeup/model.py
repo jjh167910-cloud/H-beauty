@@ -97,7 +97,11 @@ class AppearanceNet(nn.Module):
             src_early,
         ], dim=1))
         predicted = self.head(decoded)
-        edit_gate = src_mask.sum(dim=1, keepdim=True).clamp(0, 1)
+        # No reference makeup in a region means no edit in that region.
+        # This fail-closed gate protects users from hallucinated cosmetics.
+        reference_present = (ref_mask.sum(dim=(2, 3)) > 1e-6).to(src_mask.dtype)
+        eligible = src_mask * reference_present[:, :, None, None]
+        edit_gate = eligible.sum(dim=1, keepdim=True).clamp(0, 1)
         alpha = predicted[:, 3:4].sigmoid() * edit_gate
         delta = predicted[:, :3].tanh()
         transferred = (source + 0.85 * alpha * delta).clamp(0, 1)
