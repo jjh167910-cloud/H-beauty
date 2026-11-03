@@ -85,9 +85,18 @@ def mesh_points(bgr,face,session):
     crop=cv2.warpAffine(bgr,affine,(256,256),flags=cv2.INTER_LINEAR,
                         borderMode=cv2.BORDER_CONSTANT)
     rgb=cv2.cvtColor(crop,cv2.COLOR_BGR2RGB)
-    input_name=session.get_inputs()[0].name
-    assert session.get_inputs()[0].shape==[1,256,256,3]
+    spec=session.get_inputs()[0]
+    input_name=spec.name
+    shape=spec.shape
+    print("CPU 478 landmark input contract",input_name,shape,flush=True)
     t=rgb.astype(np.float32)[None]/255
+    if len(shape)!=4:raise ValueError(f"Unexpected mesh input rank: {shape}")
+    if shape[-3:]==[3,256,256]:
+        t=t.transpose(0,3,1,2).copy()
+    elif shape[-3:]==[256,256,3]:
+        pass
+    else:
+        raise ValueError(f"Unexpected mesh input layout: {shape}")
     raw=session.run(None,{input_name:t})
     pts=np.asarray(raw[0],dtype=np.float32).reshape(478,3)
     logit=float(np.asarray(raw[1]).reshape(-1)[0])
