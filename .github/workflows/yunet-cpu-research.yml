@@ -1,0 +1,89 @@
+name: H-Beauty YuNet real CPU inference proof
+on:
+  push:
+    branches: [research/neural-makeup-v20]
+    paths:
+      - ".github/workflows/yunet-cpu-research.yml"
+      - "experiments/neural-makeup/yunet-cpu-*.mjs"
+      - "experiments/neural-makeup/tests/test_yunet_cpu.mjs"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  actual-cpu:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Test YuNet JavaScript decoding and safety decisions
+        run: node --test experiments/neural-makeup/tests/test_yunet_cpu.mjs
+      - name: Install real CPU ONNX inference dependencies
+        run: python -m pip install --quiet "numpy<3" "onnxruntime>=1.19,<2" "opencv-python-headless>=4.9,<5" "Pillow>=10,<13"
+      - name: Fetch exact MIT YuNet 2026may model and verify weights
+        shell: bash
+        run: |
+          mkdir -p experiments/neural-makeup/model-validation
+          curl --fail --location --retry 3 --connect-timeout 15 --max-time 90 \
+            "https://media.githubusercontent.com/media/opencv/opencv_zoo/47534e27c9851bb1128ccc0102f1145e27f23f98/models/face_detection_yunet/face_detection_yunet_2026may.onnx" \
+            --output experiments/neural-makeup/model-validation/yunet.onnx
+          cd experiments/neural-makeup/model-validation
+          echo "ebafce4e3c118d6554634be5c27ab333b4c047a9a8c3faf1d7cf93101c22f0f0  yunet.onnx" | sha256sum --check
+      - name: Perform actual ONNX CPU inference on one-person and two-person image inputs
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json, cv2, numpy as np, onnxruntime as ort
+          from pathlib import Path
+          model=Path('experiments/neural-makeup/model-validation/yunet.onnx')
+          img=cv2.imread('public/makeup/looks/no-makeup.webp')
+          assert img is not None, 'Public repo test portrait unavailable'
+          a=cv2.resize(img,(320,320))
+          two=np.concatenate([cv2.resize(img,(320,320)),cv2.resize(img,(320,320))],axis=1)
+          ses=ort.InferenceSession(str(model),providers=['CPUExecutionProvider'])
+          assert ses.get_inputs()[0].name=='input'
+          out_names=[x.name for x in ses.get_outputs()]
+          assert len(out_names)==12, out_names
+          result={}
+          for name,frame in [('single',a),('two',two)]:
+              h,w=frame.shape[:2]
+              tensor=frame.transpose(2,0,1).astype(np.float32)[None]
+              raw=ses.run(out_names,{'input':tensor})
+              assert all(np.isfinite(v).all() for v in raw)
+              result[name]={'width':w,'height':h,'outputs':{
+                  n:{'dims':list(v.shape),'data':v.ravel().tolist()}
+                  for n,v in zip(out_names,raw)
+              }}
+              print('ONNX CPU result',name,w,h,[(n,list(v.shape)) for n,v in zip(out_names,raw)],flush=True)
+          Path('experiments/neural-makeup/model-validation/onnx_outputs.json').write_text(json.dumps(result))
+          PY
+      - name: Decode real ONNX tensors and enforce face-count gate in JavaScript
+        run: |
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          import {decodeYuNet} from './experiments/neural-makeup/yunet-cpu-core.mjs';
+          const d=JSON.parse(fs.readFileSync('experiments/neural-makeup/model-validation/onnx_outputs.json','utf8'));
+          const result={};
+          for(const [name,entry] of Object.entries(d)){
+            const o={};for(const [key,v] of Object.entries(entry.outputs))
+              o[key]={dims:v.dims,data:new Float32Array(v.data)};
+            const faces=decodeYuNet(o,{width:entry.width,height:entry.height,threshold:.45,minSize:12});
+            result[name]=faces.map(({x,y,w,h,score})=>({x,y,w,h,score}));
+            console.log('Real ONNX CPU faces',name,result[name]);
+          }
+          fs.writeFileSync('experiments/neural-makeup/model-validation/face_count.json',JSON.stringify(result,null,2));
+          if(result.single.length<1||result.two.length<2)
+            throw Error('Actual model did not pass independent single/two-person photo count; do not enable fallback');
+          JS
+      - name: Upload research-only evidence and MIT weight file
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hbeauty-yunet-cpu-actual-model-evidence
+          path: |
+            experiments/neural-makeup/model-validation/yunet.onnx
+            experiments/neural-makeup/model-validation/face_count.json
+          if-no-files-found: warn
+          retention-days: 7
