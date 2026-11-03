@@ -30,9 +30,9 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install 'torch>=2.2,<3' --index-url https://download.pytorch.org/whl/cpu
-          pip install 'numpy>=1.26,<3' 'Pillow>=10,<13' 'pytest>=8,<10' 'onnx>=1.16,<2'
+          pip install 'numpy>=1.26,<3' 'Pillow>=10,<13' 'pytest>=8,<10' 'onnx>=1.16,<2' 'onnxruntime>=1.18,<2'
       - name: Unit tests including exact off-region preservation
-        run: pytest -q experiments/neural-makeup/tests/test_model.py experiments/neural-makeup/tests/test_training.py
+        run: pytest -q experiments/neural-makeup/tests/test_*.py
       - name: Full synthetic training smoke
         run: python experiments/neural-makeup/tests/smoke_pipeline.py
       - name: Assert no embedded weights or people photos in research tree
