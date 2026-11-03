@@ -11,7 +11,7 @@ export function evaluateFaceGeometry(points,width,height){
  const d={};
  for(const [name,id] of Object.entries(P)){
   const p=points[id];if(!pointValid(p))return fail('missing-landmark',{landmark:id});
-  if(p[0]<-width*.05||p[0]>width*1.05||p[1]<-height*.05||p[1]>height*1.05)return fail('out-of-frame',{landmark:id});
+  if(p[0]<-width*.05-1.5||p[0]>width*1.05+1.5||p[1]<-height*.05-1.5||p[1]>height*1.05+1.5)return fail('out-of-frame',{landmark:id});
   d[name]=p;
  }
  const le=d.leftEye,re=d.rightEye,n=d.nose;
