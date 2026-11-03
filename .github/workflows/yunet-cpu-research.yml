@@ -82,18 +82,7 @@ jobs:
         run: |
           npm pack onnxruntime-web@1.31.1 --pack-destination experiments/neural-makeup/model-validation --silent
           test -f experiments/neural-makeup/model-validation/onnxruntime-web-1.31.1.tgz
-          tar -tf experiments/neural-makeup/model-validation/onnxruntime-web-1.31.1.tgz | grep -E '^package/dist/ort.*mjs
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: hbeauty-yunet-cpu-actual-model-evidence
-          path: |
-            experiments/neural-makeup/model-validation/yunet.onnx
-            experiments/neural-makeup/model-validation/face_count.json
-            experiments/neural-makeup/model-validation/onnxruntime-web-1.31.1.tgz
-          if-no-files-found: warn
-          retention-days: 7
- | head -5
+          tar -tf experiments/neural-makeup/model-validation/onnxruntime-web-1.31.1.tgz | grep 'ort.wasm.min.mjs' | head -5
       - name: Upload research-only evidence and MIT weight file
         if: always()
         uses: actions/upload-artifact@v4
@@ -102,5 +91,6 @@ jobs:
           path: |
             experiments/neural-makeup/model-validation/yunet.onnx
             experiments/neural-makeup/model-validation/face_count.json
+            experiments/neural-makeup/model-validation/onnxruntime-web-1.31.1.tgz
           if-no-files-found: warn
           retention-days: 7
