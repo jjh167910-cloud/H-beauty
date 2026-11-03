@@ -82,7 +82,7 @@ jobs:
         run: |
           npm pack onnxruntime-web@1.31.1 --pack-destination experiments/neural-makeup/model-validation --silent
           test -f experiments/neural-makeup/model-validation/onnxruntime-web-1.31.1.tgz
-          tar -tf experiments/neural-makeup/model-validation/onnxruntime-web-1.31.1.tgz | grep -E '^package/dist/ort\.wasm.*mjs
+          tar -tf experiments/neural-makeup/model-validation/onnxruntime-web-1.31.1.tgz | grep -E '^package/dist/ort.*mjs
         if: always()
         uses: actions/upload-artifact@v4
         with:
