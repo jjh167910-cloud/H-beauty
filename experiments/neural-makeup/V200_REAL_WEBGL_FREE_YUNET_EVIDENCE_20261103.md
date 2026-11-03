@@ -30,8 +30,8 @@ A standalone local package built on v19.9 contains:
 - New `hbeauty-tryon-20.0` service-worker cache key with ONNX/WASM added to first-install precache.
 
 **Package:** `HBeauty_AI_TryOn_v20_0_Offline_CPU_Face_Safety_Research.zip`, **44,021,956 bytes**, **334 ZIP entries**.
-SHA-256: `280397e16ce9fb01375585299a34abd12af1ae1e468d9302df09abc66f58ea1f`.
-Local QA: **34/34 Node regressions**, **28 JS syntax checks**, **306/306 declared offline asset paths**, **93/93 first-install paths**, ZIP CRC integrity pass. The binary package remains a ChatGPT attachment, not committed to GitHub.
+SHA-256: `c957647abd24726919d0f3a5ff7d857dd641652945fdbb7d2163490814968df9`.
+Local QA: **34/34 Node regressions**, **28 JS syntax checks**, **306/306 declared offline asset paths**, **93/93 first-install paths**, ZIP CRC integrity pass. The package now includes an in-archive v20 evidence memo and HTTPS/PWA installation instructions. The binary archive remains a ChatGPT attachment, not committed to GitHub.
 
 The CPU preflight is new, but it does **not** solve MediaPipe 478-point full-face landmark generation, which remains required for makeup geometry and could not be run in this headless no-WebGL browser. Therefore do not present this isolated build as universally WebGL-independent, Android-verified, state-of-the-art photorealism, or ready for public deployment. Independent real people, diverse skin tone and pose, occlusions, human perceptual quality assessments, full offline Android installation, CPU memory/thermal budgets, original model-face rights, and real 2K makeup texture remain open gates.
 
