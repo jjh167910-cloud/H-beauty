@@ -21,7 +21,7 @@ Known regressions: sun-kissed had 0.068 worse eye MAE and 1.015 worse lip MAE; b
 
 The source and reference renderings of electric-blue, classic-smokey, bold-glam, henna-night, no-makeup, sun-kissed, plus a same-image control were actually run through Chromium Canvas at 810×1080. Zero off-mask pixel changes, zero alpha byte changes, zero changes at all-zero strengths, zero changes for self-reference.
 
-Standalone ZIP SHA256: `6c9147b0429a108b399c043c49315a0394294797241ecd540e21eaecdbdce69c`. Its 262 entries pass ZIP CRC, 246 service-worker assets and 29 core cached assets are all present. JS syntax passed; the 390×844 static mobile preview has no horizontal overflow. v19.3 and v19.4 rendering paths are retained as selectable fallback methods.
+Standalone ZIP SHA256: `d20dafd3dd13e9a807de449a10d226f2b0e5b554fac2ea056da15962adbd8673`. Its 262 entries pass ZIP CRC, 246 service-worker assets and 29 core cached assets are all present. JavaScript syntax passed. A failure-injection test verified that the UI retains its selected v19.5/v19.4/v19.3 method if hybrid WebGL processing fails (instead of silently using the oldest renderer); the 390×844 static mobile preview has no horizontal overflow. v19.3 and v19.4 rendering paths are retained as selectable fallback methods.
 
 Full face-landmark MediaPipe execution was **attempted** in an in-memory Chromium page using bundled JS, WASM and model. The base64-encoded 4.8MB model decoded into a valid ZIP bundle and the graph initialized, but this container Chrome exposes no WebGL1/2 context; inference could not complete. Physical Android inference remains unverified.
 
