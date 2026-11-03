@@ -37,3 +37,12 @@ test('rejects off-frame, folded topology and excessive roll',()=>{
  p=template();p[152]=[125,30];assert.equal(evaluateFaceGeometry(p,W,H).ok,false);
  p=template();p[454]=[60,145];assert.equal(evaluateFaceGeometry(p,W,H).ok,false);
 });
+
+test('1px geometry rounding over edge is accepted, larger invalid crop rejected',()=>{
+ const p=template();
+ // Right cheek is just 0.7px over the prior 5% frame bound.
+ p[454]=[W*1.05+.7,145];
+ assert.equal(evaluateFaceGeometry(p,W,H).ok,true);
+ p[454]=[W*1.05+3.0,145];
+ assert.equal(evaluateFaceGeometry(p,W,H).reason,'out-of-frame');
+});
