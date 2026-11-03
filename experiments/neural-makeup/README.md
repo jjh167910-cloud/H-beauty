@@ -44,3 +44,25 @@ A small synthetic CPU smoke test demonstrated working forward/backward training,
 - Only promote validated weights with a verified SHA256, model card, reproducible results and a rollback-safe installer.
 
 **Not implemented yet:** trained quality model, automatic semantic face masks, ONNX browser integration, Android field validation, or state-of-the-art certification.
+
+
+## Additional evaluation and offline inference
+
+    python benchmark.py --checkpoint /private/model/best.pt --manifest /private/data/pairs.jsonl --data-root /private/data --output /private/model/benchmark.json --size 256
+    python highres_inference.py --research-only --model /private/model/appearance.onnx --manifest /private/model/manifest.json --source /private/in.jpg --reference /private/style.jpg --source-masks /private/source4.npy --reference-masks /private/ref4.npy --output /private/experimental.png
+
+- Four mask channels, ordered as above, are Float32 arrays of shape 4×H×W with values in [0, 1]. Masks currently require external preparation; they are not yet generated reliably within this experiment.
+- The Python ONNX runner processes *small neural tiles* and overlap-blends their outputs. It returns PNG at the **original input dimensions** without upscaling, but that does not mean the neural model generated each output pixel from a full-resolution global context.
+- The opt-in browser adapter in onnx-browser-runtime.mjs implements the same idea fully locally and verifies model SHA256, requiring an already bundled/cached ONNX Runtime Web+WASM runtime supplied by the host and a separately provided trained model. **It has not been wired into the v19.2 deployed app.**
+- benchmark.py reports model-vs-unaltered-source masked MAE on held-out pairs with bootstrap confidence intervals, plus exact outside-mask leakage; these are necessary diagnostics, not human identity or photorealism scores.
+- A separate owner-only Gemini cloud comparator is staged as code, not deployed. Its source/reference photos leave the phone after explicit consent and are processed under a third-party provider's policies; it is not an offline engine.
+
+### Licensing and data limitations (3 November 2026)
+
+The FFHQ-Makeup paired dataset is released under CC BY-NC-SA 4.0 and specifically restricts commercial use. ART, FPMT and MagicMakeup have non-commercial/research-only terms. Research visibility does not establish commercial model-training or checkpoint-redistribution rights. No third-party checkpoint or restricted face dataset has been included.
+
+### Automated gates
+
+The GitHub Neural Makeup Research Gate runs CPU PyTorch regression tests, a synthetic one-epoch training smoke, ONNX Runtime parity tests, offline-browser JavaScript regression tests and forbids model binary/photo files from this branch. The suite does **not** evaluate real makeup image quality. Check the workflow's current run for the latest status before quoting a pass.
+
+**Production approval remains blocked.** A rights-cleared multi-person paired dataset, region segmentation, successful real-image training, human blind comparison against current methods and on-device Android resource/performance validation are required first.
