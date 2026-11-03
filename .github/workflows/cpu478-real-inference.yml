@@ -49,6 +49,11 @@ jobs:
           path: |
             experiments/neural-makeup/model-validation/cpu478/cpu478_results.json
             experiments/neural-makeup/model-validation/cpu478/face_mesh_478.onnx
+            experiments/neural-makeup/cpu478_browser.mjs
+            experiments/neural-makeup/cpu478_geometry.mjs
+            experiments/neural-makeup/yunet-cpu-core.mjs
+            experiments/neural-makeup/v198_geometry.js
+            experiments/neural-makeup/v198_detail_atlas.js
             experiments/neural-makeup/model-validation/cpu478/cpu478_landmarks_preview.png
           if-no-files-found: warn
           retention-days: 7
