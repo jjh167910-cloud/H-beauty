@@ -1,0 +1,45 @@
+name: H-Beauty real semantic face parsing CPU validation
+on:
+  push:
+    branches: [research/neural-makeup-v20]
+    paths:
+      - ".github/workflows/faceparse-cpu-research.yml"
+      - "experiments/neural-makeup/faceparse_cpu_eval.py"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  parse-cpu:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install CPU ONNX parsing runtime
+        run: python -m pip install --quiet "onnxruntime>=1.19,<2" "opencv-python-headless>=4.9,<5" "numpy>=1.26,<3"
+      - name: Fetch original open-source BiSeNet ResNet18 ONNX model
+        shell: bash
+        run: |
+          mkdir -p experiments/neural-makeup/faceparse-evidence
+          curl --fail --location --retry 3 --connect-timeout 20 --max-time 180 \
+            "https://github.com/yakhyo/face-parsing/releases/download/weights/resnet18.onnx" \
+            -o experiments/neural-makeup/faceparse-evidence/resnet18.onnx
+          test "$(stat -c%s experiments/neural-makeup/faceparse-evidence/resnet18.onnx)" = "53205364"
+          sha256sum experiments/neural-makeup/faceparse-evidence/resnet18.onnx | tee experiments/neural-makeup/faceparse-evidence/model-sha256.txt
+      - name: Run actual BiSeNet 19-class face-part inference on catalog photo
+        shell: bash
+        run: |
+          python experiments/neural-makeup/faceparse_cpu_eval.py \
+            --model experiments/neural-makeup/faceparse-evidence/resnet18.onnx \
+            --image public/makeup/looks/no-makeup.webp \
+            --output experiments/neural-makeup/faceparse-evidence
+      - name: Keep model and visual evidence for offline integration studies
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hbeauty-faceparse-actual-model-cpu-evidence
+          path: experiments/neural-makeup/faceparse-evidence/
+          if-no-files-found: warn
+          retention-days: 7

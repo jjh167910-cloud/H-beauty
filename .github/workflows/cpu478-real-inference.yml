@@ -1,0 +1,59 @@
+name: H-Beauty real CPU 478 landmark acceptance
+on:
+  push:
+    branches: [research/neural-makeup-v20]
+    paths:
+      - ".github/workflows/cpu478-real-inference.yml"
+      - "experiments/neural-makeup/cpu478_reference.py"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  cpu-478:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install CPU inference dependencies
+        run: |
+          python -m pip install --quiet 'onnxruntime>=1.19,<2' 'opencv-python-headless>=4.9,<5' 'numpy>=1.26,<3'
+      - name: Download independently pinned open-source ONNX face models
+        shell: bash
+        run: |
+          mkdir -p experiments/neural-makeup/model-validation/cpu478
+          curl --fail --location --retry 3 --connect-timeout 15 --max-time 90 \
+            "https://media.githubusercontent.com/media/opencv/opencv_zoo/47534e27c9851bb1128ccc0102f1145e27f23f98/models/face_detection_yunet/face_detection_yunet_2026may.onnx" \
+            --output experiments/neural-makeup/model-validation/cpu478/yunet.onnx
+          curl --fail --location --retry 3 --connect-timeout 15 --max-time 160 \
+            "https://huggingface.co/senty-au/face_landmarks_detector-ONNX/resolve/main/onnx/model.onnx?download=true" \
+            --output experiments/neural-makeup/model-validation/cpu478/face_mesh_478.onnx
+          cd experiments/neural-makeup/model-validation/cpu478
+          echo "ebafce4e3c118d6554634be5c27ab333b4c047a9a8c3faf1d7cf93101c22f0f0  yunet.onnx" | sha256sum --check
+          echo "7d6e82dee82a1dca5fbddb282b3cc74571833a530de317fc22ae325c3358beeb  face_mesh_478.onnx" | sha256sum --check
+      - name: Actual ONNX CPU full-face inference and landmark topology check
+        shell: bash
+        run: |
+          python experiments/neural-makeup/cpu478_reference.py \
+            --yunet experiments/neural-makeup/model-validation/cpu478/yunet.onnx \
+            --mesh experiments/neural-makeup/model-validation/cpu478/face_mesh_478.onnx \
+            --image public/makeup/looks/no-makeup.webp \
+            --out experiments/neural-makeup/model-validation/cpu478
+      - name: Store audit evidence (research only)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hbeauty-real-478-landmark-cpu-evidence
+          path: |
+            experiments/neural-makeup/model-validation/cpu478/cpu478_results.json
+            experiments/neural-makeup/model-validation/cpu478/face_mesh_478.onnx
+            experiments/neural-makeup/cpu478_browser.mjs
+            experiments/neural-makeup/cpu478_geometry.mjs
+            experiments/neural-makeup/yunet-cpu-core.mjs
+            experiments/neural-makeup/v198_geometry.js
+            experiments/neural-makeup/v198_detail_atlas.js
+            experiments/neural-makeup/model-validation/cpu478/cpu478_landmarks_preview.png
+          if-no-files-found: warn
+          retention-days: 7
