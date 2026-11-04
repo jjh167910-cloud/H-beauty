@@ -1,0 +1,45 @@
+{
+  "study": "HBeauty_R1_A_2026_11_05",
+  "version": "R1-A",
+  "production_release": "NO_GO",
+  "data": "synthetic_only",
+  "no_real_faces": true,
+  "training_runs": 3,
+  "train_n_each": 320,
+  "calibration_n_each": 96,
+  "test_n_each": 96,
+  "network_parameters": 5830,
+  "metrics": {
+    "in_distribution": {
+      "reference_contrast": 6.45557387380298,
+      "r0_deterministic": 4.328069606635836,
+      "r1_uncertainty": 4.0636261743444875,
+      "paired_gain": 0.26444343229134876,
+      "exploratory_bootstrap95": [
+        -0.00539694520618165,
+        0.5843670369079821
+      ],
+      "coverage90": 0.9010416666666666
+    },
+    "reference_camera_shift": {
+      "reference_contrast": 6.552734573197085,
+      "r0_deterministic": 4.85870972542519,
+      "r1_uncertainty": 4.388854473654646,
+      "paired_gain": 0.46985525177054416,
+      "exploratory_bootstrap95": [
+        0.19340489370915748,
+        0.7182871828117641
+      ],
+      "coverage90": 0.8854166666666666
+    }
+  },
+  "tests": {
+    "synthetic_unit": 12,
+    "synthetic_unit_passed": 12
+  },
+  "source_zip_sha256": "e356fd49449c6a9f31059fd4bda991af6228a720c4043ca24415ee5fc4286806",
+  "binary_in_git": false,
+  "android_verified": false,
+  "real_photo_benchmark_verified": false,
+  "commercial_training_rights_verified": false
+}
