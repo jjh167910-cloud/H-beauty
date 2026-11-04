@@ -1,10 +1,10 @@
-name: H-Beauty Try-On v27.6 isolated staging
+name: H-Beauty Try-On v27.7 isolated staging
 
 on:
   push:
     branches: [staging/ai-tryon-v275-github]
     paths:
-      - '.github/workflows/hbeauty-tryon-v276-staging.yml'
+      - '.github/workflows/hbeauty-tryon-v277-staging.yml'
       - 'staging/ai-tryon-v275/**'
   workflow_dispatch:
 
@@ -12,7 +12,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: hbeauty-v276-isolated-staging
+  group: hbeauty-v277-isolated-staging
   cancel-in-progress: true
 
 jobs:
@@ -30,7 +30,7 @@ jobs:
         id: source
         shell: bash
         run: |
-          if gh release view hbeauty-tryon-v27.6-staging-source >/dev/null 2>&1; then
+          if gh release view hbeauty-tryon-v27.7-staging-source >/dev/null 2>&1; then
             echo 'ready=true' >> "$GITHUB_OUTPUT"
           else
             echo 'ready=false' >> "$GITHUB_OUTPUT"
@@ -42,27 +42,27 @@ jobs:
         shell: bash
         run: |
           mkdir -p "$RUNNER_TEMP/hbeauty-stage"
-          gh release download hbeauty-tryon-v27.6-staging-source --pattern 'HBeauty_v27_6_Isolated_Staging_Kit.zip' --dir "$RUNNER_TEMP/hbeauty-stage"
+          gh release download hbeauty-tryon-v27.7-staging-source --pattern 'HBeauty_v27_7_Isolated_Staging_Kit.zip' --dir "$RUNNER_TEMP/hbeauty-stage"
       - name: Prove source, offline assets and isolation
         if: steps.source.outputs.ready == 'true'
         shell: bash
         run: |
           set -euo pipefail
-          archive="$RUNNER_TEMP/hbeauty-stage/HBeauty_v27_6_Isolated_Staging_Kit.zip"
-          echo "34c71ff1d3889dd70e094187d3c823b3e9cb1ae4e3d66815d70c684133613872  $archive" | sha256sum --check
+          archive="$RUNNER_TEMP/hbeauty-stage/HBeauty_v27_7_Isolated_Staging_Kit.zip"
+          echo "3baa0804b30c5cfa41c7c839c618a43b7aa3b143d1f9dfa5d1ace82fe8c90e9a  $archive" | sha256sum --check
           unzip -q "$archive" -d "$RUNNER_TEMP/hbeauty-stage"
-          cd "$RUNNER_TEMP/hbeauty-stage/HBeauty_v27_6_Staging_Kit"
+          cd "$RUNNER_TEMP/hbeauty-stage/HBeauty_v27_7_Staging_Kit"
           python verify_staging.py
           python - <<'PY'
           from pathlib import Path
           import json
           c=json.loads(Path('wrangler.jsonc').read_text())
-          assert c['name']=='hbeauty-tryon-v276-staging', 'REFUSE: wrong Worker name'
+          assert c['name']=='hbeauty-tryon-v277-staging', 'REFUSE: wrong Worker name'
           assert c['name']!='h-beauty' and c['workers_dev'] is True
           assert c['assets']['directory']=='./public'
           assert 'routes' not in c and 'route' not in c
-          manifest=json.loads(Path('public/V276_FULL_INTEGRITY.json').read_text())
-          cpu=json.loads(Path('public/V276_CPU_INTEGRITY.json').read_text())
+          manifest=json.loads(Path('public/V277_FULL_INTEGRITY.json').read_text())
+          cpu=json.loads(Path('public/V277_CPU_INTEGRITY.json').read_text())
           assert len(manifest)==339 and len(cpu)==93
           print('PASS: staging-only Worker, 339 verified full assets, 93 CPU assets')
           PY
@@ -75,7 +75,7 @@ jobs:
             echo '::error title=Cloudflare token missing::Set repository secret CLOUDFLARE_API_TOKEN; no deployment was attempted.'
             exit 1
           fi
-          cd "$RUNNER_TEMP/hbeauty-stage/HBeauty_v27_6_Staging_Kit"
+          cd "$RUNNER_TEMP/hbeauty-stage/HBeauty_v27_7_Staging_Kit"
           npx --yes wrangler@4 deploy --config wrangler.jsonc 2>&1 | tee "$RUNNER_TEMP/hbeauty-v275-deploy.log"
       - name: Verify HTTPS staging responses
         if: steps.source.outputs.ready == 'true'
@@ -88,12 +88,12 @@ jobs:
           echo "### Verified isolated try-on staging" >> "$GITHUB_STEP_SUMMARY"
           echo "$url" >> "$GITHUB_STEP_SUMMARY"
           export HBEAUTY_STAGING_URL="$url"
-          cd "$RUNNER_TEMP/hbeauty-stage/HBeauty_v27_6_Staging_Kit"
+          cd "$RUNNER_TEMP/hbeauty-stage/HBeauty_v27_7_Staging_Kit"
           python - <<'PY'
           import hashlib, json, os, urllib.request
           from pathlib import Path
           base=os.environ['HBEAUTY_STAGING_URL'].rstrip('/')
-          manifest=json.loads(Path('public/V276_FULL_INTEGRITY.json').read_text())
+          manifest=json.loads(Path('public/V277_FULL_INTEGRITY.json').read_text())
           for rel in ['sw.js','models/face-mesh-478.onnx','tryon/segment.txt','wasm/vision_wasm_internal.wasm','litertjs/wasm/litert_wasm_internal.wasm','selfie-sixclass-litert-v276.mjs']:
               req=urllib.request.Request(base+'/'+rel, headers={'User-Agent':'HBeauty-Staging-QA/1.0'})
               with urllib.request.urlopen(req, timeout=60) as res:
