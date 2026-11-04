@@ -30,7 +30,7 @@ test('eye, brow, hair and inner mouth are exact source bytes',()=>{
 test('semantic edge feather has a smooth shoulder but never edits forbidden class',()=>{
  const f=fix(),matte=semanticOpacity(f.parsing,2);
  assert.equal(matte[49*w+40],0);
- assert.ok(matte[49*w+49]>0&&matte[49*w+49]<255);
+ assert.ok(matte[49*w+48]>0&&matte[49*w+48]<255);
  assert.equal(matte[70*w+111],255);
 });
 test('no change in original channel alpha, even for fully allowed skin',()=>{
