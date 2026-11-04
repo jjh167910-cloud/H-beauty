@@ -1,0 +1,23 @@
+{
+  "study": "HBeauty-appearance-pilot-R0-20261104",
+  "date": "2026-11-04",
+  "dataset": "entirely procedurally generated RGB fields and mask ellipses",
+  "photographs_used": 0,
+  "train_samples_per_seed": 320,
+  "holdout_samples_per_seed": 96,
+  "random_seeds": [20261104, 20261105, 20261106],
+  "epochs_per_seed": 45,
+  "model_parameters": 5635,
+  "metric": "mean absolute RGB error in synthetic editable regions, 0-255",
+  "baselines_mean": {"no_makeup": 8.0392, "direct_reference": 13.3536, "reference_contrast": 6.4556},
+  "trained_mean_mae": 4.3281,
+  "trained_seeds_mae": [4.4193782865, 4.2409925861, 4.3238379474],
+  "paired_contrast_gain_seed_20261104": 1.9094115159,
+  "paired_bootstrap_95_ci_seed_20261104": [1.5256931283, 2.2893843221],
+  "ablations_seed_20261104": {"no_reference_mae": 5.5456433004, "no_region_id_mae": 4.5340120506},
+  "off_region_RGB_max_abs_difference": 0,
+  "any_real_subject_fairness_validation": false,
+  "real_photo_makeup_quality_evaluated": false,
+  "ready_for_commercial_deployment": false,
+  "state_of_the_art_certified": false
+}
