@@ -1,0 +1,52 @@
+name: H-Beauty v27.5 authentic SelfieMulticlass CPU validation
+
+on:
+  push:
+    branches: [staging/ai-tryon-v275-github]
+    paths:
+      - 'staging/ai-tryon-v275/selfie6_cpu_eval.py'
+      - '.github/workflows/hbeauty-selfie6-real-cpu.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-authentic-six-class:
+    if: github.ref == 'refs/heads/staging/ai-tryon-v275-github'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout existing public catalog test asset
+        uses: actions/checkout@v4
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install standalone LiteRT CPU runtime
+        run: python -m pip install --quiet 'ai-edge-litert' 'numpy>=1.26,<3' 'Pillow>=10,<13'
+      - name: Download authentic Google six-class model
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/hbeauty-selfie6" validation/selfie6
+          curl --fail --location --retry 3 --connect-timeout 20 --max-time 120 \
+            'https://storage.googleapis.com/mediapipe-models/image_segmenter/selfie_multiclass_256x256/float32/latest/selfie_multiclass_256x256.tflite' \
+            -o "$RUNNER_TEMP/hbeauty-selfie6/selfie_multiclass_256x256.tflite"
+          test "$(stat -c%s "$RUNNER_TEMP/hbeauty-selfie6/selfie_multiclass_256x256.tflite")" -gt 1000000
+          test "$(stat -c%s "$RUNNER_TEMP/hbeauty-selfie6/selfie_multiclass_256x256.tflite")" -lt 25000000
+          sha256sum "$RUNNER_TEMP/hbeauty-selfie6/selfie_multiclass_256x256.tflite" | tee validation/selfie6/official-model-sha256.txt
+      - name: Execute genuine six-class TFLite CPU inference and check v27.5 SHA identity
+        run: |
+          python staging/ai-tryon-v275/selfie6_cpu_eval.py \
+            --model "$RUNNER_TEMP/hbeauty-selfie6/selfie_multiclass_256x256.tflite" \
+            --image public/makeup/looks/no-makeup.webp \
+            --out validation/selfie6
+      - name: Upload derived segmentation evidence (no model or private user photos)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hbeauty-v275-real-sixclass-cpu-evidence
+          path: validation/selfie6
+          if-no-files-found: warn
+          retention-days: 14
