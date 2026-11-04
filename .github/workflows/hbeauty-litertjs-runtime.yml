@@ -23,6 +23,7 @@ jobs:
           mkdir -p litertjs
           cd litertjs
           npm pack '@litertjs/core@2.5.3' --silent
+          npm pack '@litertjs/wasm-utils@2.5.3' --silent
           sha256sum ./*.tgz | tee sha256.txt
           ls -lh ./*.tgz
       - name: Upload research-only runtime package for local bundle/QA
