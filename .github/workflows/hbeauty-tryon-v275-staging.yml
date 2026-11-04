@@ -1,0 +1,112 @@
+name: H-Beauty Try-On v27.5 isolated staging
+
+on:
+  push:
+    branches: [staging/ai-tryon-v275-github]
+    paths:
+      - '.github/workflows/hbeauty-tryon-v275-staging.yml'
+      - 'staging/ai-tryon-v275/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hbeauty-v275-isolated-staging
+  cancel-in-progress: true
+
+jobs:
+  deploy-isolated-staging:
+    if: github.ref == 'refs/heads/staging/ai-tryon-v275-github'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ github.token }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID || 'a22c80a102037bf59a1a25426cb93d66' }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check for pinned release ZIP
+        id: source
+        shell: bash
+        run: |
+          if gh release view hbeauty-tryon-v27.5-staging-source >/dev/null 2>&1; then
+            echo 'ready=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'ready=false' >> "$GITHUB_OUTPUT"
+            echo '::notice title=Staging not published::The v27.5 staging ZIP release asset has not been uploaded. No Cloudflare API call will be made.'
+          fi
+      - name: Download approved source ZIP
+        if: steps.source.outputs.ready == 'true'
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/hbeauty-stage"
+          gh release download hbeauty-tryon-v27.5-staging-source --pattern 'HBeauty_v27_5_Isolated_Staging_Kit.zip' --dir "$RUNNER_TEMP/hbeauty-stage"
+      - name: Prove source, offline assets and isolation
+        if: steps.source.outputs.ready == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          archive="$RUNNER_TEMP/hbeauty-stage/HBeauty_v27_5_Isolated_Staging_Kit.zip"
+          echo "6d523542f26ea446231703da34330e3f43f8b3d877182856623309d465a25f8b  $archive" | sha256sum --check
+          unzip -q "$archive" -d "$RUNNER_TEMP/hbeauty-stage"
+          cd "$RUNNER_TEMP/hbeauty-stage/HBeauty_v27_5_Staging_Kit"
+          python verify_staging.py
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          c=json.loads(Path('wrangler.jsonc').read_text())
+          assert c['name']=='hbeauty-tryon-v275-staging', 'REFUSE: wrong Worker name'
+          assert c['name']!='h-beauty' and c['workers_dev'] is True
+          assert c['assets']['directory']=='./public'
+          assert 'routes' not in c and 'route' not in c
+          manifest=json.loads(Path('public/V275_FULL_INTEGRITY.json').read_text())
+          cpu=json.loads(Path('public/V275_CPU_INTEGRITY.json').read_text())
+          assert len(manifest)==331 and len(cpu)==85
+          print('PASS: staging-only Worker, 331 verified full assets, 85 CPU assets')
+          PY
+      - name: Deploy only the staging Worker
+        if: steps.source.outputs.ready == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+            echo '::error title=Cloudflare token missing::Set repository secret CLOUDFLARE_API_TOKEN; no deployment was attempted.'
+            exit 1
+          fi
+          cd "$RUNNER_TEMP/hbeauty-stage/HBeauty_v27_5_Staging_Kit"
+          npx --yes wrangler@4 deploy --config wrangler.jsonc 2>&1 | tee "$RUNNER_TEMP/hbeauty-v275-deploy.log"
+      - name: Verify HTTPS staging responses
+        if: steps.source.outputs.ready == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          url="$(grep -Eo 'https://[[:alnum:].-]+\.workers\.dev' "$RUNNER_TEMP/hbeauty-v275-deploy.log" | head -n1 || true)"
+          if [ -z "$url" ]; then echo '::error::Wrangler did not report a public staging workers.dev URL'; exit 1; fi
+          echo "Staging URL: $url"
+          export HBEAUTY_STAGING_URL="$url"
+          cd "$RUNNER_TEMP/hbeauty-stage/HBeauty_v27_5_Staging_Kit"
+          python - <<'PY'
+          import hashlib, json, os, urllib.request
+          from pathlib import Path
+          base=os.environ['HBEAUTY_STAGING_URL'].rstrip('/')
+          manifest=json.loads(Path('public/V275_FULL_INTEGRITY.json').read_text())
+          for rel in ['sw.js','models/face-mesh-478.onnx','tryon/segment.txt']:
+              req=urllib.request.Request(base+'/'+rel, headers={'User-Agent':'HBeauty-Staging-QA/1.0'})
+              with urllib.request.urlopen(req, timeout=45) as res:
+                  assert res.status==200,(rel,res.status)
+                  body=res.read()
+                  assert 'text/html' not in res.headers.get('Content-Type','').lower(),rel
+              assert hashlib.sha256(body).hexdigest()==manifest['./'+rel],rel
+              print('HTTPS verified',rel,len(body),'bytes')
+          with urllib.request.urlopen(base+'/',timeout=30) as res:
+              assert res.status==200 and b'html' in res.read(2000).lower()
+          print('PASS: remote staging assets match pinned local SHA-256 hashes')
+          PY
+      - name: Emit release decision
+        if: always()
+        shell: bash
+        run: |
+          echo 'Production h-beauty Worker is never targeted by this workflow.'
+          echo 'Staging is only confirmed if archive, deploy and HTTPS verification all succeed.'
+          echo 'Physical Android segmentation and neural makeup realism remain NO-GO.'
