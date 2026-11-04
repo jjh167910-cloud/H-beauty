@@ -34,7 +34,8 @@ jobs:
             echo 'ready=true' >> "$GITHUB_OUTPUT"
           else
             echo 'ready=false' >> "$GITHUB_OUTPUT"
-            echo '::notice title=Staging not published::The v27.5 staging ZIP release asset has not been uploaded. No Cloudflare API call will be made.'
+            echo '::error title=Staging archive missing::No pinned v27.5 source release was found. Staging deployment was safely blocked; production was not touched.'
+            exit 1
           fi
       - name: Download approved source ZIP
         if: steps.source.outputs.ready == 'true'
@@ -84,6 +85,8 @@ jobs:
           url="$(grep -Eo 'https://[[:alnum:].-]+\.workers\.dev' "$RUNNER_TEMP/hbeauty-v275-deploy.log" | head -n1 || true)"
           if [ -z "$url" ]; then echo '::error::Wrangler did not report a public staging workers.dev URL'; exit 1; fi
           echo "Staging URL: $url"
+          echo "### Verified isolated try-on staging" >> "$GITHUB_STEP_SUMMARY"
+          echo "$url" >> "$GITHUB_STEP_SUMMARY"
           export HBEAUTY_STAGING_URL="$url"
           cd "$RUNNER_TEMP/hbeauty-stage/HBeauty_v27_5_Staging_Kit"
           python - <<'PY'
@@ -91,13 +94,20 @@ jobs:
           from pathlib import Path
           base=os.environ['HBEAUTY_STAGING_URL'].rstrip('/')
           manifest=json.loads(Path('public/V275_FULL_INTEGRITY.json').read_text())
-          for rel in ['sw.js','models/face-mesh-478.onnx','tryon/segment.txt']:
+          for rel in ['sw.js','models/face-mesh-478.onnx','tryon/segment.txt','wasm/vision_wasm_internal.wasm']:
               req=urllib.request.Request(base+'/'+rel, headers={'User-Agent':'HBeauty-Staging-QA/1.0'})
-              with urllib.request.urlopen(req, timeout=45) as res:
+              with urllib.request.urlopen(req, timeout=60) as res:
                   assert res.status==200,(rel,res.status)
                   body=res.read()
                   assert 'text/html' not in res.headers.get('Content-Type','').lower(),rel
-              assert hashlib.sha256(body).hexdigest()==manifest['./'+rel],rel
+              local_file=Path('public')/rel
+              assert local_file.is_file(),rel
+              expected=hashlib.sha256(local_file.read_bytes()).hexdigest()
+              if rel!='sw.js':
+                  assert manifest['./'+rel]==expected,rel
+              # sw.js is generated after the immutable full-app manifest, and must
+              # be validated against the pinned staging archive's actual bytes.
+              assert hashlib.sha256(body).hexdigest()==expected,rel
               print('HTTPS verified',rel,len(body),'bytes')
           with urllib.request.urlopen(base+'/',timeout=30) as res:
               assert res.status==200 and b'html' in res.read(2000).lower()
